@@ -262,10 +262,10 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const c
 
 QDemonRenderVertFragCompilationResult QDemonRenderContext::compileBinary(const char *shaderName,
                                                                              QDemonRenderShaderProgramBinaryType type,
-                                                                             QDemonDataRef<qint8> vertShader,
-                                                                             QDemonDataRef<qint8> fragShader,
-                                                                             QDemonDataRef<qint8> tessControlShaderSource,
-                                                                             QDemonDataRef<qint8> tessEvaluationShaderSource,
+                                                                             QDemonDataView<qint8> vertShader,
+                                                                             QDemonDataView<qint8> fragShader,
+                                                                             QDemonDataView<qint8> tessControlShaderSource,
+                                                                             QDemonDataView<qint8> tessEvaluationShaderSource,
                                                                              QDemonDataView<qint8> geometryShaderSource)
 {
 #ifndef _MACOSX

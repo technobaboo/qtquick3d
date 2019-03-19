@@ -147,7 +147,7 @@ public:
                                                  const QMatrix4x4 &inGlobalTransform,
                                                  const QVector2D &inViewportDimensions,
                                                  const QVector2D &inMouseCoords,
-                                                 QDemonDataRef<QDemonRenderGraphObject *> inMapperObjects,
+                                                 QDemonDataView<QDemonRenderGraphObject *> inMapperObjects,
                                                  QDemonRenderBasisPlanes inIsectPlane) = 0;
 
     virtual QVector3D unprojectToPosition(QDemonRenderNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const = 0;

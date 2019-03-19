@@ -483,13 +483,12 @@ public:
                                                         quint32 inGSLen = 0,
                                                         bool separableProgram = false);
 
-    QDemonRenderVertFragCompilationResult compileBinary(
-            const char *shaderName,
+    QDemonRenderVertFragCompilationResult compileBinary(const char *shaderName,
             QDemonRenderShaderProgramBinaryType type,
-            QDemonDataRef<qint8> vertShader,
-            QDemonDataRef<qint8> fragShader,
-            QDemonDataRef<qint8> tessControlShaderSource = QDemonDataRef<qint8>(),
-            QDemonDataRef<qint8> tessEvaluationShaderSource = QDemonDataRef<qint8>(),
+            QDemonDataView<qint8> vertShader,
+            QDemonDataView<qint8> fragShader,
+            QDemonDataView<qint8> tessControlShaderSource = QDemonDataView<qint8>(),
+            QDemonDataView<qint8> tessEvaluationShaderSource = QDemonDataView<qint8>(),
             QDemonDataView<qint8> geometryShaderSource = QDemonDataView<qint8>());
 
     QDemonRenderVertFragCompilationResult compileComputeSource(const char *shaderName,

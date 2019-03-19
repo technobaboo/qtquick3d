@@ -657,7 +657,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonRenderNode &inNod
                                                          const QMatrix4x4 &inGlobalTransform,
                                                          const QVector2D &inViewportDimensions,
                                                          const QVector2D &inMouseCoords,
-                                                         QDemonDataRef<QDemonRenderGraphObject *> inMapperObjects,
+                                                         QDemonDataView<QDemonRenderGraphObject *> inMapperObjects,
                                                          QDemonRenderBasisPlanes inPlane)
 {
     QDemonRef<QDemonLayerRenderData> theLayerData = getOrCreateLayerRenderDataForNode(inNode);
@@ -705,7 +705,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonRenderNode &inNod
                                                                theParentModel->globalTransform,
                                                                theViewportDimensions,
                                                                theMouseCoords,
-                                                               QDemonDataRef<QDemonRenderGraphObject *>(),
+                                                               QDemonDataView<QDemonRenderGraphObject *>(),
                                                                QDemonRenderBasisPlanes::XY);
             if (relativeHit.isEmpty()) {
                 return QDemonEmpty();
