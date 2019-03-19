@@ -36,10 +36,9 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                    QDemonRenderBufferUsageType usageType,
-                                                   size_t size,
                                                    quint32 stride,
                                                    QDemonByteView data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Vertex, usageType, data),
+    : QDemonRenderDataBuffer(context, QDemonRenderBufferType::Vertex, usageType, data),
       m_stride(stride)
 {
     Q_ASSERT(m_stride);

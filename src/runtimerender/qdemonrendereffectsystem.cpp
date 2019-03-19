@@ -784,7 +784,6 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             if (inCommand.m_dataBufferType == QDemonRenderBufferType::Storage) {
                 theDataBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_name.toLocal8Bit(),
                                                                       QDemonRenderBufferUsageType::Dynamic,
-                                                                      theBufferSize,
                                                                       data,
                                                                       nullptr);
             } else if (inCommand.m_dataBufferType == QDemonRenderBufferType::DrawIndirect) {
@@ -794,7 +793,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 // vertex count we draw points right now only
                 // the rest we fill in by GPU
                 pIndirectDrawCall[0] = 1;
-                theDataBuffer = new QDemonRenderDrawIndirectBuffer(theRenderContext, QDemonRenderBufferUsageType::Dynamic, theBufferSize, data);
+                theDataBuffer = new QDemonRenderDrawIndirectBuffer(theRenderContext, QDemonRenderBufferUsageType::Dynamic, data);
             } else
                 Q_ASSERT(false);
 
@@ -809,7 +808,6 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 && !inCommand.m_wrapName.isEmpty() && theDataBuffer) {
                 theDataWrapBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_wrapName.toLocal8Bit(),
                                                                           QDemonRenderBufferUsageType::Dynamic,
-                                                                          theBufferSize,
                                                                           data,
                                                                           theDataBuffer.data());
                 theContext.m_allocatedDataBuffers.push_back(QDemonAllocatedDataBufferEntry(inCommand.m_wrapName,
@@ -818,6 +816,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                                                                            QDemonByteRef(),
                                                                                            inCommand.m_bufferFlags));
             }
+            ::free(initialData);
         }
     }
 

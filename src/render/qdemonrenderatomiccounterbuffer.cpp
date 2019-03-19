@@ -49,10 +49,9 @@ public:
 
 QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                                  const QByteArray &bufferName,
-                                                                 size_t size,
                                                                  QDemonRenderBufferUsageType usageType,
                                                                  QDemonByteView data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Storage, usageType, data)
+    : QDemonRenderDataBuffer(context, QDemonRenderBufferType::Storage, usageType, data)
     , m_name(bufferName)
     , m_dirty(true)
 {

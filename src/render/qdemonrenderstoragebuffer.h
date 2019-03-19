@@ -60,7 +60,6 @@ public:
     QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContext> &context,
                               const QByteArray &bufferName,
                               QDemonRenderBufferUsageType usageType,
-                              size_t size,
                               QDemonByteView data,
                               QDemonRenderDataBuffer *pBuffer = nullptr);
 

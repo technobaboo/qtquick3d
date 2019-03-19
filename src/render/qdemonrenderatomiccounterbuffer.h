@@ -61,7 +61,6 @@ public:
      */
     QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContext> &context,
                                     const QByteArray &bufferName,
-                                    size_t size,
                                     QDemonRenderBufferUsageType usageType,
                                     QDemonByteView data);
 

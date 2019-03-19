@@ -54,7 +54,6 @@ public:
     QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContext> &context,
                             QDemonRenderBufferUsageType usageType,
                             QDemonRenderComponentType componentType,
-                            size_t size,
                             QDemonByteView data);
 
     ///< destruvtor

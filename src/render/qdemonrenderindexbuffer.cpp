@@ -37,9 +37,8 @@ QT_BEGIN_NAMESPACE
 QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                  QDemonRenderBufferUsageType usageType,
                                                  QDemonRenderComponentType componentType,
-                                                 size_t size,
                                                  QDemonByteView data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Index, usageType, data),
+    : QDemonRenderDataBuffer(context, QDemonRenderBufferType::Index, usageType, data),
       m_componentType(componentType)
 {
 }

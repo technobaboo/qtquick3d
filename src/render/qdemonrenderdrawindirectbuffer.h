@@ -72,7 +72,6 @@ public:
      */
     QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContext> &context,
                                    QDemonRenderBufferUsageType usageType,
-                                   size_t size,
                                    QDemonByteView data);
 
     ///< destructor

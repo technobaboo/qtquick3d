@@ -139,7 +139,6 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
             };
             m_boxIndexBuffer = inContext.getOrCreateIndexBuffer(m_itemName,
                                                                 QDemonRenderComponentType::UnsignedInteger8,
-                                                                sizeof(indexes),
                                                                 toByteView(indexes, sizeof(indexes)));
         }
 

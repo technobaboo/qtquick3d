@@ -73,7 +73,6 @@ public:
      * @return No return.
      */
     QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContext> &context,
-                           size_t size,
                            QDemonRenderBufferType bindFlags,
                            QDemonRenderBufferUsageType usageType,
                            QDemonByteView data);

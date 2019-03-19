@@ -36,7 +36,6 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContext> &context,
-                                               size_t size,
                                                QDemonRenderBufferType bindFlags,
                                                QDemonRenderBufferUsageType usageType,
                                                QDemonByteView data)
@@ -46,10 +45,9 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderConte
     , m_type(bindFlags)
     , m_bufferData(data)
     , m_bufferCapacity(data.size())
-    , m_bufferSize(size)
+    , m_bufferSize(data.size())
     , m_mapped(false)
 {
-    Q_ASSERT(size == data.size());
     m_handle = m_backend->createBuffer(data, bindFlags, usageType);
 }
 

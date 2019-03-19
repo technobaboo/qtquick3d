@@ -401,7 +401,6 @@ public:
     QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
             const QByteArray &inStr,
             QDemonRenderComponentType componentType,
-            size_t size,
             QDemonByteView bufferData = QDemonByteView());
     QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs);
     QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,

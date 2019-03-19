@@ -36,9 +36,8 @@
 QT_BEGIN_NAMESPACE
 QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                                QDemonRenderBufferUsageType usageType,
-                                                               size_t size,
                                                                QDemonByteView data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::DrawIndirect, usageType, data), m_dirty(true)
+    : QDemonRenderDataBuffer(context, QDemonRenderBufferType::DrawIndirect, usageType, data), m_dirty(true)
 {
 }
 

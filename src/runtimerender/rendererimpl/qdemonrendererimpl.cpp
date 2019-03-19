@@ -364,7 +364,6 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
 
         m_rectIndexBuffer = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                         QDemonRenderComponentType::UnsignedInteger8,
-                                                        sizeof(indexData),
                                                         toDataView(indexData, sizeof(indexData)));
 
         QDemonRenderVertexBufferEntry theEntries[] = {
@@ -1232,7 +1231,6 @@ void QDemonRendererImpl::generateXYQuad()
         bufPtr[4] = uvPtr->y();
     }
     m_quadVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Static,
-                                                       20 * sizeof(float),
                                                        3 * sizeof(float) + 2 * sizeof(float),
                                                        toByteView(tempBuf, 20));
 
@@ -1241,7 +1239,6 @@ void QDemonRendererImpl::generateXYQuad()
     };
     m_quadIndexBuffer = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                      QDemonRenderComponentType::UnsignedInteger8,
-                                                     sizeof(indexData),
                                                      toByteView(indexData, sizeof(indexData)));
 
     // create our attribute layout
@@ -1272,7 +1269,6 @@ void QDemonRendererImpl::generateXYZPoint()
     tempBuf[3] = tempBuf[4] = 0.0;
 
     m_pointVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Static,
-                                                        5 * sizeof(float),
                                                         3 * sizeof(float) + 2 * sizeof(float),
                                                         toByteView(tempBuf, 5));
 
@@ -1334,9 +1330,7 @@ void QDemonRendererImpl::generateXYQuadStrip()
 
     // this buffer is filled dynmically
     m_quadStripVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic,
-                                                            0,
-                                                            3 * sizeof(float) + 2 * sizeof(float) // stride
-                                                            ,
+                                                            3 * sizeof(float) + 2 * sizeof(float), // stride
                                                             QDemonByteRef());
 
     // create our attribute layout
@@ -1418,13 +1412,12 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getOrCreateVertexBuffer(
         retval->updateBuffer(bufferData);
         return retval;
     }
-    retval = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, bufferData.size(), stride, bufferData);
+    retval = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, stride, bufferData);
     m_widgetVertexBuffers.insert(inStr, retval);
     return retval;
 }
 QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getOrCreateIndexBuffer(const QByteArray &inStr,
                                                                               QDemonRenderComponentType componentType,
-                                                                              size_t size,
                                                                               QDemonByteView bufferData)
 {
     QDemonRef<QDemonRenderIndexBuffer> retval = getIndexBuffer(inStr);
@@ -1434,7 +1427,7 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getOrCreateIndexBuffer(co
         return retval;
     }
 
-    retval = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, componentType, size, bufferData);
+    retval = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, componentType, bufferData);
     m_widgetIndexBuffers.insert(inStr, retval);
     return retval;
 }

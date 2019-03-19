@@ -149,7 +149,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         if (m_quadVertexBuffer == nullptr) {
             size_t bufSize = sizeof(pos);
             m_quadVertexBuffer = new QDemonRenderVertexBuffer(theRenderContext, QDemonRenderBufferUsageType::Static,
-                                                              bufSize, 2 * sizeof(float),
+                                                              2 * sizeof(float),
                                                               toByteView(pos, 4));
         }
 
@@ -159,7 +159,6 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
             };
             m_quadIndexBuffer = new QDemonRenderIndexBuffer(theRenderContext, QDemonRenderBufferUsageType::Static,
                                                             QDemonRenderComponentType::UnsignedInteger8,
-                                                            sizeof(indexData),
                                                             toByteView(indexData, sizeof(indexData)));
         }
 

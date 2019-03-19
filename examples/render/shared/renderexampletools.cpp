@@ -104,7 +104,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
     }
 
     auto vertexDataRef = toByteView(vertices);
-    outVertexBuffer= new QDemonRenderVertexBuffer(context, QDemonRenderBufferUsageType::Static, vertexDataRef.size(), bufStride, vertexDataRef);
+    outVertexBuffer= new QDemonRenderVertexBuffer(context, QDemonRenderBufferUsageType::Static, bufStride, vertexDataRef);
     Q_ASSERT(bufStride == outVertexBuffer->stride());
 
     // Index Buffer
@@ -122,7 +122,6 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
     auto indexDataRef = toByteView(indexBuffer);
     outIndexBuffer= new QDemonRenderIndexBuffer(context, QDemonRenderBufferUsageType::Static,
                                                QDemonRenderComponentType::UnsignedInteger16,
-                                               indexDataRef.size(),
                                                indexDataRef);
 
     quint32 strides = outVertexBuffer->stride();

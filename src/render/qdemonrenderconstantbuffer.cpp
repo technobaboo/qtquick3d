@@ -55,7 +55,7 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
                                                        const QByteArray &bufferName,
                                                        QDemonRenderBufferUsageType usageType,
                                                        QDemonByteView data)
-    : QDemonRenderDataBuffer(context, data.size(), QDemonRenderBufferType::Constant, usageType, data)
+    : QDemonRenderDataBuffer(context, QDemonRenderBufferType::Constant, usageType, data)
     , m_name(bufferName)
     , m_currentOffset(0)
     , m_currentSize(0)

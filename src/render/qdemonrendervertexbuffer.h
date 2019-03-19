@@ -58,7 +58,6 @@ public:
      */
     QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContext> &context,
                              QDemonRenderBufferUsageType usageType,
-                             size_t size,
                              quint32 stride,
                              QDemonByteView data);
 

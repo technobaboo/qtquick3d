@@ -38,10 +38,9 @@ QT_BEGIN_NAMESPACE
 QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                      const QByteArray &bufferName,
                                                      QDemonRenderBufferUsageType usageType,
-                                                     size_t size,
                                                      QDemonByteView data,
                                                      QDemonRenderDataBuffer *pBuffer)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Storage, usageType, data)
+    : QDemonRenderDataBuffer(context, QDemonRenderBufferType::Storage, usageType, data)
     , m_name(bufferName)
     , m_wrappedBuffer(pBuffer)
     , m_dirty(true)
