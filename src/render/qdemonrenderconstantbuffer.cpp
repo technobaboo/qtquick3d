@@ -54,9 +54,8 @@ public:
 QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                        const QByteArray &bufferName,
                                                        QDemonRenderBufferUsageType usageType,
-                                                       size_t size,
                                                        QDemonByteView data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Constant, usageType, QDemonByteView())
+    : QDemonRenderDataBuffer(context, data.size(), QDemonRenderBufferType::Constant, usageType, data)
     , m_name(bufferName)
     , m_currentOffset(0)
     , m_currentSize(0)
@@ -67,8 +66,8 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
 
     m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxConstantBufferBlockSize, &m_maxBlockSize);
 
-    if (size && data.size() && size == data.size()) {
-        Q_ASSERT(size < (quint32)m_maxBlockSize);
+    if (data.size()) {
+        Q_ASSERT(data.size() < (quint32)m_maxBlockSize);
         m_shadowCopy.resize(data.size());
         memcpy(m_shadowCopy.begin(), data.begin(), data.size());
     }

@@ -123,10 +123,9 @@ public:
     void clear(QDemonRenderClearFlags flags) override;
 
     /// resource handling
-    QDemonRenderBackendBufferObject createBuffer(size_t size,
+    QDemonRenderBackendBufferObject createBuffer(QDemonByteView hostData,
                                                  QDemonRenderBufferType bindFlags,
-                                                 QDemonRenderBufferUsageType usage,
-                                                 const void *hostPtr = nullptr) override;
+                                                 QDemonRenderBufferUsageType usage) override;
     void bindBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferType bindFlags) override;
     void releaseBuffer(QDemonRenderBackendBufferObject bo) override;
     void updateBuffer(QDemonRenderBackendBufferObject bo,

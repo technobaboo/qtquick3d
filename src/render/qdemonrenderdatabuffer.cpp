@@ -49,7 +49,8 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderConte
     , m_bufferSize(size)
     , m_mapped(false)
 {
-    m_handle = m_backend->createBuffer(size, bindFlags, usageType, (const void *)m_bufferData.begin());
+    Q_ASSERT(size == data.size());
+    m_handle = m_backend->createBuffer(data, bindFlags, usageType);
 }
 
 QDemonRenderDataBuffer::~QDemonRenderDataBuffer()

@@ -1362,7 +1362,6 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
             // the  size is determined automatically later on
             pCB = new QDemonRenderConstantBuffer(m_context, theName,
                                                   QDemonRenderBufferUsageType::Static,
-                                                  0,
                                                   QDemonByteRef());
             if (!pCB) {
                 Q_ASSERT(false);

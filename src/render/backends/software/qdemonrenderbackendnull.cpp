@@ -101,7 +101,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void setViewportRect(const QRect &) override {}
     void setClearColor(const QVector4D *) override {}
     void clear(QDemonRenderClearFlags) override {}
-    QDemonRenderBackendBufferObject createBuffer(size_t, QDemonRenderBufferType, QDemonRenderBufferUsageType, const void *) override
+    QDemonRenderBackendBufferObject createBuffer(QDemonByteView, QDemonRenderBufferType, QDemonRenderBufferUsageType) override
     {
         return QDemonRenderBackendBufferObject(1);
     }

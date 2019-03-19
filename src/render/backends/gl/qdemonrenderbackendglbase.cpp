@@ -572,20 +572,19 @@ void QDemonRenderBackendGLBase::clear(QDemonRenderClearFlags flags)
     GL_CALL_FUNCTION(glClear(m_conversion.fromClearFlagsToGL(flags)));
 }
 
-QDemonRenderBackend::QDemonRenderBackendBufferObject QDemonRenderBackendGLBase::createBuffer(size_t size,
+QDemonRenderBackend::QDemonRenderBackendBufferObject QDemonRenderBackendGLBase::createBuffer(QDemonByteView hostData,
                                                                                              QDemonRenderBufferType bindFlags,
-                                                                                             QDemonRenderBufferUsageType usage,
-                                                                                             const void *hostPtr)
+                                                                                             QDemonRenderBufferUsageType usage)
 {
     GLuint bufID = 0;
 
     GL_CALL_FUNCTION(glGenBuffers(1, &bufID));
 
-    if (bufID && size) {
+    if (bufID && hostData.size()) {
         GLenum target = GLConversion::fromBindBufferFlagsToGL(bindFlags);
         if (target != GL_INVALID_ENUM) {
             GL_CALL_FUNCTION(glBindBuffer(target, bufID));
-            GL_CALL_FUNCTION(glBufferData(target, size, hostPtr, m_conversion.fromBufferUsageTypeToGL(usage)));
+            GL_CALL_FUNCTION(glBufferData(target, hostData.size(), hostData, m_conversion.fromBufferUsageTypeToGL(usage)));
         } else {
             GL_CALL_FUNCTION(glDeleteBuffers(1, &bufID));
             bufID = 0;

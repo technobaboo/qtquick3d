@@ -440,10 +440,9 @@ public:
      *
      * @return The created buffer object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendBufferObject createBuffer(size_t size,
+    virtual QDemonRenderBackendBufferObject createBuffer(QDemonByteView hostData,
                                                          QDemonRenderBufferType bindFlags,
-                                                         QDemonRenderBufferUsageType usage,
-                                                         const void *hostPtr = nullptr) = 0;
+                                                         QDemonRenderBufferUsageType usage) = 0;
 
     /**
      * @brief bind a buffer object
