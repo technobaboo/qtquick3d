@@ -113,7 +113,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonByteView newBuffer,
                                     height,
                                     0,
                                     format,
-                                    newBuffer.begin());
+                                    newBuffer);
     } else if (format.isCompressedTextureFormat()) {
         m_backend->setCompressedTextureData2D(m_handle,
                                               m_texTarget,
@@ -122,8 +122,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonByteView newBuffer,
                                               width,
                                               height,
                                               0,
-                                              newBuffer.size(),
-                                              newBuffer.begin());
+                                              newBuffer);
     }
     // Set our texture parameters to a default that will look the best
     if (inMipLevel > 0)
@@ -171,7 +170,7 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
         m_texTarget = QDemonRenderTextureTargetType::Texture2D;
 
         if (dataBuffer.size() > 0)
-            m_backend->setTextureSubData2D(m_handle, m_texTarget, 0, 0, 0, width, height, format, dataBuffer.begin());
+            m_backend->setTextureSubData2D(m_handle, m_texTarget, 0, 0, 0, width, height, format, dataBuffer);
 
         if (inLevels > 1)
             setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
@@ -248,7 +247,7 @@ void QDemonRenderTexture2D::setTextureSubData(QDemonByteView newBuffer,
                                    width,
                                    height,
                                    format,
-                                   newBuffer.begin());
+                                   newBuffer);
 }
 
 void QDemonRenderTexture2D::generateMipmaps(QDemonRenderHint genType)

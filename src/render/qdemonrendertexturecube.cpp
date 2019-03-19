@@ -81,7 +81,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonByteView newBuffer,
                                           height,
                                           0,
                                           format,
-                                          newBuffer.begin());
+                                          newBuffer);
     } else if (format.isCompressedTextureFormat()) {
         m_backend->setCompressedTextureDataCubeFace(m_handle,
                                                     outTarget,
@@ -90,8 +90,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonByteView newBuffer,
                                                     width,
                                                     height,
                                                     0,
-                                                    newBuffer.size(),
-                                                    newBuffer.begin());
+                                                    newBuffer);
     }
 
     // Set our texture parameters to a default that will look the best

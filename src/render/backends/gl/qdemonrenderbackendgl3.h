@@ -82,7 +82,7 @@ public:
                           qint32 depth,
                           qint32 border,
                           QDemonRenderTextureFormat format,
-                          const void *hostPtr = nullptr) override;
+                          QDemonByteView hostData) override;
 
     void updateSampler(QDemonRenderBackendSamplerObject so,
                        QDemonRenderTextureTargetType target,

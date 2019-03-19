@@ -238,7 +238,7 @@ void QDemonRenderBackendGL3Impl::setTextureData3D(QDemonRenderBackendTextureObje
                                                   qint32 depth,
                                                   qint32 border,
                                                   QDemonRenderTextureFormat format,
-                                                  const void *hostPtr)
+                                                  QDemonByteView hostData)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
@@ -260,11 +260,12 @@ void QDemonRenderBackendGL3Impl::setTextureData3D(QDemonRenderBackendTextureObje
     } else if (internalFormat.isCompressedTextureFormat()) {
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
         glInternalFormat = GLConversion::fromCompressedTextureFormatToGL(internalFormat);
-    } else if (format.isDepthTextureFormat())
+    } else if (format.isDepthTextureFormat()) {
         GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
+    }
 
     GL_CALL_EXTRA_FUNCTION(
-            glTexImage3D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), GLsizei(depth), border, glformat, gltype, hostPtr));
+            glTexImage3D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), GLsizei(depth), border, glformat, gltype, hostData));
 
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, 0));
 }

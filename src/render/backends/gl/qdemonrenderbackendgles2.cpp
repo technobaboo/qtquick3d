@@ -225,7 +225,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureOb
                                                     qint32 depth,
                                                     qint32 border,
                                                     QDemonRenderTextureFormat format,
-                                                    const void *hostPtr)
+                                                    QDemonByteView hostData)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
@@ -253,7 +253,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureOb
     }
 
     GL_CALL_EXTRA_FUNCTION(
-            glTexImage3D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), GLsizei(depth), border, glformat, gltype, hostPtr));
+            glTexImage3D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), GLsizei(depth), border, glformat, gltype, hostData));
 
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, 0));
 }
@@ -266,7 +266,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureOb
                                                     qint32 height,
                                                     qint32 border,
                                                     QDemonRenderTextureFormat format,
-                                                    const void *hostPtr)
+                                                    QDemonByteView hostData)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
@@ -301,7 +301,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureOb
 
     Q_ASSERT(glformat == glInternalFormat);
     GL_CALL_EXTRA_FUNCTION(
-            glTexImage2D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), border, glformat, gltype, hostPtr));
+            glTexImage2D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), border, glformat, gltype, hostData));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, 0));
 }
 

@@ -86,7 +86,7 @@ void QDemonRenderTexture2DArray::setTextureData(QDemonByteView newBuffer,
                                     slices,
                                     0,
                                     format,
-                                    newBuffer.begin());
+                                    newBuffer);
     }
 
     // Set our texture parameters to a default that will look the best

@@ -206,7 +206,7 @@ public:
                           qint32 height,
                           qint32 border,
                           QDemonRenderTextureFormat format,
-                          const void *hostPtr = nullptr) override;
+                          QDemonByteView hostData) override;
     void setTextureDataCubeFace(QDemonRenderBackendTextureObject to,
                                 QDemonRenderTextureTargetType target,
                                 qint32 level,
@@ -215,7 +215,7 @@ public:
                                 qint32 height,
                                 qint32 border,
                                 QDemonRenderTextureFormat format,
-                                const void *hostPtr = nullptr) override;
+                                QDemonByteView hostData) override;
     void createTextureStorage2D(QDemonRenderBackendTextureObject to,
                                 QDemonRenderTextureTargetType target,
                                 qint32 levels,
@@ -230,7 +230,7 @@ public:
                              qint32 width,
                              qint32 height,
                              QDemonRenderTextureFormat format,
-                             const void *hostPtr = nullptr) override;
+                             QDemonByteView hostData) override;
     void setCompressedTextureData2D(QDemonRenderBackendTextureObject to,
                                     QDemonRenderTextureTargetType target,
                                     qint32 level,
@@ -238,8 +238,7 @@ public:
                                     qint32 width,
                                     qint32 height,
                                     qint32 border,
-                                    qint32 imageSize,
-                                    const void *hostPtr = nullptr) override;
+                                    QDemonByteView hostData) override;
     void setCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject to,
                                           QDemonRenderTextureTargetType target,
                                           qint32 level,
@@ -247,8 +246,7 @@ public:
                                           qint32 width,
                                           qint32 height,
                                           qint32 border,
-                                          qint32 imageSize,
-                                          const void *hostPtr = nullptr) override;
+                                          QDemonByteView hostData) override;
     void setCompressedTextureSubData2D(QDemonRenderBackendTextureObject to,
                                        QDemonRenderTextureTargetType target,
                                        qint32 level,
@@ -257,8 +255,7 @@ public:
                                        qint32 width,
                                        qint32 height,
                                        QDemonRenderTextureFormat format,
-                                       qint32 imageSize,
-                                       const void *hostPtr = nullptr) override;
+                                       QDemonByteView hostData) override;
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                       QDemonRenderTextureTargetType target,
                                       qint32 samples,
@@ -276,7 +273,7 @@ public:
                           qint32 depth,
                           qint32 border,
                           QDemonRenderTextureFormat format,
-                          const void *hostPtr = nullptr) override;
+                          QDemonByteView hostData) override;
 
     void generateMipMaps(QDemonRenderBackendTextureObject to,
                          QDemonRenderTextureTargetType target,

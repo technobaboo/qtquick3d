@@ -847,7 +847,7 @@ public:
                                   qint32 height,
                                   qint32 border,
                                   QDemonRenderTextureFormat format,
-                                  const void *hostPtr = nullptr) = 0;
+                                  QDemonByteView hostData) = 0;
 
     /**
      * @brief set texture data for the face of a Cube map
@@ -873,7 +873,7 @@ public:
                                         qint32 height,
                                         qint32 border,
                                         QDemonRenderTextureFormat format,
-                                        const void *hostPtr = nullptr) = 0;
+                                        QDemonByteView hostData) = 0;
 
     /**
      * @brief create a storage for a 2D texture including mip levels
@@ -920,7 +920,7 @@ public:
                                      qint32 width,
                                      qint32 height,
                                      QDemonRenderTextureFormat format,
-                                     const void *hostPtr = nullptr) = 0;
+                                     QDemonByteView hostData) = 0;
 
     /**
      * @brief set compressed texture data for a 2D texture
@@ -945,8 +945,7 @@ public:
                                             qint32 width,
                                             qint32 height,
                                             qint32 border,
-                                            qint32 imageSize,
-                                            const void *hostPtr = nullptr) = 0;
+                                            QDemonByteView hostData) = 0;
 
     /**
      * @brief set compressed texture data for a Cubemap face
@@ -971,8 +970,7 @@ public:
                                                   qint32 width,
                                                   qint32 height,
                                                   qint32 border,
-                                                  qint32 imageSize,
-                                                  const void *hostPtr = nullptr) = 0;
+                                                  QDemonByteView hostData) = 0;
 
     /**
      * @brief set compressed texture sub data for a 2D texture
@@ -999,8 +997,7 @@ public:
                                                qint32 width,
                                                qint32 height,
                                                QDemonRenderTextureFormat format,
-                                               qint32 imageSize,
-                                               const void *hostPtr = nullptr) = 0;
+                                               QDemonByteView hostData) = 0;
 
     /**
      * @brief establish a multisampled 2D texture
@@ -1049,7 +1046,7 @@ public:
                                   qint32 depth,
                                   qint32 border,
                                   QDemonRenderTextureFormat format,
-                                  const void *hostPtr = nullptr) = 0;
+                                  QDemonByteView hostData) = 0;
 
     /**
      * @brief generate mipmap levels

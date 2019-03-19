@@ -183,7 +183,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                           qint32,
                           qint32,
                           QDemonRenderTextureFormat,
-                          const void *) override
+                          QDemonByteView) override
     {
     }
     void setTextureDataCubeFace(QDemonRenderBackendTextureObject,
@@ -194,7 +194,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                 qint32,
                                 qint32,
                                 QDemonRenderTextureFormat,
-                                const void *) override
+                                QDemonByteView) override
     {
     }
     void createTextureStorage2D(QDemonRenderBackendTextureObject,
@@ -213,7 +213,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                              qint32,
                              qint32,
                              QDemonRenderTextureFormat,
-                             const void *) override
+                             QDemonByteView) override
     {
     }
     void setCompressedTextureData2D(QDemonRenderBackendTextureObject,
@@ -223,8 +223,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                     qint32,
                                     qint32,
                                     qint32,
-                                    qint32,
-                                    const void *) override
+                                    QDemonByteView) override
     {
     }
     void setCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject,
@@ -234,8 +233,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                           qint32,
                                           qint32,
                                           qint32,
-                                          qint32,
-                                          const void *) override
+                                          QDemonByteView) override
     {
     }
     void setCompressedTextureSubData2D(QDemonRenderBackendTextureObject,
@@ -246,8 +244,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                        qint32,
                                        qint32,
                                        QDemonRenderTextureFormat,
-                                       qint32,
-                                       const void *) override
+                                       QDemonByteView) override
     {
     }
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject,
@@ -268,7 +265,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                           qint32,
                           qint32,
                           QDemonRenderTextureFormat,
-                          const void *) override
+                          QDemonByteView) override
     {
     }
     void generateMipMaps(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType, QDemonRenderHint) override
