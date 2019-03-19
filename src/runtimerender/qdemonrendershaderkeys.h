@@ -107,7 +107,7 @@ struct QDemonShaderKeyBoolean : public QDemonShaderKeyPropertyBase
         }
     }
 
-    bool getValue(QDemonConstDataRef<quint32> inDataStore) const
+    bool getValue(QDemonDataView<quint32> inDataStore) const
     {
         quint32 idx = getIdx();
         quint32 mask = getMask();
@@ -115,7 +115,7 @@ struct QDemonShaderKeyBoolean : public QDemonShaderKeyPropertyBase
         return (target & mask) ? true : false;
     }
 
-    void toString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
+    void toString(QString &ioStr, QDemonDataView<quint32> inKeySet) const
     {
         bool isHigh = getValue(inKeySet);
         internalToString(ioStr, name, isHigh);
@@ -146,7 +146,7 @@ struct QDemonShaderKeyUnsigned : public QDemonShaderKeyPropertyBase
         target = target | inValue;
     }
 
-    quint32 getValue(QDemonConstDataRef<quint32> inDataStore) const
+    quint32 getValue(QDemonDataView<quint32> inDataStore) const
     {
         quint32 idx = getIdx();
         quint32 bit = offset % 32;
@@ -158,7 +158,7 @@ struct QDemonShaderKeyUnsigned : public QDemonShaderKeyPropertyBase
         return retval;
     }
 
-    void toString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
+    void toString(QString &ioStr, QDemonDataView<quint32> inKeySet) const
     {
         quint32 value = getValue(inKeySet);
         char buf[64];
@@ -185,7 +185,7 @@ struct QDemonShaderKeyTessellation : public QDemonShaderKeyUnsigned<4>
 
     QDemonShaderKeyTessellation(const char *inName = "") : QDemonShaderKeyUnsigned<4>(inName) {}
 
-    bool getBitValue(TessellationBits swizzleBit, QDemonConstDataRef<quint32> inKeySet) const
+    bool getBitValue(TessellationBits swizzleBit, QDemonDataView<quint32> inKeySet) const
     {
         return (getValue(inKeySet) & swizzleBit) ? true : false;
     }
@@ -221,10 +221,10 @@ struct QDemonShaderKeyTessellation : public QDemonShaderKeyUnsigned<4>
         }
     }
 
-    bool isNoTessellation(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(noTessellation, inKeySet); }
+    bool isNoTessellation(QDemonDataView<quint32> inKeySet) const { return getBitValue(noTessellation, inKeySet); }
     void setNoTessellation(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(noTessellation, val, inKeySet); }
 
-    bool isLinearTessellation(QDemonConstDataRef<quint32> inKeySet) const
+    bool isLinearTessellation(QDemonDataView<quint32> inKeySet) const
     {
         return getBitValue(linearTessellation, inKeySet);
     }
@@ -233,7 +233,7 @@ struct QDemonShaderKeyTessellation : public QDemonShaderKeyUnsigned<4>
         setBitValue(linearTessellation, val, inKeySet);
     }
 
-    bool isNPatchTessellation(QDemonConstDataRef<quint32> inKeySet) const
+    bool isNPatchTessellation(QDemonDataView<quint32> inKeySet) const
     {
         return getBitValue(npatchTessellation, inKeySet);
     }
@@ -242,7 +242,7 @@ struct QDemonShaderKeyTessellation : public QDemonShaderKeyUnsigned<4>
         setBitValue(npatchTessellation, val, inKeySet);
     }
 
-    bool isPhongTessellation(QDemonConstDataRef<quint32> inKeySet) const
+    bool isPhongTessellation(QDemonDataView<quint32> inKeySet) const
     {
         return getBitValue(phongTessellation, inKeySet);
     }
@@ -251,7 +251,7 @@ struct QDemonShaderKeyTessellation : public QDemonShaderKeyUnsigned<4>
         setBitValue(phongTessellation, val, inKeySet);
     }
 
-    void toString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
+    void toString(QString &ioStr, QDemonDataView<quint32> inKeySet) const
     {
         ioStr.append(QString::fromLocal8Bit(name));
         ioStr.append(QStringLiteral("={"));
@@ -278,7 +278,7 @@ struct QDemonShaderKeyTextureSwizzle : public QDemonShaderKeyUnsigned<5>
 
     QDemonShaderKeyTextureSwizzle(const char *inName = "") : QDemonShaderKeyUnsigned<5>(inName) {}
 
-    bool getBitValue(TextureSwizzleBits swizzleBit, QDemonConstDataRef<quint32> inKeySet) const
+    bool getBitValue(TextureSwizzleBits swizzleBit, QDemonDataView<quint32> inKeySet) const
     {
         return (getValue(inKeySet) & swizzleBit) ? true : false;
     }
@@ -317,22 +317,22 @@ struct QDemonShaderKeyTextureSwizzle : public QDemonShaderKeyUnsigned<5>
         }
     }
 
-    bool isNoSwizzled(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(noSwizzle, inKeySet); }
+    bool isNoSwizzled(QDemonDataView<quint32> inKeySet) const { return getBitValue(noSwizzle, inKeySet); }
     void setNoSwizzled(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(noSwizzle, val, inKeySet); }
 
-    bool isL8Swizzled(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(L8toR8, inKeySet); }
+    bool isL8Swizzled(QDemonDataView<quint32> inKeySet) const { return getBitValue(L8toR8, inKeySet); }
     void setL8Swizzled(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(L8toR8, val, inKeySet); }
 
-    bool isA8Swizzled(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(A8toR8, inKeySet); }
+    bool isA8Swizzled(QDemonDataView<quint32> inKeySet) const { return getBitValue(A8toR8, inKeySet); }
     void setA8Swizzled(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(A8toR8, val, inKeySet); }
 
-    bool isL8A8Swizzled(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(L8A8toRG8, inKeySet); }
+    bool isL8A8Swizzled(QDemonDataView<quint32> inKeySet) const { return getBitValue(L8A8toRG8, inKeySet); }
     void setL8A8Swizzled(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(L8A8toRG8, val, inKeySet); }
 
-    bool isL16Swizzled(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(L16toR16, inKeySet); }
+    bool isL16Swizzled(QDemonDataView<quint32> inKeySet) const { return getBitValue(L16toR16, inKeySet); }
     void setL16Swizzled(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(L16toR16, val, inKeySet); }
 
-    void toString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
+    void toString(QString &ioStr, QDemonDataView<quint32> inKeySet) const
     {
         ioStr.append(QString::fromLocal8Bit(name));
         ioStr.append(QStringLiteral("={"));
@@ -361,7 +361,7 @@ struct QDemonShaderKeyImageMap : public QDemonShaderKeyUnsigned<5>
 
     QDemonShaderKeyImageMap(const char *inName = "") : QDemonShaderKeyUnsigned<5>(inName) {}
 
-    bool getBitValue(ImageMapBits imageBit, QDemonConstDataRef<quint32> inKeySet) const
+    bool getBitValue(ImageMapBits imageBit, QDemonDataView<quint32> inKeySet) const
     {
         return (getValue(inKeySet) & imageBit) ? true : false;
     }
@@ -379,22 +379,22 @@ struct QDemonShaderKeyImageMap : public QDemonShaderKeyUnsigned<5>
         setValue(inKeySet, theValue);
     }
 
-    bool isEnabled(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(Enabled, inKeySet); }
+    bool isEnabled(QDemonDataView<quint32> inKeySet) const { return getBitValue(Enabled, inKeySet); }
     void setEnabled(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(Enabled, val, inKeySet); }
 
-    bool isEnvMap(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(EnvMap, inKeySet); }
+    bool isEnvMap(QDemonDataView<quint32> inKeySet) const { return getBitValue(EnvMap, inKeySet); }
     void setEnvMap(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(EnvMap, val, inKeySet); }
 
-    bool isLightProbe(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(LightProbe, inKeySet); }
+    bool isLightProbe(QDemonDataView<quint32> inKeySet) const { return getBitValue(LightProbe, inKeySet); }
     void setLightProbe(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(LightProbe, val, inKeySet); }
 
-    bool isInvertUVMap(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(InvertUV, inKeySet); }
+    bool isInvertUVMap(QDemonDataView<quint32> inKeySet) const { return getBitValue(InvertUV, inKeySet); }
     void setInvertUVMap(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(InvertUV, val, inKeySet); }
 
-    bool isPremultiplied(QDemonConstDataRef<quint32> inKeySet) const { return getBitValue(Premultiplied, inKeySet); }
+    bool isPremultiplied(QDemonDataView<quint32> inKeySet) const { return getBitValue(Premultiplied, inKeySet); }
     void setPremultiplied(QDemonDataRef<quint32> inKeySet, bool val) { setBitValue(Premultiplied, val, inKeySet); }
 
-    void toString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
+    void toString(QString &ioStr, QDemonDataView<quint32> inKeySet) const
     {
         ioStr.append(QString::fromLocal8Bit(name));
         ioStr.append(QStringLiteral("={"));
@@ -420,12 +420,12 @@ struct QDemonShaderKeySpecularModel : QDemonShaderKeyUnsigned<2>
         setValue(inKeySet, quint32(inModel));
     }
 
-    QDemonRenderDefaultMaterial::MaterialSpecularModel getSpecularModel(QDemonConstDataRef<quint32> inKeySet) const
+    QDemonRenderDefaultMaterial::MaterialSpecularModel getSpecularModel(QDemonDataView<quint32> inKeySet) const
     {
         return static_cast<QDemonRenderDefaultMaterial::MaterialSpecularModel>(getValue(inKeySet));
     }
 
-    void toString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
+    void toString(QString &ioStr, QDemonDataView<quint32> inKeySet) const
     {
         ioStr.append(QString::fromLocal8Bit(name));
         ioStr.append(QStringLiteral("="));
@@ -656,13 +656,13 @@ struct QDemonShaderDefaultMaterialKey
     // Cast operators to make getting properties easier.
     operator QDemonDataRef<quint32>() { return toDataRef(m_dataBuffer, DataBufferSize); }
 
-    operator QDemonConstDataRef<quint32>() const { return toConstDataRef(m_dataBuffer, DataBufferSize); }
+    operator QDemonDataView<quint32>() const { return toDataView(m_dataBuffer, DataBufferSize); }
 
     struct StringVisitor
     {
         QByteArray &m_str;
-        QDemonConstDataRef<quint32> m_keyStore;
-        StringVisitor(QByteArray &s, QDemonConstDataRef<quint32> ks) : m_str(s), m_keyStore(ks) {}
+        QDemonDataView<quint32> m_keyStore;
+        StringVisitor(QByteArray &s, QDemonDataView<quint32> ks) : m_str(s), m_keyStore(ks) {}
         template<typename TPropType>
         void visit(const TPropType &prop)
         {

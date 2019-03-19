@@ -110,7 +110,7 @@ struct QDemonPropertyDefinition
     quint32 offset = 0;
     // Sizeof this datatype.
     quint32 byteSize = 0;
-    QDemonConstDataRef<QString> enumValueNames;
+    QDemonDataView<QString> enumValueNames;
 
     ///< texture usage type like diffuse, specular, ...
     QDemonRenderTextureTypeValue texUsageType = QDemonRenderTextureTypeValue::Unknown;
@@ -156,13 +156,13 @@ public:
     QAtomicInt ref;
     virtual ~QDemonDynamicObjectClassInterface() {}
     virtual QString getId() const = 0;
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties() const = 0;
+    virtual QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties() const = 0;
     virtual quint32 getPropertySectionByteSize() const = 0;
     virtual const quint8 *getDefaultValueBuffer() const = 0;
     virtual quint32 getBaseObjectSize() const = 0;
     virtual QDemonRenderGraphObject::Type graphObjectType() const = 0;
     virtual const dynamic::QDemonPropertyDefinition *findPropertyByName(QString inName) const = 0;
-    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands() const = 0;
+    virtual QDemonDataView<dynamic::QDemonCommand *> getRenderCommands() const = 0;
     virtual bool requiresDepthTexture() const = 0;
     virtual void setRequiresDepthTexture(bool inRequires) = 0;
     virtual bool requiresCompilation() const = 0;
@@ -180,7 +180,7 @@ public:
     virtual bool isRegistered(QString inStr) = 0;
 
     virtual bool doRegister(QString inName,
-                            QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties,
+                            QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties,
                             quint32 inBaseObjectSize,
                             QDemonRenderGraphObject::Type inGraphObjectType) = 0;
 
@@ -190,13 +190,13 @@ public:
     // assumed to be.
     virtual void setPropertyDefaultValue(const QString &inName,
                                          const QString &inPropName,
-                                         const QDemonConstDataRef<quint8> &inDefaultData) = 0;
+                                         const QDemonDataView<quint8> &inDefaultData) = 0;
 
-    virtual void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames) = 0;
+    virtual void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames) = 0;
 
-    virtual QDemonConstDataRef<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const = 0;
+    virtual QDemonDataView<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const = 0;
 
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const = 0;
+    virtual QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const = 0;
 
     virtual void setPropertyTextureSettings(const QString &inName,
                                             const QString &inPropName,
@@ -214,8 +214,8 @@ public:
     // run this shader
     // See qdemonrenderdynamicobjectssystemcommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void setRenderCommands(const QString &inClassName, const QDemonConstDataRef<dynamic::QDemonCommand *> &inCommands) = 0;
-    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const = 0;
+    virtual void setRenderCommands(const QString &inClassName, const QDemonDataView<dynamic::QDemonCommand *> &inCommands) = 0;
+    virtual QDemonDataView<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const = 0;
 
     virtual QDemonRenderDynamicGraphObject *createInstance(const QString &inClassName) = 0;
 

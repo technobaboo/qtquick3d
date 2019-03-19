@@ -92,10 +92,10 @@ class QDemonRenderBackendInputAssemblerGL
 public:
     ///< constructor
     QDemonRenderBackendInputAssemblerGL(QDemonRenderBackendAttributeLayoutGL *attribLayout,
-                                        QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> buffers,
+                                        QDemonDataView<QDemonRenderBackend::QDemonRenderBackendBufferObject> buffers,
                                         const QDemonRenderBackend::QDemonRenderBackendBufferObject indexBuffer,
-                                        QDemonConstDataRef<quint32> strides,
-                                        QDemonConstDataRef<quint32> offsets,
+                                        QDemonDataView<quint32> strides,
+                                        QDemonDataView<quint32> offsets,
                                         quint32 patchVertexCount)
         : m_attribLayout(attribLayout)
         , m_vertexbufferHandles(buffers)
@@ -123,7 +123,7 @@ public:
     };
 
     QDemonRenderBackendAttributeLayoutGL *m_attribLayout; ///< pointer to attribute layout
-    QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
+    QDemonDataView<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
     QDemonRenderBackend::QDemonRenderBackendBufferObject m_indexbufferHandle; ///< opaque index buffer backend handles
     quint32 m_vaoID; ///< this is only used if GL version is greater or equal 3
     quint32 m_cachedShaderHandle; ///< this is the shader id which was last used with this object

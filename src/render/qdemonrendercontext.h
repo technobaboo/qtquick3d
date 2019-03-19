@@ -448,23 +448,23 @@ public:
 
     void frameBufferDestroyed(QDemonRenderFrameBuffer *fb);
 
-    QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
+    QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs);
     QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRef<QDemonRenderAttribLayout> attribLayout,
-                                                               QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                                                               QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
-                                                               QDemonConstDataRef<quint32> strides,
-                                                               QDemonConstDataRef<quint32> offsets,
+                                                               QDemonDataView<quint32> strides,
+                                                               QDemonDataView<quint32> offsets,
                                                                QDemonRenderDrawMode primType = QDemonRenderDrawMode::Triangles,
                                                                quint32 patchVertexCount = 1);
     void setInputAssembler(QDemonRef<QDemonRenderInputAssembler> inputAssembler);
 
     QDemonRenderVertFragCompilationResult compileSource(
             const char *shaderName,
-            QDemonConstDataRef<qint8> vertShader,
-            QDemonConstDataRef<qint8> fragShader,
-            QDemonConstDataRef<qint8> tessControlShaderSource = QDemonConstDataRef<qint8>(),
-            QDemonConstDataRef<qint8> tessEvaluationShaderSource = QDemonConstDataRef<qint8>(),
-            QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>(),
+            QDemonDataView<qint8> vertShader,
+            QDemonDataView<qint8> fragShader,
+            QDemonDataView<qint8> tessControlShaderSource = QDemonDataView<qint8>(),
+            QDemonDataView<qint8> tessEvaluationShaderSource = QDemonDataView<qint8>(),
+            QDemonDataView<qint8> geometryShaderSource = QDemonDataView<qint8>(),
             bool separateProgram = false,
             QDemonRenderShaderProgramBinaryType type = QDemonRenderShaderProgramBinaryType::Unknown,
             bool binaryProgram = false);
@@ -490,10 +490,10 @@ public:
             QDemonDataRef<qint8> fragShader,
             QDemonDataRef<qint8> tessControlShaderSource = QDemonDataRef<qint8>(),
             QDemonDataRef<qint8> tessEvaluationShaderSource = QDemonDataRef<qint8>(),
-            QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>());
+            QDemonDataView<qint8> geometryShaderSource = QDemonDataView<qint8>());
 
     QDemonRenderVertFragCompilationResult compileComputeSource(const char *shaderName,
-                                                                       QDemonConstDataRef<qint8> computeShaderSource);
+                                                                       QDemonDataView<qint8> computeShaderSource);
 
     void shaderDestroyed(QDemonRenderShaderProgram *shader);
 
@@ -562,7 +562,7 @@ public:
 
     void dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ);
 
-    void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet);
+    void setDrawBuffers(QDemonDataView<qint32> inDrawBufferSet);
     void setReadBuffer(QDemonReadFace inReadFace);
 
     void readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonDataRef<quint8> inWriteBuffer);

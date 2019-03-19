@@ -52,9 +52,9 @@ QDemonRenderPathRender::~QDemonRenderPathRender()
 void QDemonRenderPathRender::setPathSpecification(const QDemonRef<QDemonRenderPathSpecification> &inCommandBuffer)
 {
     m_backend->setPathSpecification(m_pathRenderHandle,
-                                    toConstDataRef(inCommandBuffer->getPathCommands().constData(),
+                                    toDataView(inCommandBuffer->getPathCommands().constData(),
                                                    inCommandBuffer->getPathCommands().size()),
-                                    toConstDataRef(inCommandBuffer->getPathCoords().constData(),
+                                    toDataView(inCommandBuffer->getPathCoords().constData(),
                                                    inCommandBuffer->getPathCoords().size()));
 }
 

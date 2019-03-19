@@ -402,18 +402,18 @@ struct QDemonDynamicObjectShaderInfo
 struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
 {
     QString m_id;
-    QDemonConstDataRef<dynamic::QDemonPropertyDefinition> m_propertyDefinitions;
+    QDemonDataView<dynamic::QDemonPropertyDefinition> m_propertyDefinitions;
     quint32 m_propertySectionByteSize;
     quint32 m_baseObjectSize;
     QDemonRenderGraphObject::Type m_graphObjectType;
     quint8 *m_propertyDefaultData;
-    QDemonConstDataRef<dynamic::QDemonCommand *> m_renderCommands;
+    QDemonDataView<dynamic::QDemonCommand *> m_renderCommands;
     bool m_requiresDepthTexture;
     bool m_requiresCompilation;
     QDemonRenderTextureFormat m_outputFormat;
 
     QDemonDynamicObjClassImpl(QString id,
-                              QDemonConstDataRef<dynamic::QDemonPropertyDefinition> definitions,
+                              QDemonDataView<dynamic::QDemonPropertyDefinition> definitions,
                               quint32 propertySectionByteSize,
                               quint32 baseObjectSize,
                               QDemonRenderGraphObject::Type objectType,
@@ -529,7 +529,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
             theCommandOffset += dynamic::QDemonCommand::getSizeofCommand(*theCommand);
         }
         dynamic::QDemonCommand **theCommandPtrStart = reinterpret_cast<dynamic::QDemonCommand **>(theCommandPtrBegin + theCommandOffset);
-        m_renderCommands = QDemonConstDataRef<dynamic::QDemonCommand *>(theCommandPtrStart, numEffectCommands);
+        m_renderCommands = QDemonDataView<dynamic::QDemonCommand *>(theCommandPtrStart, numEffectCommands);
         // Now run through the commands, fixup strings and setup the command ptrs
         theCommandOffset = 0;
         for (quint32 idx = 0; idx < numEffectCommands; ++idx) {
@@ -544,12 +544,12 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     {
         if (m_renderCommands.size()) {
             ::free(const_cast<dynamic::QDemonCommand *>(*m_renderCommands.begin()));
-            m_renderCommands = QDemonConstDataRef<dynamic::QDemonCommand *>();
+            m_renderCommands = QDemonDataView<dynamic::QDemonCommand *>();
         }
     }
 
     QString getId() const override { return m_id; }
-    QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties() const override
+    QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties() const override
     {
         return m_propertyDefinitions;
     }
@@ -570,7 +570,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     {
         return findDefinition(inName);
     }
-    QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands() const override { return m_renderCommands; }
+    QDemonDataView<dynamic::QDemonCommand *> getRenderCommands() const override { return m_renderCommands; }
     bool requiresDepthTexture() const override { return m_requiresDepthTexture; }
     void setRequiresDepthTexture(bool inVal) override { m_requiresDepthTexture = inVal; }
     virtual bool requiresCompilation() const override { return m_requiresCompilation; }
@@ -614,7 +614,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     bool isRegistered(QString inStr) override { return m_classes.find(inStr) != m_classes.end(); }
 
     bool doRegister(QString inName,
-                    QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties,
+                    QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties,
                     quint32 inBaseObjectSize,
                     QDemonRenderGraphObject::Type inGraphObjectType) override
     {
@@ -683,7 +683,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>>(nullptr, nullptr);
     }
 
-    void setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonConstDataRef<quint8> &inDefaultData) override
+    void setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonDataView<quint8> &inDefaultData) override
     {
         QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> def = findProperty(inName, inPropName);
         if (def.first && inDefaultData.size() >= qint32(def.first->byteSize)) {
@@ -693,7 +693,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
     }
 
-    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames) override
+    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames) override
     {
 
         QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> def = findProperty(inName, inPropName);
@@ -704,34 +704,34 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
         if (theDefinitionPtr->enumValueNames.size()) {
             ::free((void *)theDefinitionPtr->enumValueNames.begin());
-            theDefinitionPtr->enumValueNames = QDemonConstDataRef<QString>();
+            theDefinitionPtr->enumValueNames = QDemonDataView<QString>();
         }
         theDefinitionPtr->isEnumProperty = true;
         if (inNames.size()) {
             // TODO:
             QString *theNameValues = new QString[inName.size()];
             ::memcpy(theNameValues, inNames.begin(), inNames.size() * sizeof(QString));
-            theDefinitionPtr->enumValueNames = QDemonConstDataRef<QString>(theNameValues, inNames.size());
+            theDefinitionPtr->enumValueNames = QDemonDataView<QString>(theNameValues, inNames.size());
         }
     }
 
-    virtual QDemonConstDataRef<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const override
+    virtual QDemonDataView<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const override
     {
         QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>>
                 def = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findProperty(inName, inPropName);
         if (def.first)
             return def.first->enumValueNames;
-        return QDemonConstDataRef<QString>();
+        return QDemonDataView<QString>();
     }
 
     // Called during loading which is pretty heavily multithreaded.
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const override
+    virtual QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const override
     {
         QMutexLocker locker(&m_propertyLoadMutex);
         QDemonRef<QDemonDynamicObjClassImpl> cls = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inName);
         if (cls)
             return cls->m_propertyDefinitions;
-        return QDemonConstDataRef<dynamic::QDemonPropertyDefinition>();
+        return QDemonDataView<dynamic::QDemonPropertyDefinition>();
     }
 
     void setPropertyTextureSettings(const QString &inName,
@@ -761,7 +761,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return findClass(inName).data();
     }
 
-    void setRenderCommands(const QString &inClassName, const QDemonConstDataRef<dynamic::QDemonCommand *> &inCommands) override
+    void setRenderCommands(const QString &inClassName, const QDemonDataView<dynamic::QDemonCommand *> &inCommands) override
     {
         QDemonRef<QDemonDynamicObjClassImpl> theClass = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
         if (theClass == nullptr) {
@@ -801,15 +801,15 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
         Q_ASSERT(theCurrentCommandData - theCommandDataBegin == (int)commandAllocationSize);
         Q_ASSERT((quint8 *)theCurrentCommandPtr - theCommandDataBegin == (int)totalAllocationSize);
-        theClass->m_renderCommands = QDemonConstDataRef<dynamic::QDemonCommand *>(theCommandPtrBegin, inCommands.size());
+        theClass->m_renderCommands = QDemonDataView<dynamic::QDemonCommand *>(theCommandPtrBegin, inCommands.size());
     }
 
-    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const override
+    virtual QDemonDataView<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const override
     {
         QDemonRef<QDemonDynamicObjClassImpl> cls = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
         if (cls)
             return cls->m_renderCommands;
-        return QDemonConstDataRef<dynamic::QDemonCommand *>();
+        return QDemonDataView<dynamic::QDemonCommand *>();
     }
 
     QDemonRenderDynamicGraphObject *createInstance(const QString &inClassName) override
@@ -1356,7 +1356,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                     quint32 len = (quint32)strlen(nonNull(programSource)) + 1;
                     theProgram = m_context->getRenderContext()
                                          ->compileComputeSource(inPath.toLocal8Bit(),
-                                                                QDemonConstDataRef<qint8>((qint8 *)programSource, len))
+                                                                QDemonDataView<qint8>((qint8 *)programSource, len))
                                          .m_shader;
                 }
             }

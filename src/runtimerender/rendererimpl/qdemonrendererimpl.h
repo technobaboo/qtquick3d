@@ -397,19 +397,19 @@ public:
     QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
             const QByteArray &inStr,
             quint32 stride,
-            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>());
+            QDemonDataView<quint8> bufferData = QDemonDataView<quint8>());
     QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
             const QByteArray &inStr,
             QDemonRenderComponentType componentType,
             size_t size,
-            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>());
-    QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
+            QDemonDataView<quint8> bufferData = QDemonDataView<quint8>());
+    QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs);
     QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
                                                                     QDemonRef<QDemonRenderAttribLayout> attribLayout,
-                                                                    QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                                                                    QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                     const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
-                                                                    QDemonConstDataRef<quint32> strides,
-                                                                    QDemonConstDataRef<quint32> offsets);
+                                                                    QDemonDataView<quint32> strides,
+                                                                    QDemonDataView<quint32> offsets);
 
     QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr);
     QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr);

@@ -67,7 +67,7 @@ struct QDemonPGRectShader
     void apply(QMatrix4x4 &inVP, const QDemonPGRect &inObject)
     {
         if (mvp)
-            rectShader->setConstantValue(mvp.data(), toConstDataRef(inVP), 1);
+            rectShader->setConstantValue(mvp.data(), toDataView(inVP), 1);
         if (rectColor)
             rectShader->setConstantValue(rectColor.data(), inObject.fillColor, 1);
         if (leftright) {
@@ -165,7 +165,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
         if (m_quadAttribLayout == nullptr) {
             // create our attribute layout
-            m_quadAttribLayout = theRenderContext->createAttributeLayout(toConstDataRef(theEntries, 1));
+            m_quadAttribLayout = theRenderContext->createAttributeLayout(toDataView(theEntries, 1));
         }
 
         if (m_quadInputAssembler == nullptr) {
@@ -174,10 +174,10 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
             quint32 strides = m_quadVertexBuffer->stride();
             quint32 offsets = 0;
             m_quadInputAssembler = theRenderContext->createInputAssembler(m_quadAttribLayout,
-                                                                          toConstDataRef(&m_quadVertexBuffer, 1),
+                                                                          toDataView(&m_quadVertexBuffer, 1),
                                                                           m_quadIndexBuffer,
-                                                                          toConstDataRef(&strides, 1),
-                                                                          toConstDataRef(&offsets, 1));
+                                                                          toDataView(&strides, 1),
+                                                                          toDataView(&offsets, 1));
         }
     }
 

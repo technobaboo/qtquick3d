@@ -168,9 +168,9 @@ public:
     bool isMaterialRegistered(const QString &inStr);
 
     bool registerMaterialClass(const QString &inName,
-                                       const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties);
+                                       const QDemonDataView<dynamic::QDemonPropertyDeclaration> &inProperties);
 
-    QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const;
+    QDemonDataView<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const;
 
     void setCustomMaterialRefraction(const QString &inName, bool inHasRefraction);
     void setCustomMaterialTransparency(const QString &inName, bool inHasTransparency);
@@ -183,7 +183,7 @@ public:
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    void setCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands);
+    void setCustomMaterialCommands(QString inName, QDemonDataView<dynamic::QDemonCommand *> inCommands);
 
     void setMaterialClassShader(QString inName,
                                         const char *inShaderType,
@@ -194,7 +194,7 @@ public:
 
     QDemonRenderCustomMaterial *createCustomMaterial(const QString &inName);
 
-    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames);
+    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames);
 
     void setPropertyTextureSettings(const QString &inEffectName,
                                             const QString &inPropName,

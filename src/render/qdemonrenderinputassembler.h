@@ -67,10 +67,10 @@ public:
      */
     QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContext> &context,
                                const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
-                               QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                               QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
-                               QDemonConstDataRef<quint32> strides,
-                               QDemonConstDataRef<quint32> offsets,
+                               QDemonDataView<quint32> strides,
+                               QDemonDataView<quint32> offsets,
                                QDemonRenderDrawMode primType = QDemonRenderDrawMode::Triangles,
                                quint32 patchVertexCount = 1);
     ~QDemonRenderInputAssembler();
@@ -137,7 +137,7 @@ private:
     QDemonRef<QDemonRenderAttribLayout> m_attribLayout; ///< pointer to attribute layout
     QVector<QDemonRef<QDemonRenderVertexBuffer>> m_vertexBuffers; ///< vertex buffers
     const QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer; ///< index buffer
-    QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
+    QDemonDataView<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
 
     QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_handle; ///< opaque backend handle
     QDemonRenderDrawMode m_drawMode; ///< primitive type used for drawing

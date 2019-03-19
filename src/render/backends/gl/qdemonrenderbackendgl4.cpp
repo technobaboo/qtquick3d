@@ -277,7 +277,7 @@ void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(QDemonRenderBacken
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBackendGL4Impl::createTessControlShader(
-        QDemonConstDataRef<qint8> source,
+        QDemonDataView<qint8> source,
         QByteArray &errorMessage,
         bool binary)
 {
@@ -295,7 +295,7 @@ QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBack
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderBackendGL4Impl::createTessEvaluationShader(
-        QDemonConstDataRef<qint8> source,
+        QDemonDataView<qint8> source,
         QByteArray &errorMessage,
         bool binary)
 {
@@ -313,7 +313,7 @@ QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderB
     return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject>(shaderID);
 }
 
-QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackendGL4Impl::createGeometryShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackendGL4Impl::createGeometryShader(QDemonDataView<qint8> source,
                                                                                                               QByteArray &errorMessage,
                                                                                                               bool binary)
 {
@@ -563,7 +563,7 @@ void QDemonRenderBackendGL4Impl::setConstantValue(QDemonRenderBackendShaderProgr
     }
 }
 
-QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendGL4Impl::createComputeShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendGL4Impl::createComputeShader(QDemonDataView<qint8> source,
                                                                                                             QByteArray &errorMessage,
                                                                                                             bool binary)
 {
@@ -642,8 +642,8 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::c
     return QDemonRenderBackend::QDemonRenderBackendPathObject(pathID);
 }
 void QDemonRenderBackendGL4Impl::setPathSpecification(QDemonRenderBackendPathObject inPathObject,
-                                                      QDemonConstDataRef<quint8> inPathCommands,
-                                                      QDemonConstDataRef<float> inPathCoords)
+                                                      QDemonDataView<quint8> inPathCommands,
+                                                      QDemonDataView<float> inPathCoords)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, inPathObject);
     GL_CALL_NVPATH_EXT(glPathCommandsNV(pathID,

@@ -500,7 +500,7 @@ bool QDemonRenderBackendGLES2Impl::setInputAssembler(QDemonRenderBackendInputAss
     return true;
 }
 
-void QDemonRenderBackendGLES2Impl::setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonConstDataRef<qint32> inDrawBufferSet)
+void QDemonRenderBackendGLES2Impl::setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonDataView<qint32> inDrawBufferSet)
 {
     Q_UNUSED(rto)
 

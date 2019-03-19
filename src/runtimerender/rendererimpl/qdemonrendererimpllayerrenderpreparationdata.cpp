@@ -812,7 +812,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                                                                       inModel.tessellationMode,
                                                                                                       true);
 
-                QDemonConstDataRef<QMatrix4x4> boneGlobals;
+                QDemonDataView<QMatrix4x4> boneGlobals;
                 if (theSubset.joints.size()) {
                     Q_ASSERT(false);
                 }

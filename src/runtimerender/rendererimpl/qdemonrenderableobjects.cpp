@@ -205,7 +205,7 @@ QDemonSubsetRenderable::QDemonSubsetRenderable(QDemonRenderableObjectFlags inFla
                                                float inOpacity,
                                                QDemonRenderableImage *inFirstImage,
                                                QDemonShaderDefaultMaterialKey inShaderKey,
-                                               const QDemonConstDataRef<QMatrix4x4> &inBoneGlobals)
+                                               const QDemonDataView<QMatrix4x4> &inBoneGlobals)
     : QDemonSubsetRenderableBase(inFlags, inWorldCenterPt, gen, inSubset, inModelContext, inOpacity)
     , material(mat)
     , firstImage(inFirstImage)

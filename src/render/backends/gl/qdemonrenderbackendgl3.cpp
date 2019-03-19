@@ -494,7 +494,7 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
     return true;
 }
 
-void QDemonRenderBackendGL3Impl::setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonConstDataRef<qint32> inDrawBufferSet)
+void QDemonRenderBackendGL3Impl::setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonDataView<qint32> inDrawBufferSet)
 {
     Q_UNUSED(rto)
 

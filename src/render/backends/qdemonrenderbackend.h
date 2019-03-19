@@ -741,7 +741,7 @@ public:
      *
      * @return no return.
      */
-    virtual void setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonConstDataRef<qint32> inDrawBufferSet) = 0;
+    virtual void setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonDataView<qint32> inDrawBufferSet) = 0;
 
     /**
      * @brief Set active buffer for reading
@@ -1229,7 +1229,7 @@ public:
      *
      * @return The created attribute layout object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendAttribLayoutObject createAttribLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
+    virtual QDemonRenderBackendAttribLayoutObject createAttribLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs) = 0;
 
     /**
      * @brief Release a attribute layoutr object
@@ -1253,10 +1253,10 @@ public:
      * @return The created input assembler object or nullptr if the creation failed.
      */
     virtual QDemonRenderBackendInputAssemblerObject createInputAssembler(QDemonRenderBackendAttribLayoutObject attribLayout,
-                                                                         QDemonConstDataRef<QDemonRenderBackendBufferObject> buffers,
+                                                                         QDemonDataView<QDemonRenderBackendBufferObject> buffers,
                                                                          const QDemonRenderBackendBufferObject indexBuffer,
-                                                                         QDemonConstDataRef<quint32> strides,
-                                                                         QDemonConstDataRef<quint32> offsets,
+                                                                         QDemonDataView<quint32> strides,
+                                                                         QDemonDataView<quint32> offsets,
                                                                          quint32 patchVertexCount) = 0;
 
     /**
@@ -1298,7 +1298,7 @@ public:
      *
      * @return The created vertex shader object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendVertexShaderObject createVertexShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendVertexShaderObject createVertexShader(QDemonDataView<qint8> source,
                                                                      QByteArray &errorMessage,
                                                                      bool binary) = 0;
 
@@ -1320,7 +1320,7 @@ public:
      *
      * @return The created vertex shader object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendFragmentShaderObject createFragmentShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendFragmentShaderObject createFragmentShader(QDemonDataView<qint8> source,
                                                                          QByteArray &errorMessage,
                                                                          bool binary) = 0;
 
@@ -1342,7 +1342,7 @@ public:
      *
      * @return The created tessellation control shader object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonDataView<qint8> source,
                                                                                QByteArray &errorMessage,
                                                                                bool binary) = 0;
 
@@ -1364,7 +1364,7 @@ public:
      *
      * @return The created tessellation evaluation shader object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonDataView<qint8> source,
                                                                                      QByteArray &errorMessage,
                                                                                      bool binary) = 0;
 
@@ -1386,7 +1386,7 @@ public:
      *
      * @return The created geometry shader object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonDataView<qint8> source,
                                                                          QByteArray &errorMessage,
                                                                          bool binary) = 0;
 
@@ -1408,7 +1408,7 @@ public:
      *
      * @return The created compute shader object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonDataView<qint8> source,
                                                                        QByteArray &errorMessage,
                                                                        bool binary) = 0;
 
@@ -1945,8 +1945,8 @@ public:
      * @return No return
      */
     virtual void setPathSpecification(QDemonRenderBackendPathObject inPathObject,
-                                      QDemonConstDataRef<quint8> inPathCommands,
-                                      QDemonConstDataRef<float> inPathCoords) = 0;
+                                      QDemonDataView<quint8> inPathCommands,
+                                      QDemonDataView<float> inPathCoords) = 0;
 
     /**
      * @brief Get Bounds of the path object

@@ -6,13 +6,13 @@
 QT_BEGIN_NAMESPACE
 
 template<typename TDataType>
-struct QDemonConstDataRef
+struct QDemonDataView
 {
     const TDataType *mData;
     int mSize;
 
-    QDemonConstDataRef(const TDataType *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize > -1); }
-    QDemonConstDataRef() : mData(nullptr), mSize(0) {}
+    QDemonDataView(const TDataType *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize >= 0); }
+    QDemonDataView() : mData(nullptr), mSize(0) {}
 
     qint32 size() const { return mSize; }
 
@@ -28,27 +28,27 @@ struct QDemonConstDataRef
 };
 
 template<typename TDataType>
-inline QDemonConstDataRef<TDataType> toConstDataRef(const TDataType &type)
+inline QDemonDataView<TDataType> toDataView(const TDataType &type)
 {
-    return QDemonConstDataRef<TDataType>(&type, 1);
+    return QDemonDataView<TDataType>(&type, 1);
 }
 
 template<typename TDataType>
-inline QDemonConstDataRef<quint8> toU8ConstDataRef(const TDataType &type)
+inline QDemonDataView<quint8> toU8DataView(const TDataType &type)
 {
-    return QDemonConstDataRef<quint8>(reinterpret_cast<const quint8 *>(&type), sizeof(TDataType));
+    return QDemonDataView<quint8>(reinterpret_cast<const quint8 *>(&type), sizeof(TDataType));
 }
 
 template<typename TDataType>
-inline QDemonConstDataRef<TDataType> toConstDataRef(const TDataType *type, quint32 count)
+inline QDemonDataView<TDataType> toDataView(const TDataType *type, quint32 count)
 {
-    return QDemonConstDataRef<TDataType>(type, count);
+    return QDemonDataView<TDataType>(type, count);
 }
 
 template<typename TDataType>
-inline QDemonConstDataRef<quint8> toU8ConstDataRef(const TDataType *type, quint32 count)
+inline QDemonDataView<quint8> toU8DataView(const TDataType *type, quint32 count)
 {
-    return QDemonConstDataRef<quint8>(reinterpret_cast<const quint8 *>(type), sizeof(TDataType) * count);
+    return QDemonDataView<quint8>(reinterpret_cast<const quint8 *>(type), sizeof(TDataType) * count);
 }
 
 template<typename TDataType>
@@ -81,7 +81,7 @@ struct QDemonDataRef
         return mData[index];
     }
 
-    operator QDemonConstDataRef<TDataType>() const { return QDemonConstDataRef<TDataType>(mData, mSize); }
+    operator QDemonDataView<TDataType>() const { return QDemonDataView<TDataType>(mData, mSize); }
 };
 
 template<typename TDataType>

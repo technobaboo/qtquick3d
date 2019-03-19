@@ -702,7 +702,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     }
 
     // Called during binary load which is heavily threaded.
-    void setPathSubPathData(const QDemonRenderSubPath &inPath, QDemonConstDataRef<QDemonPathAnchorPoint> inPathCubicCurves) override
+    void setPathSubPathData(const QDemonRenderSubPath &inPath, QDemonDataView<QDemonPathAnchorPoint> inPathCubicCurves) override
     {
         QMutexLocker locker(&m_pathBufferMutex);
         TPathSubPathBufferHash::iterator inserter = m_subPathBuffers.find((QDemonRenderSubPath *)&inPath);
@@ -748,7 +748,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     {
         QDemonRef<QDemonPathSubPathBuffer> theBuffer = getPathBufferObject(inPath);
         if (theBuffer == nullptr)
-            setPathSubPathData(inPath, QDemonConstDataRef<QDemonPathAnchorPoint>());
+            setPathSubPathData(inPath, QDemonDataView<QDemonPathAnchorPoint>());
         theBuffer = getPathBufferObject(inPath);
         theBuffer->m_sourceData.resize(inNumAnchors);
         theBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
@@ -1055,15 +1055,15 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
                 QDemonRenderDrawMode primType = QDemonRenderDrawMode::Patches;
 
-                QDemonRef<QDemonRenderAttribLayout> theLayout = theRenderContext->createAttributeLayout(toConstDataRef(theEntries, 1));
+                QDemonRef<QDemonRenderAttribLayout> theLayout = theRenderContext->createAttributeLayout(toDataView(theEntries, 1));
                 // How many vertices the TCS shader has access to in order to produce its output
                 // array of vertices.
                 const quint32 inputPatchVertexCount = 5;
                 inPathBuffer.m_inputAssembler = theRenderContext->createInputAssembler(theLayout,
-                                                                                       toConstDataRef(inPathBuffer.m_patchData),
+                                                                                       toDataView(inPathBuffer.m_patchData),
                                                                                        nullptr,
-                                                                                       toConstDataRef(stride),
-                                                                                       toConstDataRef((quint32)0),
+                                                                                       toDataView(stride),
+                                                                                       toDataView((quint32)0),
                                                                                        primType,
                                                                                        inputPatchVertexCount);
             }
@@ -1400,12 +1400,12 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                    6,
                                                                    toU8DataRef(indexes, 6));
             QDemonRef<QDemonRenderAttribLayout> theAttribLayout = theRenderContext->createAttributeLayout(
-                    toConstDataRef(theBufferEntries, 1));
+                    toDataView(theBufferEntries, 1));
             m_paintedRectInputAssembler = theRenderContext->createInputAssembler(theAttribLayout,
-                                                                                 toConstDataRef(m_paintedRectVertexBuffer),
+                                                                                 toDataView(m_paintedRectVertexBuffer),
                                                                                  m_paintedRectIndexBuffer,
-                                                                                 toConstDataRef(stride),
-                                                                                 toConstDataRef((quint32)0),
+                                                                                 toDataView(stride),
+                                                                                 toDataView((quint32)0),
                                                                                  QDemonRenderDrawMode::Triangles);
         }
 

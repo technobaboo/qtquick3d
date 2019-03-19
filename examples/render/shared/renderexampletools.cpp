@@ -79,7 +79,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
         QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 6 * sizeof(float)),
     };
 
-    QDemonRef<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toConstDataRef(entries, 3));
+    QDemonRef<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toDataView(entries, 3));
 
     // Vertex Buffer
     quint32 bufStride = 8 * sizeof(float);
@@ -137,20 +137,20 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
     quint32 offsets = 0;
 
     QDemonRef<QDemonRenderInputAssembler> inputAssembler = context->createInputAssembler(attribLayout,
-                                                                                              toConstDataRef(&outVertexBuffer, 1),
+                                                                                              toDataView(&outVertexBuffer, 1),
                                                                                               outIndexBuffer,
-                                                                                              toConstDataRef(&strides, 1),
-                                                                                              toConstDataRef(&offsets, 1));
+                                                                                              toDataView(&strides, 1),
+                                                                                              toDataView(&offsets, 1));
     return inputAssembler;
 }
 
 
 namespace {
 
-inline QDemonConstDataRef<qint8> toRef(const char *data)
+inline QDemonDataView<qint8> toRef(const char *data)
 {
     size_t len = strlen(data) + 1;
-    return QDemonConstDataRef<qint8>((const qint8 *)data, len);
+    return QDemonDataView<qint8>((const qint8 *)data, len);
 }
 
 static void dumpShaderOutput(QDemonRef<QDemonRenderContext> ctx, const QDemonRenderVertFragCompilationResult &compResult)

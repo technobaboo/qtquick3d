@@ -347,7 +347,7 @@ QDemonMeshUtilities::MultiLoadResult QDemonBufferManager::loadPrimitive(const QS
     return QDemonMeshUtilities::MultiLoadResult();
 }
 
-QDemonConstDataRef<quint8> QDemonBufferManager::createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const
+QDemonDataView<quint8> QDemonBufferManager::createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const
 {
     // we assume a position consists of 3 floats
     quint32 vertexCount = inResult->m_mesh->m_vertexBuffer.m_data.size() / inResult->m_mesh->m_vertexBuffer.m_stride;
@@ -370,10 +370,10 @@ QDemonConstDataRef<quint8> QDemonBufferManager::createPackedPositionDataArray(QD
             srcData += srcStride;
         }
 
-        return toConstDataRef(reinterpret_cast<const quint8 *>(posData), dataSize);
+        return toDataView(reinterpret_cast<const quint8 *>(posData), dataSize);
     }
 
-    return QDemonConstDataRef<quint8>();
+    return QDemonDataView<quint8>();
 }
 
 QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
@@ -410,7 +410,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
                                                              result.m_id);
             quint8 *baseAddress = reinterpret_cast<quint8 *>(result.m_mesh);
             meshItr = d->meshMap.insert(inMeshPath, newMesh);
-            QDemonConstDataRef<quint8> vertexBufferData(result.m_mesh->m_vertexBuffer.m_data.begin(baseAddress),
+            QDemonDataView<quint8> vertexBufferData(result.m_mesh->m_vertexBuffer.m_data.begin(baseAddress),
                                                         result.m_mesh->m_vertexBuffer.m_data.size());
 
             QDemonRef<QDemonRenderVertexBuffer>
@@ -422,7 +422,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
             // create a tight packed position data VBO
             // this should improve our depth pre pass rendering
             QDemonRef<QDemonRenderVertexBuffer> posVertexBuffer;
-            QDemonConstDataRef<quint8> posData = createPackedPositionDataArray(&result);
+            QDemonDataView<quint8> posData = createPackedPositionDataArray(&result);
             if (posData.size())
                 posVertexBuffer = new QDemonRenderVertexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                                 posData.size(),
@@ -442,7 +442,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
                     if (bufComponentType == QDemonRenderComponentType::Integer32)
                         bufComponentType = QDemonRenderComponentType::UnsignedInteger32;
 
-                    QDemonConstDataRef<quint8> indexBufferData(result.m_mesh->m_indexBuffer.m_data.begin(baseAddress),
+                    QDemonDataView<quint8> indexBufferData(result.m_mesh->m_indexBuffer.m_data.begin(baseAddress),
                                                                result.m_mesh->m_indexBuffer.m_data.size());
                     indexBuffer = new QDemonRenderIndexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                                bufComponentType,
@@ -459,39 +459,39 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
                 entryBuffer[entryIdx] = entries.index(baseAddress, entryIdx).toVertexBufferEntry(baseAddress);
 
             // create our attribute layout
-            auto attribLayout = d->context->createAttributeLayout(toConstDataRef(entryBuffer.constData(), entryBuffer.count()));
+            auto attribLayout = d->context->createAttributeLayout(toDataView(entryBuffer.constData(), entryBuffer.count()));
             // create our attribute layout for depth pass
             QDemonRenderVertexBufferEntry vertBufferEntries[] = {
                 QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
             };
-            auto attribLayoutDepth = d->context->createAttributeLayout(toConstDataRef(vertBufferEntries, 1));
+            auto attribLayoutDepth = d->context->createAttributeLayout(toDataView(vertBufferEntries, 1));
 
             // create input assembler object
             quint32 strides = result.m_mesh->m_vertexBuffer.m_stride;
             quint32 offsets = 0;
             auto inputAssembler = d->context->createInputAssembler(attribLayout,
-                                                                  toConstDataRef(&vertexBuffer, 1),
+                                                                  toDataView(&vertexBuffer, 1),
                                                                   indexBuffer,
-                                                                  toConstDataRef(&strides, 1),
-                                                                  toConstDataRef(&offsets, 1),
+                                                                  toDataView(&strides, 1),
+                                                                  toDataView(&offsets, 1),
                                                                   result.m_mesh->m_drawMode);
 
             // create depth input assembler object
             quint32 posStrides = (posVertexBuffer) ? 3 * sizeof(float) : strides;
             auto inputAssemblerDepth = d->context->createInputAssembler(attribLayoutDepth,
-                                                                       toConstDataRef((posVertexBuffer) ? &posVertexBuffer : &vertexBuffer,
+                                                                       toDataView((posVertexBuffer) ? &posVertexBuffer : &vertexBuffer,
                                                                                       1),
                                                                        indexBuffer,
-                                                                       toConstDataRef(&posStrides, 1),
-                                                                       toConstDataRef(&offsets, 1),
+                                                                       toDataView(&posStrides, 1),
+                                                                       toDataView(&offsets, 1),
                                                                        result.m_mesh->m_drawMode);
 
             auto inputAssemblerPoints = d->context->createInputAssembler(attribLayoutDepth,
-                                                                        toConstDataRef((posVertexBuffer) ? &posVertexBuffer : &vertexBuffer,
+                                                                        toDataView((posVertexBuffer) ? &posVertexBuffer : &vertexBuffer,
                                                                                        1),
                                                                         nullptr,
-                                                                        toConstDataRef(&posStrides, 1),
-                                                                        toConstDataRef(&offsets, 1),
+                                                                        toDataView(&posStrides, 1),
+                                                                        toDataView(&offsets, 1),
                                                                         QDemonRenderDrawMode::Points);
 
             if (!inputAssembler || !inputAssemblerDepth || !inputAssemblerPoints) {
@@ -632,7 +632,7 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
         theMesh.first.value() = theNewMesh;
         quint32 vertDataSize = inNumVerts * inVertStride;
         Q_ASSERT(vertDataSize <= INT32_MAX); // TODO:
-        QDemonConstDataRef<quint8> theVBufData(inVertData, qint32(vertDataSize));
+        QDemonDataView<quint8> theVBufData(inVertData, qint32(vertDataSize));
         // QDemonConstDataRef<quint8> theVBufData( theResult.d->Mesh->d->VertexBuffer.d->Data.begin(
         // baseAddress )
         //		, theResult.d->Mesh->d->VertexBuffer.d->Data.size() );
@@ -646,7 +646,7 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
             const quint32 inSize = inIndexCount * sizeof(quint32);
             Q_ASSERT(inSize <= INT32_MAX);
             Q_ASSERT(*inIndexData <= INT8_MAX);
-            QDemonConstDataRef<quint8> theIBufData(reinterpret_cast<quint8 *>(inIndexData), qint32(inSize));
+            QDemonDataView<quint8> theIBufData(reinterpret_cast<quint8 *>(inIndexData), qint32(inSize));
             theIndexBuffer = new QDemonRenderIndexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                           QDemonRenderComponentType::UnsignedInteger32,
                                                           inIndexCount * sizeof(quint32),
@@ -663,7 +663,7 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
         };
 
         // create our attribute layout
-        QDemonRef<QDemonRenderAttribLayout> theAttribLayout = d->context->createAttributeLayout(toConstDataRef(theEntries, 3));
+        QDemonRef<QDemonRenderAttribLayout> theAttribLayout = d->context->createAttributeLayout(toDataView(theEntries, 3));
         /*
             // create our attribute layout for depth pass
             QDemonRenderVertexBufferEntry theEntriesDepth[] = {
@@ -677,10 +677,10 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
         quint32 strides = inVertStride;
         quint32 offsets = 0;
         QDemonRef<QDemonRenderInputAssembler> theInputAssembler = d->context->createInputAssembler(theAttribLayout,
-                                                                                                  toConstDataRef(&theVertexBuffer, 1),
+                                                                                                  toDataView(&theVertexBuffer, 1),
                                                                                                   theIndexBuffer,
-                                                                                                  toConstDataRef(&strides, 1),
-                                                                                                  toConstDataRef(&offsets, 1),
+                                                                                                  toDataView(&strides, 1),
+                                                                                                  toDataView(&offsets, 1),
                                                                                                   QDemonRenderDrawMode::Triangles);
 
         if (!theInputAssembler) {

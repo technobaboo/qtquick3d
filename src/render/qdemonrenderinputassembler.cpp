@@ -38,10 +38,10 @@ QT_BEGIN_NAMESPACE
 ///< constructor
 QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContext> &context,
                                                        const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
-                                                       QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                                                       QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                        const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
-                                                       QDemonConstDataRef<quint32> strides,
-                                                       QDemonConstDataRef<quint32> offsets,
+                                                       QDemonDataView<quint32> strides,
+                                                       QDemonDataView<quint32> offsets,
                                                        QDemonRenderDrawMode primType,
                                                        quint32 patchVertexCount)
     : m_context(context)
@@ -65,7 +65,7 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
         bufferHandle[idx] = buffers.mData[idx]->handle();
     };
 
-    m_vertexbufferHandles = toConstDataRef(bufferHandle, buffers.size());
+    m_vertexbufferHandles = toDataView(bufferHandle, buffers.size());
 
     m_handle = m_backend->createInputAssembler(m_attribLayout->handle(),
                                                               m_vertexbufferHandles,

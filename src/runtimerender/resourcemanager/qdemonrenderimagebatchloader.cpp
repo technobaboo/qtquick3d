@@ -97,7 +97,7 @@ struct QDemonImageLoaderBatch
     // Called from main thread
     static QDemonImageLoaderBatch *createLoaderBatch(QDemonBatchLoader &inLoader,
                                                      TImageBatchId inBatchId,
-                                                     QDemonConstDataRef<QString> inSourcePaths,
+                                                     QDemonDataView<QString> inSourcePaths,
                                                      QString inImageTillLoaded,
                                                      IImageLoadListener *inListener,
                                                      QDemonRenderContextType contextType);
@@ -202,7 +202,7 @@ struct QDemonBatchLoader : public IImageBatchLoader
     // paths
     // until said path is loaded.
     // An optional listener can be passed in to get callbacks about the batch.
-    TImageBatchId loadImageBatch(QDemonConstDataRef<QString> inSourcePaths,
+    TImageBatchId loadImageBatch(QDemonDataView<QString> inSourcePaths,
                                  QString inImageTillLoaded,
                                  IImageLoadListener *inListener,
                                  QDemonRenderContextType contextType) override
@@ -366,7 +366,7 @@ bool QDemonBatchLoadedImage::finalize(QDemonBufferManager &inMgr)
 
 QDemonImageLoaderBatch *QDemonImageLoaderBatch::createLoaderBatch(QDemonBatchLoader &inLoader,
                                                                   TImageBatchId inBatchId,
-                                                                  QDemonConstDataRef<QString> inSourcePaths,
+                                                                  QDemonDataView<QString> inSourcePaths,
                                                                   QString inImageTillLoaded,
                                                                   IImageLoadListener *inListener,
                                                                   QDemonRenderContextType contextType)

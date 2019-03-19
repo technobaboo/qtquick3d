@@ -210,7 +210,7 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
     const QDemonRenderDefaultMaterial &material;
     QDemonRenderableImage *firstImage;
     QDemonShaderDefaultMaterialKey shaderDescription;
-    QDemonConstDataRef<QMatrix4x4> bones;
+    QDemonDataView<QMatrix4x4> bones;
 
     QDemonSubsetRenderable(QDemonRenderableObjectFlags inFlags,
                            const QVector3D &inWorldCenterPt,
@@ -221,7 +221,7 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
                            float inOpacity,
                            QDemonRenderableImage *inFirstImage,
                            QDemonShaderDefaultMaterialKey inShaderKey,
-                           const QDemonConstDataRef<QMatrix4x4> &inBoneGlobals);
+                           const QDemonDataView<QMatrix4x4> &inBoneGlobals);
 
     void render(const QVector2D &inCameraVec, const TShaderFeatureSet &inFeatureSet);
 

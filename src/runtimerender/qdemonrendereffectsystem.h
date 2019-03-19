@@ -85,7 +85,7 @@ public:
     // Effect properties cannot change after the effect is created because that would invalidate
     // existing effect instances.
     // Effect commands, which are stored on the effect class, can change.
-    virtual bool registerEffect(QString inName, QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
+    virtual bool registerEffect(QString inName, QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
 
     virtual bool unregisterEffect(QString inName) = 0;
 
@@ -95,14 +95,14 @@ public:
     // ApplyShader()
     virtual bool registerGLSLEffect(QString inName,
                                     const char *inPathToEffect,
-                                    QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
+                                    QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
-    virtual void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonConstDataRef<quint8> inDefaultData) = 0;
-    virtual void setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) = 0;
-    virtual QDemonConstDataRef<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const = 0;
+    virtual void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonDataView<quint8> inDefaultData) = 0;
+    virtual void setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonDataView<QString> inNames) = 0;
+    virtual QDemonDataView<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const = 0;
 
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const = 0;
+    virtual QDemonDataView<dynamic::QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const = 0;
 
     virtual void setEffectPropertyTextureSettings(QString inEffectName,
                                                   QString inPropName,
@@ -128,8 +128,8 @@ public:
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void setEffectCommands(QString inEffectName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) = 0;
-    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const = 0;
+    virtual void setEffectCommands(QString inEffectName, QDemonDataView<dynamic::QDemonCommand *> inCommands) = 0;
+    virtual QDemonDataView<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const = 0;
 
     // Set the shader data for a given path.  Used when a path doesn't correspond to a file but
     // the data has been

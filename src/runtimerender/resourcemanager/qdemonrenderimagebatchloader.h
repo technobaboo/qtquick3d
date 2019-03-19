@@ -65,7 +65,7 @@ public:
     // source paths
     // until said path is loaded.
     // An optional listener can be passed in to get callbacks about the batch.
-    virtual TImageBatchId loadImageBatch(QDemonConstDataRef<QString> inSourcePaths,
+    virtual TImageBatchId loadImageBatch(QDemonDataView<QString> inSourcePaths,
                                          QString inImageTillLoaded,
                                          IImageLoadListener *inListener,
                                          QDemonRenderContextType type) = 0;

@@ -791,7 +791,7 @@ bool QDemonMaterialSystem::isMaterialRegistered(const QString &inStr)
     return stringMaterialMap.find(inStr) != stringMaterialMap.end();
 }
 
-bool QDemonMaterialSystem::registerMaterialClass(const QString &inName, const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties)
+bool QDemonMaterialSystem::registerMaterialClass(const QString &inName, const QDemonDataView<dynamic::QDemonPropertyDeclaration> &inProperties)
 {
     if (isMaterialRegistered(inName))
         return false;
@@ -822,7 +822,7 @@ const QDemonMaterialClass *QDemonMaterialSystem::getMaterialClass(const QString 
     return const_cast<QDemonMaterialSystem *>(this)->getMaterialClass(inStr);
 }
 
-QDemonConstDataRef<dynamic::QDemonPropertyDefinition> QDemonMaterialSystem::getCustomMaterialProperties(const QString &inCustomMaterialName) const
+QDemonDataView<dynamic::QDemonPropertyDefinition> QDemonMaterialSystem::getCustomMaterialProperties(const QString &inCustomMaterialName) const
 {
     QDemonDynamicObjectClassInterface *theMaterialClass = coreContext->dynamicObjectSystem()->dynamicObjectClass(
                 inCustomMaterialName);
@@ -830,7 +830,7 @@ QDemonConstDataRef<dynamic::QDemonPropertyDefinition> QDemonMaterialSystem::getC
     if (theMaterialClass)
         return theMaterialClass->getProperties();
 
-    return QDemonConstDataRef<dynamic::QDemonPropertyDefinition>();
+    return QDemonDataView<dynamic::QDemonPropertyDefinition>();
 }
 
 qint32 QDemonMaterialSystem::findBuffer(const QString &inName)
@@ -882,7 +882,7 @@ void QDemonMaterialSystem::setTexture(const QDemonRef<QDemonRenderShaderProgram>
 
 QDemonMaterialSystem::QDemonMaterialSystem() = default;
 
-void QDemonMaterialSystem::setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames)
+void QDemonMaterialSystem::setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames)
 {
     coreContext->dynamicObjectSystem()->setPropertyEnumNames(inName, inPropName, inNames);
 }
@@ -980,7 +980,7 @@ void QDemonMaterialSystem::setCustomMaterialLayerCount(const QString &inName, qu
     theClass->m_layerCount = inLayerCount;
 }
 
-void QDemonMaterialSystem::setCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands)
+void QDemonMaterialSystem::setCustomMaterialCommands(QString inName, QDemonDataView<dynamic::QDemonCommand *> inCommands)
 {
     coreContext->dynamicObjectSystem()->setRenderCommands(inName, inCommands);
 }
@@ -1187,7 +1187,7 @@ void QDemonMaterialSystem::applyInstanceValue(QDemonRenderCustomMaterial &inMate
         if (theDefinition)
             doApplyInstanceValue(inMaterial, dataPtr, inCommand.m_propertyName, inCommand.m_valueType, inShader, *theDefinition);
     } else {
-        QDemonConstDataRef<dynamic::QDemonPropertyDefinition> theDefs = inClass.m_class->getProperties();
+        QDemonDataView<dynamic::QDemonPropertyDefinition> theDefs = inClass.m_class->getProperties();
         for (quint32 idx = 0, end = theDefs.size(); idx < end; ++idx) {
             const dynamic::QDemonPropertyDefinition &theDefinition(theDefs[idx]);
             QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(
@@ -1588,7 +1588,7 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
     QVector2D theDestSize;
     bool theRenderTargetNeedsClear = false;
 
-    QDemonConstDataRef<dynamic::QDemonCommand *> theCommands(inClass.m_class->getRenderCommands());
+    QDemonDataView<dynamic::QDemonCommand *> theCommands(inClass.m_class->getRenderCommands());
     for (qint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd; ++commandIdx) {
         const dynamic::QDemonCommand &theCommand(*theCommands[commandIdx]);
 
@@ -1670,7 +1670,7 @@ QString QDemonMaterialSystem::getShaderName(const QDemonRenderCustomMaterial &in
     if (!theClass)
         return QString();
 
-    QDemonConstDataRef<dynamic::QDemonCommand *> theCommands = theClass->m_class->getRenderCommands();
+    QDemonDataView<dynamic::QDemonCommand *> theCommands = theClass->m_class->getRenderCommands();
     TShaderAndFlags thePrepassShader;
     for (qint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
         const dynamic::QDemonCommand &theCommand = *theCommands[idx];
@@ -1696,7 +1696,7 @@ void QDemonMaterialSystem::applyShaderPropertyValues(const QDemonRenderCustomMat
 
 void QDemonMaterialSystem::prepareTextureForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial)
 {
-    QDemonConstDataRef<dynamic::QDemonPropertyDefinition> thePropDefs = inClass.m_class->getProperties();
+    QDemonDataView<dynamic::QDemonPropertyDefinition> thePropDefs = inClass.m_class->getProperties();
     for (qint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
         if (thePropDefs[idx].dataType == QDemonRenderShaderDataType::Texture2D) {
             if (thePropDefs[idx].texUsageType == QDemonRenderTextureTypeValue::Displace) {
@@ -1759,7 +1759,7 @@ void QDemonMaterialSystem::prepareDisplacementForRender(QDemonMaterialClass &inC
         return;
 
     // our displacement mappin in MDL has fixed naming
-    QDemonConstDataRef<dynamic::QDemonPropertyDefinition> thePropDefs = inClass.m_class->getProperties();
+    QDemonDataView<dynamic::QDemonPropertyDefinition> thePropDefs = inClass.m_class->getProperties();
     for (qint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
         if (thePropDefs[idx].dataType == QDemonRenderShaderDataType::Float && (thePropDefs[idx].name == "displaceAmount")) {
             float theValue = *reinterpret_cast<const float *>(inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
@@ -1834,7 +1834,7 @@ void QDemonMaterialSystem::renderSubset(QDemonCustomMaterialRenderContext &inRen
 bool QDemonMaterialSystem::renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonRenderCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset)
 {
     QDemonMaterialClass *theClass = getMaterialClass(inMaterial.className);
-    QDemonConstDataRef<dynamic::QDemonCommand *> theCommands = theClass->m_class->getRenderCommands();
+    QDemonDataView<dynamic::QDemonCommand *> theCommands = theClass->m_class->getRenderCommands();
     TShaderAndFlags thePrepassShader;
     for (qint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
         const dynamic::QDemonCommand &theCommand = *theCommands[idx];

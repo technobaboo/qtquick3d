@@ -506,7 +506,7 @@ void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *
 
     // Enable drawing to 6 color attachment buffers for cubemap passes
     qint32 buffers[6] = { 0, 1, 2, 3, 4, 5 };
-    QDemonConstDataRef<qint32> bufferList(buffers, 6);
+    QDemonDataView<qint32> bufferList(buffers, 6);
     theContext->setDrawBuffers(bufferList);
 
     // Attach framebuffer targets
@@ -569,7 +569,7 @@ void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *
                          QDemonRenderTextureOrRenderBuffer(),
                          QDemonRenderTextureCubeFace::CubeNegZ);
 
-    theContext->setDrawBuffers(toConstDataRef((qint32)0));
+    theContext->setDrawBuffers(toDataView((qint32)0));
 }
 
 void QDemonLayerRenderData::renderShadowMapBlurPass(QDemonResourceFrameBuffer *theFB,

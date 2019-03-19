@@ -146,16 +146,16 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         m_boxInputAssembler = inContext.getInputAssembler(m_itemName);
         if (!m_boxInputAssembler && m_boxIndexBuffer && m_boxVertexBuffer) {
             // create our attribute layout
-            QDemonRef<QDemonRenderAttribLayout> theAttribLayout = inContext.createAttributeLayout(toConstDataRef(&theEntry, 1));
+            QDemonRef<QDemonRenderAttribLayout> theAttribLayout = inContext.createAttributeLayout(toDataView(&theEntry, 1));
 
             quint32 strides = m_boxVertexBuffer->stride();
             quint32 offsets = 0;
             m_boxInputAssembler = (inContext.getOrCreateInputAssembler(m_itemName,
                                                                        theAttribLayout,
-                                                                       toConstDataRef(&m_boxVertexBuffer, 1),
+                                                                       toDataView(&m_boxVertexBuffer, 1),
                                                                        m_boxIndexBuffer,
-                                                                       toConstDataRef(&strides, 1),
-                                                                       toConstDataRef(&offsets, 1)));
+                                                                       toDataView(&strides, 1),
+                                                                       toDataView(&offsets, 1)));
         }
         setupBoxShader(inContext);
     }
@@ -235,16 +235,16 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 
         if (!m_axisInputAssembler && m_axisVertexBuffer) {
             // create our attribute layout
-            QDemonRef<QDemonRenderAttribLayout> theAttribLAyout = inContext.createAttributeLayout(toConstDataRef(theEntries, 2));
+            QDemonRef<QDemonRenderAttribLayout> theAttribLAyout = inContext.createAttributeLayout(toDataView(theEntries, 2));
 
             quint32 strides = m_axisVertexBuffer->stride();
             quint32 offsets = 0;
             m_axisInputAssembler = (inContext.getOrCreateInputAssembler(m_itemName,
                                                                         theAttribLAyout,
-                                                                        toConstDataRef(&m_axisVertexBuffer, 1),
+                                                                        toDataView(&m_axisVertexBuffer, 1),
                                                                         nullptr,
-                                                                        toConstDataRef(&strides, 1),
-                                                                        toConstDataRef(&offsets, 1)));
+                                                                        toDataView(&strides, 1),
+                                                                        toDataView(&offsets, 1)));
         }
     }
 

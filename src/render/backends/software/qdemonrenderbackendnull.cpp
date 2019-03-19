@@ -157,7 +157,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void setRenderTarget(QDemonRenderBackendRenderTargetObject) override {}
     bool renderTargetIsValid(QDemonRenderBackendRenderTargetObject) override { return false; }
     void setReadTarget(QDemonRenderBackendRenderTargetObject) override {}
-    void setDrawBuffers(QDemonRenderBackendRenderTargetObject, QDemonConstDataRef<qint32>) override {}
+    void setDrawBuffers(QDemonRenderBackendRenderTargetObject, QDemonDataView<qint32>) override {}
     void setReadBuffer(QDemonRenderBackendRenderTargetObject, QDemonReadFace) override {}
 
     void blitFramebuffer(qint32, qint32, qint32, qint32, qint32, qint32, qint32, qint32, QDemonRenderClearFlags, QDemonRenderTextureMagnifyingOp) override
@@ -328,7 +328,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
 
     void releaseSampler(QDemonRenderBackendSamplerObject) override {}
 
-    QDemonRenderBackendAttribLayoutObject createAttribLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry>) override
+    QDemonRenderBackendAttribLayoutObject createAttribLayout(QDemonDataView<QDemonRenderVertexBufferEntry>) override
     {
         return QDemonRenderBackendAttribLayoutObject(1);
     }
@@ -336,10 +336,10 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void releaseAttribLayout(QDemonRenderBackendAttribLayoutObject) override {}
 
     QDemonRenderBackendInputAssemblerObject createInputAssembler(QDemonRenderBackendAttribLayoutObject,
-                                                                 QDemonConstDataRef<QDemonRenderBackendBufferObject>,
+                                                                 QDemonDataView<QDemonRenderBackendBufferObject>,
                                                                  const QDemonRenderBackendBufferObject,
-                                                                 QDemonConstDataRef<quint32>,
-                                                                 QDemonConstDataRef<quint32>,
+                                                                 QDemonDataView<quint32>,
+                                                                 QDemonDataView<quint32>,
                                                                  quint32) override
     {
         return QDemonRenderBackendInputAssemblerObject(1);
@@ -350,32 +350,32 @@ struct QDemonNullBackend : public QDemonRenderBackend
         return false;
     }
     void setPatchVertexCount(QDemonRenderBackendInputAssemblerObject, quint32) override {}
-    QDemonRenderBackendVertexShaderObject createVertexShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
+    QDemonRenderBackendVertexShaderObject createVertexShader(QDemonDataView<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendVertexShaderObject(1);
     }
     void releaseVertexShader(QDemonRenderBackendVertexShaderObject) override {}
-    QDemonRenderBackendFragmentShaderObject createFragmentShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
+    QDemonRenderBackendFragmentShaderObject createFragmentShader(QDemonDataView<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendFragmentShaderObject(1);
     }
     void releaseFragmentShader(QDemonRenderBackendFragmentShaderObject) override {}
-    QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
+    QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonDataView<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendTessControlShaderObject(1);
     }
     void releaseTessControlShader(QDemonRenderBackendTessControlShaderObject) override {}
-    QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
+    QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonDataView<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendTessEvaluationShaderObject(1);
     }
     void releaseTessEvaluationShader(QDemonRenderBackendTessEvaluationShaderObject) override {}
-    QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
+    QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonDataView<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendGeometryShaderObject(1);
     }
     void releaseGeometryShader(QDemonRenderBackendGeometryShaderObject) override {}
-    QDemonRenderBackendComputeShaderObject createComputeShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
+    QDemonRenderBackendComputeShaderObject createComputeShader(QDemonDataView<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendComputeShaderObject(1);
     }
@@ -464,7 +464,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
 
     QDemonRenderBackendPathObject createPathNVObject(size_t) override { return QDemonRenderBackendPathObject(1); }
-    void setPathSpecification(QDemonRenderBackendPathObject, QDemonConstDataRef<quint8>, QDemonConstDataRef<float>) override
+    void setPathSpecification(QDemonRenderBackendPathObject, QDemonDataView<quint8>, QDemonDataView<float>) override
     {
     }
 

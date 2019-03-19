@@ -471,7 +471,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     }
 
     // Registers an effect that runs via a single GLSL file.
-    bool registerGLSLEffect(QString inName, const char *inPathToEffect, QDemonConstDataRef<QDemonPropertyDeclaration> inProperties) override
+    bool registerGLSLEffect(QString inName, const char *inPathToEffect, QDemonDataView<QDemonPropertyDeclaration> inProperties) override
     {
         if (isEffectRegistered(inName))
             return false;
@@ -532,22 +532,22 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // Ensure we end up *exactly* where we expected to.
         Q_ASSERT(dataBuffer == startBuffer + commandAllocationSize);
         Q_ASSERT(theCommandPtr - theFirstCommandPtr == (int)inProperties.size() + 3);
-        m_coreContext->dynamicObjectSystem()->setRenderCommands(inName, QDemonConstDataRef<QDemonCommand *>(theFirstCommandPtr, commandCount));
+        m_coreContext->dynamicObjectSystem()->setRenderCommands(inName, QDemonDataView<QDemonCommand *>(theFirstCommandPtr, commandCount));
         ::free(startBuffer);
         return true;
     }
 
-    void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonConstDataRef<quint8> inDefaultData) override
+    void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonDataView<quint8> inDefaultData) override
     {
         m_coreContext->dynamicObjectSystem()->setPropertyDefaultValue(inName, inPropName, inDefaultData);
     }
 
-    void setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) override
+    void setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonDataView<QString> inNames) override
     {
         m_coreContext->dynamicObjectSystem()->setPropertyEnumNames(inName, inPropName, inNames);
     }
 
-    bool registerEffect(QString inName, QDemonConstDataRef<QDemonPropertyDeclaration> inProperties) override
+    bool registerEffect(QString inName, QDemonDataView<QDemonPropertyDeclaration> inProperties) override
     {
         if (isEffectRegistered(inName))
             return false;
@@ -576,25 +576,25 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         return true;
     }
 
-    QDemonConstDataRef<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const override
+    QDemonDataView<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const override
     {
         const auto theClass = getEffectClass(inName);
         if (theClass == nullptr) {
             Q_ASSERT(false);
-            QDemonConstDataRef<QString>();
+            QDemonDataView<QString>();
         }
         const QDemonPropertyDefinition *theDefinitionPtr = theClass->dynamicClass->findPropertyByName(inPropName);
         if (theDefinitionPtr)
             return theDefinitionPtr->enumValueNames;
-        return QDemonConstDataRef<QString>();
+        return QDemonDataView<QString>();
     }
 
-    QDemonConstDataRef<QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const override
+    QDemonDataView<QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const override
     {
         const auto theClass = getEffectClass(inEffectName);
         if (theClass)
             return theClass->dynamicClass->getProperties();
-        return QDemonConstDataRef<QDemonPropertyDefinition>();
+        return QDemonDataView<QDemonPropertyDefinition>();
     }
 
     void setEffectPropertyTextureSettings(QString inName,
@@ -649,12 +649,12 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         return theClass->dynamicClass->requiresCompilation();
     }
 
-    void setEffectCommands(QString inEffectName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) override
+    void setEffectCommands(QString inEffectName, QDemonDataView<dynamic::QDemonCommand *> inCommands) override
     {
         m_coreContext->dynamicObjectSystem()->setRenderCommands(inEffectName, inCommands);
     }
 
-    QDemonConstDataRef<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const override
+    QDemonDataView<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const override
     {
         return m_coreContext->dynamicObjectSystem()->getRenderCommands(inEffectName);
     }
@@ -1066,7 +1066,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             if (theDefinition)
                 doApplyInstanceValue(inEffect, dataPtr, inCommand.m_propertyName, inCommand.m_valueType, inShader, *theDefinition);
         } else {
-            QDemonConstDataRef<QDemonPropertyDefinition> theDefs = inClass->dynamicClass->getProperties();
+            QDemonDataView<QDemonPropertyDefinition> theDefs = inClass->dynamicClass->getProperties();
             for (quint32 idx = 0, end = theDefs.size(); idx < end; ++idx) {
                 const QDemonPropertyDefinition &theDefinition(theDefs[idx]);
                 auto theConstant = inShader->shaderConstant(theDefinition.name.toLatin1());
@@ -1468,7 +1468,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             theContext->setDepthWriteEnabled(false);
 
             QMatrix4x4 theMVP;
-            QDemonConstDataRef<dynamic::QDemonCommand *> theCommands = inClass->dynamicClass->getRenderCommands();
+            QDemonDataView<dynamic::QDemonCommand *> theCommands = inClass->dynamicClass->getRenderCommands();
             for (quint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd; ++commandIdx) {
                 const QDemonCommand &theCommand(*theCommands[commandIdx]);
                 switch (theCommand.m_type) {

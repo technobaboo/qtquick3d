@@ -72,13 +72,13 @@ public:
                           bool transpose) override;
 
     void setPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao, quint32 count) override;
-    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonDataView<qint8> source,
                                                                                QByteArray &errorMessage,
                                                                                bool binary) override;
-    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonDataView<qint8> source,
                                                                                      QByteArray &errorMessage,
                                                                                      bool binary) override;
-    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonDataView<qint8> source,
                                                                          QByteArray &errorMessage,
                                                                          bool binary) override;
 
@@ -111,7 +111,7 @@ public:
                           QDemonRenderImageAccessType access,
                           QDemonRenderTextureFormat format) override;
 
-    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonDataView<qint8> source,
                                                                        QByteArray &errorMessage,
                                                                        bool binary) override;
     void dispatchCompute(QDemonRenderBackendShaderProgramObject po, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ) override;
@@ -128,8 +128,8 @@ public:
 
     QDemonRenderBackendPathObject createPathNVObject(size_t range) override;
     void setPathSpecification(QDemonRenderBackendPathObject inPathObject,
-                              QDemonConstDataRef<quint8> inPathCommands,
-                              QDemonConstDataRef<float> inPathCoords) override;
+                              QDemonDataView<quint8> inPathCommands,
+                              QDemonDataView<float> inPathCoords) override;
     QDemonBounds3 getPathObjectBoundingBox(QDemonRenderBackendPathObject inPathObject) override;
     QDemonBounds3 getPathObjectFillBox(QDemonRenderBackendPathObject inPathObject) override;
     QDemonBounds3 getPathObjectStrokeBox(QDemonRenderBackendPathObject inPathObject) override;

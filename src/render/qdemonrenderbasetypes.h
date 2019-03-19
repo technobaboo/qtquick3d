@@ -1834,7 +1834,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QMatrix4x4>
 };
 
 template<>
-struct QDemonDataTypeToShaderDataTypeMap<QDemonConstDataRef<QMatrix4x4>>
+struct QDemonDataTypeToShaderDataTypeMap<QDemonDataView<QMatrix4x4>>
 {
     static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Matrix4x4; }
 };

@@ -38,7 +38,7 @@ QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderCon
                                                  QDemonRenderBufferUsageType usageType,
                                                  QDemonRenderComponentType componentType,
                                                  size_t size,
-                                                 QDemonConstDataRef<quint8> data)
+                                                 QDemonDataView<quint8> data)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Index, usageType,
                              toDataRef(const_cast<quint8 *>(data.begin()), data.size())), m_componentType(componentType)
 {

@@ -1227,7 +1227,7 @@ void QDemonRenderBackendGLBase::releaseSampler(QDemonRenderBackendSamplerObject 
 }
 
 QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject QDemonRenderBackendGLBase::createAttribLayout(
-        QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
+        QDemonDataView<QDemonRenderVertexBufferEntry> attribs)
 {
     quint32 attribLayoutSize = sizeof(QDemonRenderBackendAttributeLayoutGL);
     quint32 entrySize = sizeof(QDemonRenderBackendLayoutEntryGL) * attribs.size();
@@ -1265,10 +1265,10 @@ void QDemonRenderBackendGLBase::releaseAttribLayout(QDemonRenderBackendAttribLay
 
 QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject QDemonRenderBackendGLBase::createInputAssembler(
         QDemonRenderBackendAttribLayoutObject attribLayout,
-        QDemonConstDataRef<QDemonRenderBackendBufferObject> buffers,
+        QDemonDataView<QDemonRenderBackendBufferObject> buffers,
         const QDemonRenderBackendBufferObject indexBuffer,
-        QDemonConstDataRef<quint32> strides,
-        QDemonConstDataRef<quint32> offsets,
+        QDemonDataView<quint32> strides,
+        QDemonDataView<quint32> offsets,
         quint32 patchVertexCount)
 {
     QDemonRenderBackendAttributeLayoutGL *attribLayoutGL = (QDemonRenderBackendAttributeLayoutGL *)attribLayout;
@@ -1289,7 +1289,7 @@ void QDemonRenderBackendGLBase::releaseInputAssembler(QDemonRenderBackendInputAs
     delete inputAssembler;
 }
 
-bool QDemonRenderBackendGLBase::compileSource(GLuint shaderID, QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary)
+bool QDemonRenderBackendGLBase::compileSource(GLuint shaderID, QDemonDataView<qint8> source, QByteArray &errorMessage, bool binary)
 {
     GLint shaderSourceSize = static_cast<GLint>(source.size());
     const char *shaderSourceData = (const char *)source.begin();
@@ -1325,7 +1325,7 @@ bool QDemonRenderBackendGLBase::compileSource(GLuint shaderID, QDemonConstDataRe
     return (shaderStatus == GL_TRUE);
 }
 
-QDemonRenderBackend::QDemonRenderBackendVertexShaderObject QDemonRenderBackendGLBase::createVertexShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackend::QDemonRenderBackendVertexShaderObject QDemonRenderBackendGLBase::createVertexShader(QDemonDataView<qint8> source,
                                                                                                          QByteArray &errorMessage,
                                                                                                          bool binary)
 {
@@ -1339,7 +1339,7 @@ QDemonRenderBackend::QDemonRenderBackendVertexShaderObject QDemonRenderBackendGL
     return (QDemonRenderBackend::QDemonRenderBackendVertexShaderObject)shaderID;
 }
 
-QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject QDemonRenderBackendGLBase::createFragmentShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject QDemonRenderBackendGLBase::createFragmentShader(QDemonDataView<qint8> source,
                                                                                                              QByteArray &errorMessage,
                                                                                                              bool binary)
 {
@@ -1354,7 +1354,7 @@ QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject QDemonRenderBackend
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBackendGLBase::createTessControlShader(
-        QDemonConstDataRef<qint8> source,
+        QDemonDataView<qint8> source,
         QByteArray &errorMessage,
         bool binary)
 {
@@ -1369,7 +1369,7 @@ QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBack
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderBackendGLBase::createTessEvaluationShader(
-        QDemonConstDataRef<qint8> source,
+        QDemonDataView<qint8> source,
         QByteArray &errorMessage,
         bool binary)
 {
@@ -1383,7 +1383,7 @@ QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderB
     return (QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject) nullptr;
 }
 
-QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackendGLBase::createGeometryShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackendGLBase::createGeometryShader(QDemonDataView<qint8> source,
                                                                                                              QByteArray &errorMessage,
                                                                                                              bool binary)
 {
@@ -1397,7 +1397,7 @@ QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackend
     return (QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject) nullptr;
 }
 
-QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendGLBase::createComputeShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendGLBase::createComputeShader(QDemonDataView<qint8> source,
                                                                                                            QByteArray &errorMessage,
                                                                                                            bool binary)
 {

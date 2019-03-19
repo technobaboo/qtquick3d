@@ -140,7 +140,7 @@ public:
     void setConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32_4 &inValue, const qint32 inCount);
     void setConstantValue(QDemonRenderShaderConstantBase *inConstant, const QMatrix3x3 &inValue, const qint32 inCount, bool inTranspose = false);
     void setConstantValue(QDemonRenderShaderConstantBase *inConstant, const QMatrix4x4 &inValue, const qint32 inCount, bool inTranspose = false);
-    void setConstantValue(QDemonRenderShaderConstantBase *inConstant, const QDemonConstDataRef<QMatrix4x4> inValue, const qint32 inCount);
+    void setConstantValue(QDemonRenderShaderConstantBase *inConstant, const QDemonDataView<QMatrix4x4> inValue, const qint32 inCount);
     void setConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTexture2D *inValue, const qint32 inCount);
     void setConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTexture2D **inValue, const qint32 inCount);
     void setConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTexture2DArray *inValue, const qint32 inCount);
@@ -233,11 +233,11 @@ public:
     static QDemonRenderVertFragCompilationResult create(
             const QDemonRef<QDemonRenderContext> &context,
             const char *programName,
-            QDemonConstDataRef<qint8> vertShaderSource,
-            QDemonConstDataRef<qint8> fragShaderSource,
-            QDemonConstDataRef<qint8> tessControlShaderSource = QDemonConstDataRef<qint8>(),
-            QDemonConstDataRef<qint8> tessEvaluationShaderSource = QDemonConstDataRef<qint8>(),
-            QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>(),
+            QDemonDataView<qint8> vertShaderSource,
+            QDemonDataView<qint8> fragShaderSource,
+            QDemonDataView<qint8> tessControlShaderSource = QDemonDataView<qint8>(),
+            QDemonDataView<qint8> tessEvaluationShaderSource = QDemonDataView<qint8>(),
+            QDemonDataView<qint8> geometryShaderSource = QDemonDataView<qint8>(),
             bool separateProgram = false,
             QDemonRenderShaderProgramBinaryType type = QDemonRenderShaderProgramBinaryType::Unknown,
             bool binaryProgram = false);
@@ -253,7 +253,7 @@ public:
      */
     static QDemonRenderVertFragCompilationResult createCompute(const QDemonRef<QDemonRenderContext> &context,
                                                                const char *programName,
-                                                               QDemonConstDataRef<qint8> computeShaderSource);
+                                                               QDemonDataView<qint8> computeShaderSource);
 };
 
 // Helper class to cache the lookup of shader properties and apply them quickly in a typesafe

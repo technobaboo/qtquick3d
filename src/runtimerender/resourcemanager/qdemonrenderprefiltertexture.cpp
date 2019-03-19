@@ -368,10 +368,10 @@ static const char *computeWorkShader(QByteArray &prog, bool binESContext)
     return prog.constData();
 }
 
-inline QDemonConstDataRef<qint8> toRef(const char *data)
+inline QDemonDataView<qint8> toRef(const char *data)
 {
     size_t len = strlen(data) + 1;
-    return QDemonConstDataRef<qint8>((const qint8 *)data, (quint32)len);
+    return QDemonDataView<qint8>((const qint8 *)data, (quint32)len);
 }
 
 static bool isGLESContext(const QDemonRef<QDemonRenderContext> &context)

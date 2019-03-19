@@ -99,7 +99,7 @@ void QDemonRenderDynamicGraphObject::setStrPropertyValueT(dynamic::QDemonPropert
         inValue = "";
     if (inDefinition.dataType == QDemonRenderShaderDataType::Integer) {
         // TODO: Can the enum values be anything but 8bit chars?
-        QDemonConstDataRef<QString> theEnumValues = inDefinition.enumValueNames;
+        QDemonDataView<QString> theEnumValues = inDefinition.enumValueNames;
         for (int idx = 0, end = theEnumValues.size(); idx < end; ++idx) {
             if (theEnumValues[idx].compare(QString::fromLocal8Bit(inValue)) == 0) {
                 setPropertyValueT(inDefinition, idx);

@@ -38,8 +38,8 @@ struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBuffer
     // 64 bit random number to uniquely identify this file type.
     static quint64 getFileTag() { return 0x7b1a41633c43a6afULL; }
     static quint32 getFileVersion() { return 1; }
-    QDemonConstDataRef<PathCommand> commands;
-    QDemonConstDataRef<float> data;
+    QDemonDataView<PathCommand> commands;
+    QDemonDataView<float> data;
     QDemonPathBuffer() = default;
     void save(QIODevice &outStream) const;
     static QDemonPathBuffer *load(QIODevice &inStream);
@@ -82,8 +82,8 @@ struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBufferBuilder
     QDemonPathBuffer getPathBuffer()
     {
         QDemonPathBuffer retval;
-        retval.data = toConstDataRef(static_cast<const float *>(m_data.constData()), m_data.size());
-        retval.commands = toConstDataRef(static_cast<const PathCommand *>(m_commands.constData()), m_commands.size());
+        retval.data = toDataView(static_cast<const float *>(m_data.constData()), m_data.size());
+        retval.commands = toDataView(static_cast<const PathCommand *>(m_commands.constData()), m_commands.size());
         ;
         return retval;
     }

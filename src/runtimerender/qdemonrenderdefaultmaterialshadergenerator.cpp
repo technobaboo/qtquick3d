@@ -563,7 +563,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         }
     }
 
-    bool maybeAddMaterialFresnel(QDemonShaderStageGeneratorInterface &fragmentShader, QDemonConstDataRef<quint32> inKey, bool inFragmentHasSpecularAmount)
+    bool maybeAddMaterialFresnel(QDemonShaderStageGeneratorInterface &fragmentShader, QDemonDataView<quint32> inKey, bool inFragmentHasSpecularAmount)
     {
         if (m_defaultMaterialShaderKeyProperties.m_fresnelEnabled.getValue(inKey)) {
             if (inFragmentHasSpecularAmount == false)

@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
 
 ///< constructor
 QDemonRenderAttribLayout::QDemonRenderAttribLayout(const QDemonRef<QDemonRenderContext> &context,
-                                                   QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
+                                                   QDemonDataView<QDemonRenderVertexBufferEntry> attribs)
     : m_context(context), m_backend(context->backend())
 {
     m_attribLayoutHandle = m_backend->createAttribLayout(attribs);

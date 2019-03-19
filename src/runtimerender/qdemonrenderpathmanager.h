@@ -64,7 +64,7 @@ public:
     //!! Note this call is made from multiple threads simultaneously during binary load.
     //!! - see UICRenderGraphObjectSerializer.cpp
     virtual void setPathSubPathData(const QDemonRenderSubPath &inPathSubPath,
-                                    QDemonConstDataRef<QDemonPathAnchorPoint> inPathSubPathAnchorPoints) = 0;
+                                    QDemonDataView<QDemonPathAnchorPoint> inPathSubPathAnchorPoints) = 0;
 
     virtual ~QDemonPathManagerInterface();
     virtual QDemonDataRef<QDemonPathAnchorPoint> getPathSubPathBuffer(const QDemonRenderSubPath &inPathSubPath) = 0;
