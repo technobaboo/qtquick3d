@@ -1234,7 +1234,7 @@ void QDemonRendererImpl::generateXYQuad()
     m_quadVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                        20 * sizeof(float),
                                                        3 * sizeof(float) + 2 * sizeof(float),
-                                                       toByteRef(tempBuf, 20));
+                                                       toByteView(tempBuf, 20));
 
     quint8 indexData[] = {
         0, 1, 2, 0, 2, 3,
@@ -1242,7 +1242,7 @@ void QDemonRendererImpl::generateXYQuad()
     m_quadIndexBuffer = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                      QDemonRenderComponentType::UnsignedInteger8,
                                                      sizeof(indexData),
-                                                     toByteRef(indexData, sizeof(indexData)));
+                                                     toByteView(indexData, sizeof(indexData)));
 
     // create our attribute layout
     m_quadAttribLayout = m_context->createAttributeLayout(toDataView(theEntries, 2));
@@ -1274,7 +1274,7 @@ void QDemonRendererImpl::generateXYZPoint()
     m_pointVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                         5 * sizeof(float),
                                                         3 * sizeof(float) + 2 * sizeof(float),
-                                                        toByteRef(tempBuf, 5));
+                                                        toByteView(tempBuf, 5));
 
     // create our attribute layout
     m_pointAttribLayout = m_context->createAttributeLayout(toDataView(theEntries, 2));

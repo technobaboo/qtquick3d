@@ -84,7 +84,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentType::Float16, 3);
         m_boxVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
                                                               3 * sizeof(float),
-                                                              toByteRef(thePoints.begin(), thePoints.size()));
+                                                              toByteView(thePoints));
         m_boxIndexBuffer = inContext.getIndexBuffer(m_itemName);
         if (!m_boxIndexBuffer) {
             // The way the bounds lays out the bounds for the box
@@ -99,7 +99,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
                 XyZ,
                 XYz,
             };
-            quint8 indexes[] = {
+            const quint8 indexes[] = {
                 // The toBoxBounds function lays out points such that
                 // xyz, Xyz, xYz, xyZ, XYZ, xYZ, XyZ, XYz
                 // Min corner
@@ -140,7 +140,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
             m_boxIndexBuffer = inContext.getOrCreateIndexBuffer(m_itemName,
                                                                 QDemonRenderComponentType::UnsignedInteger8,
                                                                 sizeof(indexes),
-                                                                toByteRef(indexes, sizeof(indexes)));
+                                                                toByteView(indexes, sizeof(indexes)));
         }
 
         m_boxInputAssembler = inContext.getInputAssembler(m_itemName);
@@ -231,7 +231,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 
         m_axisVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
                                                                6 * sizeof(float),
-                                                               toByteRef(theAxes.begin(), theAxes.size()));
+                                                               toByteView(theAxes));
 
         if (!m_axisInputAssembler && m_axisVertexBuffer) {
             // create our attribute layout

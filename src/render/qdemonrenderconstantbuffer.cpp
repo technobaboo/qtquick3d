@@ -56,7 +56,7 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
                                                        QDemonRenderBufferUsageType usageType,
                                                        size_t size,
                                                        QDemonByteView data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Constant, usageType, QDemonByteRef())
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Constant, usageType, QDemonByteView())
     , m_name(bufferName)
     , m_currentOffset(0)
     , m_currentSize(0)
@@ -81,8 +81,6 @@ QDemonRenderConstantBuffer::~QDemonRenderConstantBuffer()
     // check if we should release memory
     if (m_shadowCopy.size())
         ::free(m_shadowCopy.begin());
-
-    m_shadowCopy = QDemonByteRef();
 
     for (TRenderConstantBufferEntryMap::iterator iter = m_constantBufferEntryMap.begin(), end = m_constantBufferEntryMap.end();
          iter != end;
