@@ -178,7 +178,7 @@ void QDemonRenderPrefilterTextureCPU::build(void *inTextureData, qint32 inTextur
     m_sizeOfInternalFormat = inFormat.getSizeofFormat();
     m_internalNoOfComponent = inFormat.getNumberOfComponent();
 
-    m_texture2D->setTextureData(QDemonByteRef((quint8 *)inTextureData, inTextureDataSize), 0, m_width, m_height, inFormat, m_destinationFormat);
+    m_texture2D->setTextureData(QDemonByteView((quint8 *)inTextureData, inTextureDataSize), 0, m_width, m_height, inFormat, m_destinationFormat);
 
     QDemonTextureData theMipImage;
     QDemonTextureData prevImage;
@@ -196,7 +196,7 @@ void QDemonRenderPrefilterTextureCPU::build(void *inTextureData, qint32 inTextur
         curHeight = curHeight >= 1 ? curHeight : 1;
         inTextureDataSize = curWidth * curHeight * size;
 
-        m_texture2D->setTextureData(toByteRef((char *)theMipImage.data, (quint32)inTextureDataSize),
+        m_texture2D->setTextureData(toByteView((const char *)theMipImage.data, (quint32)inTextureDataSize),
                                     (quint8)idx,
                                     (quint32)curWidth,
                                     (quint32)curHeight,
@@ -452,7 +452,7 @@ void QDemonRenderPrefilterTextureCompute::createLevel0Tex(void *inTextureData, q
 
     if (m_level0Tex == nullptr) {
         m_level0Tex = new QDemonRenderTexture2D(m_renderContext);
-        m_level0Tex->setTextureStorage(1, theWidth, m_height, theFormat, theFormat, QDemonByteRef((quint8 *)inTextureData, inTextureDataSize));
+        m_level0Tex->setTextureStorage(1, theWidth, m_height, theFormat, theFormat, QDemonByteView((quint8 *)inTextureData, inTextureDataSize));
     } else {
         m_level0Tex->setTextureSubData(QDemonByteRef((quint8 *)inTextureData, inTextureDataSize), 0, 0, 0, theWidth, m_height, theFormat);
     }

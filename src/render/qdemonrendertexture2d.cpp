@@ -47,7 +47,7 @@ QDemonTextureDetails QDemonRenderTexture2D::textureDetails() const
     return QDemonTextureDetails(m_width, m_height, 0, m_sampleCount, m_format);
 }
 
-void QDemonRenderTexture2D::setTextureData(QDemonByteRef newBuffer,
+void QDemonRenderTexture2D::setTextureData(QDemonByteView newBuffer,
                                            quint8 inMipLevel,
                                            qint32 width,
                                            qint32 height,
@@ -135,7 +135,7 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
                                               qint32 height,
                                               QDemonRenderTextureFormat formaInternal,
                                               QDemonRenderTextureFormat format,
-                                              QDemonByteRef dataBuffer)
+                                              QDemonByteView dataBuffer)
 {
     Q_ASSERT(m_handle);
 
@@ -205,7 +205,7 @@ void QDemonRenderTexture2D::setTextureDataMultisample(qint32 sampleCount,
     m_format = format;
 }
 
-void QDemonRenderTexture2D::setTextureSubData(QDemonByteRef newBuffer,
+void QDemonRenderTexture2D::setTextureSubData(QDemonByteView newBuffer,
                                               quint8 inMipLevel,
                                               qint32 inXOffset,
                                               qint32 inYOffset,

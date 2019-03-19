@@ -177,7 +177,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         else if (immutable)
             theTexture->setTextureStorage(1, inWidth, inHeight, inTextureFormat);
         else
-            theTexture->setTextureData(QDemonByteRef(), 0, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteView(), 0, inWidth, inHeight, inTextureFormat);
 
         return setupAllocatedTexture(theTexture);
     }

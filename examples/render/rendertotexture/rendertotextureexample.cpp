@@ -105,10 +105,10 @@ public:
         m_Context->setInputAssembler(mInputAssembler);
 
         mDepthBuffer = new QDemonRenderTexture2D(m_Context);
-        mDepthBuffer->setTextureData(QDemonByteRef(), 0, mFBWidth, mFBHeight,
+        mDepthBuffer->setTextureData(QDemonByteView(), 0, mFBWidth, mFBHeight,
                                      QDemonRenderTextureFormat::Depth16);
         mColorBuffer = new QDemonRenderTexture2D(m_Context);
-        mColorBuffer->setTextureData(QDemonByteRef(), 0, mFBWidth, mFBHeight,
+        mColorBuffer->setTextureData(QDemonByteView(), 0, mFBWidth, mFBHeight,
                                      QDemonRenderTextureFormat::RGBA8);
         if (mDepthBuffer && mColorBuffer) {
             // Creating objects tends to Bind them to their active state hooks.

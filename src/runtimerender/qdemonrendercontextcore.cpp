@@ -565,7 +565,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                 } else {
                     QDemonTextureDetails theDetails = m_rotationTexture->textureDetails();
                     if (theDetails.width != imageWidth || theDetails.height != imageHeight) {
-                        m_rotationTexture->setTextureData(QDemonByteRef(), 0, imageWidth, imageHeight, theColorBufferFormat);
+                        m_rotationTexture->setTextureData(QDemonByteView(), 0, imageWidth, imageHeight, theColorBufferFormat);
                         m_rotationDepthBuffer->setSize(QSize(imageWidth, imageHeight));
                     }
                 }
