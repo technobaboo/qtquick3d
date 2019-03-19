@@ -178,15 +178,6 @@ private:
      */
     qint32 uniformTypeSize(QDemonRenderShaderDataType type);
 
-    /**
-     * @brief allocate the shadow buffer
-     *
-     * @param[in] size		size of buffer
-     *
-     * @return return true on success
-     */
-    bool allocateShadowBuffer(quint32 size);
-
     inline void setDirty(quint32 start, quint32 size)
     {
         m_rangeStart = qMin(m_rangeStart, start);
@@ -201,7 +192,7 @@ private:
     quint32 m_rangeStart = 0; ///< start offset of the range to update
     quint32 m_rangeEnd = std::numeric_limits<quint32>::max(); ///< end of the range to update
     qint32 m_maxBlockSize; ///< maximum size for a single constant buffer
-    QDemonByteRef m_shadowCopy; ///< host copy of the data in the GPU
+    QByteArray m_shadowCopy; ///< host copy of the data in the GPU
 };
 
 QT_END_NAMESPACE
