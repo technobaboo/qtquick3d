@@ -126,7 +126,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     QDemonRef<QDemonRenderContextInterface> m_demonContext;
     QDemonRef<QDemonRenderContext> m_context;
     QDemonRef<QDemonBufferManager> m_bufferManager;
-    QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
+    QDemonRef<QDemonOffscreenRenderManager> m_offscreenRenderManager;
     // For rendering bounding boxes.
     QDemonRef<QDemonRenderVertexBuffer> m_boxVertexBuffer;
     QDemonRef<QDemonRenderIndexBuffer> m_boxIndexBuffer;

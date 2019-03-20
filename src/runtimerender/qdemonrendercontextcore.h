@@ -63,7 +63,7 @@ class QDemonPathManagerInterface;
 class QDemonMaterialSystem;
 class QDemonRendererInterface;
 class QDemonShaderCache;
-class QDemonOffscreenRenderManagerInterface;
+class QDemonOffscreenRenderManager;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextInterface
 {
@@ -76,7 +76,7 @@ private:
     QDemonRef<QDemonInputStreamFactory> m_inputStreamFactory;
     QDemonRef<QDemonBufferManager> m_bufferManager;
     QDemonRef<QDemonResourceManager> m_resourceManager;
-    QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
+    QDemonRef<QDemonOffscreenRenderManager> m_offscreenRenderManager;
     QDemonRef<QDemonRendererInterface> m_renderer;
     QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
     QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
@@ -151,7 +151,7 @@ public:
     QDemonRef<QDemonBufferManager> bufferManager();
     QDemonRef<QDemonResourceManager> resourceManager();
     QDemonRef<QDemonRenderContext> renderContext();
-    QDemonRef<QDemonOffscreenRenderManagerInterface> offscreenRenderManager();
+    QDemonRef<QDemonOffscreenRenderManager> offscreenRenderManager();
     QDemonRef<QDemonInputStreamFactory> inputStreamFactory();
     QDemonRef<QDemonEffectSystemInterface> effectSystem();
     QDemonRef<QDemonShaderCache> shaderCache();

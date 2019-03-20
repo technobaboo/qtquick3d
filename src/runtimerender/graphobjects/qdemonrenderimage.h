@@ -40,7 +40,7 @@
 
 QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
-class QDemonOffscreenRenderManagerInterface;
+class QDemonOffscreenRenderManager;
 class QDemonOffscreenRendererInterface;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonRenderGraphObject
@@ -94,7 +94,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonRenderGraphO
     // Or finds the image.
     // and sets up the texture transform
     bool clearDirty(const QDemonRef<QDemonBufferManager> &inBufferManager,
-                    QDemonOffscreenRenderManagerInterface &inRenderManager,
+                    QDemonOffscreenRenderManager &inRenderManager,
                     /*IRenderPluginManager &pluginManager,*/
                     bool forIbl = false);
 

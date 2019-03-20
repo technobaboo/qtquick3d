@@ -468,7 +468,7 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
 {
     QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
     QDemonRef<QDemonBufferManager> bufferManager = demonContext->bufferManager();
-    QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->offscreenRenderManager());
+    QDemonRef<QDemonOffscreenRenderManager> theOffscreenRenderManager(demonContext->offscreenRenderManager());
     //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
     if (inImage.clearDirty(bufferManager, *theOffscreenRenderManager /*, theRenderPluginManager*/))
         ioFlags |= QDemonRenderableObjectFlag::Dirty;

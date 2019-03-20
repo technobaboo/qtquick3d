@@ -163,39 +163,49 @@ struct QDemonOffscreenRenderResult
 };
 
 struct QDemonOffscreenRendererKey;
+struct QDemonRendererData;
 
 /**
- *	The offscreen render manager attempts to satisfy requests for a given image under a given
- *key.
- *	Renderers are throttled such that they render at most once per frame and potentially less
- *than
+ *	The offscreen render manager attempts to satisfy requests for a given image under a given key.
+ *	Renderers are throttled such that they render at most once per frame and potentially less than
  *	that if they don't require a new render.
  */
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderManagerInterface
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderManager
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonOffscreenRenderManagerInterface();
+private:
+    typedef QHash<QDemonOffscreenRendererKey, QDemonRendererData> TRendererMap;
+    QDemonRenderContextInterface *m_context;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
+    TRendererMap m_renderers;
+    quint32 m_frameCount; // cheap per-
+
+public:
+    QDemonOffscreenRenderManager(const QDemonRef<QDemonResourceManager> &inManager, QDemonRenderContextInterface *inContext);
+    ~QDemonOffscreenRenderManager();
     // returns true if the renderer has not been registered.
     // No return value means there was an error registering this id.
-    virtual QDemonOption<bool> maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                                              QDemonRef<QDemonOffscreenRendererInterface> inRenderer) = 0;
-    virtual void registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                           QDemonRef<QDemonOffscreenRendererInterface> inRenderer) = 0;
-    virtual bool hasOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
-    virtual QDemonRef<QDemonOffscreenRendererInterface> getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
-    virtual void releaseOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
+    QDemonOption<bool> maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
+                                                              QDemonRef<QDemonOffscreenRendererInterface> inRenderer);
+    void registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
+                                           QDemonRef<QDemonOffscreenRendererInterface> inRenderer);
+    bool hasOffscreenRenderer(const QDemonOffscreenRendererKey &inKey);
+    QDemonRef<QDemonOffscreenRendererInterface> getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey);
+    void releaseOffscreenRenderer(const QDemonOffscreenRendererKey &inKey);
 
     // This doesn't trigger rendering right away.  A node is added to the render graph that
     // points to this item.
     // Thus rendering is deffered until the graph is run but we promise to render to this
     // resource.
-    virtual QDemonOffscreenRenderResult getRenderedItem(const QDemonOffscreenRendererKey &inKey) = 0;
+    QDemonOffscreenRenderResult getRenderedItem(const QDemonOffscreenRendererKey &inKey);
     // Called by the UICRenderContext, clients don't need to call this.
-    virtual void beginFrame() = 0;
-    virtual void endFrame() = 0;
+    void beginFrame();
+    void endFrame();
 
-    static QDemonRef<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(const QDemonRef<QDemonResourceManager> &inManager,
+    void renderItem(QDemonRendererData &theData, QDemonOffscreenRendererEnvironment theDesiredEnvironment);
+
+    static QDemonRef<QDemonOffscreenRenderManager> createOffscreenRenderManager(const QDemonRef<QDemonResourceManager> &inManager,
                                                                                          QDemonRenderContextInterface *inContext);
 };
 

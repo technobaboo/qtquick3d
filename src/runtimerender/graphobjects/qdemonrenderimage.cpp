@@ -69,7 +69,7 @@ static void HandleOffscreenResult(QDemonRenderImage &theImage,
 }
 
 bool QDemonRenderImage::clearDirty(const QDemonRef<QDemonBufferManager> &inBufferManager,
-                                   QDemonOffscreenRenderManagerInterface &inRenderManager,
+                                   QDemonOffscreenRenderManager &inRenderManager,
                                    bool forIbl)
 {
 

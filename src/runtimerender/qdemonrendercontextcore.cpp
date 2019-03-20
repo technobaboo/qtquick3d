@@ -79,7 +79,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
     , m_fps(qMakePair(0.0, 0))
 {
     m_renderList = QDemonRenderList::createRenderList();
-    m_offscreenRenderManager = QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(m_resourceManager, this);
+    m_offscreenRenderManager = QDemonOffscreenRenderManager::createOffscreenRenderManager(m_resourceManager, this);
     m_renderer = QDemonRendererInterface::createRenderer(this);
     if (!inApplicationDirectory.isEmpty())
         m_inputStreamFactory->addSearchDirectory(inApplicationDirectory);
@@ -143,7 +143,7 @@ QDemonRef<QDemonResourceManager> QDemonRenderContextInterface::resourceManager()
 
 QDemonRef<QDemonRenderContext> QDemonRenderContextInterface::renderContext() { return m_renderContext; }
 
-QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonRenderContextInterface::offscreenRenderManager()
+QDemonRef<QDemonOffscreenRenderManager> QDemonRenderContextInterface::offscreenRenderManager()
 {
     return m_offscreenRenderManager;
 }
