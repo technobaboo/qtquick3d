@@ -165,8 +165,7 @@ struct QDemonShaderGeneratorGeneratedShader
     // Cache the image property name lookups
     TCustomMaterialImagMap m_images; // Images external to custom material usage
 
-    QDemonShaderGeneratorGeneratedShader(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                                         const QDemonRef<QDemonRenderContext> &inContext)
+    QDemonShaderGeneratorGeneratedShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : m_shader(inShader)
         , m_modelMatrix("model_matrix", inShader)
         , m_viewProjMatrix("model_view_projection", inShader)
@@ -370,7 +369,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
             quint8 stackData[size];
             memset(stackData, 0, 4 * sizeof(qint32));
-            QDemonLightSourceShader *s = new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
+            new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
             QDemonByteView cBuffer(stackData, size);
             pCB = new QDemonRenderConstantBuffer(theContext, name, QDemonRenderBufferUsageType::Static, cBuffer);
             if (!pCB) {
@@ -410,8 +409,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         if (m_programToShaderMap.constFind(inProgram) == m_programToShaderMap.constEnd())
             inserter = m_programToShaderMap.insert(inProgram,
                                                    QDemonRef<QDemonShaderGeneratorGeneratedShader>(
-                                                           new QDemonShaderGeneratorGeneratedShader(inProgram,
-                                                                                                    m_renderContext->renderContext())));
+                                                           new QDemonShaderGeneratorGeneratedShader(inProgram)));
 
         return inserter.value();
     }
@@ -822,7 +820,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                              << m_imageOffset << " );\n\n";
         }
 
-        inFragmentShader << "  return shadowMask;\n";
+        inFragmentShader << "  return shadowMask;\n"
                             "}\n\n";
     }
 

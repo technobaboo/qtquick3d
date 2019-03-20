@@ -319,7 +319,7 @@ void computeFrustumBounds(const QDemonRenderCamera &inCamera, const QRectF &inVi
     ctrBound *= 0.125f;
 }
 
-void setupCameraForShadowMap(const QVector2D &inCameraVec,
+void setupCameraForShadowMap(const QVector2D &/*inCameraVec*/,
                              QDemonRenderContext & /*inContext*/,
                              const QRectF &inViewport,
                              const QDemonRenderCamera &inCamera,
@@ -1210,7 +1210,6 @@ void QDemonLayerRenderData::renderToTexture()
 
     QDemonResourceTexture2D *renderColorTexture = &m_layerTexture;
     QDemonResourceTexture2D *renderPrepassDepthTexture = &m_layerPrepassDepthTexture;
-    QDemonResourceTexture2D *renderWidgetTexture = &m_layerWidgetTexture;
     QDemonRenderContextScopedProperty<bool> __multisampleEnabled(*theRenderContext,
                                                                  &QDemonRenderContext::isMultisampleEnabled,
                                                                  &QDemonRenderContext::setMultisampleEnabled);
@@ -1218,7 +1217,6 @@ void QDemonLayerRenderData::renderToTexture()
     if (isMultisamplePass) {
         renderColorTexture = &m_layerMultisampleTexture;
         renderPrepassDepthTexture = &m_layerMultisamplePrepassDepthTexture;
-        renderWidgetTexture = &m_layerMultisampleWidgetTexture;
         // for SSAA we don't use MS textures
         if (layer.multisampleAAMode != QDemonRenderLayer::AAMode::SSAA)
             thFboAttachTarget = QDemonRenderTextureTargetType::Texture2D_MS;
@@ -1599,7 +1597,7 @@ void QDemonLayerRenderData::applyLayerPostEffects()
                 QString errorMsg = QObject::tr("Failed to compile \"%1\" effect.\nConsider"
                                                " removing it from the presentation.")
                                            .arg(theEffect->className);
-                qFatal(errorMsg.toUtf8());
+                qFatal("%s", errorMsg.toUtf8().constData());
                 break;
             }
         }
@@ -1727,10 +1725,9 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
             theTempCamera.position.setZ(-theCameraSetback);
             theTempCamera.clipFar = 2.0f * theCameraSetback;
             // Render the layer texture to the entire viewport.
-            QDemonCameraGlobalCalculationResult
-                    theResult = theTempCamera.calculateGlobalVariables(theLayerViewport,
-                                                                       QVector2D((float)theLayerViewport.width(),
-                                                                                 (float)theLayerViewport.height()));
+            theTempCamera.calculateGlobalVariables(theLayerViewport,
+                                                   QVector2D((float)theLayerViewport.width(),
+                                                             (float)theLayerViewport.height()));
             theTempCamera.calculateViewProjectionMatrix(theViewProjection);
             QDemonRenderNode theTempNode;
             theFinalMVP = theViewProjection;

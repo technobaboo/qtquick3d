@@ -61,10 +61,6 @@ float getMaxValue(float start, float width, float value, QDemonRenderLayer::Unit
     return start + width - (value * width / 100.0f);
 }
 
-QVector2D toRectRelativeCoords(const QVector2D &inCoords, const QRectF &inRect)
-{
-    return QVector2D(inCoords.x() - inRect.x(), inCoords.y() - inRect.y());
-}
 }
 
 QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationViewport,
