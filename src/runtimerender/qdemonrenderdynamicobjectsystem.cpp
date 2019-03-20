@@ -1341,20 +1341,19 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 QDemonDynamicObjectShaderInfo
                         &theShaderInfo = m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
                 if (theShaderInfo.m_isComputeShader == false) {
-                    QString programSource = doLoadShader(inPath);
+                    QByteArray programSource = doLoadShader(inPath);
                     if (theShaderInfo.m_hasGeomShader)
                         theFlags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
-                    theProgram = compileShader(inPath, programSource.toLocal8Bit().constData(), nullptr, inProgramMacro, inFeatureSet, theFlags, inForceCompilation);
+                    theProgram = compileShader(inPath, programSource.constData(), nullptr, inProgramMacro, inFeatureSet, theFlags, inForceCompilation);
                 } else {
-                    QString theShaderBuffer;
-                    QString shaderVersionStr = QStringLiteral("#version 430\n");
+                    QByteArray theShaderBuffer;
+                    const char *shaderVersionStr = "#version 430\n";
                     if (m_context->getRenderContext()->renderContextType() == QDemonRenderContextType::GLES3PLUS)
-                        shaderVersionStr = QStringLiteral("#version 310 es\n");
+                        shaderVersionStr = "#version 310 es\n";
                     theShaderBuffer = doLoadShader(inPath);
                     theShaderBuffer.insert(0, shaderVersionStr);
-                    QByteArray programSource = theShaderBuffer.toLocal8Bit();
                     theProgram = m_context->getRenderContext()->compileComputeSource(inPath.toLocal8Bit(),
-                                                                                     toByteView(programSource)).m_shader;
+                                                                                     toByteView(theShaderBuffer)).m_shader;
                 }
             }
             theInserter.value() = TShaderAndFlags(theProgram, theFlags);
