@@ -217,7 +217,7 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
     } else {
         gl->makeCurrent(m_offscreenSurface.data());
         m_renderContext = QDemonRenderContext::createGl(format);
-        m_sgContext = new QDemonRenderContextInterface(m_renderContext, "./");
+        m_sgContext = new QDemonRenderContextInterface(m_renderContext, QString::fromLatin1("./"));
         gl->doneCurrent();
     }
 
@@ -300,11 +300,9 @@ void QDemonGuiThreadRenderLoop::renderWindow(QDemonWindow *window)
     if (gl)
         current = gl->makeCurrent(window);
 
-    bool lastDirtyWindow = true;
     auto i = m_windows.constBegin();
     while (i != m_windows.constEnd()) {
         if (i.value().updatePending) {
-            lastDirtyWindow = false;
             break;
         }
         i++;
