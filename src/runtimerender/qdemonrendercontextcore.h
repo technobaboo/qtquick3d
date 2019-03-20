@@ -61,42 +61,6 @@ enum class ScaleModes
 
 class QDemonPathManagerInterface;
 class QDemonMaterialSystem;
-
-// Part of render context that does not require the render system.
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCore
-{
-public:
-    QAtomicInt ref;
-private:
-    QDemonPerfTimer m_perfTimer;
-    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
-    QDemonRef<QDemonAbstractThreadPool> m_threadPool;
-    QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
-    QDemonRef<QDemonMaterialSystem> m_materialSystem;
-    QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
-    QDemonRef<QDemonPathManagerInterface> m_pathManagerCore;
-
-public:
-    QDemonRenderContextCore();
-    ~QDemonRenderContextCore();
-    QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory()
-    { return m_inputStreamFactory; }
-    QDemonRef<QDemonAbstractThreadPool> threadPool()
-    { return m_threadPool; }
-    QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem()
-    { return m_dynamicObjectSystem; }
-    QDemonRef<QDemonMaterialSystem> materialSystem()
-    { return m_materialSystem; }
-    QDemonRef<QDemonEffectSystemInterface> effectSystem()
-    { return m_effectSystem; }
-    QDemonPerfTimer *performanceTimer() { return &m_perfTimer; }
-    QDemonRef<QDemonPathManagerInterface> pathManager();
-
-    // The render context maintains a reference to this object.
-    QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
-                                                                        const char *inPrimitivesDirectory);
-};
-
 class QDemonRendererInterface;
 class QDemonShaderCacheInterface;
 class QDemonOffscreenRenderManagerInterface;
@@ -107,8 +71,8 @@ public:
     QAtomicInt ref;
 private:
     QDemonRef<QDemonRenderContext> m_renderContext;
-    QDemonRenderContextCore *m_coreContext;
-    QDemonPerfTimer *m_perfTimer;
+    QDemonPerfTimer m_perfTimer;
+
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     QDemonRef<QDemonBufferManager> m_bufferManager;
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
@@ -180,7 +144,7 @@ private:
     void teardownRenderTarget();
 
 public:
-    QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, QDemonRenderContextCore *inCore, const char *inApplicationDirectory);
+    QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const char *inApplicationDirectory);
     ~QDemonRenderContextInterface();
     QDemonRef<QDemonRendererInterface> renderer();
     QDemonRef<QDemonRendererImpl> renderWidgetContext();
@@ -196,7 +160,7 @@ public:
     QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem();
     QDemonRef<QDemonMaterialSystem> customMaterialSystem();
     QDemonRef<QDemonPixelGraphicsRendererInterface> pixelGraphicsRenderer();
-    QDemonPerfTimer *performanceTimer() { return m_perfTimer; }
+    QDemonPerfTimer *performanceTimer() { return &m_perfTimer; }
     QDemonRef<QDemonRenderListInterface> renderList();
     QDemonRef<QDemonPathManagerInterface> pathManager();
     QDemonRef<QDemonShaderProgramGeneratorInterface> shaderProgramGenerator();

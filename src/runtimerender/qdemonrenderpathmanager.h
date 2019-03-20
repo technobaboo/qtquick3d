@@ -81,9 +81,7 @@ public:
     // Returns angle in x, distance in y.
     static QVector2D getAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint);
 
-    virtual QDemonRef<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) = 0;
-
-    static QDemonRef<QDemonPathManagerInterface> createPathManager(QDemonRenderContextCore *inContext);
+    static QDemonRef<QDemonPathManagerInterface> createPathManager(QDemonRenderContextInterface *inContext);
 
     // The path segments are next expected to change after this call; changes will be ignored.
     virtual bool prepareForRender(const QDemonRenderPath &inPath) = 0;

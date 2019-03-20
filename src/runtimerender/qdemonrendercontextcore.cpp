@@ -56,24 +56,6 @@
 
 QT_BEGIN_NAMESPACE
 
-
-QDemonRenderContextCore::QDemonRenderContextCore()
-    : m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
-    , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
-{
-    m_dynamicObjectSystem = QDemonDynamicObjectSystemInterface::createDynamicSystem(this);
-    m_materialSystem = new QDemonMaterialSystem(this);
-    m_effectSystem = QDemonEffectSystemInterface::createEffectSystem(this);
-    m_pathManagerCore = QDemonPathManagerInterface::createPathManager(this);
-}
-
-QDemonRef<QDemonPathManagerInterface> QDemonRenderContextCore::pathManager()
-{
-    return m_pathManagerCore;
-}
-
-QDemonRenderContextCore::~QDemonRenderContextCore() = default;
-
 inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
 {
     if (val < inMin)
@@ -92,23 +74,15 @@ void swapXY(QVector2D &v)
 }
 }
 
-QDemonRef<QDemonRenderContextInterface> QDemonRenderContextCore::createRenderContext(QDemonRef<QDemonRenderContext> inContext,
-                                                                                     const char *inPrimitivesDirectory)
-{
-    return QDemonRef<QDemonRenderContextInterface>(new QDemonRenderContextInterface(inContext, this, inPrimitivesDirectory));
-}
-
 QDemonRenderContextInterface::~QDemonRenderContextInterface() = default;
 
-QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, QDemonRenderContextCore *inCore, const char *inApplicationDirectory)
+QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const char *inApplicationDirectory)
     : m_renderContext(ctx)
-    , m_coreContext(inCore)
-    , m_perfTimer(inCore->performanceTimer())
-    , m_inputStreamFactory(inCore->inputStreamFactory())
-    , m_bufferManager(new QDemonBufferManager(ctx, m_inputStreamFactory, m_perfTimer))
+    , m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
+    , m_bufferManager(new QDemonBufferManager(ctx, m_inputStreamFactory, &m_perfTimer))
     , m_resourceManager(QDemonResourceManagerInterface::createResourceManager(ctx))
-    , m_shaderCache(QDemonShaderCacheInterface::createShaderCache(ctx, m_inputStreamFactory, m_perfTimer))
-    , m_threadPool(inCore->threadPool())
+    , m_shaderCache(QDemonShaderCacheInterface::createShaderCache(ctx, m_inputStreamFactory, &m_perfTimer))
+    , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
     , m_frameCount(0)
     , m_windowDimensions(800, 480)
     , m_scaleMode(ScaleModes::ExactSize)
@@ -126,11 +100,10 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
     if (inApplicationDirectory && *inApplicationDirectory)
         m_inputStreamFactory->addSearchDirectory(inApplicationDirectory);
 
-    m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, m_perfTimer);
-    m_dynamicObjectSystem = inCore->dynamicObjectSystem();
-    m_dynamicObjectSystem->setContextInterface(this);
-    m_effectSystem = inCore->effectSystem()->getEffectSystem(this);
-    m_customMaterialSystem = inCore->materialSystem();
+    m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, &m_perfTimer);
+    m_dynamicObjectSystem = QDemonDynamicObjectSystemInterface::createDynamicSystem(this);
+    m_effectSystem = QDemonEffectSystemInterface::createEffectSystem(this);
+    m_customMaterialSystem = new QDemonMaterialSystem(this);
     m_customMaterialSystem->setRenderContextInterface(this);
     // as does the custom material system
     m_pixelGraphicsRenderer = QDemonPixelGraphicsRendererInterface::createRenderer(this);
@@ -138,7 +111,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
     m_defaultMaterialShaderGenerator = QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(this);
     m_customMaterialShaderGenerator = QDemonMaterialShaderGeneratorInterface::createCustomMaterialShaderGenerator(this);
 
-    m_pathManager = inCore->pathManager()->onRenderSystemInitialize(this);
+    m_pathManager = QDemonPathManagerInterface::createPathManager(this);
 
     const char *versionString;
     switch (ctx->renderContextType()) {

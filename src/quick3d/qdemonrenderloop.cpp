@@ -53,7 +53,6 @@ public:
 
     QOpenGLContext *gl;
     QSharedPointer<QOffscreenSurface> m_offscreenSurface;
-    QDemonRef<QDemonRenderContextCore> m_contextCore;
     QDemonRef<QDemonRenderContextInterface> m_sgContext;
     QDemonRef<QDemonRenderContext> m_renderContext;
 
@@ -200,12 +199,6 @@ static QSurfaceFormat idealSurfaceFormat()
 
 QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
 {
-    m_contextCore = new QDemonRenderContextCore;
-    if (!qgetenv("QUICK3D_PERFTIMERS").isEmpty())
-        m_contextCore->performanceTimer()->setEnabled(true);
-
-
-
     // To create the Render Context, we have to have a valid OpenGL Context
     // to resolve the functions, so do that now (before we have any windows)
     QSurfaceFormat format = idealSurfaceFormat();
@@ -224,9 +217,15 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
     } else {
         gl->makeCurrent(m_offscreenSurface.data());
         m_renderContext = QDemonRenderContext::createGl(format);
-        m_sgContext = m_contextCore->createRenderContext(m_renderContext, "./");
+        m_sgContext = new QDemonRenderContextInterface(m_renderContext, "./");
         gl->doneCurrent();
     }
+
+    if (!m_sgContext)
+        return;
+
+    if (!qgetenv("QUICK3D_PERFTIMERS").isEmpty())
+        m_sgContext->performanceTimer()->setEnabled(true);
 
     if (!qgetenv("QUICK3D_GPUPROFILER").isEmpty()) {
         m_enableGpuProfiling = true;
@@ -399,7 +398,7 @@ void QDemonGuiThreadRenderLoop::handleUpdateRequest(QDemonWindow *window)
 {
     renderWindow(window);
 
-    auto *perfTimer = m_contextCore->performanceTimer();
+    auto *perfTimer = m_sgContext->performanceTimer();
     if (perfTimer->isEnabled() && perfTimer->newFrame() == 60  )
         perfTimer->dump();
 }

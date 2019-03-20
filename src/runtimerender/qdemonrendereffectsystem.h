@@ -152,11 +152,9 @@ public:
     //    virtual void Load(QDemonByteRef inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystem(QDemonRenderContextInterface *context) = 0;
-
     virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
 
-    static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextCore *context);
+    static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextInterface *context);
 
     // Calling release effect context with no context results in no problems.
     virtual void releaseEffectContext(QDemonEffectContext *inEffect) = 0;

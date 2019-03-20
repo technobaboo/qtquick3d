@@ -665,8 +665,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     typedef QHash<QDemonPathShaderMapKey, QDemonPathXYGeneratedShader *> TPaintedShaderMap;
     typedef QHash<QString, TPathBufferPtr> TStringPathBufferMap;
 
-    QDemonRenderContextCore *m_coreContext;
-    QDemonRenderContextInterface *m_renderContext;
+    QDemonRenderContextInterface *m_context;
     QString m_idBuilder;
     TPathSubPathBufferHash m_subPathBuffers;
     TPathBufferHash m_buffers;
@@ -693,7 +692,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     QDemonRef<QDemonRenderPathSpecification> m_pathSpecification;
     QScopedPointer<QDemonPathUtilities::QDemonPathBufferBuilder> m_pathBuilder;
 
-    QDemonPathManager(QDemonRenderContextCore *inRC) : m_coreContext(inRC), m_renderContext(nullptr) {}
+    QDemonPathManager(QDemonRenderContextInterface *ctx) : m_context(ctx) {}
 
     virtual ~QDemonPathManager() {
         m_paintedRectInputAssembler = nullptr;
@@ -798,12 +797,6 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         }
 
         return retval;
-    }
-
-    QDemonRef<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) override
-    {
-        m_renderContext = context;
-        return this;
     }
 
     // find a point that will join these two curves *if* they are not first derivative continuous
@@ -973,7 +966,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 }
             }
 
-            QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+            QDemonRef<QDemonRenderContext> theRenderContext(m_context->renderContext());
             // Create quads out of each point.
             if (m_subdivResult.empty())
                 return false;
@@ -1085,9 +1078,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
         QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = nullptr;
         if (isDefaultMaterial)
-            theMaterialGenerator = m_renderContext->defaultMaterialShaderGenerator();
+            theMaterialGenerator = m_context->defaultMaterialShaderGenerator();
         else
-            theMaterialGenerator = m_renderContext->customMaterialShaderGenerator();
+            theMaterialGenerator = m_context->customMaterialShaderGenerator();
 
         return theMaterialGenerator;
     }
@@ -1097,7 +1090,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         bool isDefaultMaterial = (inRenderContext.material.type == QDemonRenderGraphObject::Type::DefaultMaterial);
 
         if (!isDefaultMaterial) {
-            QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->customMaterialSystem());
+            QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_context->customMaterialSystem());
             const QDemonRenderCustomMaterial &theCustomMaterial(
                     reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
@@ -1109,7 +1102,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     bool preparePaintedPathForRender(const QDemonRenderPath &inPath, QDemonPathBuffer &inPathBuffer)
     {
-        QDemonRef<QDemonRenderContext> theContext(this->m_renderContext->renderContext());
+        QDemonRef<QDemonRenderContext> theContext(this->m_context->renderContext());
         if (!inPathBuffer.m_pathRender || (inPathBuffer.m_flags & QDemonPathDirtyFlagValue::SourceData)) {
             if (!inPathBuffer.m_pathRender) {
                 inPathBuffer.m_pathRender = theContext->createPathRender();
@@ -1168,7 +1161,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer) {
             return false;
         }
-        QDemonRef<QDemonRenderContext> theContext(this->m_renderContext->renderContext());
+        QDemonRef<QDemonRenderContext> theContext(this->m_context->renderContext());
         if (!m_pathSpecification)
             m_pathSpecification = theContext->createPathSpecification();
         if (!m_pathSpecification)
@@ -1216,7 +1209,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             //            QPair<TStringPathBufferMap::iterator, bool> inserter =
             //                    m_SourcePathBufferMap.insert(inPath.m_PathBuffer, TPathBufferPtr());
             if (inserter == m_sourcePathBufferMap.end()) {
-                QSharedPointer<QIODevice> theStream = m_coreContext->inputStreamFactory()->getStreamForFile(inPath.m_pathBuffer);
+                QSharedPointer<QIODevice> theStream = m_context->inputStreamFactory()->getStreamForFile(inPath.m_pathBuffer);
                 if (theStream) {
                     QDemonPathUtilities::QDemonPathBuffer *theNewBuffer = QDemonPathUtilities::QDemonPathBuffer::load(*theStream);
                     if (theNewBuffer)
@@ -1244,7 +1237,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                QDemonLayerGlobalRenderProperties &inRenderProperties)
     {
         QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = getMaterialShaderGenertator(inRenderContext);
-        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+        QDemonRef<QDemonRenderContext> theRenderContext(m_context->renderContext());
         theRenderContext->setActiveShader(inShader);
 
         theMaterialGenerator->setMaterialProperties(inShader,
@@ -1267,7 +1260,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             return;
 
         setMaterialProperties(inShader->m_shader, inRenderContext, inRenderProperties);
-        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+        QDemonRef<QDemonRenderContext> theRenderContext(m_context->renderContext());
 
         inShader->m_beginTaperData.set(inPathBuffer->m_beginTaperData);
         inShader->m_endTaperData.set(inPathBuffer->m_endTaperData);
@@ -1306,7 +1299,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QDemonRef<QDemonRenderDepthStencilState> getDepthStencilState()
     {
-        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+        QDemonRef<QDemonRenderContext> theRenderContext(m_context->renderContext());
         QDemonRenderBoolOp theDepthFunction = theRenderContext->depthFunction();
         bool isDepthEnabled = theRenderContext->isDepthTestEnabled();
         bool isStencilEnabled = theRenderContext->isStencilTestEnabled();
@@ -1372,7 +1365,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     {
         if (!inPathBuffer->m_pathRender)
             return;
-        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+        QDemonRef<QDemonRenderContext> theRenderContext(m_context->renderContext());
         if (!m_paintedRectInputAssembler) {
             const QVector2D vertexes[] = {
                 QVector2D(0.0, 0.0),
@@ -1503,8 +1496,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
             if (!theDesiredDepthShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
-                        m_renderContext->defaultMaterialShaderGenerator());
-                QDemonPathVertexPipeline thePipeline(m_renderContext->shaderProgramGenerator(), theMaterialGenerator, false);
+                        m_context->defaultMaterialShaderGenerator());
+                QDemonPathVertexPipeline thePipeline(m_context->shaderProgramGenerator(), theMaterialGenerator, false);
                 thePipeline.beginVertexGeneration(displacementIdx, displacementImage);
                 thePipeline.beginFragmentGeneration();
                 thePipeline.fragment().append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
@@ -1525,8 +1518,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             // painted path, go stroke route for now.
             if (!m_paintedDepthShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
-                        m_renderContext->defaultMaterialShaderGenerator());
-                QDemonXYRectVertexPipeline thePipeline(m_renderContext->shaderProgramGenerator(), theMaterialGenerator);
+                        m_context->defaultMaterialShaderGenerator());
+                QDemonXYRectVertexPipeline thePipeline(m_context->shaderProgramGenerator(), theMaterialGenerator);
                 thePipeline.beginVertexGeneration(0, nullptr);
                 thePipeline.beginFragmentGeneration();
                 thePipeline.fragment().append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
@@ -1559,8 +1552,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             // painted path, go stroke route for now.
             if (!m_paintedShadowShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
-                        m_renderContext->defaultMaterialShaderGenerator());
-                QDemonXYRectVertexPipeline thePipeline(m_renderContext->shaderProgramGenerator(), theMaterialGenerator);
+                        m_context->defaultMaterialShaderGenerator());
+                QDemonXYRectVertexPipeline thePipeline(m_context->shaderProgramGenerator(), theMaterialGenerator);
                 thePipeline.outputParaboloidDepthShaders();
                 QDemonShaderCacheProgramFlags theFlags;
                 QDemonRef<QDemonRenderShaderProgram> theProgram = thePipeline.programGenerator()->compileGeneratedShader("path painted paraboloid depth",
@@ -1572,7 +1565,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             }
             if (m_paintedShadowShader) {
                 // Setup the shader paraboloid information.
-                QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+                QDemonRef<QDemonRenderContext> theRenderContext(m_context->renderContext());
                 theRenderContext->setActiveShader(m_paintedShadowShader->m_shader);
 
                 doRenderPaintedPath(m_paintedShadowShader.get(), inRenderContext, inRenderProperties, thePathBuffer, true);
@@ -1599,8 +1592,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (thePathBuffer->m_pathType == QDemonRenderPath::PathType::Painted) {
             if (!m_paintedCubeShadowShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
-                        m_renderContext->defaultMaterialShaderGenerator());
-                QDemonXYRectVertexPipeline thePipeline(m_renderContext->shaderProgramGenerator(), theMaterialGenerator);
+                        m_context->defaultMaterialShaderGenerator());
+                QDemonXYRectVertexPipeline thePipeline(m_context->shaderProgramGenerator(), theMaterialGenerator);
                 thePipeline.outputCubeFaceDepthShaders();
                 QDemonShaderCacheProgramFlags theFlags;
                 QDemonRef<QDemonRenderShaderProgram> theProgram = thePipeline.programGenerator()->compileGeneratedShader("path painted cube face depth",
@@ -1612,7 +1605,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             }
             if (m_paintedCubeShadowShader) {
                 // Setup the shader information.
-                QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+                QDemonRef<QDemonRenderContext> theRenderContext(m_context->renderContext());
                 theRenderContext->setActiveShader(m_paintedCubeShadowShader->m_shader);
 
                 m_paintedCubeShadowShader->m_cameraPosition.set(inRenderContext.camera.getGlobalPos());
@@ -1649,9 +1642,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             TShaderMap::iterator inserter = m_pathGeometryShaders.find(sPathkey);
             // QPair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(sPathkey, QDemonRef<SPathGeneratedShader>(nullptr));
             if (inserter == m_pathGeometryShaders.end()) {
-                QDemonPathVertexPipeline thePipeline(m_renderContext->shaderProgramGenerator(),
+                QDemonPathVertexPipeline thePipeline(m_context->shaderProgramGenerator(),
                                                      theMaterialGenerator,
-                                                     m_renderContext->wireframeMode());
+                                                     m_context->wireframeMode());
 
                 QDemonRef<QDemonRenderShaderProgram> theProgram = nullptr;
 
@@ -1665,7 +1658,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                       inRenderContext.opacity < 1.0,
                                                                       "path geometry pipeline-- ");
                 } else {
-                    QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->customMaterialSystem());
+                    QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_context->customMaterialSystem());
                     const QDemonRenderCustomMaterial &theCustomMaterial(
                             reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
@@ -1698,7 +1691,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             TPaintedShaderMap::iterator inserter = m_pathPaintedShaders.find(sPathkey);
 
             if (inserter == m_pathPaintedShaders.end()) {
-                QDemonXYRectVertexPipeline thePipeline(m_renderContext->shaderProgramGenerator(), theMaterialGenerator);
+                QDemonXYRectVertexPipeline thePipeline(m_context->shaderProgramGenerator(), theMaterialGenerator);
 
                 QDemonRef<QDemonRenderShaderProgram> theProgram = nullptr;
 
@@ -1712,7 +1705,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                       inRenderContext.opacity < 1.0,
                                                                       "path painted pipeline-- ");
                 } else {
-                    QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->customMaterialSystem());
+                    QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_context->customMaterialSystem());
                     const QDemonRenderCustomMaterial &theCustomMaterial(
                             reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
@@ -1761,7 +1754,7 @@ QVector2D QDemonPathManagerInterface::getAngleDistanceFromControlPoint(QVector2D
     return QVector2D(radToDeg(angleRad), distance);
 }
 
-QDemonRef<QDemonPathManagerInterface> QDemonPathManagerInterface::createPathManager(QDemonRenderContextCore *ctx)
+QDemonRef<QDemonPathManagerInterface> QDemonPathManagerInterface::createPathManager(QDemonRenderContextInterface *ctx)
 {
     return QDemonRef<QDemonPathManager>(new QDemonPathManager(ctx));
 }

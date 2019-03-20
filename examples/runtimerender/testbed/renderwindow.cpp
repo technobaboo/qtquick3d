@@ -109,11 +109,8 @@ static QSurfaceFormat idealSurfaceFormat()
 }
 void RenderWindow::initialize()
 {
-    m_contextCore = new QDemonRenderContextCore;
-
     m_renderContext = QDemonRenderContext::createGl(idealSurfaceFormat());
-
-    m_context = m_contextCore->createRenderContext(m_renderContext, "./");
+    m_context = new QDemonRenderContextInterface(m_renderContext, "./");
     m_context->setSceneColor(QVector4D(1.0, 0.0, 0.0, 1.0));
 
     buildTestScene();

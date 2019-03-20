@@ -6,7 +6,6 @@
 #include <QtGui/QOpenGLContext>
 #include <QtDemon/qtdemonglobal.h>
 
-class QDemonRenderContextCore;
 class QDemonRenderContextInterface;
 class QDemonRenderContext;
 struct QDemonRenderPresentation;
@@ -42,7 +41,6 @@ private:
     bool m_autoUpdate = true;
     bool m_isIntialized = false;
     QOpenGLContext *m_glContext;
-    QDemonRef<QDemonRenderContextCore> m_contextCore;
     QDemonRef<QDemonRenderContextInterface> m_context;
     QDemonRef<QDemonRenderContext> m_renderContext;
     QDemonRef<QDemonRenderPresentation> m_presentation;

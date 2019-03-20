@@ -591,7 +591,6 @@ static const char *includeSearch = "#include \"";
 
 struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 {
-    QDemonRenderContextCore *m_coreContext;
     QDemonRenderContextInterface *m_context;
     TStringClassMap m_classes;
     TPathDataMap m_expandedFiles;
@@ -604,8 +603,8 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     QString m_shaderLibraryPlatformDirectory;
     mutable QMutex m_propertyLoadMutex;
 
-    QDemonDynamicObjectSystemImpl(QDemonRenderContextCore *inCore)
-        : m_coreContext(inCore), m_context(nullptr), m_propertyLoadMutex()
+    QDemonDynamicObjectSystemImpl(QDemonRenderContextInterface *ctx)
+        : m_context(ctx), m_propertyLoadMutex()
     {
     }
 
@@ -922,19 +921,19 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             if (!platformDir.isEmpty()) {
                 QTextStream stream(&fullPath);
                 stream << platformDir << QLatin1Char('/') << inPathToEffect;
-                theStream = m_coreContext->inputStreamFactory()->getStreamForFile(fullPath, true);
+                theStream = m_context->inputStreamFactory()->getStreamForFile(fullPath, true);
             }
 
             if (theStream.isNull()) {
                 fullPath.clear();
                 QTextStream stream(&fullPath);
                 stream << defaultDir << QLatin1Char('/') << ver << QLatin1Char('/') << inPathToEffect;
-                theStream = m_coreContext->inputStreamFactory()->getStreamForFile(fullPath, true);
+                theStream = m_context->inputStreamFactory()->getStreamForFile(fullPath, true);
                 if (theStream.isNull()) {
                     fullPath.clear();
                     QTextStream stream(&fullPath);
                     stream << defaultDir << QLatin1Char('/') << inPathToEffect;
-                    theStream = m_coreContext->inputStreamFactory()->getStreamForFile(fullPath, false);
+                    theStream = m_context->inputStreamFactory()->getStreamForFile(fullPath, false);
                 }
             }
             if (!theStream.isNull()) {
@@ -975,7 +974,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     //        }
     //        ioBuffer.write((quint32)m_Classes.size());
     //        SStringSaveRemapper theRemapper(m_Allocator, inRemapMap, inProjectDir,
-    //                                        m_CoreContext.GetStringTable());
+    //                                        m_context.GetStringTable());
     //        for (TStringClassMap::const_iterator iter = m_Classes.begin(), end = m_Classes.end();
     //             iter != end; ++iter) {
     //            const SDynamicObjClassImpl *theClass = iter->second;
@@ -1077,7 +1076,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     //            m_ExpandedFiles.insert(theStr, thePathData);
     //        }
     //        SStringLoadRemapper theRemapper(m_Allocator, inStrDataBlock, inProjectDir,
-    //                                        m_CoreContext.GetStringTable());
+    //                                        m_context.GetStringTable());
     //        quint32 numClasses = theReader.LoadRef<quint32>();
     //        for (quint32 idx = 0, end = numClasses; idx < end; ++idx) {
     //            theReader.Align(4);
@@ -1156,8 +1155,6 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     //            theInfo.m_Version = version;
     //        }
     //    }
-
-    void setContextInterface(QDemonRenderContextInterface *rc) override { m_context = rc; }
 
     QStringList getParameters(const QString &str, int begin, int end)
     {
@@ -1432,9 +1429,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 };
 }
 
-QDemonRef<QDemonDynamicObjectSystemInterface> QDemonDynamicObjectSystemInterface::createDynamicSystem(QDemonRenderContextCore *rc)
+QDemonRef<QDemonDynamicObjectSystemInterface> QDemonDynamicObjectSystemInterface::createDynamicSystem(QDemonRenderContextInterface *ctx)
 {
-    return QDemonRef<QDemonDynamicObjectSystemImpl>(new QDemonDynamicObjectSystemImpl(rc));
+    return QDemonRef<QDemonDynamicObjectSystemImpl>(new QDemonDynamicObjectSystemImpl(ctx));
 }
 
 QDemonDynamicObjectSystemInterface::~QDemonDynamicObjectSystemInterface() {}

@@ -78,7 +78,6 @@ private:
     typedef QPair<QString, QString> TStrStrPair;
     typedef QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
 
-    QDemonRenderContextCore *coreContext = nullptr;
     QDemonRenderContextInterface *context = nullptr;
     StringMaterialMap stringMaterialMap;
     ShaderMap shaderMap;
@@ -161,8 +160,7 @@ private:
                     const dynamic::QDemonPropertyDefinition *inPropDec = nullptr,
                     bool needMips = false);
 public:
-    QDemonMaterialSystem();
-    QDemonMaterialSystem(QDemonRenderContextCore *ct);
+    QDemonMaterialSystem(QDemonRenderContextInterface *ct);
 
     ~QDemonMaterialSystem();
     bool isMaterialRegistered(const QString &inStr);

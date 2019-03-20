@@ -418,7 +418,6 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     typedef QHash<TStrStrPair, QDemonRef<QDemonEffectShader>> TShaderMap;
     typedef QVector<QDemonRef<QDemonEffectContext>> TContextList;
 
-    QDemonRenderContextCore *m_coreContext;
     QDemonRenderContextInterface *m_context;
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
     // Keep from dual-including headers.
@@ -431,7 +430,10 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     QDemonRef<QDemonRenderDepthStencilState> m_defaultStencilState;
     QVector<QDemonRef<QDemonRenderDepthStencilState>> m_depthStencilStates;
 
-    QDemonEffectSystem(QDemonRenderContextCore *inContext) : m_coreContext(inContext), m_context(nullptr) {}
+    QDemonEffectSystem(QDemonRenderContextInterface *inContext) : m_context(inContext)
+    {
+        init();
+    }
 
     //    ~QDemonEffectSystem() override
     //    {
@@ -476,8 +478,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (isEffectRegistered(inName))
             return false;
 
-        m_coreContext->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
-        QDemonDynamicObjectClassInterface &theClass = *m_coreContext->dynamicObjectSystem()->dynamicObjectClass(inName);
+        m_context->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
+        QDemonDynamicObjectClassInterface &theClass = *m_context->dynamicObjectSystem()->dynamicObjectClass(inName);
 
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(theClass));
         m_effectClasses.insert(inName, theEffect);
@@ -532,27 +534,27 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // Ensure we end up *exactly* where we expected to.
         Q_ASSERT(dataBuffer == startBuffer + commandAllocationSize);
         Q_ASSERT(theCommandPtr - theFirstCommandPtr == (int)inProperties.size() + 3);
-        m_coreContext->dynamicObjectSystem()->setRenderCommands(inName, QDemonDataView<QDemonCommand *>(theFirstCommandPtr, commandCount));
+        m_context->dynamicObjectSystem()->setRenderCommands(inName, QDemonDataView<QDemonCommand *>(theFirstCommandPtr, commandCount));
         ::free(startBuffer);
         return true;
     }
 
     void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonByteView inDefaultData) override
     {
-        m_coreContext->dynamicObjectSystem()->setPropertyDefaultValue(inName, inPropName, inDefaultData);
+        m_context->dynamicObjectSystem()->setPropertyDefaultValue(inName, inPropName, inDefaultData);
     }
 
     void setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonDataView<QString> inNames) override
     {
-        m_coreContext->dynamicObjectSystem()->setPropertyEnumNames(inName, inPropName, inNames);
+        m_context->dynamicObjectSystem()->setPropertyEnumNames(inName, inPropName, inNames);
     }
 
     bool registerEffect(QString inName, QDemonDataView<QDemonPropertyDeclaration> inProperties) override
     {
         if (isEffectRegistered(inName))
             return false;
-        m_coreContext->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
-        auto theClass = m_coreContext->dynamicObjectSystem()->dynamicObjectClass(inName);
+        m_context->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
+        auto theClass = m_context->dynamicObjectSystem()->dynamicObjectClass(inName);
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(*theClass));
         m_effectClasses.insert(inName, theEffect);
         return true;
@@ -563,7 +565,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (!isEffectRegistered(inName))
             return false;
 
-        m_coreContext->dynamicObjectSystem()->unregister(inName);
+        m_context->dynamicObjectSystem()->unregister(inName);
 
         TEffectClassMap::iterator iter = m_effectClasses.find(inName);
         if (iter != m_effectClasses.end())
@@ -605,7 +607,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                           QDemonRenderTextureMagnifyingOp inMagFilterOp,
                                           QDemonRenderTextureMinifyingOp inMinFilterOp) override
     {
-        m_coreContext->dynamicObjectSystem()
+        m_context->dynamicObjectSystem()
                 ->setPropertyTextureSettings(inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
     }
 
@@ -651,12 +653,12 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     void setEffectCommands(QString inEffectName, QDemonDataView<dynamic::QDemonCommand *> inCommands) override
     {
-        m_coreContext->dynamicObjectSystem()->setRenderCommands(inEffectName, inCommands);
+        m_context->dynamicObjectSystem()->setRenderCommands(inEffectName, inCommands);
     }
 
     QDemonDataView<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const override
     {
-        return m_coreContext->dynamicObjectSystem()->getRenderCommands(inEffectName);
+        return m_context->dynamicObjectSystem()->getRenderCommands(inEffectName);
     }
 
     QDemonRenderEffect *createEffectInstance(QString inEffectName) override
@@ -667,7 +669,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         //        StaticAssert<(sizeof(SEffect) % 4 == 0)>::valid_expression();
 
         QDemonRenderEffect *theEffect = static_cast<QDemonRenderEffect *>(
-                m_coreContext->dynamicObjectSystem()->createInstance(inEffectName));
+                m_context->dynamicObjectSystem()->createInstance(inEffectName));
         theEffect->initialize();
         return theEffect;
     }
@@ -1722,7 +1724,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     void setShaderData(QString path, const char *data, const char *inShaderType, const char *inShaderVersion, bool inHasGeomShader, bool inIsComputeShader) override
     {
-        m_coreContext->dynamicObjectSystem()->setShaderData(path, data, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
+        m_context->dynamicObjectSystem()->setShaderData(path, data, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
     }
 
     //    void save(SWriteBuffer &ioBuffer,
@@ -1769,10 +1771,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     //        }
     //    }
 
-    QDemonRef<QDemonEffectSystemInterface> getEffectSystem(QDemonRenderContextInterface *context) override
+    void init()
     {
-        m_context = context;
-
         auto theContext(m_context->renderContext());
 
         m_resourceManager = QDemonResourceManagerInterface::createResourceManager(theContext);
@@ -1791,8 +1791,6 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                                                     stencilDefaultFunc,
                                                                     stencilDefaultOp,
                                                                     stencilDefaultOp);
-
-        return this;
     }
 
     QDemonRef<QDemonResourceManagerInterface> getResourceManager() override { return m_resourceManager; }
@@ -1801,7 +1799,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
 QDemonEffectSystemInterface::~QDemonEffectSystemInterface() = default;
 
-QDemonRef<QDemonEffectSystemInterface> QDemonEffectSystemInterface::createEffectSystem(QDemonRenderContextCore *inContext)
+QDemonRef<QDemonEffectSystemInterface> QDemonEffectSystemInterface::createEffectSystem(QDemonRenderContextInterface *inContext)
 {
     return QDemonRef<QDemonEffectSystem>(new QDemonEffectSystem(inContext));
 }
