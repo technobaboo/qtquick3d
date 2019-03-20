@@ -437,6 +437,49 @@ GraphObject::~GraphObject()
     destroyGraph();
 }
 
+QString GraphObject::typeName() const
+{
+    switch (m_type) {
+    case Type::Asset:
+        return QStringLiteral("Asset");
+    case Type::Scene:
+        return QStringLiteral("Scene");
+    case Type::Slide:
+        return QStringLiteral("Slide");
+    case Type::Image:
+        return QStringLiteral("Image");
+    case Type::DefaultMaterial:
+        return QStringLiteral("DefaultMaterial");
+    case Type::ReferencedMaterial:
+        return QStringLiteral("ReferencedMaterial");
+    case Type::CustomMaterial:
+        return QStringLiteral("CustomMaterial");
+    case Type::Effect:
+        return QStringLiteral("Effect");
+    case Type::Behavior:
+        return QStringLiteral("Behavior");
+    case Type::Layer:
+        return QStringLiteral("Layer");
+    case Type::Camera:
+        return QStringLiteral("Camera");
+    case Type::Light:
+        return QStringLiteral("Light");
+    case Type::Model:
+        return QStringLiteral("Model");
+    case Type::Group:
+        return QStringLiteral("Group");
+    case Type::Text:
+        return QStringLiteral("Text");
+    case Type::Component:
+        return QStringLiteral("Component");
+    case Type::Alias:
+        return QStringLiteral("Alias");
+    }
+
+    Q_UNREACHABLE();
+    return QString();
+}
+
 int GraphObject::childCount() const
 {
     int count = 0;
@@ -2688,3 +2731,5 @@ GraphObject *UipPresentation::getObjectByName(const QString &name) const
 }
 
 QT_END_NAMESPACE
+
+

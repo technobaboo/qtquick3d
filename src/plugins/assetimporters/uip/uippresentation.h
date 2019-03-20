@@ -184,6 +184,8 @@ public:
 
     // hmm where have I seen this before...
     Type type() const { return m_type; }
+    QString typeName () const;
+
     GraphObject *parent() const { return m_parent; }
     GraphObject *firstChild() const { return m_firstChild; }
     GraphObject *lastChild() const { return m_lastChild; }
@@ -279,6 +281,7 @@ public:
         KeyFrame(float time_, float value_)
             : time(time_), value(value_)
         { }
+
         float time = 0; // seconds
         float value = 0;
         union {
