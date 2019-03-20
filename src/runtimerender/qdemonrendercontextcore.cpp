@@ -56,15 +56,6 @@
 
 QT_BEGIN_NAMESPACE
 
-inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
-{
-    if (val < inMin)
-        return inMin;
-    if (val > inMax)
-        return inMax;
-    return val;
-}
-
 namespace {
 void swapXY(QVector2D &v)
 {
@@ -321,8 +312,6 @@ void QDemonRenderContextInterface::dumpGpuProfilerStats()
 {
     m_renderer->dumpGpuProfilerStats();
 }
-
-QRect QDemonRenderContextInterface::presentationViewport() const { return m_presentationViewport; }
 
 void QDemonRenderContextInterface::beginFrame()
 {

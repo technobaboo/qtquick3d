@@ -209,7 +209,7 @@ public:
     QDemonOption<QRect> viewport() const { return m_viewport; }
     QRect contextViewport() const;
     // Only valid between calls to Begin,End.
-    QRect presentationViewport() const;
+    QRect presentationViewport() const { return m_presentationViewport; }
 
     void setScaleMode(ScaleModes inMode) { m_scaleMode = inMode; }
     ScaleModes scaleMode() { return m_scaleMode; }
