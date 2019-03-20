@@ -160,7 +160,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
     void renderItem(QDemonRendererData &theData, QDemonOffscreenRendererEnvironment theDesiredEnvironment)
     {
         auto theContext = m_resourceManager->getRenderContext();
-        QVector2D thePresScaleFactor = m_context->getPresentationScaleFactor();
+        QVector2D thePresScaleFactor = m_context->presentationScaleFactor();
         QDemonOffscreenRendererEnvironment theOriginalDesiredEnvironment(theDesiredEnvironment);
         // Ensure that our overall render context comes back no matter what the client does.
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
@@ -249,7 +249,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         QDemonResourceTexture2D renderDepthStencilTexture(m_resourceManager);
 
         if (theSampleCount > 1)
-            m_context->getRenderContext()->setMultisampleEnabled(true);
+            m_context->renderContext()->setMultisampleEnabled(true);
 
         QDemonRenderClearFlags theClearFlags;
         QDemonRenderTextureFormat theDepthStencilTextureFormat(QDemonRenderTextureFormat::Unknown);
@@ -304,20 +304,20 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                 // Have to downsample the FBO.
                 QDemonRendererUtil::resolveMutisampleFBOColorOnly(m_resourceManager,
                                                                   theResult,
-                                                                  *m_context->getRenderContext(),
+                                                                  *m_context->renderContext(),
                                                                   theDesiredEnvironment.width,
                                                                   theDesiredEnvironment.height,
                                                                   theDesiredEnvironment.format,
                                                                   theFrameBuffer);
 
-                m_context->getRenderContext()->setMultisampleEnabled(false);
+                m_context->renderContext()->setMultisampleEnabled(false);
             } else {
                 // Resolve the FBO to the layer texture
                 QDemonRendererUtil::resolveSSAAFBOColorOnly(m_resourceManager,
                                                             theResult,
                                                             theOriginalDesiredEnvironment.width,
                                                             theOriginalDesiredEnvironment.height,
-                                                            *m_context->getRenderContext(),
+                                                            *m_context->renderContext(),
                                                             theDesiredEnvironment.width,
                                                             theDesiredEnvironment.height,
                                                             theDesiredEnvironment.format,
@@ -337,7 +337,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
     QDemonOffscreenRenderResult getRenderedItem(const QDemonOffscreenRendererKey &inKey) override
     {
         TRendererMap::iterator theRenderer = m_renderers.find(inKey);
-        QVector2D thePresScaleFactor = m_context->getPresentationScaleFactor();
+        QVector2D thePresScaleFactor = m_context->presentationScaleFactor();
         if (theRenderer != m_renderers.end() && theRenderer.value().rendering == false) {
             QDemonRendererData &theData = theRenderer.value();
             QDemonScopedRenderDataRenderMarker __renderMarker(theData);
@@ -357,8 +357,8 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             }
 
             QRect theViewport(0, 0, theDesiredEnvironment.width, theDesiredEnvironment.height);
-            auto theRenderList = m_context->getRenderList();
-            auto theContext = m_context->getRenderContext();
+            auto theRenderList = m_context->renderList();
+            auto theContext = m_context->renderContext();
             // This happens here because if there are any fancy render steps
             QDemonRenderListScopedProperty<bool> scissor(*theRenderList,
                                                          &QDemonRenderListInterface::isScissorTestEnabled,
@@ -378,7 +378,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                                                     &QDemonRenderContext::setViewport,
                                                                     theViewport);
 
-            quint32 taskId = m_context->getRenderList()->addRenderTask(
+            quint32 taskId = m_context->renderList()->addRenderTask(
                     QDemonRef<QDemonOffscreenRunnable>(new QDemonOffscreenRunnable(*this, theData, theDesiredEnvironment)));
 
             QDemonOffscreenRenderFlags theFlags = theData.renderer->needsRender(theDesiredEnvironment, thePresScaleFactor, this);
@@ -387,7 +387,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             if (theData.texture) {
                 // Quick-out if the renderer doesn't need to render itself.
                 if (theData.hasChangedSinceLastFrame == false) {
-                    m_context->getRenderList()->discardRenderTask(taskId);
+                    m_context->renderList()->discardRenderTask(taskId);
                     return theData;
                 }
             } else

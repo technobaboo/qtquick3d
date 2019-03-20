@@ -49,7 +49,7 @@ struct QDemonSubPresentationHelper
 
     QDemonSubPresentationHelper(QDemonRenderContextInterface *inContext, const QSize &inPresDimensions)
         : m_renderContext(inContext)
-        , m_previousPresentationDimensions(inContext->getCurrentPresentationDimensions())
+        , m_previousPresentationDimensions(inContext->currentPresentationDimensions())
         , m_wasInSubPresentation(inContext->isInSubPresentation())
     {
         m_renderContext->setInSubPresentation(true);

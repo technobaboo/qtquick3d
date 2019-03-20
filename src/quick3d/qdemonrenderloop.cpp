@@ -230,7 +230,7 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
 
     if (!qgetenv("QUICK3D_GPUPROFILER").isEmpty()) {
         m_enableGpuProfiling = true;
-        m_sgContext->getRenderer()->enableLayerGpuProfiling(true);
+        m_sgContext->renderer()->enableLayerGpuProfiling(true);
     }
 }
 
@@ -343,7 +343,7 @@ void QDemonGuiThreadRenderLoop::renderWindow(QDemonWindow *window)
         cd->fireFrameSwapped();
     }
     if (m_enableGpuProfiling)
-        m_sgContext->getRenderer()->dumpGpuProfilerStats();
+        m_sgContext->renderer()->dumpGpuProfilerStats();
 
     // Might have been set during syncSceneGraph()
     if (data.updatePending)

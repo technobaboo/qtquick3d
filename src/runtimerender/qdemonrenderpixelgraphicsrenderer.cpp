@@ -96,8 +96,8 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
     QDemonPixelGraphicsRenderer(QDemonRenderContextInterface *ctx)
         : m_renderContext(ctx)
-        , m_vertexGenerator(m_renderContext->getRenderContext()->renderContextType())
-        , m_fragmentGenerator(m_vertexGenerator, m_renderContext->getRenderContext()->renderContextType())
+        , m_vertexGenerator(m_renderContext->renderContext()->renderContextType())
+        , m_fragmentGenerator(m_vertexGenerator, m_renderContext->renderContext()->renderContextType())
     {
     }
 
@@ -126,7 +126,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
             m_fragmentGenerator.buildShaderSource();
 
             m_rectShader.setShader(
-                    m_renderContext->getShaderCache()->compileProgram("PixelRectShader",
+                    m_renderContext->shaderCache()->compileProgram("PixelRectShader",
                                                                       m_vertexGenerator.m_finalShaderBuilder.constData(),
                                                                       m_fragmentGenerator.m_finalShaderBuilder.constData(),
                                                                       nullptr, // no tess control shader
@@ -138,7 +138,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
     }
     void generateXYQuad()
     {
-        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
+        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
 
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 2),
@@ -185,11 +185,11 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         generateXYQuad();
         getRectShaderProgram();
         if (m_rectShader) {
-            m_renderContext->getRenderContext()->setActiveShader(m_rectShader.rectShader);
+            m_renderContext->renderContext()->setActiveShader(m_rectShader.rectShader);
             m_rectShader.apply(inProjection, inObject);
 
-            m_renderContext->getRenderContext()->setInputAssembler(m_quadInputAssembler);
-            m_renderContext->getRenderContext()->draw(QDemonRenderDrawMode::Triangles, m_quadInputAssembler->indexCount(), 0);
+            m_renderContext->renderContext()->setInputAssembler(m_quadInputAssembler);
+            m_renderContext->renderContext()->draw(QDemonRenderDrawMode::Triangles, m_quadInputAssembler->indexCount(), 0);
         }
     }
 
@@ -220,7 +220,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
     void render(const QVector<QDemonPGGraphObject *> &inObjects) override
     {
-        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
+        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
         theRenderContext->pushPropertySet();
         // Setup an orthographic camera that places the center at the
         // lower left of the viewport.

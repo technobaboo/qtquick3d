@@ -68,7 +68,7 @@ QDemonOffscreenRenderFlags QDemonSubPresentationRenderer::needsRender(const QDem
                                                                       const QDemonRenderInstanceId instanceId)
 {
     bool hasTransparency = m_presentation->scene->useClearColor ? false : true;
-    QRect theViewportSize(m_renderContext->getRenderList()->getViewport());
+    QRect theViewportSize(m_renderContext->renderList()->getViewport());
     bool wasDirty = m_presentation->scene->prepareForRender(QVector2D((float)theViewportSize.width(),
                                                                       (float)theViewportSize.height()),
                                                             m_renderContext,
@@ -118,7 +118,7 @@ QDemonRenderPickResult QDemonSubPresentationRenderer::doGraphQueryPick(const QVe
     QDemonRenderPickResult thePickResult;
 
     if (m_presentation->scene && m_presentation->scene->firstChild) {
-        thePickResult = m_renderContext->getRenderer()->pick(*m_presentation->scene->firstChild,
+        thePickResult = m_renderContext->renderer()->pick(*m_presentation->scene->firstChild,
                                                              inViewportDimensions,
                                                              QVector2D(inMouseCoords.x(), inMouseCoords.y()),
                                                              true,

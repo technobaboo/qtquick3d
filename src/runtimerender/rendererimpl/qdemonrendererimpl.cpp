@@ -87,11 +87,11 @@ static QDemonRenderInstanceId combineLayerAndId(const QDemonRenderLayer *layer, 
 
 QDemonRendererImpl::QDemonRendererImpl(const QDemonRef<QDemonRenderContextInterface> &ctx)
     : m_demonContext(ctx)
-    , m_context(ctx->getRenderContext())
-    , m_bufferManager(ctx->getBufferManager())
-    , m_offscreenRenderManager(ctx->getOffscreenRenderManager())
+    , m_context(ctx->renderContext())
+    , m_bufferManager(ctx->bufferManager())
+    , m_offscreenRenderManager(ctx->offscreenRenderManager())
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    , m_layerBlendTexture(ctx->getResourceManager())
+    , m_layerBlendTexture(ctx->resourceManager())
     , m_blendFb(nullptr)
 #endif
     , m_currentLayer(nullptr)
@@ -187,7 +187,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
 
     buildRenderableLayers(inLayer, renderableLayers, inRenderSiblings);
 
-    QDemonRef<QDemonRenderContext> theRenderContext(m_demonContext->getRenderContext());
+    QDemonRef<QDemonRenderContext> theRenderContext(m_demonContext->renderContext());
     QDemonRef<QDemonRenderFrameBuffer> theFB = theRenderContext->renderTarget();
     auto iter = renderableLayers.rbegin();
     const auto end = renderableLayers.rend();
@@ -388,10 +388,10 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
 
 void QDemonRendererImpl::setupWidgetLayer()
 {
-    QDemonRef<QDemonRenderContext> theContext = m_demonContext->getRenderContext();
+    QDemonRef<QDemonRenderContext> theContext = m_demonContext->renderContext();
 
     if (!m_widgetTexture) {
-        QDemonRef<QDemonResourceManagerInterface> theManager = m_demonContext->getResourceManager();
+        QDemonRef<QDemonResourceManagerInterface> theManager = m_demonContext->resourceManager();
         m_widgetTexture = theManager->allocateTexture2D(m_beginFrameViewport.width(),
                                                         m_beginFrameViewport.height(),
                                                         QDemonRenderTextureFormat::RGBA8);
@@ -419,7 +419,7 @@ void QDemonRendererImpl::beginFrame()
     for (quint32 idx = 0, end = m_lastFrameLayers.size(); idx < end; ++idx)
         m_lastFrameLayers[idx]->resetForFrame();
     m_lastFrameLayers.clear();
-    m_beginFrameViewport = m_demonContext->getRenderList()->getViewport();
+    m_beginFrameViewport = m_demonContext->renderList()->getViewport();
 }
 void QDemonRendererImpl::endFrame()
 {
@@ -450,7 +450,7 @@ void QDemonRendererImpl::endFrame()
         theCamera.calculateViewProjectionMatrix(theViewProj);
         renderQuad(theTextureDims, theViewProj, *m_widgetTexture);
 
-        QDemonRef<QDemonResourceManagerInterface> theManager(m_demonContext->getResourceManager());
+        QDemonRef<QDemonResourceManagerInterface> theManager(m_demonContext->resourceManager());
         theManager->release(m_widgetFbo);
         theManager->release(m_widgetTexture);
         m_widgetTexture = nullptr;
@@ -536,7 +536,7 @@ QDemonPickResultProcessResult QDemonRendererImpl::processPickResultList(bool inP
     quint32 numToCopy = (quint32)m_lastPickResults.size();
     quint32 numCopyBytes = numToCopy * sizeof(QDemonRenderPickResult);
     QDemonRenderPickResult *thePickResults = reinterpret_cast<QDemonRenderPickResult *>(
-            m_demonContext->getPerFrameAllocator().allocate(numCopyBytes));
+            m_demonContext->perFrameAllocator().allocate(numCopyBytes));
     ::memcpy(thePickResults, m_lastPickResults.data(), numCopyBytes);
     m_lastPickResults.clear();
     bool foundValidResult = false;
@@ -691,8 +691,8 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonRenderNode &inNod
                 Q_ASSERT(false);
                 return QDemonEmpty();
             }
-            QDemonBounds3 theModelBounds = theParentModel->getBounds(demonContext()->getBufferManager(),
-                                                                     demonContext()->getPathManager(),
+            QDemonBounds3 theModelBounds = theParentModel->getBounds(demonContext()->bufferManager(),
+                                                                     demonContext()->pathManager(),
                                                                      false);
 
             if (theModelBounds.isEmpty()) {
@@ -743,7 +743,7 @@ QVector3D QDemonRendererImpl::unprojectToPosition(QDemonRenderNode &inNode, QVec
         return QVector3D(0, 0, 0);
     } // Q_ASSERT( false ); return QVector3D(0,0,0); }
 
-    QSize theWindow = m_demonContext->getWindowDimensions();
+    QSize theWindow = m_demonContext->windowDimensions();
     QVector2D theDims((float)theWindow.width(), (float)theWindow.height());
 
     QDemonLayerRenderPreparationResult &thePrepResult(*theData->layerPrepResult);
@@ -765,7 +765,7 @@ QVector3D QDemonRendererImpl::unprojectWithDepth(QDemonRenderNode &inNode, QVect
     float theDepth = inMouseVec.z();
 
     QDemonLayerRenderPreparationResult &thePrepResult(*theData->layerPrepResult);
-    QSize theWindow = m_demonContext->getWindowDimensions();
+    QSize theWindow = m_demonContext->windowDimensions();
     QDemonRenderRay theRay = thePrepResult.pickRay(theMouse, QVector2D((float)theWindow.width(), (float)theWindow.height()), true);
     QVector3D theTargetPosition = theRay.origin + theRay.direction * theDepth;
     if (inNode.parent != nullptr && inNode.parent->type != QDemonRenderGraphObject::Type::Layer)
@@ -807,7 +807,7 @@ QVector3D QDemonRendererImpl::projectPosition(QDemonRenderNode &inNode, const QV
     mouseVec.setY(mouseVec.y() + theViewport.y());
 
     // Flip the y into window coordinates so it matches the mouse.
-    QSize theWindow = m_demonContext->getWindowDimensions();
+    QSize theWindow = m_demonContext->windowDimensions();
     mouseVec.setY(theWindow.height() - mouseVec.y());
 
     return mouseVec;
@@ -822,7 +822,7 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonR
         Q_ASSERT(false);
         return QDemonEmpty();
     }
-    QSize theWindow = m_demonContext->getWindowDimensions();
+    QSize theWindow = m_demonContext->windowDimensions();
     QVector2D theDims((float)theWindow.width(), (float)theWindow.height());
     // The mouse is relative to the layer
     QDemonOption<QVector2D> theLocalMouse = getLayerMouseCoords(*theData, inMouseCoords, theDims, false);
@@ -1498,7 +1498,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::compileAndStoreShader(c
 
 QDemonRef<QDemonShaderProgramGeneratorInterface> QDemonRendererImpl::getProgramGenerator()
 {
-    return m_demonContext->getShaderProgramGenerator();
+    return m_demonContext->shaderProgramGenerator();
 }
 
 void QDemonRendererImpl::dumpGpuProfilerStats()

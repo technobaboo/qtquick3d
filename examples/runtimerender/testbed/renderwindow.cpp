@@ -208,7 +208,7 @@ void RenderWindow::drawFrame(qint64 delta)
     m_renderContext->resetBlendState();
 
     // Render the first presentation (QDemonRenderPresentation)
-    auto lastRenderViewport = m_context->getRenderList()->getViewport();
+    auto lastRenderViewport = m_context->renderList()->getViewport();
     if (m_presentation && m_presentation->scene) {
         QRect theViewportSize(lastRenderViewport);
         m_presentation->scene->prepareForRender(QVector2D(theViewportSize.width(), theViewportSize.height()), m_context.data());

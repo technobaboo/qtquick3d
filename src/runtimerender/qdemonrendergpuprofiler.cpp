@@ -154,7 +154,7 @@ void QDemonRenderGPUProfiler::startTimer(QString &nameID, bool absoluteTime, boo
             theGpuTimerData->addSync();
 
         theGpuTimerData->m_absoluteTime = absoluteTime;
-        theGpuTimerData->startTimerQuery(m_context->getFrameCount());
+        theGpuTimerData->startTimerQuery(m_context->frameCount());
     }
 }
 
@@ -173,7 +173,7 @@ double QDemonRenderGPUProfiler::elapsed(const QString &nameID) const
     QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getGpuTimerInfo(nameID);
 
     if (theGpuTimerData) {
-        time = theGpuTimerData->elapsedTimeInMs(m_context->getFrameCount());
+        time = theGpuTimerData->elapsedTimeInMs(m_context->frameCount());
     }
 
     return time;

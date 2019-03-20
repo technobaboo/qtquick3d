@@ -1296,7 +1296,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             m_fragShader.append(inProgramSource);
         }
 
-        QDemonRef<QDemonShaderCacheInterface> theShaderCache = m_context->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theShaderCache = m_context->shaderCache();
 
         QByteArray theKey = getShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
         if (inForceCompilation) {
@@ -1331,7 +1331,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
         // TODO: This looks funky (if found)...
         if (found || inForceCompilation) {
-            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()
+            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->shaderCache()
                                                                       ->getProgram(getShaderCacheKey(inPath.toLocal8Bit(),
                                                                                                      inProgramMacro.toLocal8Bit(),
                                                                                                      inFlags),
@@ -1348,11 +1348,11 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 } else {
                     QByteArray theShaderBuffer;
                     const char *shaderVersionStr = "#version 430\n";
-                    if (m_context->getRenderContext()->renderContextType() == QDemonRenderContextType::GLES3PLUS)
+                    if (m_context->renderContext()->renderContextType() == QDemonRenderContextType::GLES3PLUS)
                         shaderVersionStr = "#version 310 es\n";
                     theShaderBuffer = doLoadShader(inPath);
                     theShaderBuffer.insert(0, shaderVersionStr);
-                    theProgram = m_context->getRenderContext()->compileComputeSource(inPath.toLocal8Bit(),
+                    theProgram = m_context->renderContext()->compileComputeSource(inPath.toLocal8Bit(),
                                                                                      toByteView(theShaderBuffer)).m_shader;
                 }
             }
@@ -1381,7 +1381,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         auto theInserter = m_shaderMap.find(shaderMapKey);
         const bool found = theInserter != m_shaderMap.end();
         if (found) {
-            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()
+            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->shaderCache()
                                                                       ->getProgram(getShaderCacheKey(inPath.toLocal8Bit(),
                                                                                                      theProgramMacro.toLocal8Bit(),
                                                                                                      theFlags),
@@ -1389,9 +1389,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             dynamic::QDemonDynamicShaderProgramFlags flags(theFlags);
             if (!theProgram) {
                 QString geomSource = doLoadShader(inPath);
-                QDemonShaderVertexCodeGenerator vertexShader(m_context->getRenderContext()->renderContextType());
+                QDemonShaderVertexCodeGenerator vertexShader(m_context->renderContext()->renderContextType());
                 QDemonShaderFragmentCodeGenerator fragmentShader(vertexShader,
-                                                                 m_context->getRenderContext()->renderContextType());
+                                                                 m_context->renderContext()->renderContextType());
 
                 vertexShader.addAttribute("attr_pos", "vec3");
                 vertexShader.addUniform("model_view_projection", "mat4");

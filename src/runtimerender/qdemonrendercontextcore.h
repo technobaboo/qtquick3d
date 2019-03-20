@@ -175,58 +175,58 @@ private:
     BeginFrameResult m_beginFrameResult;
 
     QPair<QRect, QRect> getPresentationViewportAndOuterViewport() const;
-    QRect getPresentationViewport(const QRect &inViewerViewport, ScaleModes inScaleToFit, const QSize &inPresDimensions) const;
+    QRect presentationViewport(const QRect &inViewerViewport, ScaleModes inScaleToFit, const QSize &inPresDimensions) const;
     void setupRenderTarget();
     void teardownRenderTarget();
 
 public:
     QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, QDemonRenderContextCore *inCore, const char *inApplicationDirectory);
     ~QDemonRenderContextInterface();
-    QDemonRef<QDemonRendererInterface> getRenderer();
-    QDemonRef<QDemonRendererImpl> getRenderWidgetContext();
-    QDemonRef<QDemonBufferManager> getBufferManager();
-    QDemonRef<QDemonResourceManagerInterface> getResourceManager();
-    QDemonRef<QDemonRenderContext> getRenderContext();
-    QDemonRef<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager();
-    QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory();
-    QDemonRef<QDemonEffectSystemInterface> getEffectSystem();
-    QDemonRef<QDemonShaderCacheInterface> getShaderCache();
-    QDemonRef<QDemonAbstractThreadPool> getThreadPool();
-    QDemonRef<IImageBatchLoader> getImageBatchLoader();
+    QDemonRef<QDemonRendererInterface> renderer();
+    QDemonRef<QDemonRendererImpl> renderWidgetContext();
+    QDemonRef<QDemonBufferManager> bufferManager();
+    QDemonRef<QDemonResourceManagerInterface> resourceManager();
+    QDemonRef<QDemonRenderContext> renderContext();
+    QDemonRef<QDemonOffscreenRenderManagerInterface> offscreenRenderManager();
+    QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory();
+    QDemonRef<QDemonEffectSystemInterface> effectSystem();
+    QDemonRef<QDemonShaderCacheInterface> shaderCache();
+    QDemonRef<QDemonAbstractThreadPool> threadPool();
+    QDemonRef<IImageBatchLoader> imageBatchLoader();
     QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem();
-    QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem();
-    QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer();
-    QDemonPerfTimer *performanceTimer();
-    QDemonRef<QDemonRenderListInterface> getRenderList();
-    QDemonRef<QDemonPathManagerInterface> getPathManager();
-    QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator();
-    QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator();
-    QDemonRef<QDemonMaterialShaderGeneratorInterface> getCustomMaterialShaderGenerator();
+    QDemonRef<QDemonMaterialSystem> customMaterialSystem();
+    QDemonRef<QDemonPixelGraphicsRendererInterface> pixelGraphicsRenderer();
+    QDemonPerfTimer *performanceTimer() { return m_perfTimer; }
+    QDemonRef<QDemonRenderListInterface> renderList();
+    QDemonRef<QDemonPathManagerInterface> pathManager();
+    QDemonRef<QDemonShaderProgramGeneratorInterface> shaderProgramGenerator();
+    QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> defaultMaterialShaderGenerator();
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> customMaterialShaderGenerator();
     // The memory used for the per frame allocator is released as the first step in BeginFrame.
     // This is useful for short lived objects and datastructures.
-    QDemonPerFrameAllocator &getPerFrameAllocator();
+    QDemonPerFrameAllocator &perFrameAllocator() { return m_perFrameAllocator; }
 
     // Get the number of times EndFrame has been called
-    quint32 getFrameCount();
+    quint32 frameCount() { return m_frameCount; }
 
     // Get fps
-    QPair<float, int> getFPS();
+    QPair<float, int> getFPS() { return m_fps; }
     // Set fps by higher level, etc application
-    void setFPS(QPair<float, int> inFPS);
+    void setFPS(QPair<float, int> inFPS) { m_fps = inFPS; }
 
     // Currently there are a few things that need to work differently
     // in authoring mode vs. runtime.  The particle effects, for instance
     // need to be framerate-independent at runtime but framerate-dependent during
     // authoring time assuming virtual 16 ms frames.
     // Defaults to falst.
-    bool isAuthoringMode();
-    void setAuthoringMode(bool inMode);
+    bool isAuthoringMode() { return m_authoringMode; }
+    void setAuthoringMode(bool inMode) { m_authoringMode = inMode; }
 
     // Sub presentations change the rendering somewhat.
-    bool isInSubPresentation();
-    void setInSubPresentation(bool inValue);
-    void setSceneColor(QDemonOption<QVector4D> inSceneColor);
-    void setMatteColor(QDemonOption<QVector4D> inMatteColor);
+    bool isInSubPresentation() { return m_isInSubPresentation; }
+    void setInSubPresentation(bool inValue) { m_isInSubPresentation = inValue; }
+    void setSceneColor(QDemonOption<QVector4D> inSceneColor) { m_sceneColor = inSceneColor; }
+    void setMatteColor(QDemonOption<QVector4D> inMatteColor) { m_matteColor = inMatteColor; }
 
     // render Gpu profiler values
     void dumpGpuProfilerStats();
@@ -235,40 +235,43 @@ public:
     // needs to be inverted
     // which requires the window height, and then the rest of the system really requires the
     // viewport.
-    void setWindowDimensions(const QSize &inWindowDimensions);
-    QSize getWindowDimensions();
+    void setWindowDimensions(const QSize &inWindowDimensions) { m_windowDimensions = inWindowDimensions; }
+    QSize windowDimensions() { return m_windowDimensions; }
 
     // In addition to the window dimensions which really have to be set, you can optionally
     // set the viewport which will force the entire viewer to render specifically to this
     // viewport.
-    void setViewport(QDemonOption<QRect> inViewport);
-    QDemonOption<QRect> getViewport() const;
-    QRect getContextViewport() const;
+    void setViewport(QDemonOption<QRect> inViewport) { m_viewport = inViewport; }
+    QDemonOption<QRect> viewport() const { return m_viewport; }
+    QRect contextViewport() const;
     // Only valid between calls to Begin,End.
-    QRect getPresentationViewport() const;
+    QRect presentationViewport() const;
 
-    void setScaleMode(ScaleModes inMode);
-    ScaleModes getScaleMode();
+    void setScaleMode(ScaleModes inMode) { m_scaleMode = inMode; }
+    ScaleModes scaleMode() { return m_scaleMode; }
 
-    void setWireframeMode(bool inEnable);
-    bool getWireframeMode();
+    void setWireframeMode(bool inEnable) { m_wireframeMode = inEnable; }
+    bool wireframeMode() { return m_wireframeMode; }
 
     // Return the viewport the system is using to render data to.  This gives the the dimensions
     // of the rendered system.  It is dependent on but not equal to the viewport.
-    QRectF getDisplayViewport() const;
+    QRectF displayViewport() const { return getPresentationViewportAndOuterViewport().first; }
 
     // Layers require the current presentation dimensions in order to render.
-    void setPresentationDimensions(const QSize &inPresentationDimensions);
-    QSize getCurrentPresentationDimensions() const;
+    void setPresentationDimensions(const QSize &inPresentationDimensions)
+    {
+        m_presentationDimensions = inPresentationDimensions;
+    }
+    QSize currentPresentationDimensions() const { return m_presentationDimensions; }
 
-    void setRenderRotation(RenderRotationValues inRotation);
-    RenderRotationValues getRenderRotation() const;
+    void setRenderRotation(RenderRotationValues inRotation) { m_rotation = inRotation; }
+    RenderRotationValues renderRotation() const { return m_rotation; }
 
-    QVector2D getMousePickViewport() const;
-    QVector2D getMousePickMouseCoords(const QVector2D &inMouseCoords) const;
+    QVector2D mousePickViewport() const;
+    QVector2D mousePickMouseCoords(const QVector2D &inMouseCoords) const;
 
     // Valid during and just after prepare for render.
-    QVector2D getPresentationScaleFactor() const;
+    QVector2D presentationScaleFactor() const { return m_presentationScale; }
 
     // Steps needed to render:
     // 1.  BeginFrame - sets up new target in render graph

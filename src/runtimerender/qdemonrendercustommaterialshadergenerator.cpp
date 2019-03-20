@@ -355,7 +355,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     ///< get the light constant buffer and generate if necessary
     QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(const char *name, quint32 inLightCount)
     {
-        QDemonRef<QDemonRenderContext> theContext(m_renderContext->getRenderContext());
+        QDemonRef<QDemonRenderContext> theContext(m_renderContext->renderContext());
 
         // we assume constant buffer support
         Q_ASSERT(theContext->supportsConstantBuffer());
@@ -411,7 +411,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             inserter = m_programToShaderMap.insert(inProgram,
                                                    QDemonRef<QDemonShaderGeneratorGeneratedShader>(
                                                            new QDemonShaderGeneratorGeneratedShader(inProgram,
-                                                                                                    m_renderContext->getRenderContext())));
+                                                                                                    m_renderContext->renderContext())));
 
         return inserter.value();
     }
@@ -483,7 +483,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                              const QDemonRef<QDemonRenderShadowMap> &inShadowMaps)
     {
         QDemonRef<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
-        m_renderContext->getRenderContext()->setActiveShader(inProgram);
+        m_renderContext->renderContext()->setActiveShader(inProgram);
 
         QDemonRenderCamera &theCamera(inCamera);
 
@@ -507,7 +507,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         // this call setup the constant buffer for ambient occlusion and shadow
         theShader->m_aoShadowParams.set();
 
-        if (m_renderContext->getRenderContext()->supportsConstantBuffer()) {
+        if (m_renderContext->renderContext()->supportsConstantBuffer()) {
             QDemonRef<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer("cbBufferLights", inLights.size());
             QDemonRef<QDemonRenderConstantBuffer> pAreaLightCb = getLightConstantBuffer("cbBufferAreaLights", inLights.size());
 
@@ -634,7 +634,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                float inProbe2Fade,
                                float inProbeFOV)
     {
-        QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
+        QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->customMaterialSystem());
         QDemonRef<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
 
         theShader->m_viewProjMatrix.set(inModelViewProjection);
@@ -927,7 +927,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
         QByteArray srcString(fragSource);
 
-        if (m_renderContext->getRenderContext()->renderContextType() == QDemonRenderContextType::GLES2) {
+        if (m_renderContext->renderContext()->renderContextType() == QDemonRenderContextType::GLES2) {
             QString::size_type pos = 0;
             while ((pos = srcString.indexOf("out vec4 fragColor", pos)) != -1) {
                 srcString.insert(pos, "//");
@@ -1030,7 +1030,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                   "    rgba = mix( vec4(0.0, 1.0, 0.0, 1.0), rgba, mixVal);");
         }
         fragmentShader << "  rgba.a *= object_opacity;\n";
-        if (m_renderContext->getRenderContext()->renderContextType() == QDemonRenderContextType::GLES2)
+        if (m_renderContext->renderContext()->renderContextType() == QDemonRenderContextType::GLES2)
             fragmentShader << "  gl_FragColor = rgba;\n";
         else
             fragmentShader << "  fragColor = rgba;\n";

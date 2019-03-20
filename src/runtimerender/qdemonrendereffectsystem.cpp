@@ -777,7 +777,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
         if (theDataBuffer == nullptr) {
             QDemonEffectContext &theContext(getEffectContext(inEffect));
-            auto theRenderContext(m_context->getRenderContext());
+            auto theRenderContext(m_context->renderContext());
             quint8 *initialData = (quint8 *)::malloc(theBufferSize);
             QDemonByteRef data((quint8 *)initialData, theBufferSize);
             memset(initialData, 0x0L, theBufferSize);
@@ -866,7 +866,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (theTexture) {
             QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(*theTexture, outMVP);
             QDemonTextureDetails theDetails(theTexture->textureDetails());
-            m_context->getRenderContext()->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
+            m_context->renderContext()->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
             outDestSize = QVector2D((float)theDetails.width, (float)theDetails.height);
         }
 
@@ -901,7 +901,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 theInsertResult.value() = QDemonRef<QDemonEffectShader>(new QDemonEffectShader(theProgram));
         }
         if (theInsertResult.value()) {
-            auto theContext(m_context->getRenderContext());
+            auto theContext(m_context->renderContext());
             theContext->setActiveShader(theInsertResult.value()->m_shader);
         }
 
@@ -922,8 +922,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                     // TODO:
                     //                    StaticAssert<sizeof(QString) == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
                     QString theStrPtr = QString::fromLatin1(reinterpret_cast<char *>(inDataPtr));
-                    auto theBufferManager(m_context->getBufferManager());
-                    auto theOffscreenRenderer = m_context->getOffscreenRenderManager();
+                    auto theBufferManager(m_context->bufferManager());
+                    auto theOffscreenRenderer = m_context->offscreenRenderManager();
                     bool needsAlphaMultiply = true;
                     QDemonRef<QDemonRenderTexture2D> theTexture;
                     if (!theStrPtr.isEmpty()) {
@@ -1094,7 +1094,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     bool applyBlending(const QDemonApplyBlending &inCommand)
     {
-        auto theContext(m_context->getRenderContext());
+        auto theContext(m_context->renderContext());
 
         theContext->setBlendingEnabled(true);
 
@@ -1126,7 +1126,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 if (bufferIdx < theContext.m_allocatedBuffers.size()) {
                     QDemonAllocatedBufferEntry &theEntry(theContext.m_allocatedBuffers[bufferIdx]);
                     if (theEntry.needsClear) {
-                        auto theRenderContext(m_context->getRenderContext());
+                        auto theRenderContext(m_context->renderContext());
 
                         theRenderContext->setRenderTarget(theEntry.frameBuffer);
                         // Note that depth/stencil buffers need an explicit clear in their bind
@@ -1298,7 +1298,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                const QDemonRef<QDemonRenderTexture2D> &inDepthStencilTexture,
                                const QDemonApplyRenderState &theCommand)
     {
-        auto theContext(m_context->getRenderContext());
+        auto theContext(m_context->renderContext());
         bool inEnable = theCommand.m_enabled;
 
         switch (theCommand.m_renderState) {
@@ -1338,7 +1338,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                     QDemonOption<QDemonDepthStencil> inDepthStencilCommand,
                     bool drawIndirect)
     {
-        auto theContext(m_context->getRenderContext());
+        auto theContext(m_context->renderContext());
         theContext->setRenderTarget(inFrameBuffer);
         if (inDepthStencil && inFrameBuffer) {
             inFrameBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, inDepthStencil);
@@ -1392,16 +1392,16 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         inShader.m_fragColorAlphaSettings.set(QVector2D(1.0f, 0.0f));
         inShader.m_destSize.set(inDestSize);
         if (inShader.m_appFrame.isValid())
-            inShader.m_appFrame.set((float)m_context->getFrameCount());
+            inShader.m_appFrame.set((float)m_context->frameCount());
         if (inShader.m_fps.isValid())
             inShader.m_fps.set((float)m_context->getFPS().first);
         if (inShader.m_cameraClipRange.isValid())
             inShader.m_cameraClipRange.set(inCameraClipRange);
 
         if (!drawIndirect)
-            m_context->getRenderer()->renderQuad();
+            m_context->renderer()->renderQuad();
         else
-            m_context->getRenderer()->renderPointsIndirect();
+            m_context->renderer()->renderPointsIndirect();
 
         if (inDepthStencil && inFrameBuffer) {
             inFrameBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
@@ -1421,7 +1421,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     {
         // Run through the effect commands and render the effect.
         // QDemonRenderTexture2D* theCurrentTexture(&inSourceTexture);
-        auto theContext = m_context->getRenderContext();
+        auto theContext = m_context->renderContext();
 
         // Context variables that are updated during the course of a pass.
         QDemonEffectTextureData theCurrentSourceTexture(inSourceTexture, false);
@@ -1492,7 +1492,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                     break;
 
                 case CommandType::BindTarget: {
-                    m_context->getRenderContext()->setRenderTarget(inTarget);
+                    m_context->renderContext()->setRenderTarget(inTarget);
                     theCurrentRenderTarget = inTarget;
                     theMVP = inMVP;
                     theContext->setViewport(theOriginalViewport);
@@ -1629,8 +1629,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         QMatrix4x4 theMVP;
         QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(*inRenderArgument.m_colorBuffer, theMVP);
         // setup a render target
-        auto theContext(m_context->getRenderContext());
-        auto theManager(m_context->getResourceManager());
+        auto theContext(m_context->renderContext());
+        auto theManager(m_context->resourceManager());
         QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
                                                                                             &QDemonRenderContext::renderTarget,
                                                                                             &QDemonRenderContext::setRenderTarget);
@@ -1660,7 +1660,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                        theClass,
                        inRenderArgument.m_colorBuffer,
                        theMVP,
-                       m_context->getRenderContext()->renderTarget(),
+                       m_context->renderContext()->renderTarget(),
                        false,
                        inRenderArgument.m_depthTexture,
                        inRenderArgument.m_depthStencilBuffer,
@@ -1684,7 +1684,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                        theClass,
                        inRenderArgument.m_colorBuffer,
                        inMVP,
-                       m_context->getRenderContext()->renderTarget(),
+                       m_context->renderContext()->renderTarget(),
                        inEnableBlendWhenRenderToTarget,
                        inRenderArgument.m_depthTexture,
                        inRenderArgument.m_depthStencilBuffer,
@@ -1773,7 +1773,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     {
         m_context = context;
 
-        auto theContext(m_context->getRenderContext());
+        auto theContext(m_context->renderContext());
 
         m_resourceManager = QDemonResourceManagerInterface::createResourceManager(theContext);
 

@@ -616,7 +616,7 @@ void QDemonWindowPrivate::renderSceneGraph(const QSize &size)
     context->beginFrame();
     windowManager->renderContext()->resetBlendState();
 
-    auto lastRenderViewport = context->getRenderList()->getViewport();
+    auto lastRenderViewport = context->renderList()->getViewport();
     if (m_presentation && m_presentation->scene) {
         QRect theViewportSize(lastRenderViewport);
         m_presentation->scene->prepareForRender(QVector2D(theViewportSize.width(), theViewportSize.height()), context);

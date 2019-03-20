@@ -667,7 +667,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     {
         QDemonRenderContextTypes deprecatedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
 
-        if (!(deprecatedContextFlags & m_renderContext->getRenderContext()->renderContextType())) {
+        if (!(deprecatedContextFlags & m_renderContext->renderContext()->renderContextType())) {
             switch (swizzleMode) {
             case QDemonRenderTextureSwizzleMode::L8toR8:
             case QDemonRenderTextureSwizzleMode::L16toR16:
@@ -691,7 +691,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     ///< get the light constant buffer and generate if necessary
     QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(quint32 inLightCount)
     {
-        QDemonRef<QDemonRenderContext> theContext(m_renderContext->getRenderContext());
+        QDemonRef<QDemonRenderContext> theContext(m_renderContext->renderContext());
 
         // we assume constant buffer support
         Q_ASSERT(theContext->supportsConstantBuffer());
@@ -828,7 +828,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         quint32 lightmapRadiosityImageIdx = 0;
         QDemonRenderableImage *lightmapShadowImage = nullptr;
         quint32 lightmapShadowImageIdx = 0;
-        const bool supportStandardDerivatives = m_renderContext->getRenderContext()->supportsStandardDerivatives();
+        const bool supportStandardDerivatives = m_renderContext->renderContext()->supportsStandardDerivatives();
 
         for (QDemonRenderableImage *img = m_firstImage; img != nullptr; img = img->m_nextImage, ++imageIdx) {
             hasSpecMap = img->m_mapType == QDemonImageMapTypes::Specular;
@@ -1383,7 +1383,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         QDemonShaderDefaultMaterialKey theKey(key());
         theKey.toString(generatedShaderString, m_defaultMaterialShaderKeyProperties);
 
-        m_lightsAsSeparateUniforms = !m_renderContext->getRenderContext()->supportsConstantBuffer();
+        m_lightsAsSeparateUniforms = !m_renderContext->renderContext()->supportsConstantBuffer();
 
         generateVertexShader();
         generateFragmentShader(theKey);
@@ -1423,7 +1423,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             inserter = m_programToShaderMap.insert(inProgram,
                                                    QDemonRef<QDemonShaderGeneratorGeneratedShader>(
                                                            new QDemonShaderGeneratorGeneratedShader(inProgram,
-                                                                                                    m_renderContext->getRenderContext())));
+                                                                                                    m_renderContext->renderContext())));
 
         return inserter.value();
     }
@@ -1437,7 +1437,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                              const QDemonRef<QDemonRenderShadowMap> &inShadowMapManager)
     {
         QDemonRef<QDemonShaderGeneratorGeneratedShader> shader(getShaderForProgram(inProgram));
-        m_renderContext->getRenderContext()->setActiveShader(inProgram);
+        m_renderContext->renderContext()->setActiveShader(inProgram);
 
         m_shadowMapManager = inShadowMapManager;
 
@@ -1553,7 +1553,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                float inProbeFOV)
     {
 
-        QDemonRef<QDemonRenderContext> context(m_renderContext->getRenderContext());
+        QDemonRef<QDemonRenderContext> context(m_renderContext->renderContext());
         QDemonRef<QDemonShaderGeneratorGeneratedShader> shader(getShaderForProgram(inProgram));
         shader->m_mvp.set(inModelViewProjection);
         shader->m_normalMatrix.set(inNormalMatrix);

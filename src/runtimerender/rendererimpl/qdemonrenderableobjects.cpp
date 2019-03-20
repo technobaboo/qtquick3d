@@ -226,7 +226,7 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderF
 
     context->setActiveShader(shader->shader);
 
-    generator->demonContext()->getDefaultMaterialShaderGenerator()->setMaterialProperties(shader->shader,
+    generator->demonContext()->defaultMaterialShaderGenerator()->setMaterialProperties(shader->shader,
                                                                                              material,
                                                                                              inCameraVec,
                                                                                              modelContext.modelViewProjection,
@@ -330,7 +330,7 @@ void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                                        firstImage,
                                                        opacity);
 
-    demonContext->getCustomMaterialSystem()->renderSubset(theRenderContext, inFeatureSet);
+    demonContext->customMaterialSystem()->renderSubset(theRenderContext, inFeatureSet);
 }
 
 void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVec,
@@ -341,7 +341,7 @@ void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVe
 {
 
     QDemonRef<QDemonRenderContextInterface> demonContext(generator->demonContext());
-    if (!demonContext->getCustomMaterialSystem()->renderDepthPrepass(modelContext.modelViewProjection, material, subset)) {
+    if (!demonContext->customMaterialSystem()->renderDepthPrepass(modelContext.modelViewProjection, material, subset)) {
         QDemonRenderableImage *displacementImage = nullptr;
         for (QDemonRenderableImage *theImage = firstImage; theImage != nullptr && displacementImage == nullptr;
              theImage = theImage->m_nextImage) {
@@ -370,12 +370,12 @@ void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec,
                                              m_material,
                                              m_shaderDescription,
                                              m_firstImage,
-                                             demonContext->getWireframeMode(),
+                                             demonContext->wireframeMode(),
                                              inCameraVec,
                                              false,
                                              m_isStroke);
 
-    demonContext->getPathManager()->renderDepthPrepass(theRenderContext, m_generator->getLayerGlobalRenderProperties(), TShaderFeatureSet());
+    demonContext->pathManager()->renderDepthPrepass(theRenderContext, m_generator->getLayerGlobalRenderProperties(), TShaderFeatureSet());
 }
 
 QDemonPathRenderable::QDemonPathRenderable(QDemonRenderableObjectFlags inFlags,
@@ -423,12 +423,12 @@ void QDemonPathRenderable::render(const QVector2D &inCameraVec,
                                              m_material,
                                              m_shaderDescription,
                                              m_firstImage,
-                                             demonContext->getWireframeMode(),
+                                             demonContext->wireframeMode(),
                                              inCameraVec,
                                              renderableFlags.hasTransparency(),
                                              m_isStroke);
 
-    demonContext->getPathManager()->renderPath(theRenderContext, m_generator->getLayerGlobalRenderProperties(), inFeatureSet);
+    demonContext->pathManager()->renderPath(theRenderContext, m_generator->getLayerGlobalRenderProperties(), inFeatureSet);
 }
 
 void QDemonPathRenderable::renderShadowMapPass(const QVector2D &inCameraVec,
@@ -450,17 +450,17 @@ void QDemonPathRenderable::renderShadowMapPass(const QVector2D &inCameraVec,
                                              m_material,
                                              m_shaderDescription,
                                              m_firstImage,
-                                             demonContext->getWireframeMode(),
+                                             demonContext->wireframeMode(),
                                              inCameraVec,
                                              false,
                                              m_isStroke);
 
     if (inLight->m_lightType != QDemonRenderLight::Type::Directional) {
-        demonContext->getPathManager()->renderCubeFaceShadowPass(theRenderContext,
+        demonContext->pathManager()->renderCubeFaceShadowPass(theRenderContext,
                                                                  m_generator->getLayerGlobalRenderProperties(),
                                                                  TShaderFeatureSet());
     } else
-        demonContext->getPathManager()->renderShadowMapPass(theRenderContext,
+        demonContext->pathManager()->renderShadowMapPass(theRenderContext,
                                                             m_generator->getLayerGlobalRenderProperties(),
                                                             TShaderFeatureSet());
 }

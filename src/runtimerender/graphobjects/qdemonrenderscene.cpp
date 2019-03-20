@@ -91,7 +91,7 @@ bool QDemonRenderScene::prepareForRender(const QVector2D &inViewportDimensions,
     bool wasDirty = dirty;
     dirty = false;
     if (firstChild)
-        wasDirty |= inContext->getRenderer()->prepareLayerForRender(*firstChild, inViewportDimensions, true, id);
+        wasDirty |= inContext->renderer()->prepareLayerForRender(*firstChild, inViewportDimensions, true, id);
     return wasDirty;
 }
 
@@ -110,14 +110,14 @@ void QDemonRenderScene::render(const QVector2D &inViewportDimensions,
             clearColor.setZ(clearColor.z());
         }
         // Maybe clear and reset to previous clear color after we leave.
-        QDemonRenderContextScopedProperty<QVector4D> __clearColor(*inContext->getRenderContext(),
+        QDemonRenderContextScopedProperty<QVector4D> __clearColor(*inContext->renderContext(),
                                                                   &QDemonRenderContext::clearColor,
                                                                   &QDemonRenderContext::setClearColor,
                                                                   clearColor);
-        inContext->getRenderContext()->clear(QDemonRenderClearValues::Color);
+        inContext->renderContext()->clear(QDemonRenderClearValues::Color);
     }
     if (firstChild)
-        inContext->getRenderer()->renderLayer(*firstChild, inViewportDimensions, useClearColor, clearColor, true, id);
+        inContext->renderer()->renderLayer(*firstChild, inViewportDimensions, useClearColor, clearColor, true, id);
 }
 void QDemonRenderScene::renderWithClear(const QVector2D &inViewportDimensions,
                                         QDemonRenderContextInterface *inContext,

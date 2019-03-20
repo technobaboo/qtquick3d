@@ -179,7 +179,7 @@ bool QDemonLayerRenderPreparationData::usesOffscreenRenderer()
     //        }
     //    }
     if (lastFrameOffscreenRenderer == nullptr)
-        lastFrameOffscreenRenderer = renderer->demonContext()->getOffscreenRenderManager()->getOffscreenRenderer(layer.texturePath);
+        lastFrameOffscreenRenderer = renderer->demonContext()->offscreenRenderManager()->getOffscreenRenderer(layer.texturePath);
     return lastFrameOffscreenRenderer != nullptr;
 }
 
@@ -261,7 +261,7 @@ void QDemonLayerRenderPreparationData::addRenderWidget(QDemonRenderWidgetInterfa
         iRenderWidgets.push_back(&inWidget);
 }
 
-#define RENDER_FRAME_NEW(type) new (renderer->demonContext()->getPerFrameAllocator().allocate(sizeof(type))) type
+#define RENDER_FRAME_NEW(type) new (renderer->demonContext()->perFrameAllocator().allocate(sizeof(type))) type
 
 #define QDEMON_RENDER_MINIMUM_RENDER_OPACITY .01f
 
@@ -335,7 +335,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonRenderPath &in
     QMatrix3x3 theNormalMatrix;
 
     inPath.calculateMVPAndNormalMatrix(inViewProjection, theMVP, theNormalMatrix);
-    QDemonBounds3 theBounds(this->renderer->demonContext()->getPathManager()->getBounds(inPath));
+    QDemonBounds3 theBounds(this->renderer->demonContext()->pathManager()->getBounds(inPath));
 
     if (inPath.globalOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY && inClipFrustum.hasValue()) {
         // Check bounding box against the clipping planes
@@ -403,10 +403,10 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonRenderPath &in
             theRenderable->m_firstImage = prepResult.firstImage;
 
             QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
-            QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
+            QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->pathManager();
             retval = thePathManager->prepareForRender(inPath) || retval;
-            retval |= (inPath.m_wireframeMode != demonContext->getWireframeMode());
-            inPath.m_wireframeMode = demonContext->getWireframeMode();
+            retval |= (inPath.m_wireframeMode != demonContext->wireframeMode());
+            inPath.m_wireframeMode = demonContext->wireframeMode();
 
             if (theFlags.hasTransparency())
                 transparentObjects.push_back(theRenderable);
@@ -449,10 +449,10 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonRenderPath &in
             theRenderable->m_firstImage = prepResult.firstImage;
 
             QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
-            QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
+            QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->pathManager();
             retval = thePathManager->prepareForRender(inPath) || retval;
-            retval |= (inPath.m_wireframeMode != demonContext->getWireframeMode());
-            inPath.m_wireframeMode = demonContext->getWireframeMode();
+            retval |= (inPath.m_wireframeMode != demonContext->wireframeMode());
+            inPath.m_wireframeMode = demonContext->wireframeMode();
 
             if (theFlags.hasTransparency())
                 transparentObjects.push_back(theRenderable);
@@ -472,8 +472,8 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
                                                              quint32 inImageIndex)
 {
     QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
-    QDemonRef<QDemonBufferManager> bufferManager = demonContext->getBufferManager();
-    QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
+    QDemonRef<QDemonBufferManager> bufferManager = demonContext->bufferManager();
+    QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->offscreenRenderManager());
     //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
     if (inImage.clearDirty(bufferManager, *theOffscreenRenderManager /*, theRenderPluginManager*/))
         ioFlags |= QDemonRenderableObjectFlag::Dirty;
@@ -559,7 +559,7 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
 
     // set wireframe mode
     renderer->defaultMaterialShaderKeyProperties().m_wireframeMode.setValue(theGeneratedKey,
-                                                                            renderer->demonContext()->getWireframeMode());
+                                                                            renderer->demonContext()->wireframeMode());
 
     if (theMaterial->iblProbe && checkLightProbeDirty(*theMaterial->iblProbe)) {
         renderer->prepareImageForIbl(*theMaterial->iblProbe);
@@ -670,7 +670,7 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
 
     // set wireframe mode
     renderer->defaultMaterialShaderKeyProperties().m_wireframeMode.setValue(theGeneratedKey,
-                                                                            renderer->demonContext()->getWireframeMode());
+                                                                            renderer->demonContext()->wireframeMode());
 
     if (subsetOpacity < QDEMON_RENDER_MINIMUM_RENDER_OPACITY) {
         subsetOpacity = 0.0f;
@@ -715,7 +715,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                              QDemonNodeLightEntryList &inScopedLights)
 {
     QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
-    QDemonRef<QDemonBufferManager> bufferManager = demonContext->getBufferManager();
+    QDemonRef<QDemonBufferManager> bufferManager = demonContext->bufferManager();
     QDemonRenderMesh *theMesh = bufferManager->loadMesh(inModel.meshPath);
     if (theMesh == nullptr)
         return false;
@@ -776,10 +776,10 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                 theSubset.inputAssembler->setPatchVertexCount(3);
                 theSubset.inputAssemblerDepth->setPatchVertexCount(3);
                 // check wireframe mode
-                theSubset.wireframeMode = demonContext->getWireframeMode();
+                theSubset.wireframeMode = demonContext->wireframeMode();
 
                 subsetDirty = subsetDirty | (theSubset.wireframeMode != inModel.wireframeMode);
-                inModel.wireframeMode = demonContext->getWireframeMode();
+                inModel.wireframeMode = demonContext->wireframeMode();
             } else {
                 theSubset.primitiveType = theSubset.inputAssembler->drawMode();
                 theSubset.inputAssembler->setPatchVertexCount(1);
@@ -831,7 +831,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             } else if (theMaterialObject->type == QDemonRenderGraphObject::Type::CustomMaterial) {
                 QDemonRenderCustomMaterial &theMaterial(static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
 
-                QDemonRef<QDemonMaterialSystem> theMaterialSystem(demonContext->getCustomMaterialSystem());
+                QDemonRef<QDemonMaterialSystem> theMaterialSystem(demonContext->customMaterialSystem());
                 subsetDirty |= theMaterialSystem->prepareForRender(theModelContext.model, theSubset, theMaterial, clearMaterialDirtyFlags);
 
                 QDemonDefaultMaterialPreparationResult theMaterialPrepResult(
@@ -921,9 +921,9 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
 bool QDemonLayerRenderPreparationData::checkLightProbeDirty(QDemonRenderImage &inLightProbe)
 {
     QDemonRef<QDemonRenderContextInterface> theContext(renderer->demonContext());
-    QDemonRef<QDemonBufferManager> bufferManager = theContext->getBufferManager();
+    QDemonRef<QDemonBufferManager> bufferManager = theContext->bufferManager();
     return inLightProbe.clearDirty(bufferManager,
-                                   *theContext->getOffscreenRenderManager() /*,
+                                   *theContext->offscreenRenderManager() /*,
                                     theContext.GetRenderPluginManager()*/
                                    ,
                                    true);
@@ -976,7 +976,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     features.clear();
     featureSetHash = 0;
     QVector2D thePresentationDimensions((float)inViewportDimensions.width(), (float)inViewportDimensions.height());
-    QDemonRef<QDemonRenderListInterface> theGraph(renderer->demonContext()->getRenderList());
+    QDemonRef<QDemonRenderListInterface> theGraph(renderer->demonContext()->renderList());
     QRect theViewport(theGraph->getViewport());
     QRect theScissor(theGraph->getViewport());
     if (theGraph->isScissorTestEnabled())
@@ -1003,7 +1003,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
     if (layer.flags.testFlag(QDemonRenderLayer::Flag::Active)) {
         // Get the layer's width and height.
-        QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->demonContext()->getEffectSystem());
+        QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->demonContext()->effectSystem());
         for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect; theEffect = theEffect->m_nextEffect) {
             if (theEffect->flags.testFlag(QDemonRenderEffect::Flag::Dirty)) {
                 wasDirty = true;
@@ -1036,8 +1036,8 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                                         layer.scene->presentation->presentationDimensions,
                                         layer,
                                         shouldRenderToTexture,
-                                        renderer->demonContext()->getScaleMode(),
-                                        renderer->demonContext()->getPresentationScaleFactor()));
+                                        renderer->demonContext()->scaleMode(),
+                                        renderer->demonContext()->presentationScaleFactor()));
         thePrepResult.lastEffect = theLastEffect;
         thePrepResult.maxAAPassIndex = maxNumAAPasses;
         thePrepResult.flags.setRequiresDepthTexture(requiresDepthPrepass || needsWidgetTexture());
@@ -1047,7 +1047,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
         if (thePrepResult.isLayerVisible()) {
             if (shouldRenderToTexture) {
-                renderer->demonContext()->getRenderList()->addRenderTask(createRenderToTextureRunnable());
+                renderer->demonContext()->renderList()->addRenderTask(createRenderToTextureRunnable());
             }
             if (layer.lightProbe && checkLightProbeDirty(*layer.lightProbe)) {
                 renderer->prepareImageForIbl(*layer.lightProbe);
@@ -1235,7 +1235,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 bool theScissor = true;
                 QRect theScissorRect = thePrepResult.scissor().toRect();
                 // This happens here because if there are any fancy render steps
-                QDemonRef<QDemonRenderListInterface> theRenderList(renderer->demonContext()->getRenderList());
+                QDemonRef<QDemonRenderListInterface> theRenderList(renderer->demonContext()->renderList());
                 auto theContext = renderer->context();
                 QDemonRenderListScopedProperty<bool> _listScissorEnabled(*theRenderList,
                                                                          &QDemonRenderListInterface::isScissorTestEnabled,
@@ -1265,7 +1265,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                                                                         theViewport);
                 QDemonOffscreenRenderFlags theResult = lastFrameOffscreenRenderer
                                                                ->needsRender(createOffscreenRenderEnvironment(),
-                                                                             renderer->demonContext()->getPresentationScaleFactor(),
+                                                                             renderer->demonContext()->presentationScaleFactor(),
                                                                              &layer);
                 wasDataDirty = wasDataDirty || theResult.hasChangedSinceLastFrame;
             }
