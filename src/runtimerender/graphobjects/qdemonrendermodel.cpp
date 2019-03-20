@@ -61,11 +61,11 @@ void QDemonRenderModel::addMaterial(QDemonRenderGraphObject &inMaterial)
         static_cast<QDemonRenderDefaultMaterial &>(inMaterial).parent = this;
 }
 
-QDemonBounds3 QDemonRenderModel::getModelBounds(const QDemonBufferManager &inManager) const
+QDemonBounds3 QDemonRenderModel::getModelBounds(const QDemonRef<QDemonBufferManager> &inManager) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
-    QDemonRenderMesh *theMesh = inManager.loadMesh(meshPath);
+    QDemonRenderMesh *theMesh = inManager->loadMesh(meshPath);
     if (theMesh) {
         for (quint32 idx = 0, end = theMesh->subsets.size(); idx < end; ++idx)
             retval.include(theMesh->subsets[idx].bounds);

@@ -68,7 +68,7 @@ static void HandleOffscreenResult(QDemonRenderImage &theImage,
     replaceTexture = true;
 }
 
-bool QDemonRenderImage::clearDirty(QDemonBufferManager &inBufferManager,
+bool QDemonRenderImage::clearDirty(const QDemonRef<QDemonBufferManager> &inBufferManager,
                                    QDemonOffscreenRenderManagerInterface &inRenderManager,
                                    bool forIbl)
 {
@@ -86,7 +86,7 @@ bool QDemonRenderImage::clearDirty(QDemonBufferManager &inBufferManager,
 
     if (newImage.m_texture == nullptr) {
         m_lastFrameOffscreenRenderer = nullptr;
-        newImage = inBufferManager.loadRenderImage(m_imagePath, false, forIbl);
+        newImage = inBufferManager->loadRenderImage(m_imagePath, false, forIbl);
         replaceTexture = newImage.m_texture != m_textureData.m_texture;
     }
 

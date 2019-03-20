@@ -1064,11 +1064,11 @@ void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &, qu
             if (inPropertyType == QDemonRenderShaderDataType::Texture2D) {
                 //                    StaticAssert<sizeof(QString) == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
                 QString *theStrPtr = reinterpret_cast<QString *>(inDataPtr);
-                QDemonBufferManager theBufferManager(context->getBufferManager());
+                QDemonRef<QDemonBufferManager> theBufferManager(context->getBufferManager());
                 QDemonRef<QDemonRenderTexture2D> theTexture;
 
                 if (!theStrPtr->isNull()) {
-                    QDemonRenderImageTextureData theTextureData = theBufferManager.loadRenderImage(*theStrPtr);
+                    QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(*theStrPtr);
                     if (theTextureData.m_texture) {
                         theTexture = theTextureData.m_texture;
                         setTexture(inShader,

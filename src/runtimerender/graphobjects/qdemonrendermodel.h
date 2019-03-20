@@ -56,7 +56,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonRenderNode
 
     void addMaterial(QDemonRenderGraphObject &inMaterial);
 
-    QDemonBounds3 getModelBounds(const QDemonBufferManager &inManager) const;
+    QDemonBounds3 getModelBounds(const QDemonRef<QDemonBufferManager> &inManager) const;
 };
 QT_END_NAMESPACE
 

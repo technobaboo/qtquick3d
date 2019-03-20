@@ -81,7 +81,7 @@ public:
     virtual void endFrame() = 0;
 
     static QDemonRef<IImageBatchLoader> createBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
-                                                          QDemonBufferManager inBufferManager,
+                                                          QDemonRef<QDemonBufferManager> inBufferManager,
                                                           QDemonRef<QDemonAbstractThreadPool> inThreadPool,
                                                           QDemonPerfTimer *inTimer);
 };

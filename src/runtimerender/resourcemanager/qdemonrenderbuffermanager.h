@@ -49,31 +49,26 @@ namespace QDemonMeshUtilities {
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
 {
-    struct Private {
-        Q_DISABLE_COPY(Private)
-        Private();
-        ~Private();
-        QAtomicInt ref;
-        typedef QSet<QString> StringSet;
-        typedef QHash<QString, QDemonRenderImageTextureData> ImageMap;
-        typedef QHash<QString, QDemonRenderMesh *> MeshMap;
-        typedef QHash<QString, QString> AliasImageMap;
+public:
+    QAtomicInt ref;
+private:
+    typedef QSet<QString> StringSet;
+    typedef QHash<QString, QDemonRenderImageTextureData> ImageMap;
+    typedef QHash<QString, QDemonRenderMesh *> MeshMap;
+    typedef QHash<QString, QString> AliasImageMap;
 
-        QDemonRef<QDemonRenderContext> context;
-        QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory;
-        QDemonPerfTimer *perfTimer;
-        QString pathBuilder;
-        ImageMap imageMap;
-        QMutex loadedImageSetMutex;
-        StringSet loadedImageSet;
-        AliasImageMap aliasImageMap;
-        MeshMap meshMap;
-        QVector<QDemonRenderVertexBufferEntry> entryBuffer;
-        bool gpuSupportsDXT;
+    QDemonRef<QDemonRenderContext> context;
+    QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory;
+    QDemonPerfTimer *perfTimer;
+    ImageMap imageMap;
+    QMutex loadedImageSetMutex;
+    StringSet loadedImageSet;
+    AliasImageMap aliasImageMap;
+    MeshMap meshMap;
+    QVector<QDemonRenderVertexBufferEntry> entryBuffer;
+    bool gpuSupportsDXT;
 
-        void clear();
-    };
-    QExplicitlySharedDataPointer<Private> d;
+    void clear();
 
     QDemonMeshUtilities::MultiLoadResult loadPrimitive(const QString &inRelativePath) const;
     QVector<QVector3D> createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const;
@@ -117,7 +112,7 @@ public:
     QDemonRenderImageTextureData loadRenderImage(QString inSourcePath,
                                                          bool inForceScanForTransparency = false,
                                                          bool inBsdfMipmaps = false);
-    QDemonRenderMesh *loadMesh(const QString &inSourcePath) const;
+    QDemonRenderMesh *loadMesh(const QString &inSourcePath);
 
     QDemonRenderMesh *createMesh(const QString &inSourcePath,
                                          quint8 *inVertData,

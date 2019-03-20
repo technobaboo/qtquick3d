@@ -98,7 +98,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRenderContextCore *m_coreContext;
     QDemonPerfTimer *m_perfTimer;
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
-    QDemonBufferManager m_bufferManager;
+    QDemonRef<QDemonBufferManager> m_bufferManager;
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
     QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
     QDemonRef<QDemonRendererInterface> m_renderer;
@@ -143,7 +143,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         , m_coreContext(inCore)
         , m_perfTimer(inCore->performanceTimer())
         , m_inputStreamFactory(inCore->inputStreamFactory())
-        , m_bufferManager(ctx, m_inputStreamFactory, m_perfTimer)
+        , m_bufferManager(new QDemonBufferManager(ctx, m_inputStreamFactory, m_perfTimer))
         , m_resourceManager(QDemonResourceManagerInterface::createResourceManager(ctx))
         , m_shaderCache(QDemonShaderCacheInterface::createShaderCache(ctx, m_inputStreamFactory, m_perfTimer))
         , m_threadPool(inCore->threadPool())
@@ -217,7 +217,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     }
 
     QDemonRef<QDemonRendererInterface> getRenderer() override { return m_renderer; }
-    QDemonBufferManager getBufferManager() override { return m_bufferManager; }
+    QDemonRef<QDemonBufferManager> getBufferManager() override { return m_bufferManager; }
     QDemonRef<QDemonResourceManagerInterface> getResourceManager() override { return m_resourceManager; }
     QDemonRef<QDemonRenderContext> getRenderContext() override { return m_renderContext; }
     QDemonRef<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() override

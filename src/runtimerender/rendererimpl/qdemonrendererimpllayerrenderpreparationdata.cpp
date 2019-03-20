@@ -472,7 +472,7 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
                                                              quint32 inImageIndex)
 {
     QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
-    QDemonBufferManager bufferManager = demonContext->getBufferManager();
+    QDemonRef<QDemonBufferManager> bufferManager = demonContext->getBufferManager();
     QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
     //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
     if (inImage.clearDirty(bufferManager, *theOffscreenRenderManager /*, theRenderPluginManager*/))
@@ -715,8 +715,8 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                              QDemonNodeLightEntryList &inScopedLights)
 {
     QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
-    QDemonBufferManager bufferManager = demonContext->getBufferManager();
-    QDemonRenderMesh *theMesh = bufferManager.loadMesh(inModel.meshPath);
+    QDemonRef<QDemonBufferManager> bufferManager = demonContext->getBufferManager();
+    QDemonRenderMesh *theMesh = bufferManager->loadMesh(inModel.meshPath);
     if (theMesh == nullptr)
         return false;
 
@@ -921,7 +921,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
 bool QDemonLayerRenderPreparationData::checkLightProbeDirty(QDemonRenderImage &inLightProbe)
 {
     QDemonRef<QDemonRenderContextInterface> theContext(renderer->demonContext());
-    QDemonBufferManager bufferManager = theContext->getBufferManager();
+    QDemonRef<QDemonBufferManager> bufferManager = theContext->getBufferManager();
     return inLightProbe.clearDirty(bufferManager,
                                    *theContext->getOffscreenRenderManager() /*,
                                     theContext.GetRenderPluginManager()*/

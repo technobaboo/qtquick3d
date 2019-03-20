@@ -932,7 +932,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                             needsAlphaMultiply = false;
                             theTexture = theResult.texture;
                         } else {
-                            QDemonRenderImageTextureData theTextureData = theBufferManager.loadRenderImage(theStrPtr);
+                            QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(theStrPtr);
                             needsAlphaMultiply = true;
                             theTexture = theTextureData.m_texture;
                         }

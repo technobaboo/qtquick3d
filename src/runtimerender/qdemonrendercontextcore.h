@@ -108,7 +108,7 @@ public:
     virtual ~QDemonRenderContextInterface();
     virtual QDemonRef<QDemonRendererInterface> getRenderer() = 0;
     virtual QDemonRef<QDemonRendererImpl> getRenderWidgetContext() = 0;
-    virtual QDemonBufferManager getBufferManager() = 0;
+    virtual QDemonRef<QDemonBufferManager> getBufferManager() = 0;
     virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
     virtual QDemonRef<QDemonRenderContext> getRenderContext() = 0;
     virtual QDemonRef<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() = 0;

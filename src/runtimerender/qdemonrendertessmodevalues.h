@@ -35,9 +35,6 @@
 
 QT_BEGIN_NAMESPACE
 
-struct QDemonRenderDefaultMaterial;
-class QDemonBufferManager;
-
 enum class TessModeValues
 {
     NoTess = 0,
