@@ -74,16 +74,9 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
     , m_resourceManager(QDemonResourceManagerInterface::createResourceManager(ctx))
     , m_shaderCache(QDemonShaderCacheInterface::createShaderCache(ctx, m_inputStreamFactory, &m_perfTimer))
     , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
-    , m_frameCount(0)
     , m_windowDimensions(800, 480)
-    , m_scaleMode(ScaleModes::ExactSize)
-    , m_wireframeMode(false)
-    , m_isInSubPresentation(false)
-    , m_rotation(RenderRotationValues::NoRotation)
-    , m_contextRenderTarget(nullptr)
     , m_presentationScale(0, 0)
     , m_fps(qMakePair(0.0, 0))
-    , m_authoringMode(false)
 {
     m_renderList = QDemonRenderListInterface::createRenderList();
     m_offscreenRenderManager = QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(m_resourceManager, this);

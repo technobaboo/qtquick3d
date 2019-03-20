@@ -91,16 +91,16 @@ private:
     QDemonRef<QDemonMaterialShaderGeneratorInterface> m_customMaterialShaderGenerator;
     QDemonPerFrameAllocator m_perFrameAllocator;
     QDemonRef<QDemonRenderListInterface> m_renderList;
-    quint32 m_frameCount;
+    quint32 m_frameCount = 0;
     // Viewport that this render context should use
     QDemonOption<QRect> m_viewport;
     QSize m_windowDimensions;
-    ScaleModes m_scaleMode;
-    bool m_wireframeMode;
-    bool m_isInSubPresentation;
+    ScaleModes m_scaleMode = ScaleModes::ExactSize;
+    bool m_wireframeMode = false;
+    bool m_isInSubPresentation = false;
     QDemonOption<QVector4D> m_sceneColor;
     QDemonOption<QVector4D> m_matteColor;
-    RenderRotationValues m_rotation;
+    RenderRotationValues m_rotation = RenderRotationValues::NoRotation;
     QDemonRef<QDemonRenderFrameBuffer> m_rotationFbo;
     QDemonRef<QDemonRenderTexture2D> m_rotationTexture;
     QDemonRef<QDemonRenderRenderBuffer> m_rotationDepthBuffer;
@@ -112,7 +112,7 @@ private:
     QVector2D m_presentationScale;
     QRect m_virtualViewport;
     QPair<float, int> m_fps;
-    bool m_authoringMode;
+    bool m_authoringMode = false;
 
     struct BeginFrameResult
     {
