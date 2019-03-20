@@ -61,13 +61,6 @@
 
 QT_BEGIN_NAMESPACE
 
-inline bool isRectEdgeInBounds(qint32 inNewRectOffset, qint32 inNewRectWidth, qint32 inCurrentRectOffset, qint32 inCurrentRectWidth)
-{
-    qint32 newEnd = inNewRectOffset + inNewRectWidth;
-    qint32 currentEnd = inCurrentRectOffset + inCurrentRectWidth;
-    return inNewRectOffset >= inCurrentRectOffset && newEnd <= currentEnd;
-}
-
 struct QDemonPickResultProcessResult : public QDemonRenderPickResult
 {
     QDemonPickResultProcessResult(const QDemonRenderPickResult &inSrc) : QDemonRenderPickResult(inSrc) {}
