@@ -3,9 +3,6 @@
 
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
-#include <QtCore/QVector>
-#include <QtCore/QHash>
-
 QT_BEGIN_NAMESPACE
 
 class QDemonPerFrameAllocator

@@ -42,6 +42,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+#include <QtDemonRuntimeRender/qdemonperframeallocator.h>
 
 #include <QtDemon/qdemonperftimer.h>
 
@@ -99,100 +100,175 @@ public:
 class QDemonRendererInterface;
 class QDemonShaderCacheInterface;
 class QDemonOffscreenRenderManagerInterface;
-struct QDemonPerFrameAllocator;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextInterface
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonRenderContextInterface();
-    virtual QDemonRef<QDemonRendererInterface> getRenderer() = 0;
-    virtual QDemonRef<QDemonRendererImpl> getRenderWidgetContext() = 0;
-    virtual QDemonRef<QDemonBufferManager> getBufferManager() = 0;
-    virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
-    virtual QDemonRef<QDemonRenderContext> getRenderContext() = 0;
-    virtual QDemonRef<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() = 0;
-    virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
-    virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystem() = 0;
-    virtual QDemonRef<QDemonShaderCacheInterface> getShaderCache() = 0;
-    virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
-    virtual QDemonRef<IImageBatchLoader> getImageBatchLoader() = 0;
-    virtual QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() = 0;
-    virtual QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem() = 0;
-    virtual QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
-    virtual QDemonPerfTimer *performanceTimer() = 0;
-    virtual QDemonRef<QDemonRenderListInterface> getRenderList() = 0;
-    virtual QDemonRef<QDemonPathManagerInterface> getPathManager() = 0;
-    virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() = 0;
-    virtual QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() = 0;
-    virtual QDemonRef<QDemonMaterialShaderGeneratorInterface> getCustomMaterialShaderGenerator() = 0;
+private:
+    QDemonRef<QDemonRenderContext> m_renderContext;
+    QDemonRenderContextCore *m_coreContext;
+    QDemonPerfTimer *m_perfTimer;
+    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QDemonRef<QDemonBufferManager> m_bufferManager;
+    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
+    QDemonRef<QDemonRendererInterface> m_renderer;
+    QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
+    QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
+    QDemonRef<QDemonShaderCacheInterface> m_shaderCache;
+    QDemonRef<QDemonAbstractThreadPool> m_threadPool;
+    QDemonRef<IImageBatchLoader> m_imageBatchLoader;
+    QDemonRef<QDemonMaterialSystem> m_customMaterialSystem;
+    QDemonRef<QDemonPixelGraphicsRendererInterface> m_pixelGraphicsRenderer;
+    QDemonRef<QDemonPathManagerInterface> m_pathManager;
+    QDemonRef<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
+    QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> m_customMaterialShaderGenerator;
+    QDemonPerFrameAllocator m_perFrameAllocator;
+    QDemonRef<QDemonRenderListInterface> m_renderList;
+    quint32 m_frameCount;
+    // Viewport that this render context should use
+    QDemonOption<QRect> m_viewport;
+    QSize m_windowDimensions;
+    ScaleModes m_scaleMode;
+    bool m_wireframeMode;
+    bool m_isInSubPresentation;
+    QDemonOption<QVector4D> m_sceneColor;
+    QDemonOption<QVector4D> m_matteColor;
+    RenderRotationValues m_rotation;
+    QDemonRef<QDemonRenderFrameBuffer> m_rotationFbo;
+    QDemonRef<QDemonRenderTexture2D> m_rotationTexture;
+    QDemonRef<QDemonRenderRenderBuffer> m_rotationDepthBuffer;
+    QDemonRef<QDemonRenderFrameBuffer> m_contextRenderTarget;
+    QRect m_presentationViewport;
+    QSize m_presentationDimensions;
+    QSize m_renderPresentationDimensions;
+    QSize m_preRenderPresentationDimensions;
+    QVector2D m_presentationScale;
+    QRect m_virtualViewport;
+    QPair<float, int> m_fps;
+    bool m_authoringMode;
+
+    struct BeginFrameResult
+    {
+        bool renderOffscreen;
+        QSize presentationDimensions;
+        bool scissorTestEnabled;
+        QRect scissorRect;
+        QRect viewport;
+        QSize fboDimensions;
+        BeginFrameResult(bool ro, QSize presDims, bool scissorEnabled, QRect inScissorRect, QRect inViewport, QSize fboDims)
+            : renderOffscreen(ro)
+            , presentationDimensions(presDims)
+            , scissorTestEnabled(scissorEnabled)
+            , scissorRect(inScissorRect)
+            , viewport(inViewport)
+            , fboDimensions(fboDims)
+        {
+        }
+        BeginFrameResult() = default;
+    };
+
+    // Calculated values passed from beginframe to setupRenderTarget.
+    // Trying to avoid duplicate code as much as possible.
+    BeginFrameResult m_beginFrameResult;
+
+    QPair<QRect, QRect> getPresentationViewportAndOuterViewport() const;
+    QRect getPresentationViewport(const QRect &inViewerViewport, ScaleModes inScaleToFit, const QSize &inPresDimensions) const;
+    void setupRenderTarget();
+    void teardownRenderTarget();
+
+public:
+    QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, QDemonRenderContextCore *inCore, const char *inApplicationDirectory);
+    ~QDemonRenderContextInterface();
+    QDemonRef<QDemonRendererInterface> getRenderer();
+    QDemonRef<QDemonRendererImpl> getRenderWidgetContext();
+    QDemonRef<QDemonBufferManager> getBufferManager();
+    QDemonRef<QDemonResourceManagerInterface> getResourceManager();
+    QDemonRef<QDemonRenderContext> getRenderContext();
+    QDemonRef<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager();
+    QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory();
+    QDemonRef<QDemonEffectSystemInterface> getEffectSystem();
+    QDemonRef<QDemonShaderCacheInterface> getShaderCache();
+    QDemonRef<QDemonAbstractThreadPool> getThreadPool();
+    QDemonRef<IImageBatchLoader> getImageBatchLoader();
+    QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem();
+    QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem();
+    QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer();
+    QDemonPerfTimer *performanceTimer();
+    QDemonRef<QDemonRenderListInterface> getRenderList();
+    QDemonRef<QDemonPathManagerInterface> getPathManager();
+    QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator();
+    QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator();
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> getCustomMaterialShaderGenerator();
     // The memory used for the per frame allocator is released as the first step in BeginFrame.
     // This is useful for short lived objects and datastructures.
-    virtual QDemonPerFrameAllocator &getPerFrameAllocator() = 0;
+    QDemonPerFrameAllocator &getPerFrameAllocator();
 
     // Get the number of times EndFrame has been called
-    virtual quint32 getFrameCount() = 0;
+    quint32 getFrameCount();
 
     // Get fps
-    virtual QPair<float, int> getFPS() = 0;
+    QPair<float, int> getFPS();
     // Set fps by higher level, etc application
-    virtual void setFPS(QPair<float, int> inFPS) = 0;
+    void setFPS(QPair<float, int> inFPS);
 
     // Currently there are a few things that need to work differently
     // in authoring mode vs. runtime.  The particle effects, for instance
     // need to be framerate-independent at runtime but framerate-dependent during
     // authoring time assuming virtual 16 ms frames.
     // Defaults to falst.
-    virtual bool isAuthoringMode() = 0;
-    virtual void setAuthoringMode(bool inMode) = 0;
+    bool isAuthoringMode();
+    void setAuthoringMode(bool inMode);
 
     // Sub presentations change the rendering somewhat.
-    virtual bool isInSubPresentation() = 0;
-    virtual void setInSubPresentation(bool inValue) = 0;
-    virtual void setSceneColor(QDemonOption<QVector4D> inSceneColor) = 0;
-    virtual void setMatteColor(QDemonOption<QVector4D> inMatteColor) = 0;
+    bool isInSubPresentation();
+    void setInSubPresentation(bool inValue);
+    void setSceneColor(QDemonOption<QVector4D> inSceneColor);
+    void setMatteColor(QDemonOption<QVector4D> inMatteColor);
 
     // render Gpu profiler values
-    virtual void dumpGpuProfilerStats() = 0;
+    void dumpGpuProfilerStats();
 
     // The reason you can set both window dimensions and an overall viewport is that the mouse
     // needs to be inverted
     // which requires the window height, and then the rest of the system really requires the
     // viewport.
-    virtual void setWindowDimensions(const QSize &inWindowDimensions) = 0;
-    virtual QSize getWindowDimensions() = 0;
+    void setWindowDimensions(const QSize &inWindowDimensions);
+    QSize getWindowDimensions();
 
     // In addition to the window dimensions which really have to be set, you can optionally
     // set the viewport which will force the entire viewer to render specifically to this
     // viewport.
-    virtual void setViewport(QDemonOption<QRect> inViewport) = 0;
-    virtual QDemonOption<QRect> getViewport() const = 0;
-    virtual QRect getContextViewport() const = 0;
+    void setViewport(QDemonOption<QRect> inViewport);
+    QDemonOption<QRect> getViewport() const;
+    QRect getContextViewport() const;
     // Only valid between calls to Begin,End.
-    virtual QRect getPresentationViewport() const = 0;
+    QRect getPresentationViewport() const;
 
-    virtual void setScaleMode(ScaleModes inMode) = 0;
-    virtual ScaleModes getScaleMode() = 0;
+    void setScaleMode(ScaleModes inMode);
+    ScaleModes getScaleMode();
 
-    virtual void setWireframeMode(bool inEnable) = 0;
-    virtual bool getWireframeMode() = 0;
+    void setWireframeMode(bool inEnable);
+    bool getWireframeMode();
 
     // Return the viewport the system is using to render data to.  This gives the the dimensions
     // of the rendered system.  It is dependent on but not equal to the viewport.
-    virtual QRectF getDisplayViewport() const = 0;
+    QRectF getDisplayViewport() const;
 
     // Layers require the current presentation dimensions in order to render.
-    virtual void setPresentationDimensions(const QSize &inPresentationDimensions) = 0;
-    virtual QSize getCurrentPresentationDimensions() const = 0;
+    void setPresentationDimensions(const QSize &inPresentationDimensions);
+    QSize getCurrentPresentationDimensions() const;
 
-    virtual void setRenderRotation(RenderRotationValues inRotation) = 0;
-    virtual RenderRotationValues getRenderRotation() const = 0;
+    void setRenderRotation(RenderRotationValues inRotation);
+    RenderRotationValues getRenderRotation() const;
 
-    virtual QVector2D getMousePickViewport() const = 0;
-    virtual QVector2D getMousePickMouseCoords(const QVector2D &inMouseCoords) const = 0;
+    QVector2D getMousePickViewport() const;
+    QVector2D getMousePickMouseCoords(const QVector2D &inMouseCoords) const;
 
     // Valid during and just after prepare for render.
-    virtual QVector2D getPresentationScaleFactor() const = 0;
+    QVector2D getPresentationScaleFactor() const;
 
     // Steps needed to render:
     // 1.  BeginFrame - sets up new target in render graph
@@ -208,15 +284,15 @@ public:
     // and the topmost presentation dimensions.  Expects there to be exactly one presentation
     // dimension pushed at this point.
     // This also starts a render target in the render graph.
-    virtual void beginFrame() = 0;
+    void beginFrame();
 
     // This runs through the added tasks in reverse order.  This is used to render dependencies
     // before rendering to the main render target.
-    virtual void runRenderTasks() = 0;
+    void runRenderTasks();
     // Now you can render to the main render target if you want to render over the top
     // of everything.
     // Next call end frame.
-    virtual void endFrame() = 0;
+    void endFrame();
 };
 QT_END_NAMESPACE
 
