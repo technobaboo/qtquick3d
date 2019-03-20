@@ -206,12 +206,6 @@ qint32 QDemonRenderContext::nextTextureUnit()
     return retval;
 }
 
-void QDemonRenderContext::frameBufferDestroyed(QDemonRenderFrameBuffer *fb)
-{
-    if (m_hardwarePropertyContext.m_frameBuffer == fb)
-        m_hardwarePropertyContext.m_frameBuffer = nullptr;
-}
-
 QDemonRef<QDemonRenderAttribLayout> QDemonRenderContext::createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs)
 {
     return QDemonRef<QDemonRenderAttribLayout>(new QDemonRenderAttribLayout(this, attribs));

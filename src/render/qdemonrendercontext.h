@@ -446,8 +446,6 @@ public:
 
     qint32 nextTextureUnit();
 
-    void frameBufferDestroyed(QDemonRenderFrameBuffer *fb);
-
     QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs);
     QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRef<QDemonRenderAttribLayout> attribLayout,
                                                                QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
