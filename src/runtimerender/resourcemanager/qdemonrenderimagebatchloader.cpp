@@ -164,7 +164,7 @@ struct QDemonBatchLoader : public IImageBatchLoader
     typedef QHash<QString, TImageBatchId> TSourcePathToBatchMap;
 
     // Accessed from loader thread
-    QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory;
+    QDemonRef<QDemonInputStreamFactory> inputStreamFactory;
     //!!Not threadsafe!  accessed only from main thread
     QDemonRef<QDemonBufferManager> bufferManager;
     // Accessed from main thread
@@ -187,7 +187,7 @@ struct QDemonBatchLoader : public IImageBatchLoader
     // main thread
     QVector<QDemonLoadingImage> loaderBuilderWorkspace;
 
-    QDemonBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
+    QDemonBatchLoader(QDemonRef<QDemonInputStreamFactory> inFactory,
                       QDemonRef<QDemonBufferManager> inBufferManager,
                       QDemonRef<QDemonAbstractThreadPool> inThreadPool,
                       QDemonPerfTimer *inTimer)
@@ -460,7 +460,7 @@ void QDemonImageLoaderBatch::cancel(QString inSourcePath)
 }
 }
 
-QDemonRef<IImageBatchLoader> IImageBatchLoader::createBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
+QDemonRef<IImageBatchLoader> IImageBatchLoader::createBatchLoader(QDemonRef<QDemonInputStreamFactory> inFactory,
                                                                   QDemonRef<QDemonBufferManager> inBufferManager,
                                                                   QDemonRef<QDemonAbstractThreadPool> inThreadPool,
                                                                   QDemonPerfTimer *inTimer)

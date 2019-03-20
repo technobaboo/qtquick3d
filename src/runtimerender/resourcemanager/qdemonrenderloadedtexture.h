@@ -37,7 +37,7 @@
 #include <QtGui/QImage>
 
 QT_BEGIN_NAMESPACE
-class QDemonInputStreamFactoryInterface;
+class QDemonInputStreamFactory;
 
 struct QDemonTextureData
 {
@@ -99,7 +99,7 @@ public:
     bool scanForTransparency();
 
     static QDemonRef<QDemonLoadedTexture> load(const QString &inPath,
-                                               QDemonInputStreamFactoryInterface &inFactory,
+                                               QDemonInputStreamFactory &inFactory,
                                                bool inFlipY = true,
                                                const QDemonRenderContextType &renderContextType = QDemonRenderContextType::NullContext);
     static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath, qint32 flipVertical, QDemonRenderContextType renderContextType);

@@ -355,7 +355,7 @@ bool QDemonLoadedTexture::scanForTransparency()
 }
 
 QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
-                                                         QDemonInputStreamFactoryInterface &inFactory,
+                                                         QDemonInputStreamFactory &inFactory,
                                                          bool inFlipY,
                                                          const QDemonRenderContextType &renderContextType)
 {

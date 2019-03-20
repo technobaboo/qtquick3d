@@ -194,16 +194,4 @@ double degToRad(const double a)
     return 0.01745329251994329547 * a;
 }
 
-QString CFileTools::normalizePathForQtUsage(const QString &path)
-{
-    // path can be a file path or a qrc URL string.
-
-    QString filePath = QDir::cleanPath(path);
-
-    if (filePath.startsWith(QLatin1String("qrc:/")))
-        return filePath.mid(3);
-
-    return filePath;
-}
-
 QT_END_NAMESPACE

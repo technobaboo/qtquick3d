@@ -42,7 +42,7 @@ QT_BEGIN_NAMESPACE
 struct QDemonRenderMesh;
 struct QDemonLoadedTexture;
 class QDemonRenderContext;
-class QDemonInputStreamFactoryInterface;
+class QDemonInputStreamFactory;
 namespace QDemonMeshUtilities {
     struct MultiLoadResult;
 }
@@ -58,7 +58,7 @@ private:
     typedef QHash<QString, QString> AliasImageMap;
 
     QDemonRef<QDemonRenderContext> context;
-    QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory;
+    QDemonRef<QDemonInputStreamFactory> inputStreamFactory;
     QDemonPerfTimer *perfTimer;
     ImageMap imageMap;
     QMutex loadedImageSetMutex;
@@ -77,7 +77,7 @@ private:
 
 public:
     QDemonBufferManager(const QDemonRef<QDemonRenderContext> &inRenderContext,
-                        const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
+                        const QDemonRef<QDemonInputStreamFactory> &inInputStreamFactory,
                         QDemonPerfTimer *inTimer);
     ~QDemonBufferManager();
 

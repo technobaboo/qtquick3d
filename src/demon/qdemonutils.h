@@ -72,9 +72,6 @@ Q_DEMON_EXPORT double radToDeg(const double a);
 Q_DEMON_EXPORT float degToRad(const float a);
 Q_DEMON_EXPORT double degToRad(const double a);
 
-namespace CFileTools {
-QString Q_DEMON_EXPORT normalizePathForQtUsage(const QString &path);
-}
 
 QT_END_NAMESPACE
 

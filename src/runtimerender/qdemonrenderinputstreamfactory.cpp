@@ -36,7 +36,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QUrl>
-#include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
 
 #include <limits>
@@ -55,98 +54,79 @@ private:
     QString m_path;
 };
 
-struct QDemonInputStreamFactory : public QDemonInputStreamFactoryInterface
+
+QString normalizePathForQtUsage(const QString &path)
 {
-    QMutex m_mutex;
+    // path can be a file path or a qrc URL string.
 
-    const QString Q3DSTUDIO_TAG = QStringLiteral("qt3dstudio");
+    QString filePath = QDir::cleanPath(path);
 
-    QDemonInputStreamFactory()
-    {
-        // Add the top-level qrc directory
-        if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(QLatin1String(":/")))
-            QDir::addSearchPath(Q3DSTUDIO_TAG, QStringLiteral(":/"));
-    }
+    if (filePath.startsWith(QLatin1String("qrc:/")))
+        return filePath.mid(3);
 
-    QFileInfo matchCaseInsensitiveFile(const QString &file)
-    {
-        //        qCWarning(WARNING, PERF_INFO, "Case-insensitive matching with file: %s",
-        //                  file.toLatin1().constData());
-        const QStringList searchDirectories = QDir::searchPaths(Q3DSTUDIO_TAG);
-        for (const auto &directoryPath : searchDirectories) {
-            QFileInfo fileInfo(file);
-            QDirIterator it(directoryPath, { fileInfo.fileName() }, QDir::NoFilter, QDirIterator::Subdirectories);
-            while (it.hasNext()) {
-                QString filePath = it.next();
-                if (filePath.compare(QDir::cleanPath(directoryPath + '/' + file), Qt::CaseInsensitive) == 0) {
-                    return QFileInfo(filePath);
-                }
-            }
-        }
-
-        return QFileInfo();
-    }
-
-    void addSearchDirectory(const char *inDirectory) override
-    {
-        QMutexLocker factoryLocker(&m_mutex);
-        QString localDir = CFileTools::normalizePathForQtUsage(QString::fromLocal8Bit(inDirectory));
-        QDir directory(localDir);
-        if (!directory.exists()) {
-            qCritical("Adding search directory: %s", inDirectory);
-            return;
-        }
-
-        if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(localDir))
-            QDir::addSearchPath(Q3DSTUDIO_TAG, localDir);
-    }
-
-    QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet) override
-    {
-        QMutexLocker factoryLocker(&m_mutex);
-        QString localFile = CFileTools::normalizePathForQtUsage(inFilename);
-        QFileInfo fileInfo = QFileInfo(localFile);
-        QIODevice *inputStream = nullptr;
-        // Try to match the file with the search paths
-        if (!fileInfo.exists())
-            fileInfo.setFile(QStringLiteral("qt3dstudio:") + localFile);
-
-        // Try to match the case-insensitive file with the given search paths
-        if (!fileInfo.exists())
-            fileInfo = matchCaseInsensitiveFile(localFile);
-
-        if (fileInfo.exists()) {
-            QDemonInputStream *file = new QDemonInputStream(fileInfo.absoluteFilePath());
-            if (file->open(QIODevice::ReadOnly))
-                inputStream = file;
-        }
-
-        if (!inputStream && !inQuiet) {
-            // Print extensive debugging information.
-            qCritical("Failed to find file: %s", inFilename.toLatin1().data());
-            qCritical("Searched path: %s", QDir::searchPaths(Q3DSTUDIO_TAG).join(',').toLatin1().constData());
-        }
-        return QSharedPointer<QIODevice>(inputStream);
-    }
-
-    bool getPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false) override
-    {
-        QSharedPointer<QIODevice> theStream = getStreamForFile(inFilename, inQuiet);
-        if (theStream) {
-            QDemonInputStream *theRealStream = static_cast<QDemonInputStream *>(theStream.data());
-            outFile = theRealStream->path();
-            return true;
-        }
-        return false;
-    }
-};
+    return filePath;
 }
 
-QDemonInputStreamFactoryInterface::~QDemonInputStreamFactoryInterface() {}
+const QString Q3DSTUDIO_TAG = QStringLiteral("qt3dstudio");
 
-QDemonRef<QDemonInputStreamFactoryInterface> QDemonInputStreamFactoryInterface::create()
+}
+
+QDemonInputStreamFactory::~QDemonInputStreamFactory() {}
+
+QDemonInputStreamFactory::QDemonInputStreamFactory()
 {
-    return QDemonRef<QDemonInputStreamFactoryInterface>(new QDemonInputStreamFactory());
+    // Add the top-level qrc directory
+    if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(QLatin1String(":/")))
+        QDir::addSearchPath(Q3DSTUDIO_TAG, QStringLiteral(":/"));
+}
+
+void QDemonInputStreamFactory::addSearchDirectory(const QString &inDirectory)
+{
+    QMutexLocker factoryLocker(&m_mutex);
+    QString localDir = normalizePathForQtUsage(inDirectory);
+    QDir directory(localDir);
+    if (!directory.exists()) {
+        qCritical("Adding search directory: %s", inDirectory.toUtf8().constData());
+        return;
+    }
+
+    if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(localDir))
+        QDir::addSearchPath(Q3DSTUDIO_TAG, localDir);
+}
+
+QSharedPointer<QIODevice> QDemonInputStreamFactory::getStreamForFile(const QString &inFilename, bool inQuiet)
+{
+    QMutexLocker factoryLocker(&m_mutex);
+    QString localFile = normalizePathForQtUsage(inFilename);
+    QFileInfo fileInfo = QFileInfo(localFile);
+    QIODevice *inputStream = nullptr;
+    // Try to match the file with the search paths
+    if (!fileInfo.exists())
+        fileInfo.setFile(QStringLiteral("qt3dstudio:") + localFile);
+
+    if (fileInfo.exists()) {
+        QDemonInputStream *file = new QDemonInputStream(fileInfo.absoluteFilePath());
+        if (file->open(QIODevice::ReadOnly))
+            inputStream = file;
+    }
+
+    if (!inputStream && !inQuiet) {
+        // Print extensive debugging information.
+        qCritical("Failed to find file: %s", inFilename.toLatin1().data());
+        qCritical("Searched path: %s", QDir::searchPaths(Q3DSTUDIO_TAG).join(',').toLatin1().constData());
+    }
+    return QSharedPointer<QIODevice>(inputStream);
+}
+
+bool QDemonInputStreamFactory::getPathForFile(const QString &inFilename, QString &outFile, bool inQuiet)
+{
+    QSharedPointer<QIODevice> theStream = getStreamForFile(inFilename, inQuiet);
+    if (theStream) {
+        QDemonInputStream *theRealStream = static_cast<QDemonInputStream *>(theStream.data());
+        outFile = theRealStream->path();
+        return true;
+    }
+    return false;
 }
 
 QT_END_NAMESPACE

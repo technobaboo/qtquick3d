@@ -40,7 +40,7 @@
 QT_BEGIN_NAMESPACE
 class QDemonRenderShaderProgram;
 class QDemonRenderContext;
-class QDemonInputStreamFactoryInterface;
+class QDemonInputStreamFactory;
 class QDemonPerfTimer;
 
 enum class ShaderCacheProgramFlagValues : quint32
@@ -125,7 +125,7 @@ private:
     QString m_contextTypeString;
     QDemonShaderCacheKey m_tempKey;
 
-    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QDemonRef<QDemonInputStreamFactory> m_inputStreamFactory;
     bool m_shaderCompilationEnabled;
 
     void addBackwardCompatibilityDefines(ShaderType shaderType);
@@ -139,7 +139,7 @@ private:
 
 public:
     QDemonShaderCache(QDemonRef<QDemonRenderContext> ctx,
-                QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                QDemonRef<QDemonInputStreamFactory> inInputStreamFactory,
                 QDemonPerfTimer *inPerfTimer);
     ~QDemonShaderCache();
     // If directory is nonnull, then we attempt to load any shaders from shadercache.xml in
@@ -202,7 +202,7 @@ public:
     static const QString getShaderCacheFileName() { return QStringLiteral("shadercache.xml"); }
 
     static QDemonRef<QDemonShaderCache> createShaderCache(QDemonRef<QDemonRenderContext> inContext,
-                                                                   QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                                   QDemonRef<QDemonInputStreamFactory> inInputStreamFactory,
                                                                    QDemonPerfTimer *inPerfTimer);
 };
 

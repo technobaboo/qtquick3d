@@ -73,7 +73,7 @@ private:
     QDemonRef<QDemonRenderContext> m_renderContext;
     QDemonPerfTimer m_perfTimer;
 
-    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QDemonRef<QDemonInputStreamFactory> m_inputStreamFactory;
     QDemonRef<QDemonBufferManager> m_bufferManager;
     QDemonRef<QDemonResourceManager> m_resourceManager;
     QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
@@ -144,7 +144,7 @@ private:
     void teardownRenderTarget();
 
 public:
-    QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const char *inApplicationDirectory);
+    QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const QString &inApplicationDirectory);
     ~QDemonRenderContextInterface();
     QDemonRef<QDemonRendererInterface> renderer();
     QDemonRef<QDemonRendererImpl> renderWidgetContext();
@@ -152,7 +152,7 @@ public:
     QDemonRef<QDemonResourceManager> resourceManager();
     QDemonRef<QDemonRenderContext> renderContext();
     QDemonRef<QDemonOffscreenRenderManagerInterface> offscreenRenderManager();
-    QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory();
+    QDemonRef<QDemonInputStreamFactory> inputStreamFactory();
     QDemonRef<QDemonEffectSystemInterface> effectSystem();
     QDemonRef<QDemonShaderCache> shaderCache();
     QDemonRef<QDemonAbstractThreadPool> threadPool();

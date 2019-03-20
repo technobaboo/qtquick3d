@@ -67,9 +67,9 @@ void swapXY(QVector2D &v)
 
 QDemonRenderContextInterface::~QDemonRenderContextInterface() = default;
 
-QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const char *inApplicationDirectory)
+QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const QString &inApplicationDirectory)
     : m_renderContext(ctx)
-    , m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
+    , m_inputStreamFactory(new QDemonInputStreamFactory)
     , m_bufferManager(new QDemonBufferManager(ctx, m_inputStreamFactory, &m_perfTimer))
     , m_resourceManager(new QDemonResourceManager(ctx))
     , m_shaderCache(QDemonShaderCache::createShaderCache(ctx, m_inputStreamFactory, &m_perfTimer))
@@ -81,7 +81,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
     m_renderList = QDemonRenderList::createRenderList();
     m_offscreenRenderManager = QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(m_resourceManager, this);
     m_renderer = QDemonRendererInterface::createRenderer(this);
-    if (inApplicationDirectory && *inApplicationDirectory)
+    if (!inApplicationDirectory.isEmpty())
         m_inputStreamFactory->addSearchDirectory(inApplicationDirectory);
 
     m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, &m_perfTimer);
@@ -148,7 +148,7 @@ QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonRenderContextInterface::o
     return m_offscreenRenderManager;
 }
 
-QDemonRef<QDemonInputStreamFactoryInterface> QDemonRenderContextInterface::inputStreamFactory() { return m_inputStreamFactory; }
+QDemonRef<QDemonInputStreamFactory> QDemonRenderContextInterface::inputStreamFactory() { return m_inputStreamFactory; }
 
 QDemonRef<QDemonEffectSystemInterface> QDemonRenderContextInterface::effectSystem() { return m_effectSystem; }
 

@@ -192,7 +192,7 @@ bool QDemonShaderPreprocessorFeature::operator==(const QDemonShaderPreprocessorF
 QDemonShaderCache::~QDemonShaderCache() {}
 
 QDemonRef<QDemonShaderCache> QDemonShaderCache::createShaderCache(QDemonRef<QDemonRenderContext> inContext,
-                                                                                    QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                                                    QDemonRef<QDemonInputStreamFactory> inInputStreamFactory,
                                                                                     QDemonPerfTimer *inPerfTimer)
 {
     return QDemonRef<QDemonShaderCache>(new QDemonShaderCache(inContext, inInputStreamFactory, inPerfTimer));
@@ -200,7 +200,7 @@ QDemonRef<QDemonShaderCache> QDemonShaderCache::createShaderCache(QDemonRef<QDem
 
 QT_END_NAMESPACE
 
-QDemonShaderCache::QDemonShaderCache(QDemonRef<QDemonRenderContext> ctx, QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory, QDemonPerfTimer *inPerfTimer)
+QDemonShaderCache::QDemonShaderCache(QDemonRef<QDemonRenderContext> ctx, QDemonRef<QDemonInputStreamFactory> inInputStreamFactory, QDemonPerfTimer *inPerfTimer)
     : m_renderContext(ctx), m_perfTimer(inPerfTimer), m_inputStreamFactory(inInputStreamFactory), m_shaderCompilationEnabled(true)
 {
 }

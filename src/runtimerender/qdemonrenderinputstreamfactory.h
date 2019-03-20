@@ -35,26 +35,26 @@
 #include <QtDemon/qdemondataref.h>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QIODevice>
+#include <QtCore/qmutex.h>
 
 QT_BEGIN_NAMESPACE
 // This class is threadsafe.
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonInputStreamFactoryInterface
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonInputStreamFactory
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonInputStreamFactoryInterface();
+    QMutex m_mutex;
+
+    QDemonInputStreamFactory();
+
+    ~QDemonInputStreamFactory();
     // These directories must have a '/' on them
-    virtual void addSearchDirectory(const char *inDirectory) = 0;
-    virtual QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet = false) = 0;
+    void addSearchDirectory(const QString &inDirectory);
+    QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet = false);
     // Return a path for this file.  Returns true if GetStreamForFile would return a valid
     // stream.
     // else returns false
-    virtual bool getPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false) = 0;
-
-    // Create an input stream factory using this foundation and an platform-optional app
-    // directory
-    // on android the app directory has no effect; use use the assets bundled with the APK file.
-    static QDemonRef<QDemonInputStreamFactoryInterface> create();
+    bool getPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false);
 };
 QT_END_NAMESPACE
 
