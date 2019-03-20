@@ -277,7 +277,7 @@ void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(QDemonRenderBacken
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBackendGL4Impl::createTessControlShader(
-        QDemonDataView<qint8> source,
+        QDemonByteView source,
         QByteArray &errorMessage,
         bool binary)
 {
@@ -295,7 +295,7 @@ QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBack
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderBackendGL4Impl::createTessEvaluationShader(
-        QDemonDataView<qint8> source,
+        QDemonByteView source,
         QByteArray &errorMessage,
         bool binary)
 {
@@ -313,7 +313,7 @@ QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderB
     return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject>(shaderID);
 }
 
-QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackendGL4Impl::createGeometryShader(QDemonDataView<qint8> source,
+QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackendGL4Impl::createGeometryShader(QDemonByteView source,
                                                                                                               QByteArray &errorMessage,
                                                                                                               bool binary)
 {
@@ -563,7 +563,7 @@ void QDemonRenderBackendGL4Impl::setConstantValue(QDemonRenderBackendShaderProgr
     }
 }
 
-QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendGL4Impl::createComputeShader(QDemonDataView<qint8> source,
+QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendGL4Impl::createComputeShader(QDemonByteView source,
                                                                                                             QByteArray &errorMessage,
                                                                                                             bool binary)
 {

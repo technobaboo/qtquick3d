@@ -112,6 +112,11 @@ inline QDemonByteView toByteView(const QByteArray &type)
     return QDemonByteView(type);
 }
 
+inline QDemonByteView toByteView(const char *str)
+{
+    return QDemonByteView(str, qstrlen(str));
+}
+
 template<typename T>
 inline QDemonDataView<T> toDataView(const T *type, quint32 count)
 {

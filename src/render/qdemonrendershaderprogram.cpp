@@ -1030,11 +1030,11 @@ void writeErrorMessage(const char *tag, const QByteArray &message)
 
 QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QDemonRef<QDemonRenderContext> &context,
                                                                         const char *programName,
-                                                                        QDemonDataView<qint8> vertShaderSource,
-                                                                        QDemonDataView<qint8> fragShaderSource,
-                                                                        QDemonDataView<qint8> tessControlShaderSource,
-                                                                        QDemonDataView<qint8> tessEvaluationShaderSource,
-                                                                        QDemonDataView<qint8> geometryShaderSource,
+                                                                        QDemonByteView vertShaderSource,
+                                                                        QDemonByteView fragShaderSource,
+                                                                        QDemonByteView tessControlShaderSource,
+                                                                        QDemonByteView tessEvaluationShaderSource,
+                                                                        QDemonByteView geometryShaderSource,
                                                                         bool separateProgram,
                                                                         QDemonRenderShaderProgramBinaryType type,
                                                                         bool binaryProgram)
@@ -1164,7 +1164,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
 
 QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(const QDemonRef<QDemonRenderContext> &context,
                                                                                const char *programName,
-                                                                               QDemonDataView<qint8> computeShaderSource)
+                                                                               QDemonByteView computeShaderSource)
 {
     QDemonRenderVertFragCompilationResult result;
     QDemonRef<QDemonRenderShaderProgram> pProgram;

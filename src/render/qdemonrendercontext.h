@@ -460,11 +460,11 @@ public:
 
     QDemonRenderVertFragCompilationResult compileSource(
             const char *shaderName,
-            QDemonDataView<qint8> vertShader,
-            QDemonDataView<qint8> fragShader,
-            QDemonDataView<qint8> tessControlShaderSource = QDemonDataView<qint8>(),
-            QDemonDataView<qint8> tessEvaluationShaderSource = QDemonDataView<qint8>(),
-            QDemonDataView<qint8> geometryShaderSource = QDemonDataView<qint8>(),
+            QDemonByteView vertShader,
+            QDemonByteView fragShader,
+            QDemonByteView tessControlShaderSource = QDemonByteView(),
+            QDemonByteView tessEvaluationShaderSource = QDemonByteView(),
+            QDemonByteView geometryShaderSource = QDemonByteView(),
             bool separateProgram = false,
             QDemonRenderShaderProgramBinaryType type = QDemonRenderShaderProgramBinaryType::Unknown,
             bool binaryProgram = false);
@@ -485,14 +485,14 @@ public:
 
     QDemonRenderVertFragCompilationResult compileBinary(const char *shaderName,
             QDemonRenderShaderProgramBinaryType type,
-            QDemonDataView<qint8> vertShader,
-            QDemonDataView<qint8> fragShader,
-            QDemonDataView<qint8> tessControlShaderSource = QDemonDataView<qint8>(),
-            QDemonDataView<qint8> tessEvaluationShaderSource = QDemonDataView<qint8>(),
-            QDemonDataView<qint8> geometryShaderSource = QDemonDataView<qint8>());
+            QDemonByteView vertShader,
+            QDemonByteView fragShader,
+            QDemonByteView tessControlShaderSource = QDemonByteView(),
+            QDemonByteView tessEvaluationShaderSource = QDemonByteView(),
+            QDemonByteView geometryShaderSource = QDemonByteView());
 
     QDemonRenderVertFragCompilationResult compileComputeSource(const char *shaderName,
-                                                                       QDemonDataView<qint8> computeShaderSource);
+                                                                       QDemonByteView computeShaderSource);
 
     void shaderDestroyed(QDemonRenderShaderProgram *shader);
 

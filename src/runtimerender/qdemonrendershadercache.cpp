@@ -440,19 +440,13 @@ struct ShaderCache : public QDemonShaderCacheInterface
         if (inFlags & ShaderCacheProgramFlagValues::GeometryShaderEnabled)
             addShaderPreprocessor(m_geometryCode, inKey, ShaderType::Geometry, inFeatures);
 
-        auto shaderProgram = m_renderContext
-                                     ->compileSource(inKey.constData(),
-                                                     m_vertexCode.constData(),
-                                                     quint32(m_vertexCode.size()),
-                                                     m_fragmentCode.constData(),
-                                                     quint32(m_fragmentCode.size()),
-                                                     m_tessCtrlCode.constData(),
-                                                     quint32(m_tessCtrlCode.size()),
-                                                     m_tessEvalCode.constData(),
-                                                     quint32(m_tessEvalCode.size()),
-                                                     m_geometryCode.constData(),
-                                                     quint32(m_geometryCode.size()),
-                                                     separableProgram)
+        auto shaderProgram = m_renderContext->compileSource(inKey.constData(),
+                                                            toByteView(m_vertexCode),
+                                                            toByteView(m_fragmentCode),
+                                                            toByteView(m_tessCtrlCode),
+                                                            toByteView(m_tessEvalCode),
+                                                            toByteView(m_geometryCode),
+                                                            separableProgram)
                                      .m_shader;
         m_shaders.insert(tempKey, shaderProgram);
         if (shaderProgram) {

@@ -334,22 +334,22 @@ public:
     void setPatchVertexCount(QDemonRenderBackendInputAssemblerObject, quint32) override { Q_ASSERT(false); }
 
     // shader
-    virtual QDemonRenderBackendVertexShaderObject createVertexShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendVertexShaderObject createVertexShader(QDemonByteView source,
                                                                      QByteArray &errorMessage,
                                                                      bool binary) override;
-    virtual QDemonRenderBackendFragmentShaderObject createFragmentShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendFragmentShaderObject createFragmentShader(QDemonByteView source,
                                                                          QByteArray &errorMessage,
                                                                          bool binary) override;
-    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonByteView source,
                                                                                QByteArray &errorMessage,
                                                                                bool binary) override;
-    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonByteView source,
                                                                                      QByteArray &errorMessage,
                                                                                      bool binary) override;
-    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonByteView source,
                                                                          QByteArray &errorMessage,
                                                                          bool binary) override;
-    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonByteView source,
                                                                        QByteArray &errorMessage,
                                                                        bool binary) override;
     void releaseVertexShader(QDemonRenderBackendVertexShaderObject vso) override;
@@ -572,7 +572,7 @@ public:
     QSurfaceFormat format() const override { return m_format; }
 
 protected:
-    virtual bool compileSource(GLuint shaderID, QDemonDataView<qint8> source, QByteArray &errorMessage, bool binary);
+    virtual bool compileSource(GLuint shaderID, QDemonByteView source, QByteArray &errorMessage, bool binary);
     virtual const char *getVersionString();
     virtual const char *getVendorString();
     virtual const char *getRendererString();

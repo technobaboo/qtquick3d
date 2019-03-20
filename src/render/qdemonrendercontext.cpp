@@ -237,11 +237,11 @@ void QDemonRenderContext::setInputAssembler(QDemonRef<QDemonRenderInputAssembler
 }
 
 QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const char *shaderName,
-                                                                             QDemonDataView<qint8> vertShader,
-                                                                             QDemonDataView<qint8> fragShader,
-                                                                             QDemonDataView<qint8> tessControlShaderSource,
-                                                                             QDemonDataView<qint8> tessEvaluationShaderSource,
-                                                                             QDemonDataView<qint8> geometryShaderSource,
+                                                                             QDemonByteView vertShader,
+                                                                             QDemonByteView fragShader,
+                                                                             QDemonByteView tessControlShaderSource,
+                                                                             QDemonByteView tessEvaluationShaderSource,
+                                                                             QDemonByteView geometryShaderSource,
                                                                              bool separateProgram,
                                                                              QDemonRenderShaderProgramBinaryType type,
                                                                              bool binaryProgram)
@@ -262,11 +262,11 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const c
 
 QDemonRenderVertFragCompilationResult QDemonRenderContext::compileBinary(const char *shaderName,
                                                                              QDemonRenderShaderProgramBinaryType type,
-                                                                             QDemonDataView<qint8> vertShader,
-                                                                             QDemonDataView<qint8> fragShader,
-                                                                             QDemonDataView<qint8> tessControlShaderSource,
-                                                                             QDemonDataView<qint8> tessEvaluationShaderSource,
-                                                                             QDemonDataView<qint8> geometryShaderSource)
+                                                                             QDemonByteView vertShader,
+                                                                             QDemonByteView fragShader,
+                                                                             QDemonByteView tessControlShaderSource,
+                                                                             QDemonByteView tessEvaluationShaderSource,
+                                                                             QDemonByteView geometryShaderSource)
 {
 #ifndef _MACOSX
     QDemonRenderVertFragCompilationResult result = QDemonRenderShaderProgram::create(this,
@@ -288,7 +288,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileBinary(const c
 }
 
 QDemonRenderVertFragCompilationResult QDemonRenderContext::compileComputeSource(const char *shaderName,
-                                                                                    QDemonDataView<qint8> computeShaderSource)
+                                                                                    QDemonByteView computeShaderSource)
 {
     QDemonRenderVertFragCompilationResult result = QDemonRenderShaderProgram::createCompute(this, shaderName, computeShaderSource);
 
@@ -697,11 +697,11 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const c
                                                                          bool separableProgram)
 {
     return compileSource(shaderName,
-                         QDemonDataView<qint8>((const qint8 *)vertShader, inVertLen),
-                         QDemonDataView<qint8>((const qint8 *)fragShader, inFragLen),
-                         QDemonDataView<qint8>((const qint8 *)tessControlShaderSource, inTCLen),
-                         QDemonDataView<qint8>((const qint8 *)tessEvaluationShaderSource, inTELen),
-                         QDemonDataView<qint8>((const qint8 *)geometryShaderSource, inGSLen),
+                         QDemonByteView((const qint8 *)vertShader, inVertLen),
+                         QDemonByteView((const qint8 *)fragShader, inFragLen),
+                         QDemonByteView((const qint8 *)tessControlShaderSource, inTCLen),
+                         QDemonByteView((const qint8 *)tessEvaluationShaderSource, inTELen),
+                         QDemonByteView((const qint8 *)geometryShaderSource, inGSLen),
                          separableProgram);
 }
 

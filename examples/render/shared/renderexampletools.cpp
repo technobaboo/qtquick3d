@@ -138,12 +138,6 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
 
 namespace {
 
-inline QDemonDataView<qint8> toRef(const char *data)
-{
-    size_t len = strlen(data) + 1;
-    return QDemonDataView<qint8>((const qint8 *)data, len);
-}
-
 static void dumpShaderOutput(QDemonRef<QDemonRenderContext> ctx, const QDemonRenderVertFragCompilationResult &compResult)
 {
     //    if (!isTrivial(compResult.mFragCompilationOutput)) {
@@ -160,7 +154,7 @@ static void dumpShaderOutput(QDemonRef<QDemonRenderContext> ctx, const QDemonRen
 QDemonRef<QDemonRenderShaderProgram> compileAndDump(QDemonRef<QDemonRenderContext> ctx, const char *name, const char *vertShader, const char *fragShader)
 {
     QDemonRenderVertFragCompilationResult compResult =
-            ctx->compileSource(name, toRef(vertShader), toRef(fragShader));
+            ctx->compileSource(name, toByteView(vertShader), toByteView(fragShader));
     dumpShaderOutput(ctx, compResult);
     return compResult.m_shader;
 }

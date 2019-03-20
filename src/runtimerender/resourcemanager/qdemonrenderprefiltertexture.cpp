@@ -368,12 +368,6 @@ static const char *computeWorkShader(QByteArray &prog, bool binESContext)
     return prog.constData();
 }
 
-inline QDemonDataView<qint8> toRef(const char *data)
-{
-    size_t len = strlen(data) + 1;
-    return QDemonDataView<qint8>((const qint8 *)data, (quint32)len);
-}
-
 static bool isGLESContext(const QDemonRef<QDemonRenderContext> &context)
 {
     QDemonRenderContextType ctxType = context->renderContextType();
@@ -406,7 +400,7 @@ void QDemonRenderPrefilterTextureCompute::createComputeProgram(const QDemonRef<Q
 
     if (!m_bsdfProgram) {
         m_bsdfProgram = context->compileComputeSource("Compute BSDF mipmap shader",
-                                                      toRef(computeWorkShader(computeProg, isGLESContext(context))))
+                                                      toByteView(computeWorkShader(computeProg, isGLESContext(context))))
                                 .m_shader;
     }
 }
@@ -420,7 +414,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrC
     if (inFormat == QDemonRenderTextureFormat::RGB8) {
         if (!m_uploadProgram_RGB8) {
             m_uploadProgram_RGB8 = context->compileComputeSource("Compute BSDF mipmap level 0 RGB8 shader",
-                                                                 toRef(computeUploadShader(computeProg, inFormat, isGLESContext(context))))
+                                                                 toByteView(computeUploadShader(computeProg, inFormat, isGLESContext(context))))
                                            .m_shader;
         }
 
@@ -428,7 +422,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrC
     } else {
         if (!m_uploadProgram_RGBA8) {
             m_uploadProgram_RGBA8 = context->compileComputeSource("Compute BSDF mipmap level 0 RGBA8 shader",
-                                                                  toRef(computeUploadShader(computeProg, inFormat, isGLESContext(context))))
+                                                                  toByteView(computeUploadShader(computeProg, inFormat, isGLESContext(context))))
                                             .m_shader;
         }
 

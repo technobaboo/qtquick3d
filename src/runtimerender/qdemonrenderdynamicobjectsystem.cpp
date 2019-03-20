@@ -1352,12 +1352,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                         shaderVersionStr = QStringLiteral("#version 310 es\n");
                     theShaderBuffer = doLoadShader(inPath);
                     theShaderBuffer.insert(0, shaderVersionStr);
-                    const char *programSource = theShaderBuffer.toLocal8Bit();
-                    quint32 len = (quint32)strlen(nonNull(programSource)) + 1;
-                    theProgram = m_context->getRenderContext()
-                                         ->compileComputeSource(inPath.toLocal8Bit(),
-                                                                QDemonDataView<qint8>((qint8 *)programSource, len))
-                                         .m_shader;
+                    QByteArray programSource = theShaderBuffer.toLocal8Bit();
+                    theProgram = m_context->getRenderContext()->compileComputeSource(inPath.toLocal8Bit(),
+                                                                                     toByteView(programSource)).m_shader;
                 }
             }
             theInserter.value() = TShaderAndFlags(theProgram, theFlags);

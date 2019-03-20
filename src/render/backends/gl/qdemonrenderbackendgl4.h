@@ -72,13 +72,13 @@ public:
                           bool transpose) override;
 
     void setPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao, quint32 count) override;
-    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonByteView source,
                                                                                QByteArray &errorMessage,
                                                                                bool binary) override;
-    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonByteView source,
                                                                                      QByteArray &errorMessage,
                                                                                      bool binary) override;
-    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonByteView source,
                                                                          QByteArray &errorMessage,
                                                                          bool binary) override;
 
@@ -111,7 +111,7 @@ public:
                           QDemonRenderImageAccessType access,
                           QDemonRenderTextureFormat format) override;
 
-    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonDataView<qint8> source,
+    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonByteView source,
                                                                        QByteArray &errorMessage,
                                                                        bool binary) override;
     void dispatchCompute(QDemonRenderBackendShaderProgramObject po, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ) override;

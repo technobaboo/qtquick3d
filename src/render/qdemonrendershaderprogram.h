@@ -233,11 +233,11 @@ public:
     static QDemonRenderVertFragCompilationResult create(
             const QDemonRef<QDemonRenderContext> &context,
             const char *programName,
-            QDemonDataView<qint8> vertShaderSource,
-            QDemonDataView<qint8> fragShaderSource,
-            QDemonDataView<qint8> tessControlShaderSource = QDemonDataView<qint8>(),
-            QDemonDataView<qint8> tessEvaluationShaderSource = QDemonDataView<qint8>(),
-            QDemonDataView<qint8> geometryShaderSource = QDemonDataView<qint8>(),
+            QDemonByteView vertShaderSource,
+            QDemonByteView fragShaderSource,
+            QDemonByteView tessControlShaderSource = QDemonByteView(),
+            QDemonByteView tessEvaluationShaderSource = QDemonByteView(),
+            QDemonByteView geometryShaderSource = QDemonByteView(),
             bool separateProgram = false,
             QDemonRenderShaderProgramBinaryType type = QDemonRenderShaderProgramBinaryType::Unknown,
             bool binaryProgram = false);
@@ -253,7 +253,7 @@ public:
      */
     static QDemonRenderVertFragCompilationResult createCompute(const QDemonRef<QDemonRenderContext> &context,
                                                                const char *programName,
-                                                               QDemonDataView<qint8> computeShaderSource);
+                                                               QDemonByteView computeShaderSource);
 };
 
 // Helper class to cache the lookup of shader properties and apply them quickly in a typesafe
