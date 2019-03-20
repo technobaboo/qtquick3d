@@ -156,7 +156,7 @@ public:
 
     virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
 
-    static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextCoreInterface *context);
+    static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextCore *context);
 
     // Calling release effect context with no context results in no problems.
     virtual void releaseEffectContext(QDemonEffectContext *inEffect) = 0;

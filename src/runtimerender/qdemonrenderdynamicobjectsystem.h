@@ -47,7 +47,7 @@ struct QDemonRenderDynamicGraphObject;
 // struct SStrRemapMap;
 class QDemonRenderContextInterface;
 class QDemonDynamicObjectSystemInterface;
-class QDemonRenderContextCoreInterface;
+class QDemonRenderContextCore;
 
 typedef QPair<QString, QString> TStrStrPair;
 
@@ -242,7 +242,7 @@ public:
 
     virtual void setContextInterface(QDemonRenderContextInterface *rc) = 0;
 
-    static QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextCoreInterface *rc);
+    static QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextCore *rc);
 
     virtual TShaderAndFlags getShaderProgram(QString inPath,
                                              QString inProgramMacro,

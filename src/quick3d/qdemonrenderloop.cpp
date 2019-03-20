@@ -53,7 +53,7 @@ public:
 
     QOpenGLContext *gl;
     QSharedPointer<QOffscreenSurface> m_offscreenSurface;
-    QDemonRef<QDemonRenderContextCoreInterface> m_contextCore;
+    QDemonRef<QDemonRenderContextCore> m_contextCore;
     QDemonRef<QDemonRenderContextInterface> m_sgContext;
     QDemonRef<QDemonRenderContext> m_renderContext;
 
@@ -200,7 +200,7 @@ static QSurfaceFormat idealSurfaceFormat()
 
 QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
 {
-    m_contextCore = QDemonRenderContextCoreInterface::create();
+    m_contextCore = new QDemonRenderContextCore;
     if (!qgetenv("QUICK3D_PERFTIMERS").isEmpty())
         m_contextCore->performanceTimer()->setEnabled(true);
 

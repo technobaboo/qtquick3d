@@ -418,7 +418,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     typedef QHash<TStrStrPair, QDemonRef<QDemonEffectShader>> TShaderMap;
     typedef QVector<QDemonRef<QDemonEffectContext>> TContextList;
 
-    QDemonRenderContextCoreInterface *m_coreContext;
+    QDemonRenderContextCore *m_coreContext;
     QDemonRenderContextInterface *m_context;
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
     // Keep from dual-including headers.
@@ -431,7 +431,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     QDemonRef<QDemonRenderDepthStencilState> m_defaultStencilState;
     QVector<QDemonRef<QDemonRenderDepthStencilState>> m_depthStencilStates;
 
-    QDemonEffectSystem(QDemonRenderContextCoreInterface *inContext) : m_coreContext(inContext), m_context(nullptr) {}
+    QDemonEffectSystem(QDemonRenderContextCore *inContext) : m_coreContext(inContext), m_context(nullptr) {}
 
     //    ~QDemonEffectSystem() override
     //    {
@@ -1801,7 +1801,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
 QDemonEffectSystemInterface::~QDemonEffectSystemInterface() = default;
 
-QDemonRef<QDemonEffectSystemInterface> QDemonEffectSystemInterface::createEffectSystem(QDemonRenderContextCoreInterface *inContext)
+QDemonRef<QDemonEffectSystemInterface> QDemonEffectSystemInterface::createEffectSystem(QDemonRenderContextCore *inContext)
 {
     return QDemonRef<QDemonEffectSystem>(new QDemonEffectSystem(inContext));
 }

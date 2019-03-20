@@ -109,7 +109,7 @@ static QSurfaceFormat idealSurfaceFormat()
 }
 void RenderWindow::initialize()
 {
-    m_contextCore = QDemonRenderContextCoreInterface::create();
+    m_contextCore = new QDemonRenderContextCore;
 
     m_renderContext = QDemonRenderContext::createGl(idealSurfaceFormat());
 

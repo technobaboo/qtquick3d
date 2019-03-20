@@ -83,7 +83,7 @@ public:
 
     virtual QDemonRef<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) = 0;
 
-    static QDemonRef<QDemonPathManagerInterface> createPathManager(QDemonRenderContextCoreInterface *inContext);
+    static QDemonRef<QDemonPathManagerInterface> createPathManager(QDemonRenderContextCore *inContext);
 
     // The path segments are next expected to change after this call; changes will be ignored.
     virtual bool prepareForRender(const QDemonRenderPath &inPath) = 0;

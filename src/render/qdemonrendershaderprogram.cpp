@@ -1021,10 +1021,9 @@ void QDemonRenderShaderProgram::bindComputeInput(QDemonRenderDataBuffer *inBuffe
 namespace {
 void writeErrorMessage(const char *tag, const QByteArray &message)
 {
-    const QString messageData = QString::fromLocal8Bit(message);
-    const auto lines = messageData.splitRef('\n');
+    const auto lines = message.split('\n');
     for (const auto &line : lines)
-        qCCritical(INVALID_OPERATION, "%s: %s", tag, line.toLocal8Bit().constData());
+        qCCritical(INVALID_OPERATION, "%s: %s", tag, line.constData());
 }
 }
 

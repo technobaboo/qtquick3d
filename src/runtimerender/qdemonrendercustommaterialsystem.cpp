@@ -750,7 +750,7 @@ const QDemonStringBlendFuncMap g_BlendFuncMap[] = {
 };
 
 
-QDemonMaterialSystem::QDemonMaterialSystem(QDemonRenderContextCoreInterface *ct)
+QDemonMaterialSystem::QDemonMaterialSystem(QDemonRenderContextCore *ct)
 {
     coreContext = ct;
 }

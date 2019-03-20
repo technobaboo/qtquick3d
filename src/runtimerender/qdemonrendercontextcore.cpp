@@ -56,41 +56,23 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace {
 
-struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
+QDemonRenderContextCore::QDemonRenderContextCore()
+    : m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
+    , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
 {
-    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
-    QDemonRef<QDemonAbstractThreadPool> m_threadPool;
-    QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
-    QDemonRef<QDemonMaterialSystem> m_materialSystem;
-    QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
-    QDemonRef<QDemonPathManagerInterface> m_pathManagerCore;
+    m_dynamicObjectSystem = QDemonDynamicObjectSystemInterface::createDynamicSystem(this);
+    m_materialSystem = new QDemonMaterialSystem(this);
+    m_effectSystem = QDemonEffectSystemInterface::createEffectSystem(this);
+    m_pathManagerCore = QDemonPathManagerInterface::createPathManager(this);
+}
 
-    QDemonRenderContextCore()
-        : m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
-        , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
-    {
-        m_dynamicObjectSystem = QDemonDynamicObjectSystemInterface::createDynamicSystem(this);
-        m_materialSystem = new QDemonMaterialSystem(this);
-        m_effectSystem = QDemonEffectSystemInterface::createEffectSystem(this);
-        m_pathManagerCore = QDemonPathManagerInterface::createPathManager(this);
-    }
+QDemonRef<QDemonPathManagerInterface> QDemonRenderContextCore::pathManager()
+{
+    return m_pathManagerCore;
+}
 
-    ~QDemonRenderContextCore() override = default;
-
-    QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
-    QDemonRef<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
-    QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() override
-    {
-        return m_dynamicObjectSystem;
-    }
-    QDemonRef<QDemonMaterialSystem> getMaterialSystemCore() override { return m_materialSystem; }
-    QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() override { return m_effectSystem; }
-    QDemonRef<QDemonPathManagerInterface> getPathManagerCore() override { return m_pathManagerCore; }
-    QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
-                                                                const char *inPrimitivesDirectory) override;
-};
+QDemonRenderContextCore::~QDemonRenderContextCore() = default;
 
 inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
 {
@@ -113,7 +95,7 @@ void swapXY(QVector2D &v)
 struct QDemonRenderContextData : public QDemonRenderContextInterface
 {
     QDemonRef<QDemonRenderContext> m_renderContext;
-    QDemonRenderContextCoreInterface *m_coreContext;
+    QDemonRenderContextCore *m_coreContext;
     QDemonPerfTimer *m_perfTimer;
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     QDemonBufferManager m_bufferManager;
@@ -156,15 +138,15 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QPair<float, int> m_fps;
     bool m_authoringMode;
 
-    QDemonRenderContextData(const QDemonRef<QDemonRenderContext> &ctx, QDemonRenderContextCoreInterface *inCore, const char *inApplicationDirectory)
+    QDemonRenderContextData(const QDemonRef<QDemonRenderContext> &ctx, QDemonRenderContextCore *inCore, const char *inApplicationDirectory)
         : m_renderContext(ctx)
         , m_coreContext(inCore)
         , m_perfTimer(inCore->performanceTimer())
-        , m_inputStreamFactory(inCore->getInputStreamFactory())
+        , m_inputStreamFactory(inCore->inputStreamFactory())
         , m_bufferManager(ctx, m_inputStreamFactory, m_perfTimer)
         , m_resourceManager(QDemonResourceManagerInterface::createResourceManager(ctx))
         , m_shaderCache(QDemonShaderCacheInterface::createShaderCache(ctx, m_inputStreamFactory, m_perfTimer))
-        , m_threadPool(inCore->getThreadPool())
+        , m_threadPool(inCore->threadPool())
         , m_frameCount(0)
         , m_windowDimensions(800, 480)
         , m_scaleMode(ScaleModes::ExactSize)
@@ -185,8 +167,8 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, m_perfTimer);
         m_dynamicObjectSystem = inCore->dynamicObjectSystem();
         m_dynamicObjectSystem->setContextInterface(this);
-        m_effectSystem = inCore->getEffectSystemCore()->getEffectSystem(this);
-        m_customMaterialSystem = inCore->getMaterialSystemCore();
+        m_effectSystem = inCore->effectSystem()->getEffectSystem(this);
+        m_customMaterialSystem = inCore->materialSystem();
         m_customMaterialSystem->setRenderContextInterface(this);
         // as does the custom material system
         m_pixelGraphicsRenderer = QDemonPixelGraphicsRendererInterface::createRenderer(this);
@@ -194,7 +176,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         m_defaultMaterialShaderGenerator = QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(this);
         m_customMaterialShaderGenerator = QDemonMaterialShaderGeneratorInterface::createCustomMaterialShaderGenerator(this);
 
-        m_pathManager = inCore->getPathManagerCore()->onRenderSystemInitialize(this);
+        m_pathManager = inCore->pathManager()->onRenderSystemInitialize(this);
 
         const char *versionString;
         switch (ctx->renderContextType()) {
@@ -658,14 +640,6 @@ QDemonRef<QDemonRenderContextInterface> QDemonRenderContextCore::createRenderCon
                                                                                      const char *inPrimitivesDirectory)
 {
     return QDemonRef<QDemonRenderContextData>(new QDemonRenderContextData(inContext, this, inPrimitivesDirectory));
-}
-}
-
-QDemonRenderContextCoreInterface::~QDemonRenderContextCoreInterface() = default;
-
-QDemonRef<QDemonRenderContextCoreInterface> QDemonRenderContextCoreInterface::create()
-{
-    return QDemonRef<QDemonRenderContextCore>(new QDemonRenderContextCore());
 }
 
 QDemonRenderContextInterface::~QDemonRenderContextInterface() = default;

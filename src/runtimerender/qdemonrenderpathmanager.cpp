@@ -665,7 +665,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     typedef QHash<QDemonPathShaderMapKey, QDemonPathXYGeneratedShader *> TPaintedShaderMap;
     typedef QHash<QString, TPathBufferPtr> TStringPathBufferMap;
 
-    QDemonRenderContextCoreInterface *m_coreContext;
+    QDemonRenderContextCore *m_coreContext;
     QDemonRenderContextInterface *m_renderContext;
     QString m_idBuilder;
     TPathSubPathBufferHash m_subPathBuffers;
@@ -693,7 +693,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     QDemonRef<QDemonRenderPathSpecification> m_pathSpecification;
     QScopedPointer<QDemonPathUtilities::QDemonPathBufferBuilder> m_pathBuilder;
 
-    QDemonPathManager(QDemonRenderContextCoreInterface *inRC) : m_coreContext(inRC), m_renderContext(nullptr) {}
+    QDemonPathManager(QDemonRenderContextCore *inRC) : m_coreContext(inRC), m_renderContext(nullptr) {}
 
     virtual ~QDemonPathManager() {
         m_paintedRectInputAssembler = nullptr;
@@ -1216,7 +1216,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             //            QPair<TStringPathBufferMap::iterator, bool> inserter =
             //                    m_SourcePathBufferMap.insert(inPath.m_PathBuffer, TPathBufferPtr());
             if (inserter == m_sourcePathBufferMap.end()) {
-                QSharedPointer<QIODevice> theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(inPath.m_pathBuffer);
+                QSharedPointer<QIODevice> theStream = m_coreContext->inputStreamFactory()->getStreamForFile(inPath.m_pathBuffer);
                 if (theStream) {
                     QDemonPathUtilities::QDemonPathBuffer *theNewBuffer = QDemonPathUtilities::QDemonPathBuffer::load(*theStream);
                     if (theNewBuffer)
@@ -1761,7 +1761,7 @@ QVector2D QDemonPathManagerInterface::getAngleDistanceFromControlPoint(QVector2D
     return QVector2D(radToDeg(angleRad), distance);
 }
 
-QDemonRef<QDemonPathManagerInterface> QDemonPathManagerInterface::createPathManager(QDemonRenderContextCoreInterface *ctx)
+QDemonRef<QDemonPathManagerInterface> QDemonPathManagerInterface::createPathManager(QDemonRenderContextCore *ctx)
 {
     return QDemonRef<QDemonPathManager>(new QDemonPathManager(ctx));
 }

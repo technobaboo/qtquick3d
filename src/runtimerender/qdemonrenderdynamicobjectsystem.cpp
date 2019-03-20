@@ -591,7 +591,7 @@ static const char *includeSearch = "#include \"";
 
 struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 {
-    QDemonRenderContextCoreInterface *m_coreContext;
+    QDemonRenderContextCore *m_coreContext;
     QDemonRenderContextInterface *m_context;
     TStringClassMap m_classes;
     TPathDataMap m_expandedFiles;
@@ -604,7 +604,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     QString m_shaderLibraryPlatformDirectory;
     mutable QMutex m_propertyLoadMutex;
 
-    QDemonDynamicObjectSystemImpl(QDemonRenderContextCoreInterface *inCore)
+    QDemonDynamicObjectSystemImpl(QDemonRenderContextCore *inCore)
         : m_coreContext(inCore), m_context(nullptr), m_propertyLoadMutex()
     {
     }
@@ -922,19 +922,19 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             if (!platformDir.isEmpty()) {
                 QTextStream stream(&fullPath);
                 stream << platformDir << QLatin1Char('/') << inPathToEffect;
-                theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath, true);
+                theStream = m_coreContext->inputStreamFactory()->getStreamForFile(fullPath, true);
             }
 
             if (theStream.isNull()) {
                 fullPath.clear();
                 QTextStream stream(&fullPath);
                 stream << defaultDir << QLatin1Char('/') << ver << QLatin1Char('/') << inPathToEffect;
-                theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath, true);
+                theStream = m_coreContext->inputStreamFactory()->getStreamForFile(fullPath, true);
                 if (theStream.isNull()) {
                     fullPath.clear();
                     QTextStream stream(&fullPath);
                     stream << defaultDir << QLatin1Char('/') << inPathToEffect;
-                    theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath, false);
+                    theStream = m_coreContext->inputStreamFactory()->getStreamForFile(fullPath, false);
                 }
             }
             if (!theStream.isNull()) {
@@ -1432,7 +1432,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 };
 }
 
-QDemonRef<QDemonDynamicObjectSystemInterface> QDemonDynamicObjectSystemInterface::createDynamicSystem(QDemonRenderContextCoreInterface *rc)
+QDemonRef<QDemonDynamicObjectSystemInterface> QDemonDynamicObjectSystemInterface::createDynamicSystem(QDemonRenderContextCore *rc)
 {
     return QDemonRef<QDemonDynamicObjectSystemImpl>(new QDemonDynamicObjectSystemImpl(rc));
 }

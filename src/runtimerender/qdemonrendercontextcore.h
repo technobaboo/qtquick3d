@@ -62,25 +62,38 @@ class QDemonPathManagerInterface;
 class QDemonMaterialSystem;
 
 // Part of render context that does not require the render system.
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCoreInterface
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCore
 {
 public:
     QAtomicInt ref;
+private:
     QDemonPerfTimer m_perfTimer;
-    QDemonRenderContextCoreInterface() {}
-    virtual ~QDemonRenderContextCoreInterface();
-    virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
-    virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
-    virtual QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() = 0;
-    virtual QDemonRef<QDemonMaterialSystem> getMaterialSystemCore() = 0;
-    virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() = 0;
-    QDemonPerfTimer *performanceTimer() { return &m_perfTimer; }
-    virtual QDemonRef<QDemonPathManagerInterface> getPathManagerCore() = 0;
-    // The render context maintains a reference to this object.
-    virtual QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
-                                                                        const char *inPrimitivesDirectory) = 0;
+    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QDemonRef<QDemonAbstractThreadPool> m_threadPool;
+    QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
+    QDemonRef<QDemonMaterialSystem> m_materialSystem;
+    QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
+    QDemonRef<QDemonPathManagerInterface> m_pathManagerCore;
 
-    static QDemonRef<QDemonRenderContextCoreInterface> create();
+public:
+    QDemonRenderContextCore();
+    ~QDemonRenderContextCore();
+    QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory()
+    { return m_inputStreamFactory; }
+    QDemonRef<QDemonAbstractThreadPool> threadPool()
+    { return m_threadPool; }
+    QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem()
+    { return m_dynamicObjectSystem; }
+    QDemonRef<QDemonMaterialSystem> materialSystem()
+    { return m_materialSystem; }
+    QDemonRef<QDemonEffectSystemInterface> effectSystem()
+    { return m_effectSystem; }
+    QDemonPerfTimer *performanceTimer() { return &m_perfTimer; }
+    QDemonRef<QDemonPathManagerInterface> pathManager();
+
+    // The render context maintains a reference to this object.
+    QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
+                                                                        const char *inPrimitivesDirectory);
 };
 
 class QDemonRendererInterface;
