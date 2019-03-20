@@ -203,14 +203,13 @@ void QDemonRenderConstantBuffer::update()
     // and if it is dirty
     if (m_rangeStart < m_rangeEnd && m_hwBufferInitialized) {
         if (m_rangeStart == 0 && m_rangeEnd >= m_shadowCopy.size()) {
-            m_backend->updateBuffer(m_handle, m_type, m_shadowCopy.size(), m_usageType, m_shadowCopy.constBegin());
+            m_backend->updateBuffer(m_handle, m_type, m_usageType, toByteView(m_shadowCopy));
         } else {
             Q_ASSERT(m_rangeStart < m_rangeEnd && m_rangeEnd <= m_shadowCopy.size());
             m_backend->updateBufferRange(m_handle,
                                          m_type,
                                          m_rangeStart,
-                                         m_rangeEnd - m_rangeStart,
-                                         m_shadowCopy.constBegin() + m_rangeStart);
+                                         QDemonByteView(m_shadowCopy.constBegin() + m_rangeStart, m_rangeEnd - m_rangeStart));
         }
 
         m_rangeStart = std::numeric_limits<quint32>::max();

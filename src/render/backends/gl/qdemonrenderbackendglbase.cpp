@@ -572,9 +572,9 @@ void QDemonRenderBackendGLBase::clear(QDemonRenderClearFlags flags)
     GL_CALL_FUNCTION(glClear(m_conversion.fromClearFlagsToGL(flags)));
 }
 
-QDemonRenderBackend::QDemonRenderBackendBufferObject QDemonRenderBackendGLBase::createBuffer(QDemonByteView hostData,
-                                                                                             QDemonRenderBufferType bindFlags,
-                                                                                             QDemonRenderBufferUsageType usage)
+QDemonRenderBackend::QDemonRenderBackendBufferObject QDemonRenderBackendGLBase::createBuffer(QDemonRenderBufferType bindFlags,
+                                                                                             QDemonRenderBufferUsageType usage,
+                                                                                             QDemonByteView hostData)
 {
     GLuint bufID = 0;
 
@@ -609,26 +609,24 @@ void QDemonRenderBackendGLBase::releaseBuffer(QDemonRenderBackendBufferObject bo
 
 void QDemonRenderBackendGLBase::updateBuffer(QDemonRenderBackendBufferObject bo,
                                              QDemonRenderBufferType bindFlags,
-                                             size_t size,
                                              QDemonRenderBufferUsageType usage,
-                                             const void *data)
+                                             QDemonByteView data)
 {
     GLuint bufID = HandleToID_cast(GLuint, size_t, bo);
     GLenum target = GLConversion::fromBindBufferFlagsToGL(bindFlags);
     GL_CALL_FUNCTION(glBindBuffer(target, bufID));
-    GL_CALL_FUNCTION(glBufferData(target, size, data, m_conversion.fromBufferUsageTypeToGL(usage)));
+    GL_CALL_FUNCTION(glBufferData(target, data.size(), data, m_conversion.fromBufferUsageTypeToGL(usage)));
 }
 
 void QDemonRenderBackendGLBase::updateBufferRange(QDemonRenderBackendBufferObject bo,
                                                   QDemonRenderBufferType bindFlags,
                                                   size_t offset,
-                                                  size_t size,
-                                                  const void *data)
+                                                  QDemonByteView data)
 {
     GLuint bufID = HandleToID_cast(GLuint, size_t, bo);
     GLenum target = GLConversion::fromBindBufferFlagsToGL(bindFlags);
     GL_CALL_FUNCTION(glBindBuffer(target, bufID));
-    GL_CALL_FUNCTION(glBufferSubData(target, offset, size, data));
+    GL_CALL_FUNCTION(glBufferSubData(target, offset, data.size(), data));
 }
 
 void *QDemonRenderBackendGLBase::mapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, size_t, QDemonRenderBufferAccessFlags)

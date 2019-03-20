@@ -48,7 +48,7 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderConte
     , m_bufferSize(data.size())
     , m_mapped(false)
 {
-    m_handle = m_backend->createBuffer(data, bindFlags, usageType);
+    m_handle = m_backend->createBuffer(bindFlags, usageType, data);
 }
 
 QDemonRenderDataBuffer::~QDemonRenderDataBuffer()
@@ -124,6 +124,6 @@ void QDemonRenderDataBuffer::updateBuffer(QDemonByteView data)
     m_bufferData = data;
     m_bufferCapacity = data.mSize;
     // update hardware
-    m_backend->updateBuffer(m_handle, m_type, m_bufferCapacity, m_usageType, (const void *)m_bufferData.begin());
+    m_backend->updateBuffer(m_handle, m_type, m_usageType, data);
 }
 QT_END_NAMESPACE

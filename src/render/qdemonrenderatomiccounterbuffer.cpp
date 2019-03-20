@@ -92,7 +92,7 @@ void QDemonRenderAtomicCounterBuffer::update()
 {
     // we only update the buffer if it is dirty and we actually have some data
     if (m_dirty && m_bufferData.size()) {
-        m_backend->updateBuffer(m_handle, m_type, m_bufferData.size(), m_usageType, m_bufferData.begin());
+        m_backend->updateBuffer(m_handle, m_type, m_usageType, m_bufferData);
         m_dirty = false;
     }
 }
@@ -101,7 +101,7 @@ void QDemonRenderAtomicCounterBuffer::updateData(qint32 offset, QDemonByteView d
 {
     // we only update the buffer if we something
     if (data.size())
-        m_backend->updateBuffer(m_handle, m_type, data.size(), m_usageType, data.begin() + offset);
+        m_backend->updateBufferRange(m_handle, m_type, offset, data);
 }
 
 void QDemonRenderAtomicCounterBuffer::addParam(const QByteArray &name, quint32 offset)

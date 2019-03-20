@@ -101,17 +101,17 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void setViewportRect(const QRect &) override {}
     void setClearColor(const QVector4D *) override {}
     void clear(QDemonRenderClearFlags) override {}
-    QDemonRenderBackendBufferObject createBuffer(QDemonByteView, QDemonRenderBufferType, QDemonRenderBufferUsageType) override
+    QDemonRenderBackendBufferObject createBuffer(QDemonRenderBufferType, QDemonRenderBufferUsageType, QDemonByteView) override
     {
         return QDemonRenderBackendBufferObject(1);
     }
     void bindBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType) override {}
     void releaseBuffer(QDemonRenderBackendBufferObject) override {}
 
-    void updateBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, QDemonRenderBufferUsageType, const void *) override
+    void updateBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType, QDemonRenderBufferUsageType, QDemonByteView) override
     {
     }
-    void updateBufferRange(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, size_t, const void *) override
+    void updateBufferRange(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, QDemonByteView) override
     {
     }
     void *mapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, size_t, QDemonRenderBufferAccessFlags) override

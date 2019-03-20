@@ -440,9 +440,9 @@ public:
      *
      * @return The created buffer object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendBufferObject createBuffer(QDemonByteView hostData,
-                                                         QDemonRenderBufferType bindFlags,
-                                                         QDemonRenderBufferUsageType usage) = 0;
+    virtual QDemonRenderBackendBufferObject createBuffer(QDemonRenderBufferType bindFlags,
+                                                         QDemonRenderBufferUsageType usage,
+                                                         QDemonByteView hostData) = 0;
 
     /**
      * @brief bind a buffer object
@@ -481,9 +481,8 @@ public:
      */
     virtual void updateBuffer(QDemonRenderBackendBufferObject bo,
                               QDemonRenderBufferType bindFlags,
-                              size_t size,
                               QDemonRenderBufferUsageType usage,
-                              const void *data) = 0;
+                              QDemonByteView data) = 0;
 
     /**
      * @brief update a range of a buffer object
@@ -502,8 +501,7 @@ public:
     virtual void updateBufferRange(QDemonRenderBackendBufferObject bo,
                                    QDemonRenderBufferType bindFlags,
                                    size_t offset,
-                                   size_t size,
-                                   const void *data) = 0;
+                                   QDemonByteView data) = 0;
 
     /**
      * @brief Get a pointer to the buffer data ( GL(ES) >= 3 only )

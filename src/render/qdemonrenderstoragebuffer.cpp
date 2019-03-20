@@ -77,7 +77,7 @@ void QDemonRenderStorageBuffer::update()
 {
     // we only update the buffer if it is dirty and we actually have some data
     if (m_dirty && m_bufferData.size()) {
-        m_backend->updateBuffer(m_handle, m_type, m_bufferData.size(), m_usageType, m_bufferData.begin());
+        m_backend->updateBuffer(m_handle, m_type, m_usageType, m_bufferData);
         m_dirty = false;
     }
 }
@@ -86,7 +86,7 @@ void QDemonRenderStorageBuffer::updateData(qint32 offset, QDemonByteView data)
 {
     // we only update the buffer if it is not just a wrapper
     if (!m_wrappedBuffer)
-        m_backend->updateBuffer(m_handle, m_type, data.size(), m_usageType, data.begin() + offset);
+        m_backend->updateBufferRange(m_handle, m_type, offset, data);
 }
 
 QT_END_NAMESPACE
