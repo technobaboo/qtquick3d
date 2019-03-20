@@ -469,20 +469,6 @@ public:
             QDemonRenderShaderProgramBinaryType type = QDemonRenderShaderProgramBinaryType::Unknown,
             bool binaryProgram = false);
 
-    // You must figure out inVertLen and inFragLen yourself, this object doesn't do that.
-    QDemonRenderVertFragCompilationResult compileSource(const char *shaderName,
-                                                        const char *vertShader,
-                                                        quint32 inVertLen,
-                                                        const char *fragShader,
-                                                        quint32 inFragLen,
-                                                        const char * = nullptr,
-                                                        quint32 inTCLen = 0,
-                                                        const char *tessEvaluationShaderSource = nullptr,
-                                                        quint32 inTELen = 0,
-                                                        const char *geometryShaderSource = nullptr,
-                                                        quint32 inGSLen = 0,
-                                                        bool separableProgram = false);
-
     QDemonRenderVertFragCompilationResult compileBinary(const char *shaderName,
             QDemonRenderShaderProgramBinaryType type,
             QDemonByteView vertShader,

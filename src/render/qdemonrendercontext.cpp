@@ -683,28 +683,6 @@ QMatrix4x4 QDemonRenderContext::applyVirtualViewportToProjectionMatrix(const QMa
     return theScaleTransMat * inProjection;
 }
 
-QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const char *shaderName,
-                                                                         const char *vertShader,
-                                                                         quint32 inVertLen,
-                                                                         const char *fragShader,
-                                                                         quint32 inFragLen,
-                                                                         const char *tessControlShaderSource,
-                                                                         quint32 inTCLen,
-                                                                         const char *tessEvaluationShaderSource,
-                                                                         quint32 inTELen,
-                                                                         const char *geometryShaderSource,
-                                                                         quint32 inGSLen,
-                                                                         bool separableProgram)
-{
-    return compileSource(shaderName,
-                         QDemonByteView((const qint8 *)vertShader, inVertLen),
-                         QDemonByteView((const qint8 *)fragShader, inFragLen),
-                         QDemonByteView((const qint8 *)tessControlShaderSource, inTCLen),
-                         QDemonByteView((const qint8 *)tessEvaluationShaderSource, inTELen),
-                         QDemonByteView((const qint8 *)geometryShaderSource, inGSLen),
-                         separableProgram);
-}
-
 void QDemonRenderContext::doSetActiveShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
     m_hardwarePropertyContext.m_activeShader = nullptr;
