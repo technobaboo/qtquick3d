@@ -58,10 +58,10 @@ Q_DECLARE_FLAGS(QDemonShaderCacheProgramFlags, ShaderCacheProgramFlagValues)
 //#define name value where value is 1 or zero depending on if the feature is enabled or not.
 struct QDemonShaderPreprocessorFeature
 {
-    QString name;
+    QByteArray name;
     bool enabled = false;
     QDemonShaderPreprocessorFeature() = default;
-    QDemonShaderPreprocessorFeature(const QString &inName, bool val) : name(inName), enabled(val) {}
+    QDemonShaderPreprocessorFeature(const QByteArray &inName, bool val) : name(inName), enabled(val) {}
     bool operator<(const QDemonShaderPreprocessorFeature &inOther) const;
     bool operator==(const QDemonShaderPreprocessorFeature &inOther) const;
 };

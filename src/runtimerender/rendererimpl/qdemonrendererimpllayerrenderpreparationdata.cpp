@@ -90,13 +90,14 @@ QDemonDefaultMaterialPreparationResult::QDemonDefaultMaterialPreparationResult(Q
 }
 
 #define MAX_AA_LEVELS 8
+const char *
+QDemonLayerRenderPreparationData::cgLightingFeatureName = "QDEMON_ENABLE_CG_LIGHTING";
 
 QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer,
                                                                    const QDemonRef<QDemonRendererImpl> &inRenderer)
     : layer(inLayer)
     , renderer(inRenderer)
     , camera(nullptr)
-    , cgLightingFeatureName(QStringLiteral("QDEMON_ENABLE_CG_LIGHTING"))
     , featuresDirty(true)
     , featureSetHash(0)
     , tooManyLightsError(false)
@@ -110,7 +111,7 @@ bool QDemonLayerRenderPreparationData::needsWidgetTexture() const
     return iRenderWidgets.size() > 0;
 }
 
-void QDemonLayerRenderPreparationData::setShaderFeature(const QString &theStr, bool inValue)
+void QDemonLayerRenderPreparationData::setShaderFeature(const QByteArray &theStr, bool inValue)
 {
     QDemonShaderPreprocessorFeature item(theStr, inValue);
     QVector<QDemonShaderPreprocessorFeature>::iterator iter = features.begin(), end = features.end();
@@ -130,12 +131,6 @@ void QDemonLayerRenderPreparationData::setShaderFeature(const QString &theStr, b
         featuresDirty = true;
         featureSetHash = 0;
     }
-}
-
-void QDemonLayerRenderPreparationData::setShaderFeature(const char *inName, bool inValue)
-{
-    QString theStr(QString::fromLocal8Bit(inName));
-    setShaderFeature(theStr, inValue);
 }
 
 QVector<QDemonShaderPreprocessorFeature> QDemonLayerRenderPreparationData::getShaderFeatureSet()

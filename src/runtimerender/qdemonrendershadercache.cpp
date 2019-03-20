@@ -387,7 +387,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
             for (int idx = 0, end = inFeatures.size(); idx < end; ++idx) {
                 QDemonShaderPreprocessorFeature feature(inFeatures[idx]);
                 m_insertStr.append("#define ");
-                m_insertStr.append(inFeatures[idx].name.toUtf8());
+                m_insertStr.append(inFeatures[idx].name);
                 m_insertStr.append(" ");
                 m_insertStr.append(feature.enabled ? "1" : "0");
                 m_insertStr.append("\n");
@@ -686,7 +686,7 @@ uint hashShaderFeatureSet(QVector<QDemonShaderPreprocessorFeature> inFeatureSet)
 
 bool QDemonShaderPreprocessorFeature::operator<(const QDemonShaderPreprocessorFeature &other) const
 {
-    return QString::compare(name, other.name) < 0;
+    return name < other.name;
 }
 
 bool QDemonShaderPreprocessorFeature::operator==(const QDemonShaderPreprocessorFeature &other) const

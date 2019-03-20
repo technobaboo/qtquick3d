@@ -262,7 +262,7 @@ struct QDemonLayerRenderPreparationData
     QDemonRef<QDemonOffscreenRendererInterface> lastFrameOffscreenRenderer;
 
     QVector<QDemonShaderPreprocessorFeature> features;
-    QString cgLightingFeatureName;
+    static const char *cgLightingFeatureName;
     bool featuresDirty;
     size_t featureSetHash;
     bool tooManyLightsError;
@@ -314,8 +314,7 @@ struct QDemonLayerRenderPreparationData
     virtual void prepareForRender(const QSize &inViewportDimensions);
     bool checkLightProbeDirty(QDemonRenderImage &inLightProbe);
     void addRenderWidget(QDemonRenderWidgetInterface &inWidget);
-    void setShaderFeature(const char *inName, bool inValue);
-    void setShaderFeature(const QString &inName, bool inValue);
+    void setShaderFeature(const QByteArray &inName, bool inValue);
     QVector<QDemonShaderPreprocessorFeature> getShaderFeatureSet();
     size_t getShaderFeatureSetHash();
     // The graph object is not const because this traversal updates dirty state on the objects.
