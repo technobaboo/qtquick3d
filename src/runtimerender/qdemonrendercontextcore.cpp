@@ -97,7 +97,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
 
     m_pathManager = QDemonPathManagerInterface::createPathManager(this);
 
-    const char *versionString;
+    const char *versionString = nullptr;
     switch (ctx->renderContextType()) {
     case QDemonRenderContextType::GLES2:
         versionString = "gles2";
@@ -118,6 +118,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
         versionString = "gl4";
         break;
     default:
+        Q_ASSERT(false);
         break;
     }
 
