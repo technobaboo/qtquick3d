@@ -60,37 +60,6 @@
 #include <QtDemon/QDemonDataRef>
 
 QT_BEGIN_NAMESPACE
-inline bool floatLessThan(float lhs, float rhs)
-{
-    float diff = lhs - rhs;
-    if (std::abs(diff) < .001f)
-        return false;
-    return diff < 0.0f ? true : false;
-}
-inline bool iSRenderObjectPtrLessThan(const QDemonRenderableObject *lhs, const QDemonRenderableObject *rhs)
-{
-    return floatLessThan(lhs->cameraDistanceSq, rhs->cameraDistanceSq);
-}
-inline bool iSRenderObjectPtrGreatThan(const QDemonRenderableObject *lhs, const QDemonRenderableObject *rhs)
-{
-    return floatLessThan(rhs->cameraDistanceSq, lhs->cameraDistanceSq);
-}
-inline bool nonZero(float inValue)
-{
-    return std::abs(inValue) > .001f;
-}
-inline bool nonZero(quint32 inValue)
-{
-    return inValue != 0;
-}
-inline bool isZero(float inValue)
-{
-    return std::abs(inValue) < .001f;
-}
-inline bool isNotOne(float inValue)
-{
-    return std::abs(1.0f - inValue) > .001f;
-}
 
 inline bool isRectEdgeInBounds(qint32 inNewRectOffset, qint32 inNewRectWidth, qint32 inCurrentRectOffset, qint32 inCurrentRectWidth)
 {

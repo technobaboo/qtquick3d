@@ -460,7 +460,7 @@ void QDemonRendererImpl::endFrame()
 
 inline bool pickResultLessThan(const QDemonRenderPickResult &lhs, const QDemonRenderPickResult &rhs)
 {
-    return floatLessThan(lhs.m_cameraDistanceSq, rhs.m_cameraDistanceSq);
+    return lhs.m_cameraDistanceSq < rhs.m_cameraDistanceSq;
 }
 
 inline float clampUVCoord(float inUVCoord, QDemonRenderTextureCoordOp inCoordOp)

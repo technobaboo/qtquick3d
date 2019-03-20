@@ -62,6 +62,16 @@
 QT_BEGIN_NAMESPACE
 
 namespace {
+
+inline bool iSRenderObjectPtrLessThan(const QDemonRenderableObject *lhs, const QDemonRenderableObject *rhs)
+{
+    return lhs->cameraDistanceSq < rhs->cameraDistanceSq;
+}
+inline bool iSRenderObjectPtrGreatThan(const QDemonRenderableObject *lhs, const QDemonRenderableObject *rhs)
+{
+    return lhs->cameraDistanceSq > rhs->cameraDistanceSq;
+}
+
 void MaybeQueueNodeForRender(QDemonRenderNode &inNode,
                              QVector<QDemonRenderableNodeEntry> &outRenderables,
                              QVector<QDemonRenderNode *> &outCamerasAndLights,
@@ -643,7 +653,9 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
         renderableFlags |= QDemonRenderableObjectFlag::CompletelyTransparent;
     }
 
-    if (isNotOne(subsetOpacity))
+    if (subsetOpacity > 1. - QDEMON_RENDER_MINIMUM_RENDER_OPACITY)
+        subsetOpacity = 1.;
+    else
         renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
 
     retval.firstImage = firstImage;
@@ -676,7 +688,9 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
         renderableFlags |= QDemonRenderableObjectFlag::CompletelyTransparent;
     }
 
-    if (isNotOne(subsetOpacity))
+    if (subsetOpacity > 1. - QDEMON_RENDER_MINIMUM_RENDER_OPACITY)
+        subsetOpacity = 1.;
+    else
         renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
 
     QDemonRenderableImage *firstImage = nullptr;
