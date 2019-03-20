@@ -391,7 +391,7 @@ void QDemonRendererImpl::setupWidgetLayer()
     QDemonRef<QDemonRenderContext> theContext = m_demonContext->renderContext();
 
     if (!m_widgetTexture) {
-        QDemonRef<QDemonResourceManagerInterface> theManager = m_demonContext->resourceManager();
+        QDemonRef<QDemonResourceManager> theManager = m_demonContext->resourceManager();
         m_widgetTexture = theManager->allocateTexture2D(m_beginFrameViewport.width(),
                                                         m_beginFrameViewport.height(),
                                                         QDemonRenderTextureFormat::RGBA8);
@@ -450,7 +450,7 @@ void QDemonRendererImpl::endFrame()
         theCamera.calculateViewProjectionMatrix(theViewProj);
         renderQuad(theTextureDims, theViewProj, *m_widgetTexture);
 
-        QDemonRef<QDemonResourceManagerInterface> theManager(m_demonContext->resourceManager());
+        QDemonRef<QDemonResourceManager> theManager(m_demonContext->resourceManager());
         theManager->release(m_widgetFbo);
         theManager->release(m_widgetTexture);
         m_widgetTexture = nullptr;

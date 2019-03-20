@@ -239,7 +239,7 @@ struct QDemonEffectContext
     QAtomicInt ref;
     QString m_className;
     QDemonRenderContextInterface *m_context;
-    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
     QVector<QDemonAllocatedBufferEntry> m_allocatedBuffers;
     QVector<QDemonAllocatedImageEntry> m_allocatedImages;
     QVector<QDemonAllocatedDataBufferEntry> m_allocatedDataBuffers;
@@ -247,7 +247,7 @@ struct QDemonEffectContext
     QVector<TNamedImageEntry> m_imageEntries;
     QVector<TNamedDataBufferEntry> m_dataBufferEntries;
 
-    QDemonEffectContext(const QString &inName, QDemonRenderContextInterface *ctx, const QDemonRef<QDemonResourceManagerInterface> &inManager)
+    QDemonEffectContext(const QString &inName, QDemonRenderContextInterface *ctx, const QDemonRef<QDemonResourceManager> &inManager)
         : m_className(inName), m_context(ctx), m_resourceManager(inManager)
     {
     }
@@ -419,7 +419,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     typedef QVector<QDemonRef<QDemonEffectContext>> TContextList;
 
     QDemonRenderContextInterface *m_context;
-    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
     // Keep from dual-including headers.
     TEffectClassMap m_effectClasses;
     QVector<QString> m_effectList;
@@ -1775,7 +1775,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     {
         auto theContext(m_context->renderContext());
 
-        m_resourceManager = QDemonResourceManagerInterface::createResourceManager(theContext);
+        m_resourceManager = m_context->resourceManager();
 
         // create default stencil state
         QDemonRenderStencilFunction stencilDefaultFunc(QDemonRenderBoolOp::AlwaysTrue, 0x0, 0xFF);
@@ -1793,7 +1793,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                                                     stencilDefaultOp);
     }
 
-    QDemonRef<QDemonResourceManagerInterface> getResourceManager() override { return m_resourceManager; }
+    QDemonRef<QDemonResourceManager> getResourceManager() override { return m_resourceManager; }
 };
 }
 

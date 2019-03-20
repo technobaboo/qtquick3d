@@ -56,11 +56,11 @@ namespace {
 
 struct QDemonRendererData : QDemonOffscreenRenderResult
 {
-    QDemonRef<QDemonResourceManagerInterface> resourceManager;
+    QDemonRef<QDemonResourceManager> resourceManager;
     quint32 frameCount = std::numeric_limits<quint32>::max();
     bool rendering = false;
 
-    QDemonRendererData(const QDemonRef<QDemonResourceManagerInterface> &inResourceManager)
+    QDemonRendererData(const QDemonRef<QDemonResourceManager> &inResourceManager)
         : resourceManager(inResourceManager)
     {
     }
@@ -100,11 +100,11 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
 {
     typedef QHash<QDemonOffscreenRendererKey, QDemonRendererData> TRendererMap;
     QDemonRenderContextInterface *m_context;
-    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
     TRendererMap m_renderers;
     quint32 m_frameCount; // cheap per-
 
-    QDemonOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager, QDemonRenderContextInterface *inContext)
+    QDemonOffscreenRenderManager(const QDemonRef<QDemonResourceManager> &inManager, QDemonRenderContextInterface *inContext)
         : m_context(inContext), m_resourceManager(inManager), m_frameCount(0)
     {
     }
@@ -430,7 +430,7 @@ void QDemonOffscreenRunnable::run()
 QDemonOffscreenRenderManagerInterface::~QDemonOffscreenRenderManagerInterface() = default;
 
 QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(
-        const QDemonRef<QDemonResourceManagerInterface> &inManager,
+        const QDemonRef<QDemonResourceManager> &inManager,
         QDemonRenderContextInterface *inContext)
 {
     return QDemonRef<QDemonOffscreenRenderManagerInterface>(new QDemonOffscreenRenderManager(inManager, inContext));

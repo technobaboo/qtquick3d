@@ -35,7 +35,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 
 QT_BEGIN_NAMESPACE
-class QDemonResourceManagerInterface;
+class QDemonResourceManager;
 struct QDemonRenderPickResult;
 class QDemonGraphObjectPickQueryInterface;
 class QDemonRenderContextInterface;
@@ -195,7 +195,7 @@ public:
     virtual void beginFrame() = 0;
     virtual void endFrame() = 0;
 
-    static QDemonRef<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager,
+    static QDemonRef<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(const QDemonRef<QDemonResourceManager> &inManager,
                                                                                          QDemonRenderContextInterface *inContext);
 };
 

@@ -39,15 +39,15 @@ QT_BEGIN_NAMESPACE
 class QDemonResourceTexture2D
 {
 protected:
-    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
     QDemonRef<QDemonRenderTexture2D> m_texture;
     QDemonTextureDetails m_textureDetails;
 
 public:
-    QDemonResourceTexture2D(const QDemonRef<QDemonResourceManagerInterface> &mgr,
+    QDemonResourceTexture2D(const QDemonRef<QDemonResourceManager> &mgr,
                             const QDemonRef<QDemonRenderTexture2D> &inTexture = nullptr);
     // create and allocate the texture right away.
-    QDemonResourceTexture2D(const QDemonRef<QDemonResourceManagerInterface> &mgr,
+    QDemonResourceTexture2D(const QDemonRef<QDemonResourceManager> &mgr,
                             quint32 width,
                             quint32 height,
                             QDemonRenderTextureFormat inFormat,
@@ -83,14 +83,14 @@ public:
 class QDemonResourceTexture2DArray
 {
 protected:
-    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
     QDemonRef<QDemonRenderTexture2DArray> m_texture;
     QDemonTextureDetails m_textureDetails;
 
 public:
-    QDemonResourceTexture2DArray(const QDemonRef<QDemonResourceManagerInterface> &mgr);
+    QDemonResourceTexture2DArray(const QDemonRef<QDemonResourceManager> &mgr);
     // create and allocate the texture right away.
-    QDemonResourceTexture2DArray(const QDemonRef<QDemonResourceManagerInterface> &mgr,
+    QDemonResourceTexture2DArray(const QDemonRef<QDemonResourceManager> &mgr,
                                  quint32 width,
                                  quint32 height,
                                  quint32 slices,

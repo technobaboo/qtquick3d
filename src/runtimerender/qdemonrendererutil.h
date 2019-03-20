@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonResourceManagerInterface;
+class QDemonResourceManager;
 class QDemonResourceTexture2D;
 class QDemonRenderContext;
 
@@ -43,7 +43,7 @@ class QDemonRendererUtil
     static const qint16 MAX_SSAA_DIM = 8192; // max render traget size for SSAA mode
 
 public:
-    static void resolveMutisampleFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
+    static void resolveMutisampleFBOColorOnly(const QDemonRef<QDemonResourceManager> &inManager,
                                               QDemonResourceTexture2D &ioResult,
                                               QDemonRenderContext &inRenderContext,
                                               qint32 inWidth,
@@ -51,7 +51,7 @@ public:
                                               QDemonRenderTextureFormat inColorFormat,
                                               const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO);
 
-    static void resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
+    static void resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceManager> &inManager,
                                         QDemonResourceTexture2D &ioResult,
                                         qint32 outWidth,
                                         qint32 outHeight,

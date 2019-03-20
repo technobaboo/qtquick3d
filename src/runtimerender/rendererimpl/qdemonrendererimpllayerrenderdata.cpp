@@ -84,7 +84,7 @@ QDemonLayerRenderData::QDemonLayerRenderData(QDemonRenderLayer &inLayer, const Q
 
 QDemonLayerRenderData::~QDemonLayerRenderData()
 {
-    QDemonRef<QDemonResourceManagerInterface> theResourceManager(renderer->demonContext()->resourceManager());
+    QDemonRef<QDemonResourceManager> theResourceManager(renderer->demonContext()->resourceManager());
     if (m_layerCachedTexture && m_layerCachedTexture != m_layerTexture.getTexture())
         theResourceManager->release(m_layerCachedTexture);
     if (m_advancedModeDrawFB) {
@@ -102,7 +102,7 @@ void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions)
 {
     QDemonLayerRenderPreparationData::prepareForRender(inViewportDimensions);
     QDemonLayerRenderPreparationResult &thePrepResult(*layerPrepResult);
-    QDemonRef<QDemonResourceManagerInterface> theResourceManager(renderer->demonContext()->resourceManager());
+    QDemonRef<QDemonResourceManager> theResourceManager(renderer->demonContext()->resourceManager());
     // at that time all values shoud be updated
     renderer->updateCbAoShadow(&layer, camera, m_layerDepthTexture);
 
@@ -1247,7 +1247,7 @@ void QDemonLayerRenderData::renderToTexture()
     // If our pass index == thePreResult.m_MaxAAPassIndex then
     // we shouldn't get into here.
 
-    QDemonRef<QDemonResourceManagerInterface> theResourceManager = renderer->demonContext()->resourceManager();
+    QDemonRef<QDemonResourceManager> theResourceManager = renderer->demonContext()->resourceManager();
     bool hadLayerTexture = true;
 
     if (renderColorTexture->ensureTexture(theLayerTextureDimensions.width(), theLayerTextureDimensions.height(), ColorTextureFormat, sampleCount)) {
@@ -1561,7 +1561,7 @@ void QDemonLayerRenderData::applyLayerPostEffects()
 {
     if (layer.firstEffect == nullptr) {
         if (m_layerCachedTexture) {
-            QDemonRef<QDemonResourceManagerInterface> theResourceManager(renderer->demonContext()->resourceManager());
+            QDemonRef<QDemonResourceManager> theResourceManager(renderer->demonContext()->resourceManager());
             theResourceManager->release(m_layerCachedTexture);
             m_layerCachedTexture = nullptr;
         }
@@ -1569,7 +1569,7 @@ void QDemonLayerRenderData::applyLayerPostEffects()
     }
 
     QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->demonContext()->effectSystem());
-    QDemonRef<QDemonResourceManagerInterface> theResourceManager(renderer->demonContext()->resourceManager());
+    QDemonRef<QDemonResourceManager> theResourceManager(renderer->demonContext()->resourceManager());
     // we use the non MSAA buffer for the effect
     QDemonRef<QDemonRenderTexture2D> theLayerColorTexture = m_layerTexture.getTexture();
     QDemonRef<QDemonRenderTexture2D> theLayerDepthTexture = m_layerDepthTexture.getTexture();

@@ -774,7 +774,7 @@ void QDemonMaterialSystem::releaseBuffer(qint32 inIdx)
     // Don't call this on MaterialSystem destroy.
     // This causes issues for scene liftime buffers
     // because the resource manager is destroyed before
-    QDemonRef<QDemonResourceManagerInterface> theManager(context->resourceManager());
+    QDemonRef<QDemonResourceManager> theManager(context->resourceManager());
     QDemonCustomMaterialBuffer &theEntry(allocatedBuffers[inIdx]);
     theEntry.frameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
 
@@ -1282,7 +1282,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
     QDemonRenderTextureFormat theFormat = inCommand.m_format;
     if (theFormat == QDemonRenderTextureFormat::Unknown)
         theFormat = theSourceTextureDetails.format;
-    QDemonRef<QDemonResourceManagerInterface> theResourceManager(context->resourceManager());
+    QDemonRef<QDemonResourceManager> theResourceManager(context->resourceManager());
     // size intentionally requiried every loop;
     qint32 bufferIdx = findBuffer(inCommand.m_name);
     if (bufferIdx < allocatedBuffers.size()) {

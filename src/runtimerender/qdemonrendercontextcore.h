@@ -75,7 +75,7 @@ private:
 
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     QDemonRef<QDemonBufferManager> m_bufferManager;
-    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
     QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
     QDemonRef<QDemonRendererInterface> m_renderer;
     QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
@@ -149,7 +149,7 @@ public:
     QDemonRef<QDemonRendererInterface> renderer();
     QDemonRef<QDemonRendererImpl> renderWidgetContext();
     QDemonRef<QDemonBufferManager> bufferManager();
-    QDemonRef<QDemonResourceManagerInterface> resourceManager();
+    QDemonRef<QDemonResourceManager> resourceManager();
     QDemonRef<QDemonRenderContext> renderContext();
     QDemonRef<QDemonOffscreenRenderManagerInterface> offscreenRenderManager();
     QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory();

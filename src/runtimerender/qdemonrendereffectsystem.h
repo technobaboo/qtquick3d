@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 struct QDemonRenderEffect;
 struct QDemonEffectContext;
 class QDemonEffectSystemInterface;
-class QDemonResourceManagerInterface;
+class QDemonResourceManager;
 
 namespace dynamic {
 struct QDemonCommand; // UICRenderEffectCommands.h
@@ -152,7 +152,7 @@ public:
     //    virtual void Load(QDemonByteRef inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
+    virtual QDemonRef<QDemonResourceManager> getResourceManager() = 0;
 
     static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextInterface *context);
 

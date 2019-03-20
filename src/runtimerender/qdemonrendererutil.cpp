@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
+void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonResourceManager> &inManager,
                                                        QDemonResourceTexture2D &ioResult,
                                                        QDemonRenderContext &inRenderContext,
                                                        qint32 inWidth,
@@ -68,7 +68,7 @@ void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonRes
     inRenderContext.blitFramebuffer(0, 0, inWidth, inHeight, 0, 0, inWidth, inHeight, copyFlags, QDemonRenderTextureMagnifyingOp::Nearest);
 }
 
-void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
+void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceManager> &inManager,
                                                  QDemonResourceTexture2D &ioResult,
                                                  qint32 outWidth,
                                                  qint32 outHeight,

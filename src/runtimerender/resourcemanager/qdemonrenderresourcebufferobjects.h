@@ -40,16 +40,16 @@ QT_BEGIN_NAMESPACE
 class QDemonResourceFrameBuffer
 {
 protected:
-    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
     QDemonRef<QDemonRenderFrameBuffer> m_frameBuffer;
 
 public:
-    QDemonResourceFrameBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
+    QDemonResourceFrameBuffer(const QDemonRef<QDemonResourceManager> &mgr);
     ~QDemonResourceFrameBuffer();
     bool ensureFrameBuffer();
     void releaseFrameBuffer();
 
-    QDemonRef<QDemonResourceManagerInterface> getResourceManager() { return m_resourceManager; }
+    QDemonRef<QDemonResourceManager> getResourceManager() { return m_resourceManager; }
     QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer() { return m_frameBuffer; }
     operator QDemonRef<QDemonRenderFrameBuffer>() { return m_frameBuffer; }
     QDemonRef<QDemonRenderFrameBuffer> operator->()
@@ -67,13 +67,13 @@ public:
 class QDemonResourceRenderBuffer
 {
 protected:
-    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManager> m_resourceManager;
     QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
     QDemonRenderRenderBufferFormat m_storageFormat;
     QSize m_dimensions;
 
 public:
-    QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
+    QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManager> &mgr);
     ~QDemonResourceRenderBuffer();
     bool ensureRenderBuffer(qint32 width, qint32 height, QDemonRenderRenderBufferFormat storageFormat);
     void releaseRenderBuffer();
