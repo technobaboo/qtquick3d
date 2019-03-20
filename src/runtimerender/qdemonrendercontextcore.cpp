@@ -72,7 +72,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
     , m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
     , m_bufferManager(new QDemonBufferManager(ctx, m_inputStreamFactory, &m_perfTimer))
     , m_resourceManager(new QDemonResourceManager(ctx))
-    , m_shaderCache(QDemonShaderCacheInterface::createShaderCache(ctx, m_inputStreamFactory, &m_perfTimer))
+    , m_shaderCache(QDemonShaderCache::createShaderCache(ctx, m_inputStreamFactory, &m_perfTimer))
     , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
     , m_windowDimensions(800, 480)
     , m_presentationScale(0, 0)
@@ -152,7 +152,7 @@ QDemonRef<QDemonInputStreamFactoryInterface> QDemonRenderContextInterface::input
 
 QDemonRef<QDemonEffectSystemInterface> QDemonRenderContextInterface::effectSystem() { return m_effectSystem; }
 
-QDemonRef<QDemonShaderCacheInterface> QDemonRenderContextInterface::shaderCache() { return m_shaderCache; }
+QDemonRef<QDemonShaderCache> QDemonRenderContextInterface::shaderCache() { return m_shaderCache; }
 
 QDemonRef<QDemonAbstractThreadPool> QDemonRenderContextInterface::threadPool() { return m_threadPool; }
 

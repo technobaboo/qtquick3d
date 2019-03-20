@@ -76,75 +76,6 @@ inline const QVector<QDemonShaderPreprocessorFeature> shaderCacheNoFeatures()
 // Hash is dependent on the order of the keys; so make sure their order is consistent!!
 uint hashShaderFeatureSet(QVector<QDemonShaderPreprocessorFeature> inFeatureSet);
 
-class QDemonShaderCacheInterface
-{
-public:
-    QAtomicInt ref;
-    virtual ~QDemonShaderCacheInterface();
-    // If directory is nonnull, then we attempt to load any shaders from shadercache.xml in
-    // inDirectory
-    // and save any new ones out to the same file.  The shaders are marked by the gl version
-    // used when saving.
-    // If we can't open shadercache.xml from inDirectory for writing (at least), then we still
-    // consider the
-    // shadercache to be disabled.
-    // This call immediately blocks and attempts to load all applicable shaders from the
-    // shadercache.xml file in
-    // the given directory.
-    virtual void setShaderCachePersistenceEnabled(const QString &inDirectory) = 0;
-    virtual bool isShaderCachePersistenceEnabled() const = 0;
-    // It is up to the caller to ensure that inFeatures contains unique keys.
-    // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRef<QDemonRenderShaderProgram> getProgram(const QByteArray &inKey,
-                                                            const QVector<QDemonShaderPreprocessorFeature> &inFeatures) = 0;
-
-    // Replace an existing program in the cache for the same key with this program.
-    // The shaders returned by *CompileProgram functions can be released by this object
-    // due to ForceCompileProgram or SetProjectDirectory, so clients need to either not
-    // hold on to them or they need to addref/release them to ensure they still have
-    // access to them.
-    // The flags just tell us under what gl state to compile the program in order to hopefully
-    // reduce program compilations.
-    // It is up to the caller to ensure that inFeatures contains unique keys.
-    // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(const QByteArray &inKey,
-                                                                     const QByteArray &inVert,
-                                                                     const QByteArray &inFrag,
-                                                                     const QByteArray &inTessCtrl,
-                                                                     const QByteArray &inTessEval,
-                                                                     const QByteArray &inGeom,
-                                                                     const QDemonShaderCacheProgramFlags &inFlags,
-                                                                     const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
-                                                                     bool separableProgram,
-                                                                     bool fromDisk = false) = 0;
-
-    // It is up to the caller to ensure that inFeatures contains unique keys.
-    // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey,
-                                                                const QByteArray &inVert,
-                                                                const QByteArray &inFrag,
-                                                                const QByteArray &inTessCtrl,
-                                                                const QByteArray &inTessEval,
-                                                                const QByteArray &inGeom,
-                                                                const QDemonShaderCacheProgramFlags &inFlags,
-                                                                const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
-                                                                bool separableProgram = false) = 0;
-
-    // Used to disable any shader compilation during loading.  This is used when we are just
-    // interested in going from uia->binary
-    // and we expect to run on a headless server of sorts.  See the UICCompiler project for its
-    // only current use case.
-    virtual void setShaderCompilationEnabled(bool inEnableShaderCompilation) = 0;
-
-    // Upping the shader version invalidates all previous cache files.
-    static quint32 getShaderVersion() { return 4; }
-    static const QString getShaderCacheFileName() { return QStringLiteral("shadercache.xml"); }
-
-    static QDemonRef<QDemonShaderCacheInterface> createShaderCache(QDemonRef<QDemonRenderContext> inContext,
-                                                                   QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                                   QDemonPerfTimer *inPerfTimer);
-};
-
 struct QDemonShaderCacheKey
 {
     QByteArray m_key;
@@ -166,6 +97,113 @@ struct QDemonShaderCacheKey
     {
         return m_key == inOther.m_key && m_features == inOther.m_features;
     }
+};
+
+
+class QDemonShaderCache
+{
+    enum class ShaderType
+    {
+        Vertex, TessControl, TessEval, Fragment, Geometry, Compute
+    };
+
+public:
+    QAtomicInt ref;
+private:
+    typedef QHash<QDemonShaderCacheKey, QDemonRef<QDemonRenderShaderProgram>> TShaderMap;
+    QDemonRef<QDemonRenderContext> m_renderContext;
+    QDemonPerfTimer *m_perfTimer;
+    TShaderMap m_shaders;
+    QString m_cacheFilePath;
+    QByteArray m_vertexCode;
+    QByteArray m_tessCtrlCode;
+    QByteArray m_tessEvalCode;
+    QByteArray m_geometryCode;
+    QByteArray m_fragmentCode;
+    QByteArray m_insertStr;
+    QString m_flagString;
+    QString m_contextTypeString;
+    QDemonShaderCacheKey m_tempKey;
+
+    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    bool m_shaderCompilationEnabled;
+
+    void addBackwardCompatibilityDefines(ShaderType shaderType);
+
+    void addShaderExtensionStrings(ShaderType shaderType, bool isGLES);
+
+    void addShaderPreprocessor(QByteArray &str,
+                               const QByteArray &inKey,
+                               ShaderType shaderType,
+                               const QVector<QDemonShaderPreprocessorFeature> &inFeatures);
+
+public:
+    QDemonShaderCache(QDemonRef<QDemonRenderContext> ctx,
+                QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                QDemonPerfTimer *inPerfTimer);
+    ~QDemonShaderCache();
+    // If directory is nonnull, then we attempt to load any shaders from shadercache.xml in
+    // inDirectory
+    // and save any new ones out to the same file.  The shaders are marked by the gl version
+    // used when saving.
+    // If we can't open shadercache.xml from inDirectory for writing (at least), then we still
+    // consider the
+    // shadercache to be disabled.
+    // This call immediately blocks and attempts to load all applicable shaders from the
+    // shadercache.xml file in
+    // the given directory.
+    void setShaderCachePersistenceEnabled(const QString &inDirectory);
+    bool isShaderCachePersistenceEnabled() const;
+    // It is up to the caller to ensure that inFeatures contains unique keys.
+    // It is also up the the caller to ensure the keys are ordered in some way.
+    QDemonRef<QDemonRenderShaderProgram> getProgram(const QByteArray &inKey,
+                                                            const QVector<QDemonShaderPreprocessorFeature> &inFeatures);
+
+    // Replace an existing program in the cache for the same key with this program.
+    // The shaders returned by *CompileProgram functions can be released by this object
+    // due to ForceCompileProgram or SetProjectDirectory, so clients need to either not
+    // hold on to them or they need to addref/release them to ensure they still have
+    // access to them.
+    // The flags just tell us under what gl state to compile the program in order to hopefully
+    // reduce program compilations.
+    // It is up to the caller to ensure that inFeatures contains unique keys.
+    // It is also up the the caller to ensure the keys are ordered in some way.
+    QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(const QByteArray &inKey,
+                                                                     const QByteArray &inVert,
+                                                                     const QByteArray &inFrag,
+                                                                     const QByteArray &inTessCtrl,
+                                                                     const QByteArray &inTessEval,
+                                                                     const QByteArray &inGeom,
+                                                                     const QDemonShaderCacheProgramFlags &inFlags,
+                                                                     const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
+                                                                     bool separableProgram,
+                                                                     bool fromDisk = false);
+
+    // It is up to the caller to ensure that inFeatures contains unique keys.
+    // It is also up the the caller to ensure the keys are ordered in some way.
+    QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey,
+                                                                const QByteArray &inVert,
+                                                                const QByteArray &inFrag,
+                                                                const QByteArray &inTessCtrl,
+                                                                const QByteArray &inTessEval,
+                                                                const QByteArray &inGeom,
+                                                                const QDemonShaderCacheProgramFlags &inFlags,
+                                                                const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
+                                                                bool separableProgram = false);
+
+    // Used to disable any shader compilation during loading.  This is used when we are just
+    // interested in going from uia->binary
+    // and we expect to run on a headless server of sorts.  See the UICCompiler project for its
+    // only current use case.
+    void setShaderCompilationEnabled(bool inEnableShaderCompilation);
+
+    // Upping the shader version invalidates all previous cache files.
+    static quint32 getShaderVersion() { return 4; }
+    static const QString getShaderCacheFileName() { return QStringLiteral("shadercache.xml"); }
+
+    static QDemonRef<QDemonShaderCache> createShaderCache(QDemonRef<QDemonRenderContext> inContext,
+                                                                   QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                                   QDemonPerfTimer *inPerfTimer);
 };
 
 QT_END_NAMESPACE

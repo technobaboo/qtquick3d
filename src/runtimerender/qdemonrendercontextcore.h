@@ -62,7 +62,7 @@ enum class ScaleModes
 class QDemonPathManagerInterface;
 class QDemonMaterialSystem;
 class QDemonRendererInterface;
-class QDemonShaderCacheInterface;
+class QDemonShaderCache;
 class QDemonOffscreenRenderManagerInterface;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextInterface
@@ -80,7 +80,7 @@ private:
     QDemonRef<QDemonRendererInterface> m_renderer;
     QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
     QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
-    QDemonRef<QDemonShaderCacheInterface> m_shaderCache;
+    QDemonRef<QDemonShaderCache> m_shaderCache;
     QDemonRef<QDemonAbstractThreadPool> m_threadPool;
     QDemonRef<IImageBatchLoader> m_imageBatchLoader;
     QDemonRef<QDemonMaterialSystem> m_customMaterialSystem;
@@ -154,7 +154,7 @@ public:
     QDemonRef<QDemonOffscreenRenderManagerInterface> offscreenRenderManager();
     QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory();
     QDemonRef<QDemonEffectSystemInterface> effectSystem();
-    QDemonRef<QDemonShaderCacheInterface> shaderCache();
+    QDemonRef<QDemonShaderCache> shaderCache();
     QDemonRef<QDemonAbstractThreadPool> threadPool();
     QDemonRef<IImageBatchLoader> imageBatchLoader();
     QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem();

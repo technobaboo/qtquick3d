@@ -375,7 +375,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
             }
         }
 
-        QDemonRef<QDemonShaderCacheInterface> theCache = m_context->shaderCache();
+        QDemonRef<QDemonShaderCache> theCache = m_context->shaderCache();
         return theCache->compileProgram(inShaderName,
                                         m_vs.m_finalBuilder,
                                         m_fs.m_finalBuilder,

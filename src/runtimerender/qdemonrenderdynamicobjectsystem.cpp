@@ -1293,7 +1293,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             m_fragShader.append(inProgramSource);
         }
 
-        QDemonRef<QDemonShaderCacheInterface> theShaderCache = m_context->shaderCache();
+        QDemonRef<QDemonShaderCache> theShaderCache = m_context->shaderCache();
 
         QByteArray theKey = getShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
         if (inForceCompilation) {
