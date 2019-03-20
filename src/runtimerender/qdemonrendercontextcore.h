@@ -90,7 +90,7 @@ private:
     QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
     QDemonRef<QDemonMaterialShaderGeneratorInterface> m_customMaterialShaderGenerator;
     QDemonPerFrameAllocator m_perFrameAllocator;
-    QDemonRef<QDemonRenderListInterface> m_renderList;
+    QDemonRef<QDemonRenderList> m_renderList;
     quint32 m_frameCount = 0;
     // Viewport that this render context should use
     QDemonOption<QRect> m_viewport;
@@ -161,7 +161,7 @@ public:
     QDemonRef<QDemonMaterialSystem> customMaterialSystem();
     QDemonRef<QDemonPixelGraphicsRendererInterface> pixelGraphicsRenderer();
     QDemonPerfTimer *performanceTimer() { return &m_perfTimer; }
-    QDemonRef<QDemonRenderListInterface> renderList();
+    QDemonRef<QDemonRenderList> renderList();
     QDemonRef<QDemonPathManagerInterface> pathManager();
     QDemonRef<QDemonShaderProgramGeneratorInterface> shaderProgramGenerator();
     QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> defaultMaterialShaderGenerator();

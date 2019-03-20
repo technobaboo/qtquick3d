@@ -361,12 +361,12 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             auto theContext = m_context->renderContext();
             // This happens here because if there are any fancy render steps
             QDemonRenderListScopedProperty<bool> scissor(*theRenderList,
-                                                         &QDemonRenderListInterface::isScissorTestEnabled,
-                                                         &QDemonRenderListInterface::setScissorTestEnabled,
+                                                         &QDemonRenderList::isScissorTestEnabled,
+                                                         &QDemonRenderList::setScissorTestEnabled,
                                                          false);
             QDemonRenderListScopedProperty<QRect> viewport(*theRenderList,
-                                                           &QDemonRenderListInterface::getViewport,
-                                                           &QDemonRenderListInterface::setViewport,
+                                                           &QDemonRenderList::getViewport,
+                                                           &QDemonRenderList::setViewport,
                                                            theViewport);
             // Some plugins don't use the render list so they need the actual gl context setup.
             QDemonRenderContextScopedProperty<bool> scissorEnabled(*theContext,

@@ -78,7 +78,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
     , m_presentationScale(0, 0)
     , m_fps(qMakePair(0.0, 0))
 {
-    m_renderList = QDemonRenderListInterface::createRenderList();
+    m_renderList = QDemonRenderList::createRenderList();
     m_offscreenRenderManager = QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(m_resourceManager, this);
     m_renderer = QDemonRendererInterface::createRenderer(this);
     if (inApplicationDirectory && *inApplicationDirectory)
@@ -167,7 +167,7 @@ QDemonRef<QDemonPixelGraphicsRendererInterface> QDemonRenderContextInterface::pi
     return m_pixelGraphicsRenderer;
 }
 
-QDemonRef<QDemonRenderListInterface> QDemonRenderContextInterface::renderList() { return m_renderList; }
+QDemonRef<QDemonRenderList> QDemonRenderContextInterface::renderList() { return m_renderList; }
 
 QDemonRef<QDemonPathManagerInterface> QDemonRenderContextInterface::pathManager() { return m_pathManager; }
 
@@ -312,7 +312,7 @@ void QDemonRenderContextInterface::beginFrame()
     QSize thePresentationDimensions(m_preRenderPresentationDimensions);
     QRect theContextViewport(contextViewport());
     m_perFrameAllocator.reset();
-    QDemonRenderListInterface &theRenderList(*m_renderList);
+    QDemonRenderList &theRenderList(*m_renderList);
     theRenderList.beginFrame();
     if (m_viewport.hasValue()) {
         theRenderList.setScissorTestEnabled(true);

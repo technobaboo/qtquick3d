@@ -32,72 +32,47 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace {
-
-struct QDemonRenderList : public QDemonRenderListInterface
+QDemonRef<QDemonRenderList> QDemonRenderList::createRenderList()
 {
-    typedef QPair<quint32, QDemonRef<QDemonRenderTask>> TTaskIdTaskPair;
-    typedef QVector<TTaskIdTaskPair> TTaskList;
-
-    TTaskList m_tasks;
-    quint32 m_nextTaskId{ 1 };
-    bool m_scissorEnabled{ false };
-    QRect m_scissorRect;
-    QRect m_viewport;
-
-    QDemonRenderList() = default;
-
-    void beginFrame() override
-    {
-        m_nextTaskId = 1;
-        m_tasks.clear();
-    }
-
-    quint32 addRenderTask(QDemonRef<QDemonRenderTask> inTask) override
-    {
-        quint32 taskId = m_nextTaskId;
-        ++m_nextTaskId;
-        m_tasks.push_back(QPair<quint32, QDemonRef<QDemonRenderTask>>(taskId, inTask));
-        return taskId;
-    }
-
-    void discardRenderTask(quint32 inTaskId) override
-    {
-        auto iter = m_tasks.begin();
-        const auto end = m_tasks.end();
-        while (iter != end && iter->first != inTaskId)
-            ++iter;
-
-        if (iter != end)
-            m_tasks.erase(iter);
-    }
-    // This runs through the added tasks in reverse order.  This is used to render dependencies
-    // before rendering to the main render target.
-    void runRenderTasks() override
-    {
-        auto iter = m_tasks.rbegin();
-        const auto end = m_tasks.rend();
-        while (iter != end) {
-            iter->second->run();
-            ++iter;
-        }
-        beginFrame();
-    }
-
-    void setScissorTestEnabled(bool enabled) override { m_scissorEnabled = enabled; }
-    void setScissorRect(QRect rect) override { m_scissorRect = rect; }
-    void setViewport(QRect rect) override { m_viewport = rect; }
-    bool isScissorTestEnabled() const override { return m_scissorEnabled; }
-    QRect getScissor() const override { return m_scissorRect; }
-    QRect getViewport() const override { return m_viewport; }
-};
-}
-
-QDemonRef<QDemonRenderListInterface> QDemonRenderListInterface::createRenderList()
-{
-    return QDemonRef<QDemonRenderListInterface>(new QDemonRenderList());
+    return QDemonRef<QDemonRenderList>(new QDemonRenderList());
 }
 
 QDemonRenderTask::~QDemonRenderTask() = default;
 
 QT_END_NAMESPACE
+
+void QDemonRenderList::beginFrame()
+{
+    m_nextTaskId = 1;
+    m_tasks.clear();
+}
+
+quint32 QDemonRenderList::addRenderTask(QDemonRef<QDemonRenderTask> inTask)
+{
+    quint32 taskId = m_nextTaskId;
+    ++m_nextTaskId;
+    m_tasks.push_back(QPair<quint32, QDemonRef<QDemonRenderTask>>(taskId, inTask));
+    return taskId;
+}
+
+void QDemonRenderList::discardRenderTask(quint32 inTaskId)
+{
+    auto iter = m_tasks.begin();
+    const auto end = m_tasks.end();
+    while (iter != end && iter->first != inTaskId)
+        ++iter;
+
+    if (iter != end)
+        m_tasks.erase(iter);
+}
+
+void QDemonRenderList::runRenderTasks()
+{
+    auto iter = m_tasks.rbegin();
+    const auto end = m_tasks.rend();
+    while (iter != end) {
+        iter->second->run();
+        ++iter;
+    }
+    beginFrame();
+}

@@ -2017,7 +2017,7 @@ void QDemonLayerRenderData::addLayerRenderStep()
     if (!camera)
         return;
 
-    QDemonRef<QDemonRenderListInterface> theGraph(renderer->demonContext()->renderList());
+    QDemonRef<QDemonRenderList> theGraph(renderer->demonContext()->renderList());
 
     QRect theCurrentViewport = theGraph->getViewport();
     if (!layerPrepResult.hasValue())

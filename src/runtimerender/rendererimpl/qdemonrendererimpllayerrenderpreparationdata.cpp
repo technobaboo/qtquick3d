@@ -971,7 +971,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     features.clear();
     featureSetHash = 0;
     QVector2D thePresentationDimensions((float)inViewportDimensions.width(), (float)inViewportDimensions.height());
-    QDemonRef<QDemonRenderListInterface> theGraph(renderer->demonContext()->renderList());
+    QDemonRef<QDemonRenderList> theGraph(renderer->demonContext()->renderList());
     QRect theViewport(theGraph->getViewport());
     QRect theScissor(theGraph->getViewport());
     if (theGraph->isScissorTestEnabled())
@@ -1230,19 +1230,19 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 bool theScissor = true;
                 QRect theScissorRect = thePrepResult.scissor().toRect();
                 // This happens here because if there are any fancy render steps
-                QDemonRef<QDemonRenderListInterface> theRenderList(renderer->demonContext()->renderList());
+                QDemonRef<QDemonRenderList> theRenderList(renderer->demonContext()->renderList());
                 auto theContext = renderer->context();
                 QDemonRenderListScopedProperty<bool> _listScissorEnabled(*theRenderList,
-                                                                         &QDemonRenderListInterface::isScissorTestEnabled,
-                                                                         &QDemonRenderListInterface::setScissorTestEnabled,
+                                                                         &QDemonRenderList::isScissorTestEnabled,
+                                                                         &QDemonRenderList::setScissorTestEnabled,
                                                                          theScissor);
                 QDemonRenderListScopedProperty<QRect> _listViewport(*theRenderList,
-                                                                    &QDemonRenderListInterface::getViewport,
-                                                                    &QDemonRenderListInterface::setViewport,
+                                                                    &QDemonRenderList::getViewport,
+                                                                    &QDemonRenderList::setViewport,
                                                                     theViewport);
                 QDemonRenderListScopedProperty<QRect> _listScissor(*theRenderList,
-                                                                   &QDemonRenderListInterface::getScissor,
-                                                                   &QDemonRenderListInterface::setScissorRect,
+                                                                   &QDemonRenderList::getScissor,
+                                                                   &QDemonRenderList::setScissorRect,
                                                                    theScissorRect);
                 // Some plugins don't use the render list so they need the actual gl context
                 // setup.

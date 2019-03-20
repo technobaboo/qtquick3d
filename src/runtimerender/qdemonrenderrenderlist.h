@@ -50,67 +50,72 @@ public:
  * architecture.  This tiling mechanism is sensitive to switching the render target, so we would
  * really like to render completely to a single render target and then switch.  With our layered
  * render architecture, this is not very feasible unless dependencies render themselves before
- * the
- * main set of layers render themselves.  Furthermore it benefits the overall software
- * architecture
- * to have a distinct split between the prepare for render step and the render step and using
- * this
- * render list allows us to avoid some level of repeated tree traversal at the cost of some
- * minimal
- * per frame allocation.  The rules for using the render list are that you need to add yourself
- * before
- * your dependencies do; the list is iterated in reverse during RunRenderTasks.  So a layer adds
- * itself
- * (if it is going to render offscreen) before it runs through its renderable list to prepare
- * each object
- * because it is during the renderable prepare traversale that subpresentations will get added
- * by
- * the offscreen render manager.
+ * the main set of layers render themselves.  Furthermore it benefits the overall software
+ * architecture to have a distinct split between the prepare for render step and the render step
+ * and using this render list allows us to avoid some level of repeated tree traversal at the cost
+ * of some minimal per frame allocation.  The rules for using the render list are that you need to
+ * add yourself before your dependencies do; the list is iterated in reverse during RunRenderTasks.
+ * So a layer adds itself (if it is going to render offscreen) before it runs through its renderable
+ * list to prepare each object because it is during the renderable prepare traversale that
+ * subpresentations will get added by the offscreen render manager.
  */
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderListInterface
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderList
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonRenderListInterface() {}
+
+private:
+    typedef QPair<quint32, QDemonRef<QDemonRenderTask>> TTaskIdTaskPair;
+    typedef QVector<TTaskIdTaskPair> TTaskList;
+
+    TTaskList m_tasks;
+    quint32 m_nextTaskId = 1;
+    bool m_scissorEnabled = false;
+    QRect m_scissorRect;
+    QRect m_viewport;
+
+public:
+    QDemonRenderList() = default;
+    ~QDemonRenderList() {}
     // Called by the render context, do not call this.
-    virtual void beginFrame() = 0;
+    void beginFrame();
 
     // Next tell all sub render target rendering systems to add themselves to the render list.
     // At this point
     // we agree to *not* have rendered anything, no clears or anything so if you are caching
     // render state and you detect nothing has changed it may not be necessary to swap egl
     // buffers.
-    virtual quint32 addRenderTask(QDemonRef<QDemonRenderTask> inTask) = 0;
-    virtual void discardRenderTask(quint32 inTaskId) = 0;
+    quint32 addRenderTask(QDemonRef<QDemonRenderTask> inTask);
+    void discardRenderTask(quint32 inTaskId);
     // This runs through the added tasks in reverse order.  This is used to render dependencies
     // before rendering to the main render target.
-    virtual void runRenderTasks() = 0;
+    void runRenderTasks();
 
     // We used to use GL state to pass information down the callstack.
     // I have replaced those calls with this state here because that information
     // controls how layers size themselves (which is quite a complicated process).
-    virtual void setScissorTestEnabled(bool enabled) = 0;
-    virtual void setScissorRect(QRect rect) = 0;
-    virtual void setViewport(QRect rect) = 0;
-    virtual bool isScissorTestEnabled() const = 0;
-    virtual QRect getScissor() const = 0;
-    virtual QRect getViewport() const = 0;
+    void setScissorTestEnabled(bool enabled) { m_scissorEnabled = enabled; }
+    void setScissorRect(QRect rect) { m_scissorRect = rect; }
+    void setViewport(QRect rect) { m_viewport = rect; }
+    bool isScissorTestEnabled() const { return m_scissorEnabled; }
+    QRect getScissor() const { return m_scissorRect; }
+    QRect getViewport() const { return m_viewport; }
 
-    static QDemonRef<QDemonRenderListInterface> createRenderList();
+    static QDemonRef<QDemonRenderList> createRenderList();
 };
 
 // Now for scoped property access.
 template<typename TDataType>
-struct QDemonRenderListScopedProperty : public QDemonRenderGenericScopedProperty<QDemonRenderListInterface, TDataType>
+struct QDemonRenderListScopedProperty : public QDemonRenderGenericScopedProperty<QDemonRenderList, TDataType>
 {
-    typedef QDemonRenderGenericScopedProperty<QDemonRenderListInterface, TDataType> TBaseType;
+    typedef QDemonRenderGenericScopedProperty<QDemonRenderList, TDataType> TBaseType;
     typedef typename TBaseType::TGetter TGetter;
     typedef typename TBaseType::TSetter TSetter;
-    QDemonRenderListScopedProperty(QDemonRenderListInterface &ctx, TGetter getter, TSetter setter)
+    QDemonRenderListScopedProperty(QDemonRenderList &ctx, TGetter getter, TSetter setter)
         : TBaseType(ctx, getter, setter)
     {
     }
-    QDemonRenderListScopedProperty(QDemonRenderListInterface &ctx, TGetter getter, TSetter setter, const TDataType &inNewValue)
+    QDemonRenderListScopedProperty(QDemonRenderList &ctx, TGetter getter, TSetter setter, const TDataType &inNewValue)
         : TBaseType(ctx, getter, setter, inNewValue)
     {
     }
