@@ -172,6 +172,7 @@ struct QDemonRendererData;
  */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderManager
 {
+    Q_DISABLE_COPY(QDemonOffscreenRenderManager)
 public:
     QAtomicInt ref;
 private:

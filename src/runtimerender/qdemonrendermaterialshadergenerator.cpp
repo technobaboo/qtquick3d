@@ -1,5 +1,5 @@
 #include "qdemonrendermaterialshadergenerator.h"
-#include <QtDemonRuntimeRender/QDemonRenderContextCoreInterface>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 QDemonMaterialShaderGeneratorInterface::QDemonMaterialShaderGeneratorInterface(QDemonRenderContextInterface *renderContext)
     : m_renderContext(renderContext),
