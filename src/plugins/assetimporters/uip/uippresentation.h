@@ -605,7 +605,7 @@ public:
     float m_aoSoftness = 50;
     float m_aoBias = 0;
     qint32 m_aoSampleRate = 2;
-    bool m_aoDither = true;
+    bool m_aoDither = false;
 
     float m_shadowStrength = 0;
     float m_shadowDist = 10;

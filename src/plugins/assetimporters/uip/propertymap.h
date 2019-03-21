@@ -28,6 +28,8 @@ public:
     static PropertyMap *instance();
 
     PropertiesMap *propertiesForType(GraphObject::Type type);
+    QVariant getDefaultValue(GraphObject::Type type, const QString &property);
+    bool isDefaultValue(GraphObject::Type type, const QString &property, const QVariant &value);
 
 
 private:
