@@ -36,5 +36,4 @@ SOURCES += \
 RESOURCES += \
     metadata.qrc
 
-DISTFILES += \
-    propertymap.json
+DISTFILES +=
