@@ -301,6 +301,15 @@ void UipImporter::generateAnimationTimeLine(GraphObject *layer, QTextStream &out
     if (layerItems.isEmpty())
         return;
 
+    QString looping = QStringLiteral("1");
+    QString pingPong = QStringLiteral("false");
+    if (firstSlide->m_playMode == Slide::Looping) {
+        looping = QStringLiteral("-1");
+    } else if (firstSlide->m_playMode == Slide::PingPong) {
+        looping = QStringLiteral("-1");
+        pingPong = QStringLiteral("true");
+    }
+
     float startFrame = layer->startTime();
     float endFrame = layer->endTime();
 
@@ -315,6 +324,8 @@ void UipImporter::generateAnimationTimeLine(GraphObject *layer, QTextStream &out
     output << insertTabs(tabLevel + 3) << QStringLiteral("from: ") << startFrame << endl;
     output << insertTabs(tabLevel + 3) << QStringLiteral("to: ") << endFrame << endl;
     output << insertTabs(tabLevel + 3) << QStringLiteral("running: true") << endl;
+    output << insertTabs(tabLevel + 3) << QStringLiteral("loops: ") << looping << endl;
+    output << insertTabs(tabLevel + 3) << QStringLiteral("pingPong: ") << pingPong << endl;
     output << insertTabs(tabLevel + 2) << QStringLiteral("}") << endl;
     output << insertTabs(tabLevel + 1) << QStringLiteral("]") << endl << endl;
 
