@@ -184,6 +184,8 @@ public:
 
     // hmm where have I seen this before...
     Type type() const { return m_type; }
+    QString typeName () const;
+
     GraphObject *parent() const { return m_parent; }
     GraphObject *firstChild() const { return m_firstChild; }
     GraphObject *lastChild() const { return m_lastChild; }
@@ -279,6 +281,7 @@ public:
         KeyFrame(float time_, float value_)
             : time(time_), value(value_)
         { }
+
         float time = 0; // seconds
         float value = 0;
         union {
@@ -602,7 +605,7 @@ public:
     float m_aoSoftness = 50;
     float m_aoBias = 0;
     qint32 m_aoSampleRate = 2;
-    bool m_aoDither = true;
+    bool m_aoDither = false;
 
     float m_shadowStrength = 0;
     float m_shadowDist = 10;

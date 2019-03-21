@@ -16,7 +16,10 @@ HEADERS += \
     uipparser.h \
     uippresentation.h \
     enummaps.h \
-    datamodelparser.h
+    datamodelparser.h \
+    keyframegroupgenerator.h \
+    utils.h \
+    propertymap.h
 
 SOURCES += \
     uipassetimporterplugin.cpp \
@@ -26,7 +29,12 @@ SOURCES += \
     uipparser.cpp \
     uippresentation.cpp \
     enummaps.cpp \
-    datamodelparser.cpp
+    datamodelparser.cpp \
+    keyframegroupgenerator.cpp \
+    propertymap.cpp
 
 RESOURCES += \
     metadata.qrc
+
+DISTFILES += \
+    propertymap.json

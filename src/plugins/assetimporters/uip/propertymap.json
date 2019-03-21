@@ -1,0 +1,125 @@
+{
+    "types": [
+        {
+            "type": "Image",
+            "properties": [
+                {
+                    "name": "source",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "Node",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "Layer",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "Camera",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "Light",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "Model",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "DefaultMaterial",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "ReferenceMaterial",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "CustomMaterial",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "Effect",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+        {
+            "type": "Alias",
+            "properties": [
+                {
+                    "name": "",
+                    "type": "",
+                    "defaultValue": "",
+                    "animatable": ""
+                }
+            ]
+        },
+    ]
+}
