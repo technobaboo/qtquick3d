@@ -21,6 +21,7 @@ private:
     UipPresentation *createPresentation(const QString &presentationName);
     void parseUIP();
     void parseProject();
+    void parseProjectSettings();
     void parseClasses();
     void parseBufferData();
     void parseImageBuffer();

@@ -2,6 +2,7 @@
 #include "enummaps.h"
 #include "datamodelparser.h"
 #include "propertymap.h"
+#include "utils.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -382,15 +383,7 @@ QString convertFromVariant(const QVariant &value)
 
 namespace {
 
-QString insertTabs(int n)
-{
-    QString tabs;
-    for (int i = 0; i < n; ++i)
-        tabs += "    ";
-    return tabs;
-}
-
-QString qmlComponentName(const QString &name) {
+QString qmlPresentationComponentName(const QString &name) {
     QString nameCopy = name;
 
 
@@ -410,16 +403,6 @@ QString qmlComponentName(const QString &name) {
         nameCopy[0] = nameCopy[0].toUpper();
 
     return nameCopy;
-}
-
-QString colorToQml(const QColor &color) {
-    QString colorString;
-    colorString = QStringLiteral("Qt.rgba(") + QString::number(color.redF()) +
-            QStringLiteral(", ") + QString::number(color.greenF()) +
-            QStringLiteral(", ") + QString::number(color.blueF()) +
-            QStringLiteral(", ") + QString::number(color.alphaF()) +
-            QStringLiteral(")");
-    return colorString;
 }
 
 void writeQmlPropertyHelper(QTextStream &output, int tabLevel, GraphObject::Type type, const QString &propertyName, const QVariant &value)
@@ -2210,7 +2193,7 @@ void ReferencedMaterial::writeQmlHeader(QTextStream &output, int tabLevel)
 {
     // This is a bit special because it references a component
     // so the Comonent type is Material.(ReferencedMaterial)
-    QString componentName = QStringLiteral("Materials.") + qmlComponentName(m_referencedMaterial_unresolved);
+    QString componentName = QStringLiteral("Materials.") + qmlPresentationComponentName(m_referencedMaterial_unresolved);
     output << insertTabs(tabLevel) << componentName << QStringLiteral(" {") << endl;
 }
 
@@ -2449,7 +2432,7 @@ void AliasNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
     // This is a bit special because it references a component
     // so the Comonent type is Material.(ReferencedMaterial)
-    QString componentName = QStringLiteral("Aliases.") + qmlComponentName(m_referencedNode_unresolved);
+    QString componentName = QStringLiteral("Aliases.") + qmlPresentationComponentName(m_referencedNode_unresolved);
     output << insertTabs(tabLevel) << componentName << QStringLiteral(" {") << endl;
 }
 

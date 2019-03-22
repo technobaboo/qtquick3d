@@ -32,6 +32,7 @@ private:
     void generateMaterialComponent(GraphObject *object);
     void generateAliasComponent(GraphObject *reference);
     void generateAnimationTimeLine(GraphObject *layer, QTextStream &output, int tabLevel);
+    void writeHeader(QTextStream &output);
 
     QVector<QString> m_resourcesList;
     UiaParser m_uiaParser;
@@ -46,6 +47,9 @@ private:
     // per presentation
     QVector <ReferencedMaterial *> m_referencedMaterials;
     QVector <AliasNode *> m_aliasNodes;
+
+    // options
+    bool m_generateWindowComponent = true;
 };
 
 QT_END_NAMESPACE

@@ -391,8 +391,10 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath)
             QSharedPointer<QIODevice> ioStream(inputStreamFactory->getStreamForFile(pathBuilder));
             if (ioStream)
                 result = QDemonMeshUtilities::Mesh::loadMulti(*ioStream, id);
-            if (result.m_mesh == nullptr)
+            if (result.m_mesh == nullptr) {
                 qCWarning(WARNING, "Failed to load mesh: %s", qPrintable(pathBuilder));
+                return nullptr;
+            }
         }
 
         if (result.m_mesh) {

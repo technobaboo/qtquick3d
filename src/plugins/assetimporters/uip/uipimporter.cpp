@@ -6,6 +6,8 @@
 #include "keyframegroupgenerator.h"
 #include "utils.h"
 
+#include <QBuffer>
+
 QT_BEGIN_NAMESPACE
 
 UipImporter::UipImporter()
@@ -345,33 +347,43 @@ void UipImporter::generateAnimationTimeLine(GraphObject *layer, QTextStream &out
     output << insertTabs(tabLevel) << QStringLiteral("}") << endl;
 }
 
+void UipImporter::writeHeader(QTextStream &output)
+{
+    output << "import QtDemon 1.0" << endl;
+    output << "import QtQuick 2.12" << endl;
+    output << "import QtQuick.Timeline 1.0" << endl;
+    if (m_referencedMaterials.count() > 0) {
+        output << "import \"./materials\" as Materials" << endl;
+    }
+
+    if (m_aliasNodes.count() > 0) {
+        output << "import \"./aliases\" as Aliases" << endl;
+    }
+    output << endl;
+}
+
 QString UipImporter::processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath)
 {
     m_referencedMaterials.clear();
     m_aliasNodes.clear();
     m_presentation = presentation;
 
+    QString errorString;
+
     // create one component per layer
     GraphObject *layer = presentation->scene()->firstChild();
+    QHash<QString, QBuffer *> layerComponentsMap;
     while (layer) {
         if (layer->type() == GraphObject::Layer) {
-            // Create *3d.qml file from .uip presentation
-            QString targetFile = ouputFilePath + qmlComponentName(presentation->name()) + qmlComponentName(layer->qmlId()) + QStringLiteral(".qml");
-            QFile qmlFile(targetFile);
-            if (!qmlFile.open(QIODevice::WriteOnly)) {
-                return QString(QStringLiteral("Could not open file: ") + targetFile + QStringLiteral(" for writing"));
-            }
-
-            QTextStream output(&qmlFile);
-
-            output << "import QtDemon 1.0" << endl;
-            output << "import QtQuick.Timeline 1.0" << endl;
-            output << "import \"./materials\" as Materials" << endl << endl;
-
+            // Create qml component from .uip presentation
+            QString targetFile = ouputFilePath + qmlComponentName(presentation->name()) + qmlComponentName(layer->qmlId());
+            QBuffer *qmlBuffer = new QBuffer();
+            qmlBuffer->open(QIODevice::WriteOnly);
+            QTextStream output(qmlBuffer);
             processNode(layer, output, 0, false);
+            qmlBuffer->close();
+            layerComponentsMap.insert(targetFile, qmlBuffer);
 
-            qmlFile.close();
-            m_generatedFiles += targetFile;
         } else if ( layer->type() == GraphObject::DefaultMaterial &&
                     layer->qmlId() == QStringLiteral("__Container")) {
             // UIP version > 5 which tries to be clever with reference materials
@@ -413,7 +425,66 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
         generateAliasComponent(presentation->object(id.toUtf8()));
     }
 
-    return QString();
+    // Generate actual files from the buffers we created
+    if (m_generateWindowComponent) {
+        // only one component to create
+        QString outputFileName = ouputFilePath + qmlComponentName(presentation->name()) + QStringLiteral(".qml");
+        QFile outputFile(outputFileName);
+        if (!outputFile.open(QIODevice::WriteOnly)) {
+            errorString += QString(QStringLiteral("Could not write to file: ") + outputFileName);
+        } else {
+            QTextStream output(&outputFile);
+            // Write header
+            writeHeader(output);
+
+            // DemonWindow header
+            output << QStringLiteral("DemonWindow {") << endl;
+            output << insertTabs(1) << QStringLiteral("visible: true") << endl;
+            output << insertTabs(1) << QStringLiteral("width: ") << m_presentation->presentationWidth()<< endl;
+            output << insertTabs(1) << QStringLiteral("height: ") << m_presentation->presentationHeight() << endl;
+            output << insertTabs(1) << QStringLiteral("title: \"") << m_presentation->name() << QStringLiteral("\"") << endl;
+            output << insertTabs(1) << QStringLiteral("color: ") << colorToQml(m_presentation->scene()->m_clearColor) << endl << endl;
+
+            // For each component buffer paste in each line with tablevel +1
+            for (auto buffer : layerComponentsMap.values()) {
+                buffer->open(QIODevice::ReadOnly);
+                buffer->seek(0);
+                while(!buffer->atEnd()) {
+                    QByteArray line = buffer->readLine();
+                    output << insertTabs(1) << line;
+                }
+                buffer->close();
+                output << endl;
+            }
+
+            // DemonWindow footer
+            output << QStringLiteral("}") << endl;
+            outputFile.close();
+        }
+    } else {
+        // Create a file for each component buffer
+        for (auto targetName : layerComponentsMap.keys()) {
+            QString targetFileName = targetName + QStringLiteral(".qml");
+            QFile targetFile(targetFileName);
+            if (!targetFile.open(QIODevice::WriteOnly)) {
+                errorString += QString("Could not write to file: ") + targetFileName;
+            } else {
+                QTextStream output(&targetFile);
+                writeHeader(output);
+                QBuffer *componentBuffer = layerComponentsMap.value(targetName);
+                componentBuffer->open(QIODevice::ReadOnly);
+                output << componentBuffer->readAll();
+                componentBuffer->close();
+                targetFile.close();
+            }
+        }
+    }
+
+    // Cleanup
+    for (auto buffer : layerComponentsMap.values())
+        delete buffer;
+
+    return errorString;
 }
 
 QT_END_NAMESPACE

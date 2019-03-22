@@ -77,7 +77,9 @@ void UipParser::parseProject()
     QXmlStreamReader *r = reader();
     bool foundGraph = false;
     while (r->readNextStartElement()) {
-        if (r->name() == QStringLiteral("Classes"))
+        if (r->name() == QStringLiteral("ProjectSettings"))
+            parseProjectSettings();
+        else if (r->name() == QStringLiteral("Classes"))
             parseClasses();
         else if (r->name() == QStringLiteral("BufferData"))
             parseBufferData();
@@ -97,6 +99,31 @@ void UipParser::parseProject()
             r->skipCurrentElement();
         }
     }
+}
+
+void UipParser::parseProjectSettings()
+{
+    QXmlStreamReader *r = reader();
+    for (const QXmlStreamAttribute &attr : r->attributes()) {
+        if (attr.name() == QStringLiteral("author")) {
+            m_presentation->setAuthor(attr.value().toString());
+        } else if (attr.name() == QStringLiteral("company")) {
+            m_presentation->setCompany(attr.value().toString());
+        } else if (attr.name() == QStringLiteral("presentationWidth")) {
+            int w;
+            if (Q3DS::convertToInt(attr.value(), &w, "presentation width", r))
+                m_presentation->setPresentationWidth(w);
+        } else if (attr.name() == QStringLiteral("presentationHeight")) {
+            int h;
+            if (Q3DS::convertToInt(attr.value(), &h, "presentation height", r))
+                m_presentation->setPresentationHeight(h);
+        } else if (attr.name() == QStringLiteral("maintainAspect")) {
+            bool v;
+            if (Q3DS::convertToBool(attr.value(), &v, "maintainAspect value", r))
+                m_presentation->setMaintainAspectRatio(v);
+        }
+    }
+    r->skipCurrentElement();
 }
 
 
