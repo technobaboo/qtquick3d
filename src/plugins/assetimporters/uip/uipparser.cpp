@@ -22,6 +22,17 @@ UipPresentation *UipParser::parseData(const QByteArray &data, const QString &pre
     return createPresentation(presentationName);
 }
 
+namespace  {
+QString sanitizeFilename(const QString &filename) {
+    //remove ending
+
+    QStringList parts = filename.split(".");
+    QString name = parts[0];
+    name.replace(" ", "_");
+    return name;
+}
+}
+
 UipPresentation *UipParser::createPresentation(const QString &presentationName)
 {
     if (m_presentation)
@@ -29,7 +40,7 @@ UipPresentation *UipParser::createPresentation(const QString &presentationName)
     m_presentation = new UipPresentation;
 
     m_presentation->setSourceFile(sourceInfo()->absoluteFilePath());
-    m_presentation->setName(presentationName.isEmpty() ? QLatin1String("main") : presentationName);
+    m_presentation->setName(presentationName.isEmpty() ? sanitizeFilename(sourceInfo()->fileName()) : presentationName);
 
     QXmlStreamReader *r = reader();
     if (r->readNextStartElement()) {

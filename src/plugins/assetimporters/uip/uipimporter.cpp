@@ -91,7 +91,8 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
             m_generatedFiles += destFile.absoluteFilePath();
     }
 
-    generatedFiles = &m_generatedFiles;
+    if (generatedFiles)
+        generatedFiles = &m_generatedFiles;
 
     return errorString;
 }
@@ -460,6 +461,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             // DemonWindow footer
             output << QStringLiteral("}") << endl;
             outputFile.close();
+            m_generatedFiles += outputFileName;
         }
     } else {
         // Create a file for each component buffer
@@ -476,6 +478,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
                 output << componentBuffer->readAll();
                 componentBuffer->close();
                 targetFile.close();
+                m_generatedFiles += targetFileName;
             }
         }
     }
