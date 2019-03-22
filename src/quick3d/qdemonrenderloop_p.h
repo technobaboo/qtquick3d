@@ -17,13 +17,12 @@
 #include <QtGui/QImage>
 #include <QtGui/QSurface>
 #include <QtCore/QSet>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 QT_BEGIN_NAMESPACE
 
 class QDemonWindow;
 class QAnimationDriver;
-class QDemonRenderContext;
-class QDemonRenderContextInterface;
 class QRunnable;
 
 class Q_QUICK3D_PRIVATE_EXPORT QDemonRenderLoop : public QObject

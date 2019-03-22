@@ -50,6 +50,7 @@
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrendererutil.h>
+#include <QtDemon/qdemonutils.h>
 
 #define QDEMON_CACHED_POST_EFFECT
 const float QDEMON_DEGREES_TO_RADIANS = 0.0174532925199f;
@@ -380,10 +381,10 @@ void setupCameraForShadowMap(const QVector2D &/*inCameraVec*/,
         // Apply bounding box parameters to shadow map camera projection matrix
         // so that the whole scene is fit inside the shadow map
         inLightPos = boundCtr;
-        theViewport.setHeight(abs(maxDistanceY - minDistanceY));
-        theViewport.setWidth(abs(maxDistanceX - minDistanceX));
-        theCamera.clipNear = -abs(maxDistanceZ - minDistanceZ);
-        theCamera.clipFar = abs(maxDistanceZ - minDistanceZ);
+        theViewport.setHeight(std::abs(maxDistanceY - minDistanceY));
+        theViewport.setWidth(std::abs(maxDistanceX - minDistanceX));
+        theCamera.clipNear = -std::abs(maxDistanceZ - minDistanceZ);
+        theCamera.clipFar = std::abs(maxDistanceZ - minDistanceZ);
     }
 
     theCamera.flags.setFlag(QDemonRenderCamera::Flag::LeftHanded);

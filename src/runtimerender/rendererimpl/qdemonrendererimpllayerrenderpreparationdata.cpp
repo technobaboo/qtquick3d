@@ -54,6 +54,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonperframeallocator.h>
+#include <QtDemon/qdemonutils.h>
 
 #ifdef _WIN32
 #pragma warning(disable : 4355)

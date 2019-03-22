@@ -75,17 +75,17 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
     // we know if we can load a file or not.
     static quint32 getSceneGraphBinaryVersion() { return 1; }
 
-    constexpr inline bool isMaterialType() const Q_DECL_NOTHROW
+    const inline bool isMaterialType() const Q_DECL_NOTHROW
     {
         return (type == Type::ReferencedMaterial || type == Type::CustomMaterial || type == Type::DefaultMaterial);
     }
 
-    constexpr inline bool isLightmapType() const Q_DECL_NOTHROW
+    const inline bool isLightmapType() const Q_DECL_NOTHROW
     {
         return (type == Type::Lightmaps || type == Type::DefaultMaterial);
     }
 
-    constexpr inline bool isNodeType() const Q_DECL_NOTHROW
+    const inline bool isNodeType() const Q_DECL_NOTHROW
     {
         return (type == Type::Node ||
                 type == Type::Layer ||
@@ -95,18 +95,18 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
                 type == Type::Path);
     }
 
-    constexpr inline bool isRenderableType() const Q_DECL_NOTHROW
+    const inline bool isRenderableType() const Q_DECL_NOTHROW
     {
         return (type == Type::Model || type == Type::Path);
     }
 
-    constexpr inline bool isLightCameraType() const Q_DECL_NOTHROW
+    const inline bool isLightCameraType() const Q_DECL_NOTHROW
     {
         return (type == Type::Camera || type == Type::Light);
     }
 
 
-    constexpr inline bool isMaterial() const Q_DECL_NOTHROW
+    const inline bool isMaterial() const Q_DECL_NOTHROW
     {
         return type == QDemonRenderGraphObject::Type::CustomMaterial ||
                type == QDemonRenderGraphObject::Type::DefaultMaterial ||

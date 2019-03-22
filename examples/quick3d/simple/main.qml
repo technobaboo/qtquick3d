@@ -44,50 +44,50 @@ DemonWindow {
             }
         }
 
-//        Timer {
-//            property real range: 100
-//            property var instances: []
-//            property bool reverse: false
+        Timer {
+            property real range: 300
+            property var instances: []
+            property bool reverse: false
 
-//            running: true
-//            repeat: true
-//            interval: 500
-//            onTriggered: {
-//                if (!reverse) {
-//                    // Create a new weirdShape at random postion
-//                    var xPos = Math.random() * (range - (-range)) + -range;
-//                    var yPos = Math.random() * (range - (-range)) + -range;
-//                    var zPos = Math.random() * (range - (-range)) + -range;
-//                    var weirdShapeComponent = Qt.createComponent("WeirdShape.qml");
-//                    let instance = weirdShapeComponent.createObject(layer1, {"x": xPos, "y": yPos, "z": zPos, "scale": Qt.vector3d(0.25, 0.25, 0.25)})
-//                    instances.push(instance);
-//                    console.log("created WeirdShape[" + instances.length + "] at: (" + xPos + ", " + yPos + ", " + zPos + ")");
-//                    if (instances.length === 10)
-//                        reverse = true;
-//                } else {
-//                    // remove last item in instances list
-//                    console.log("removed WeirdShape[" + instances.length + "]");
-//                    let instance = instances.pop();
-//                    instance.destroy();
-//                    if (instances.length === 0) {
-//                        reverse = false;
-//                    }
-//                }
-//            }
-//        }
+            running: true
+            repeat: true
+            interval: 500
+            onTriggered: {
+                if (!reverse) {
+                    // Create a new weirdShape at random postion
+                    var xPos = Math.random() * (range - (-range)) + -range;
+                    var yPos = Math.random() * (range - (-range)) + -range;
+                    var zPos = Math.random() * (range - (-range)) + -range;
+                    var weirdShapeComponent = Qt.createComponent("WeirdShape.qml");
+                    let instance = weirdShapeComponent.createObject(layer1, {"x": xPos, "y": yPos, "z": zPos, "scale": Qt.vector3d(0.25, 0.25, 0.25)})
+                    instances.push(instance);
+                    //console.log("created WeirdShape[" + instances.length + "] at: (" + xPos + ", " + yPos + ", " + zPos + ")");
+                    if (instances.length === 10)
+                        reverse = true;
+                } else {
+                    // remove last item in instances list
+                    //console.log("removed WeirdShape[" + instances.length + "]");
+                    let instance = instances.pop();
+                    instance.destroy();
+                    if (instances.length === 0) {
+                        reverse = false;
+                    }
+                }
+            }
+        }
 
-//        WeirdShape {
-//            id: weirdShape1
-//            color: "red"
-//        }
+        WeirdShape {
+            id: weirdShape1
+            color: "red"
+        }
 
-//        WeirdShape {
-//            id: weirdShape2
-//            color: "orange"
-//            x: 100
-//            y: 100
-//            z: 100
-//        }
+        WeirdShape {
+            id: weirdShape2
+            color: "orange"
+            x: 100
+            y: 100
+            z: 100
+        }
 
 
         TexturedCube {

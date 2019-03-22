@@ -408,7 +408,7 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
     if (m_backendSupport.caps.bits.bTessellationSupported && m_currentMiscState->m_patchVertexCount != inputAssembler->m_patchVertexCount) {
         m_currentMiscState->m_patchVertexCount = inputAssembler->m_patchVertexCount;
 #if defined(QT_OPENGL_ES)
-        GL_CALL_TESSELATION_EXT(glPatchParameteriEXT(GL_PATCH_VERTICES, inputAssembler->m_PatchVertexCount));
+        GL_CALL_TESSELATION_EXT(glPatchParameteriEXT(GL_PATCH_VERTICES, inputAssembler->m_patchVertexCount));
 #else
         GL_CALL_TESSELATION_EXT(glPatchParameteri(GL_PATCH_VERTICES, inputAssembler->m_patchVertexCount));
 #endif
@@ -735,7 +735,7 @@ void QDemonRenderBackendGL3Impl::getQueryResult(QDemonRenderBackendQueryObject q
 
         if (params)
 #if defined(QT_OPENGL_ES)
-            GL_CALL_TIMER_EXT(glGetQueryObjectui64vEXT(queryID, m_Conversion.fromQueryResultTypeToGL(resultType), params));
+            GL_CALL_TIMER_EXT(glGetQueryObjectui64vEXT(queryID, m_conversion.fromQueryResultTypeToGL(resultType), (GLuint64 *)params));
 #else
             GL_CALL_TIMER_EXT(glGetQueryObjectui64v(queryID, m_conversion.fromQueryResultTypeToGL(resultType), (GLuint64 *)params));
 #endif
