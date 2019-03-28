@@ -1373,11 +1373,11 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
 
         // update values
         QVector4D aoProps(pLayer->aoStrength * 0.01f, pLayer->aoDistance * 0.4f, pLayer->aoSoftness * 0.02f, pLayer->aoBias);
-        pCB->updateParam("ao_properties", QDemonByteView((quint8 *)&aoProps, 1));
+        pCB->updateParam("ao_properties", toByteView(aoProps));
         QVector4D aoProps2((float)pLayer->aoSamplerate, (pLayer->aoDither) ? 1.0f : 0.0f, 0.0f, 0.0f);
-        pCB->updateParam("ao_properties2", QDemonByteView((quint8 *)&aoProps2, 1));
+        pCB->updateParam("ao_properties2", toByteView(aoProps2));
         QVector4D shadowProps(pLayer->shadowStrength * 0.01f, pLayer->shadowDist, pLayer->shadowSoftness * 0.01f, pLayer->shadowBias);
-        pCB->updateParam("shadow_properties", QDemonByteView((quint8 *)&shadowProps, 1));
+        pCB->updateParam("shadow_properties", toByteView(shadowProps));
 
         float R2 = pLayer->aoDistance * pLayer->aoDistance * 0.16f;
         float rw = 100, rh = 100;
@@ -1391,9 +1391,9 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
         float invFocalLenX = tanHalfFovY * (rw / rh);
 
         QVector4D aoScreenConst(1.0f / R2, rh / (2.0f * tanHalfFovY), 1.0f / rw, 1.0f / rh);
-        pCB->updateParam("aoScreenConst", QDemonByteView((quint8 *)&aoScreenConst, 1));
+        pCB->updateParam("aoScreenConst", toByteView(aoScreenConst));
         QVector4D UvToEyeConst(2.0f * invFocalLenX, -2.0f * tanHalfFovY, -invFocalLenX, tanHalfFovY);
-        pCB->updateParam("UvToEyeConst", QDemonByteView((quint8 *)&UvToEyeConst, 1));
+        pCB->updateParam("UvToEyeConst", toByteView(UvToEyeConst));
 
         // update buffer to hardware
         pCB->update();

@@ -245,12 +245,10 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonByteView 
     const QByteArray theName = inName;
     TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);
     if (entry != m_constantBufferEntryMap.end()) {
-        if (!memcmp(m_shadowCopy.constBegin() + entry.value()->m_offset,
-                    value.begin(),
-                    entry.value()->m_count * uniformTypeSize(entry.value()->m_type))) {
-            return;
-        }
         quint32 size = entry.value()->m_count * uniformTypeSize(entry.value()->m_type);
+        Q_ASSERT(size == value.size());
+        if (!memcmp(m_shadowCopy.constBegin() + entry.value()->m_offset, value.begin(), size))
+            return;
         memcpy(m_shadowCopy.begin() + entry.value()->m_offset, value.begin(), size);
         setDirty(entry.value()->m_offset, size);
     }
