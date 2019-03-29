@@ -300,21 +300,24 @@ public:
     QDemonRef<QDemonDefaultMaterialRenderableDepthShader> getRenderableDepthShader();
 
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthShader(TessModeValues inTessMode);
+    QDemonRef<QDemonRenderableDepthPrepassShader> getCubeShadowDepthShader(TessModeValues inTessMode);
+    QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthShader(TessModeValues inTessMode);
+
+private:
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthNoTessShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthTessLinearShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthTessPhongShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthTessNPatchShader();
-    QDemonRef<QDemonRenderableDepthPrepassShader> getCubeShadowDepthShader(TessModeValues inTessMode);
     QDemonRef<QDemonRenderableDepthPrepassShader> getCubeDepthNoTessShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getCubeDepthTessLinearShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getCubeDepthTessPhongShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getCubeDepthTessNPatchShader();
-    QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthShader(TessModeValues inTessMode);
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthNoTessShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthTessLinearShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthTessPhongShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthTessNPatchShader();
 
+public:
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthPrepassShader(bool inDisplaced);
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPrepassShader(TessModeValues inTessMode, bool inDisplaced);
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessLinearPrepassShader(bool inDisplaced);
