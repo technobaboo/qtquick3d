@@ -51,8 +51,8 @@ struct QDemonRenderRay
     QVector3D origin;
     QVector3D direction;
     QDemonRenderRay() = default;
-    QDemonRenderRay(const QVector3D &origin, const QVector3D &direction)
-        : origin(origin), direction(direction)
+    QDemonRenderRay(const QVector3D &inOrigin, const QVector3D &inDirection)
+        : origin(inOrigin), direction(inDirection)
     {
     }
     // If we are parallel, then no intersection of course.
