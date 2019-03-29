@@ -125,29 +125,6 @@ static QDemonRenderGraphObject *getMaterialNodeFromQDemonMaterial(QDemonMaterial
     return p->spatialNode;
 }
 
-namespace {
-QDemonRenderGraphObject *getNextSibling(QDemonRenderGraphObject *obj)
-{
-
-    if (obj->type == QDemonRenderGraphObject::Type::CustomMaterial)
-        return static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling;
-    else if (obj->type == QDemonRenderGraphObject::Type::DefaultMaterial)
-        return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
-    else
-        return static_cast<QDemonRenderReferencedMaterial *>(obj)->m_nextSibling;
-}
-
-void setNextSibling(QDemonRenderGraphObject *obj, QDemonRenderGraphObject *sibling)
-{
-    if (obj->type == QDemonRenderGraphObject::Type::CustomMaterial)
-        static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling = sibling;
-    else if (obj->type == QDemonRenderGraphObject::Type::DefaultMaterial)
-        static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling = sibling;
-    else
-        static_cast<QDemonRenderReferencedMaterial *>(obj)->m_nextSibling = sibling;
-}
-}
-
 QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
@@ -181,7 +158,7 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
             while (material) {
                 if (index > m_materials.count()) {
                     // Materials have been removed!!
-                    setNextSibling(previousMaterial, nullptr);
+                    previousMaterial->setNextMaterialSibling(nullptr);
                     break;
                 }
 
@@ -193,14 +170,14 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
                         // new first
                         modelNode->firstMaterial = newMaterial;
                     } else {
-                        setNextSibling(previousMaterial, newMaterial);
+                        previousMaterial->setNextMaterialSibling(newMaterial);
                     }
                     previousMaterial = newMaterial;
                 } else {
                     previousMaterial = material;
                 }
 
-                material = getNextSibling(material);
+                material = material->nextMaterialSibling();
                 index++;
             }
         }
