@@ -1,49 +1,29 @@
 #include "qdemonview3d.h"
-#include "qdemonview3d_p.h"
 #include "qdemonsceneenvironment.h"
 #include "qdemonobject_p.h"
 #include "qdemonscenemanager_p.h"
-#include "qdemonsgrendernode_p.h"
 #include "qdemonimage.h"
+#include "qdemonscenerenderer.h"
 #include <QtDemonRuntimeRender/QDemonRenderLayer>
+
+#include <qsgtextureprovider.h>
+#include <QSGSimpleTextureNode>
+#include <QSGRendererInterface>
+#include <QQuickWindow>
+#include <QtQuick/private/qquickitem_p.h>
 
 QT_BEGIN_NAMESPACE
 
-QDemonView3DPrivate::QDemonView3DPrivate()
-{
-    Q_Q(QDemonView3D);
-    environment = new QDemonSceneEnvironment(q);
-    camera = nullptr;
-    sceneRoot = new QDemonNode();
-    QDemonObjectPrivate::get(sceneRoot)->sceneRenderer = new QDemonSceneManager(sceneRoot);
-    sceneRoot->update();
-}
-
-QDemonView3DPrivate::~QDemonView3DPrivate()
-{
-
-}
-
-void QDemonView3DPrivate::createRenderer()
-{
-
-}
-
-QSGNode *QDemonView3DPrivate::createNode()
-{
-    return nullptr;
-
-}
-
-void QDemonView3DPrivate::sync()
-{
-
-}
-
 QDemonView3D::QDemonView3D(QQuickItem *parent)
-    : QQuickItem(*(new QDemonView3DPrivate), parent)
+    : QQuickItem(parent)
 {
     setFlag(ItemHasContents);
+    m_environment = new QDemonSceneEnvironment(this);
+    m_camera = nullptr;
+    m_sceneRoot = new QDemonNode();
+    QDemonObjectPrivate::get(m_sceneRoot)->sceneRenderer = new QDemonSceneManager(m_sceneRoot);
+    connect(QDemonObjectPrivate::get(m_sceneRoot)->sceneRenderer, &QDemonSceneManager::needsUpdate,
+            this, &QQuickItem::update);
 }
 
 QDemonView3D::~QDemonView3D()
@@ -96,164 +76,160 @@ QQmlListProperty<QObject> QDemonView3D::data()
 
 QDemonCamera *QDemonView3D::camera() const
 {
-    const Q_D(QDemonView3D);
-    return d->camera;
+    return m_camera;
 }
 
 QDemonSceneEnvironment *QDemonView3D::environment() const
 {
-    const Q_D(QDemonView3D);
-    return d->environment;
+    return m_environment;
 }
 
 QDemonNode *QDemonView3D::scene() const
 {
-    const Q_D(QDemonView3D);
-    return d->sceneRoot;
+    return m_sceneRoot;
 }
 
-void QDemonView3D::setCamera(QDemonCamera *camera)
+QDemonNode *QDemonView3D::referencedScene() const
 {
-    Q_D(QDemonView3D);
-    if (d->camera == camera)
-        return;
-
-    d->camera = camera;
-    emit cameraChanged(d->camera);
+    return m_referencedScene;
 }
 
-void QDemonView3D::setEnvironment(QDemonSceneEnvironment *environment)
+QDemonSceneRenderer *QDemonView3D::createRenderer() const
 {
-    Q_D(QDemonView3D);
-    if (d->environment == environment)
-        return;
-
-    d->environment = environment;
-    emit environmentChanged(d->environment);
+    return new QDemonSceneRenderer();
 }
 
-void QDemonView3D::setScene(QDemonNode *sceneRoot)
+bool QDemonView3D::isTextureProvider() const
 {
-    Q_D(QDemonView3D);
-    // ### We may need consider the case where there is
-    // already a scene tree here
-    if (d->referencedScene) {
-        // ### remove referenced tree
+    return true;
+}
+
+QSGTextureProvider *QDemonView3D::textureProvider() const
+{
+    // When Item::layer::enabled == true, QQuickItem will be a texture
+    // provider. In this case we should prefer to return the layer rather
+    // than the fbo texture.
+    if (QQuickItem::isTextureProvider())
+        return QQuickItem::textureProvider();
+
+    QQuickWindow *w = window();
+    if (!w || !w->openglContext() || QThread::currentThread() != w->openglContext()->thread()) {
+        qWarning("QQuickFramebufferObject::textureProvider: can only be queried on the rendering thread of an exposed window");
+        return nullptr;
     }
-    d->referencedScene = sceneRoot;
-    // ### add referenced tree
+    if (!m_node)
+        m_node = new SGFramebufferObjectNode;
+    return m_node;
+}
+
+void QDemonView3D::releaseResources()
+{
+    m_node = nullptr;
+}
+
+void QDemonView3D::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+{
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+
+    if (newGeometry.size() != oldGeometry.size())
+        update();
 }
 
 QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *)
 {
-    Q_D(QDemonView3D);
+    SGFramebufferObjectNode *n = static_cast<SGFramebufferObjectNode *>(node);
 
-    if (d->sceneRoot && d->sceneRoot->sceneRenderer()) {
-        d->sceneRoot->sceneRenderer()->updateDirtyNodes();
+    // We only abort if we never had a node before. This is so that we
+    // don't recreate the renderer object if the thing becomes tiny. In
+    // terms of API it would be horrible if the renderer would go away
+    // that easily so with this logic, the renderer only goes away when
+    // the scenegraph is invalidated or it is removed from the scene.
+    if (!n && (width() <= 0 || height() <= 0))
+        return nullptr;
 
-        auto renderNode = static_cast<QDemonSGRenderNode*>(node);
-
-        if (!renderNode)
-            renderNode = new QDemonSGRenderNode(d->sceneRoot->sceneRenderer());
-
-        // Create / Update Layer and set it on the render node
-        if (!d->layerNode) {
-            d->layerNode = new QDemonRenderLayer();
-        }
-
-        updateLayerNode();
-        auto rootNode = static_cast<QDemonRenderNode*>(QDemonObjectPrivate::get(d->sceneRoot)->spatialNode);
-        if (rootNode) {
-            if (d->layerNode->firstChild != nullptr && d->layerNode->firstChild != rootNode)
-                d->layerNode->removeChild(*d->layerNode->firstChild);
-            else
-                d->layerNode->addChild(*rootNode);
-        }
-        renderNode->setRenderLayer(d->layerNode);
-        node = renderNode;
+    if (!n) {
+        if (!m_node)
+            m_node = new SGFramebufferObjectNode;
+        n = m_node;
     }
 
-    return node;
+    if (!n->renderer) {
+        n->window = window();
+        n->renderer = createRenderer();
+        n->renderer->data = n;
+        n->quickFbo = this;
+        connect(window(), SIGNAL(beforeRendering()), n, SLOT(render()));
+        connect(window(), SIGNAL(screenChanged(QScreen*)), n, SLOT(handleScreenChange()));
+    }
+
+    n->renderer->synchronize(this);
+
+    QSize minFboSize = QQuickItemPrivate::get(this)->sceneGraphContext()->minimumFBOSize();
+    QSize desiredFboSize(qMax<int>(minFboSize.width(), width()),
+                         qMax<int>(minFboSize.height(), height()));
+
+    n->devicePixelRatio = window()->effectiveDevicePixelRatio();
+    desiredFboSize *= n->devicePixelRatio;
+
+    if (n->fbo && (n->fbo->size != desiredFboSize || n->invalidatePending)) {
+        delete n->texture();
+        delete n->fbo;
+        n->fbo = nullptr;
+        n->invalidatePending = false;
+    }
+
+    if (!n->fbo) {
+        n->fbo = n->renderer->createFramebufferObject(desiredFboSize);
+
+        GLuint displayTexture = HandleToID_cast(GLuint, size_t, n->fbo->color0->handle());
+
+        n->setTexture(window()->createTextureFromId(displayTexture,
+                                                    n->fbo->size,
+                                                    QQuickWindow::TextureHasAlphaChannel));
+    }
+
+    n->setFiltering(smooth() ? QSGTexture::Linear : QSGTexture::Nearest);
+    n->setRect(0, 0, width(), height());
+
+    n->scheduleRender();
+
+    return n;
 }
 
-void QDemonView3D::updatePolish()
+void QDemonView3D::setCamera(QDemonCamera *camera)
 {
+    if (m_camera == camera)
+        return;
 
+    m_camera = camera;
+    emit cameraChanged(m_camera);
+    update();
 }
 
-void QDemonView3D::itemChange(QQuickItem::ItemChange change, const QQuickItem::ItemChangeData &data)
+void QDemonView3D::setEnvironment(QDemonSceneEnvironment *environment)
 {
+    if (m_environment == environment)
+        return;
 
+    m_environment = environment;
+    emit environmentChanged(m_environment);
+    update();
 }
 
-void QDemonView3D::componentComplete()
+void QDemonView3D::setScene(QDemonNode *sceneRoot)
 {
-    QQuickItem::componentComplete();
+    // ### We may need consider the case where there is
+    // already a scene tree here
+    if (m_referencedScene) {
+        // ### remove referenced tree
+    }
+    m_referencedScene = sceneRoot;
+    // ### add referenced tree
 }
 
-void QDemonView3D::classBegin()
+void QDemonView3D::invalidateSceneGraph()
 {
-    QQuickItem::classBegin();
-}
-
-void QDemonView3D::updateLayerNode()
-{
-    Q_D(QDemonView3D);
-    QDemonRenderLayer *layerNode = d->layerNode;
-    layerNode->progressiveAAMode = QDemonRenderLayer::AAMode(d->environment->progressiveAAMode());
-    layerNode->multisampleAAMode = QDemonRenderLayer::AAMode(d->environment->multisampleAAMode());
-    layerNode->temporalAAEnabled = d->environment->temporalAAEnabled();
-
-    layerNode->background = QDemonRenderLayer::Background(d->environment->backgroundMode());
-    layerNode->clearColor = QVector3D(d->environment->clearColor().redF(), d->environment->clearColor().greenF(), d->environment->clearColor().blueF());
-    layerNode->blendType = QDemonRenderLayer::BlendMode(d->environment->blendType());
-
-    // Set all units to pixels
-    layerNode->m_width = float(width());
-    layerNode->m_height = float(height());
-    layerNode->widthUnits = QDemonRenderLayer::UnitType::Pixels;
-    layerNode->heightUnits = QDemonRenderLayer::UnitType::Pixels;
-
-    layerNode->m_left = float(x());
-    layerNode->m_top = float(y());
-    layerNode->leftUnits = QDemonRenderLayer::UnitType::Pixels;
-    layerNode->topUnits = QDemonRenderLayer::UnitType::Pixels;
-
-    // ## Maybe the rest of anchors as well
-
-    layerNode->aoStrength = d->environment->aoStrength();
-    layerNode->aoDistance = d->environment->aoDistance();
-    layerNode->aoSoftness = d->environment->aoSoftness();
-    layerNode->aoBias = d->environment->aoBias();
-    layerNode->aoSamplerate = d->environment->aoSampleRate();
-    layerNode->aoDither = d->environment->aoDither();
-
-
-    layerNode->shadowStrength = d->environment->shadowStrength();
-    layerNode->shadowDist = d->environment->shadowDistance();
-    layerNode->shadowSoftness = d->environment->shadowSoftness();
-    layerNode->shadowBias = d->environment->shadowBias();
-
-    // ### These images will not be registered anywhere
-    if (d->environment->lightProbe())
-        layerNode->lightProbe = d->environment->lightProbe()->getRenderImage();
-    else
-        layerNode->lightProbe = nullptr;
-
-    layerNode->probeBright = d->environment->probeBrightness();
-    layerNode->fastIbl = d->environment->fastIBL();
-    layerNode->probeHorizon = d->environment->probeHorizon();
-    layerNode->probeFov = d->environment->probeFieldOfView();
-
-
-    if (d->environment->lightProbe2())
-        layerNode->lightProbe2 = d->environment->lightProbe()->getRenderImage();
-    else
-        layerNode->lightProbe2 = nullptr;
-
-    layerNode->probe2Fade = d->environment->probe2Fade();
-    layerNode->probe2Window = d->environment->probe2Window();
-    layerNode->probe2Pos = d->environment->probe2Postion();
+    m_node = nullptr;
 }
 
 QT_END_NAMESPACE

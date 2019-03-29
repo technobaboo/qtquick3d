@@ -1,5 +1,6 @@
 #include "qdemonscenemanager_p.h"
 #include "qdemonobject_p.h"
+#include "qdemonview3d.h"
 
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
@@ -11,15 +12,12 @@ QDemonSceneManager::QDemonSceneManager(QObject *parent)
     , dirtyResourceList(nullptr)
     , dirtyImageList(nullptr)
 {
-//    m_presentation = new QDemonRenderPresentation();
-//    m_scene = new QDemonRenderScene();
-//    m_presentation->scene = m_scene;
-//    m_scene->presentation = m_presentation.data();
 }
 
 void QDemonSceneManager::dirtyItem(QDemonObject *item)
 {
     Q_UNUSED(item)
+    emit needsUpdate();
 }
 
 void QDemonSceneManager::cleanup(QDemonRenderGraphObject *item)
@@ -131,9 +129,17 @@ void QDemonSceneManager::updateDirtySpatialNode(QDemonNode *spatialNode)
         if (nodeParent) {
             QDemonRenderNode *parentGraphNode = static_cast<QDemonRenderNode *>(QDemonObjectPrivate::get(nodeParent)->spatialNode);
             parentGraphNode->addChild(*graphNode);
-        } /*else if (graphNode && spatialNode != contentItem) {
-            Q_ASSERT(false);
-        } */
+        } else {
+            QDemonView3D *viewParent = qobject_cast<QDemonView3D *>(spatialNode->parent());
+            if (viewParent) {
+                auto sceneRoot = QDemonObjectPrivate::get(viewParent->scene());
+                if (!sceneRoot->spatialNode) {
+                    // must have a sceen root spatial node first
+                    sceneRoot->spatialNode = viewParent->scene()->updateSpatialNode(sceneRoot->spatialNode);
+                }
+                static_cast<QDemonRenderNode *>(sceneRoot->spatialNode)->addChild(*graphNode);
+            }
+        }
     }
 }
 

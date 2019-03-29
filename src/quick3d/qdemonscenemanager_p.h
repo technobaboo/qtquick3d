@@ -39,6 +39,9 @@ public:
     QList<QDemonRenderGraphObject *> cleanupNodeList;
     QSet<QDemonObject *> parentlessItems;
     friend QDemonObject;
+
+Q_SIGNALS:
+    void needsUpdate();
 };
 
 QML_DECLARE_TYPE(QDemonSceneManager)

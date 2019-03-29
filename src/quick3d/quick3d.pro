@@ -21,8 +21,8 @@ SOURCES += \
     #qdemonrenderloop.cpp \
     qdemonview3d.cpp \
     qdemonsceneenvironment.cpp \
-    qdemonsgrendernode.cpp \
-    qdemonscenemanager.cpp
+    qdemonscenemanager.cpp \
+    qdemonscenerenderer.cpp
 
 HEADERS += \
     qdemonobject.h \
@@ -44,9 +44,8 @@ HEADERS += \
     qdemonobject_p.h \
     qdemonobjectchangelistener_p.h \
     qdemonview3d.h \
-    qdemonview3d_p.h \
     qdemonsceneenvironment.h \
-    qdemonsgrendernode_p.h \
-    qdemonscenemanager_p.h
+    qdemonscenemanager_p.h \
+    qdemonscenerenderer.h
 
 load(qt_module)

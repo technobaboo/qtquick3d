@@ -36,6 +36,10 @@ Window {
                     id: cubeMaterial
                 }
             ]
+            SequentialAnimation on rotation {
+                loops: Animation.Infinite
+                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 360, 0); from: Qt.vector3d(0, 0, 0) }
+            }
         }
     }
 

@@ -552,7 +552,7 @@ void QDemonObjectPrivate::dirty(QDemonObjectPrivate::DirtyType type)
         dirtyAttributes |= type;
         if (sceneRenderer && componentComplete) {
             addToDirtyList();
-           sceneRenderer->dirtyItem(q);
+            sceneRenderer->dirtyItem(q);
         }
     }
 }
