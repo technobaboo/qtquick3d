@@ -109,7 +109,6 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
         m_codeBuilder.append(data);
         m_codeBuilder.append("\n");
     }
-    void appendPartial(const QByteArray &data) override { m_codeBuilder.append(data); }
     QDemonShaderGeneratorStage stage() const override { return m_stage; }
 
     virtual void addShaderItemMap(const QByteArray &itemType, const TStrTableStrMap &itemMap, const QByteArray &inItemSuffix = QByteArray())

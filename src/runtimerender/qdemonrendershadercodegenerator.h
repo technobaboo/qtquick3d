@@ -66,7 +66,6 @@ struct QDemonShaderCodeGeneratorBase
     void begin();
     void append(const QByteArray &data);
     // don't add the newline
-    void appendPartial(const QByteArray &data);
     void addConstantBuffer(const QByteArray &name, const QByteArray &layout);
     void addConstantBufferParam(const QByteArray &cbName, const QByteArray &paramName, const QByteArray &type);
     void addUniform(const QByteArray &name, const QByteArray &type);

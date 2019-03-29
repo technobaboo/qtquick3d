@@ -74,7 +74,6 @@ public:
 
     virtual QDemonShaderStageGeneratorInterface &operator<<(const QByteArray &data) = 0;
     virtual void append(const QByteArray &data) = 0;
-    virtual void appendPartial(const QByteArray &data) = 0;
 
     virtual QDemonShaderGeneratorStage stage() const = 0;
 };

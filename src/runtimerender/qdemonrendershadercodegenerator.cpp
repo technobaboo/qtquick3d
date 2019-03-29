@@ -54,11 +54,7 @@ void QDemonShaderCodeGeneratorBase::append(const QByteArray &data)
     m_codeBuilder.append(data);
     m_codeBuilder.append("\n");
 }
-// don't add the newline
-void QDemonShaderCodeGeneratorBase::appendPartial(const QByteArray &data)
-{
-    m_codeBuilder.append(data);
-}
+
 void QDemonShaderCodeGeneratorBase::addUniform(const QByteArray &name, const QByteArray &type)
 {
     m_uniforms.insert(name, type);

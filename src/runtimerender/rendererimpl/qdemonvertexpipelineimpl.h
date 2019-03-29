@@ -345,7 +345,6 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     }
 
     void append(const QByteArray &data) override { activeStage().append(data); }
-    void appendPartial(const QByteArray &data) override { activeStage().append(data); }
 
     QDemonShaderGeneratorStage stage() const override
     {
