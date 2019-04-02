@@ -85,7 +85,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
         m_inputStreamFactory->addSearchDirectory(inApplicationDirectory);
 
     m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, &m_perfTimer);
-    m_dynamicObjectSystem = QDemonDynamicObjectSystemInterface::createDynamicSystem(this);
+    m_dynamicObjectSystem = new QDemonDynamicObjectSystem(this);
     m_effectSystem = QDemonEffectSystemInterface::createEffectSystem(this);
     m_customMaterialSystem = new QDemonMaterialSystem(this);
     m_customMaterialSystem->setRenderContextInterface(this);
@@ -159,7 +159,7 @@ QDemonRef<QDemonAbstractThreadPool> QDemonRenderContextInterface::threadPool() {
 
 QDemonRef<IImageBatchLoader> QDemonRenderContextInterface::imageBatchLoader() { return m_imageBatchLoader; }
 
-QDemonRef<QDemonDynamicObjectSystemInterface> QDemonRenderContextInterface::dynamicObjectSystem() { return m_dynamicObjectSystem; }
+QDemonRef<QDemonDynamicObjectSystem> QDemonRenderContextInterface::dynamicObjectSystem() { return m_dynamicObjectSystem; }
 
 QDemonRef<QDemonMaterialSystem> QDemonRenderContextInterface::customMaterialSystem() { return m_customMaterialSystem; }
 

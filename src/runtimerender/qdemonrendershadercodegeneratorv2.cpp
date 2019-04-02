@@ -362,7 +362,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
             return nullptr;
         }
 
-        QDemonRef<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_context->dynamicObjectSystem());
+        QDemonRef<QDemonDynamicObjectSystem> theDynamicSystem(m_context->dynamicObjectSystem());
         QDemonShaderCacheProgramFlags theCacheFlags(inFlags);
         for (quint32 stageIdx = 0; stageIdx < static_cast<quint32>(QDemonShaderGeneratorStage::StageCount); ++stageIdx) {
             QDemonShaderGeneratorStage stageName = static_cast<QDemonShaderGeneratorStage>(1 << stageIdx);

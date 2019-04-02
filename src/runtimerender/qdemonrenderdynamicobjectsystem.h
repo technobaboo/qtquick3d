@@ -40,13 +40,14 @@
 #include <QtGui/QVector2D>
 
 #include <QtCore/QString>
+#include <QtCore/qmutex.h>
 
 QT_BEGIN_NAMESPACE
 struct QDemonRenderDynamicGraphObject;
 // struct SWriteBuffer;
 // struct SStrRemapMap;
 class QDemonRenderContextInterface;
-class QDemonDynamicObjectSystemInterface;
+struct QDemonDynamicObjectClass;
 
 typedef QPair<QString, QString> TStrStrPair;
 
@@ -155,110 +156,175 @@ struct QDemonDynamicShaderProgramFlags : public QDemonShaderCacheProgramFlags
 };
 }
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectClassInterface
+struct QDemonDynamicObjectShaderInfo
 {
-public:
+    QString m_type; ///< shader type (GLSL or HLSL)
+    QString m_version; ///< shader version (e.g. 330 vor GLSL)
+    bool m_hasGeomShader;
+    bool m_isComputeShader;
+
+    QDemonDynamicObjectShaderInfo() : m_hasGeomShader(false), m_isComputeShader(false) {}
+    QDemonDynamicObjectShaderInfo(QString inType, QString inVersion, bool inHasGeomShader, bool inIsComputeShader)
+        : m_type(inType), m_version(inVersion), m_hasGeomShader(inHasGeomShader), m_isComputeShader(inIsComputeShader)
+    {
+    }
+};
+
+struct QDemonDynamicObjectClass
+{
     QAtomicInt ref;
-    virtual ~QDemonDynamicObjectClassInterface() {}
-    virtual QString getId() const = 0;
-    virtual QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties() const = 0;
-    virtual quint32 getPropertySectionByteSize() const = 0;
-    virtual const quint8 *getDefaultValueBuffer() const = 0;
-    virtual quint32 getBaseObjectSize() const = 0;
-    virtual QDemonRenderGraphObject::Type graphObjectType() const = 0;
-    virtual const dynamic::QDemonPropertyDefinition *findPropertyByName(QString inName) const = 0;
-    virtual QDemonDataView<dynamic::QDemonCommand *> getRenderCommands() const = 0;
-    virtual bool requiresDepthTexture() const = 0;
-    virtual void setRequiresDepthTexture(bool inRequires) = 0;
-    virtual bool requiresCompilation() const = 0;
-    virtual void setRequiresCompilation(bool inRequires) = 0;
-    virtual QDemonRenderTextureFormat getOutputTextureFormat() const = 0;
+    QString m_id;
+    QDemonDataView<dynamic::QDemonPropertyDefinition> m_propertyDefinitions;
+    quint32 m_propertySectionByteSize;
+    quint32 m_baseObjectSize;
+    QDemonRenderGraphObject::Type m_graphObjectType;
+    quint8 *m_propertyDefaultData;
+    QDemonDataView<dynamic::QDemonCommand *> m_renderCommands;
+    bool m_requiresDepthTexture;
+    bool m_requiresCompilation;
+    QDemonRenderTextureFormat m_outputFormat;
+
+    QDemonDynamicObjectClass(QString id,
+                             QDemonDataView<dynamic::QDemonPropertyDefinition> definitions,
+                             quint32 propertySectionByteSize,
+                             quint32 baseObjectSize,
+                             QDemonRenderGraphObject::Type objectType,
+                             quint8 *propDefaultData,
+                             bool inRequiresDepthTexture = false,
+                             QDemonRenderTextureFormat inOutputFormat = QDemonRenderTextureFormat::RGBA8);
+
+    ~QDemonDynamicObjectClass();
+
+    void releaseCommands();
+
+    QString getId() const;
+    QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties() const;
+    quint32 getPropertySectionByteSize() const;
+    const quint8 *getDefaultValueBuffer() const;
+    quint32 getBaseObjectSize() const;
+    QDemonRenderGraphObject::Type graphObjectType() const;
+    const dynamic::QDemonPropertyDefinition *findDefinition(QString &str) const;
+    const dynamic::QDemonPropertyDefinition *findPropertyByName(QString inName) const;
+    QDemonDataView<dynamic::QDemonCommand *> getRenderCommands() const;
+    bool requiresDepthTexture() const;
+    void setRequiresDepthTexture(bool inVal);
+    bool requiresCompilation() const;
+    void setRequiresCompilation(bool inVal);
+    QDemonRenderTextureFormat getOutputTextureFormat() const;
 };
 
 typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShaderProgramFlags> TShaderAndFlags;
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectSystemInterface
+struct QDemonDynamicObjectSystem
 {
-public:
+    typedef QHash<QString, QDemonRef<QDemonDynamicObjectClass>> TStringClassMap;
+    typedef QHash<QString, QByteArray> TPathDataMap;
+    typedef QHash<QString, QDemonDynamicObjectShaderInfo> TShaderInfoMap;
+    typedef QSet<QString> TPathSet;
+    typedef QHash<dynamic::QDemonDynamicShaderMapKey, TShaderAndFlags> TShaderMap;
+
+    QDemonRenderContextInterface *m_context;
+    TStringClassMap m_classes;
+    TPathDataMap m_expandedFiles;
+    TShaderMap m_shaderMap;
+    TShaderInfoMap m_shaderInfoMap;
+    QByteArray m_vertShader;
+    QByteArray m_fragShader;
+    QByteArray m_geometryShader;
+    QByteArray m_shaderLibraryVersion;
+    QString m_shaderLibraryPlatformDirectory;
+    mutable QMutex m_propertyLoadMutex;
     QAtomicInt ref;
-    virtual ~QDemonDynamicObjectSystemInterface();
-    virtual bool isRegistered(QString inStr) = 0;
 
-    virtual bool doRegister(QString inName,
-                            QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties,
-                            quint32 inBaseObjectSize,
-                            QDemonRenderGraphObject::Type inGraphObjectType) = 0;
+    static QString getShaderCodeLibraryDirectory();
 
-    virtual bool unregister(QString inName) = 0;
+    QDemonDynamicObjectSystem(QDemonRenderContextInterface *ctx);
 
-    // Set the default value.  THis is unnecessary if the default is zero as that is what it is
-    // assumed to be.
-    virtual void setPropertyDefaultValue(const QString &inName,
-                                         const QString &inPropName,
-                                         const QDemonByteView &inDefaultData) = 0;
+    ~QDemonDynamicObjectSystem();
 
-    virtual void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames) = 0;
+    bool isRegistered(QString inStr);
 
-    virtual QDemonDataView<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const = 0;
+    bool doRegister(QString inName,
+                    QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties,
+                    quint32 inBaseObjectSize,
+                    QDemonRenderGraphObject::Type inGraphObjectType);
 
-    virtual QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const = 0;
+    bool unregister(QString inName);
 
-    virtual void setPropertyTextureSettings(const QString &inName,
-                                            const QString &inPropName,
-                                            const QString &inPropPath,
-                                            QDemonRenderTextureTypeValue inTexType,
-                                            QDemonRenderTextureCoordOp inCoordOp,
-                                            QDemonRenderTextureMagnifyingOp inMagFilterOp,
-                                            QDemonRenderTextureMinifyingOp inMinFilterOp) = 0;
+    QDemonRef<QDemonDynamicObjectClass> findClass(QString inName);
 
-    virtual QDemonDynamicObjectClassInterface *dynamicObjectClass(const QString &inName) = 0;
+    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>> findProperty(QString inName, QString inPropName);
 
-    // The effect commands are the actual commands that run for a given effect.  The tell the
-    // system exactly
-    // explicitly things like bind this shader, bind this render target, apply this property,
-    // run this shader
-    // See qdemonrenderdynamicobjectssystemcommands.h for the list of commands.
-    // These commands are copied into the effect.
-    virtual void setRenderCommands(const QString &inClassName, const QDemonDataView<dynamic::QDemonCommand *> &inCommands) = 0;
-    virtual QDemonDataView<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const = 0;
+    void setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonByteView &inDefaultData);
 
-    virtual QDemonRenderDynamicGraphObject *createInstance(const QString &inClassName) = 0;
+    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames);
 
-    // scan shader for #includes and insert any found"
-    virtual void insertShaderHeaderInformation(QByteArray &inShader, const char *inLogPath) = 0;
+    QDemonDataView<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const;
 
-    // Set the shader data for a given path.  Used when a path doesn't correspond to a file but
-    // the data has been
-    // auto-generated.  The system will look for data under this path key during the BindShader
-    // effect command.
-    virtual void setShaderData(const QString &inPath,
-                               const QByteArray &inData,
-                               const QByteArray &inShaderType = nullptr,
-                               const QByteArray &inShaderVersion = nullptr,
-                               bool inHasGeomShader = false,
-                               bool inIsComputeShader = false) = 0;
+    // Called during loading which is pretty heavily multithreaded.
+    QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const;
 
-    static QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *ctx);
+    void setPropertyTextureSettings(const QString &inName,
+                                    const QString &inPropName,
+                                    const QString &inPropPath,
+                                    QDemonRenderTextureTypeValue inTexType,
+                                    QDemonRenderTextureCoordOp inCoordOp,
+                                    QDemonRenderTextureMagnifyingOp inMagFilterOp,
+                                    QDemonRenderTextureMinifyingOp inMinFilterOp);
 
-    virtual TShaderAndFlags getShaderProgram(QString inPath,
-                                             QString inProgramMacro,
-                                             TShaderFeatureSet inFeatureSet,
-                                             const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
-                                             bool inForceCompilation = false) = 0;
+    QDemonDynamicObjectClass *dynamicObjectClass(const QString &inName);
 
-    virtual QString getShaderSource(QString inPath) = 0;
+    void setRenderCommands(const QString &inClassName, const QDemonDataView<dynamic::QDemonCommand *> &inCommands);
 
-    // Will return null in the case where a custom prepass shader isn't needed for this object
-    // If no geom shader, then no depth prepass shader.
-    virtual TShaderAndFlags getDepthPrepassShader(QString inPath, QString inProgramMacro, TShaderFeatureSet inFeatureSet) = 0;
+    QDemonDataView<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const;
 
-    virtual void setShaderCodeLibraryVersion(const QByteArray &version) = 0;
-    virtual QString shaderCodeLibraryVersion() = 0;
+    QDemonRenderDynamicGraphObject *createInstance(const QString &inClassName);
 
-    virtual void setShaderCodeLibraryPlatformDirectory(const QString &directory) = 0;
-    virtual QString shaderCodeLibraryPlatformDirectory() = 0;
+    void setShaderData(const QString &inPath,
+                       const QByteArray &inData,
+                       const QByteArray &inShaderType,
+                       const QByteArray &inShaderVersion,
+                       bool inHasGeomShader,
+                       bool inIsComputeShader);
 
-    static QString getShaderCodeLibraryDirectory() { return QStringLiteral("res/effectlib"); }
+    QByteArray getShaderCacheKey(const char *inId, const char *inProgramMacro, const dynamic::QDemonDynamicShaderProgramFlags &inFlags);
+
+    void insertShaderHeaderInformation(QByteArray &theReadBuffer, const char *inPathToEffect);
+
+    void doInsertShaderHeaderInformation(QByteArray &theReadBuffer, const QString &inPathToEffect);
+
+    QByteArray doLoadShader(const QString &inPathToEffect);
+
+    QStringList getParameters(const QString &str, int begin, int end);
+
+    void insertSnapperDirectives(QString &str);
+
+    QDemonRef<QDemonRenderShaderProgram> compileShader(QString inId,
+                                                       const char *inProgramSource,
+                                                       const char *inGeomSource,
+                                                       QString inProgramMacroName,
+                                                       TShaderFeatureSet inFeatureSet,
+                                                       const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
+                                                       bool inForceCompilation = false);
+
+    // This just returns the custom material shader source without compiling
+    QString getShaderSource(QString inPath);
+
+    TShaderAndFlags getShaderProgram(QString inPath,
+                                     QString inProgramMacro,
+                                     TShaderFeatureSet inFeatureSet,
+                                     const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
+                                     bool inForceCompilation);
+
+    TShaderAndFlags getDepthPrepassShader(QString inPath, QString inPMacro, TShaderFeatureSet inFeatureSet);
+
+    void setShaderCodeLibraryVersion(const QByteArray &version);
+
+    QString shaderCodeLibraryVersion();
+
+    void setShaderCodeLibraryPlatformDirectory(const QString &directory);
+
+    QString shaderCodeLibraryPlatformDirectory();
 };
 
 QT_END_NAMESPACE

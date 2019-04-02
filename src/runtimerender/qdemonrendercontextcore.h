@@ -77,7 +77,7 @@ private:
     QDemonRef<QDemonResourceManager> m_resourceManager;
     QDemonRef<QDemonOffscreenRenderManager> m_offscreenRenderManager;
     QDemonRef<QDemonRendererInterface> m_renderer;
-    QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
+    QDemonRef<QDemonDynamicObjectSystem> m_dynamicObjectSystem;
     QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
     QDemonRef<QDemonShaderCache> m_shaderCache;
     QDemonRef<QDemonAbstractThreadPool> m_threadPool;
@@ -155,7 +155,7 @@ public:
     QDemonRef<QDemonShaderCache> shaderCache();
     QDemonRef<QDemonAbstractThreadPool> threadPool();
     QDemonRef<IImageBatchLoader> imageBatchLoader();
-    QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem();
+    QDemonRef<QDemonDynamicObjectSystem> dynamicObjectSystem();
     QDemonRef<QDemonMaterialSystem> customMaterialSystem();
     QDemonRef<QDemonPixelGraphicsRendererInterface> pixelGraphicsRenderer();
     QDemonPerfTimer *performanceTimer() { return &m_perfTimer; }

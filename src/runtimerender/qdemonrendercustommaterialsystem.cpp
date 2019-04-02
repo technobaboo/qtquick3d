@@ -483,18 +483,18 @@ void QDemonCustomMaterialVertexPipeline::doGenerateVertexColor()
 struct QDemonMaterialClass
 {
     QAtomicInt ref;
-    QDemonDynamicObjectClassInterface *m_class;
+    QDemonDynamicObjectClass *m_class;
     bool m_hasTransparency = false;
     bool m_hasRefraction = false;
     bool m_hasDisplacement = false;
     bool m_alwaysDirty = false;
     quint32 m_shaderKey = 0;
     quint32 m_layerCount = 0;
-    QDemonMaterialClass(QDemonDynamicObjectClassInterface &inCls) : m_class(&inCls) {}
+    QDemonMaterialClass(QDemonDynamicObjectClass &inCls) : m_class(&inCls) {}
 
     void afterWrite() { m_class = nullptr; }
 
-    void afterRead(QDemonDynamicObjectClassInterface &inCls) { m_class = &inCls; }
+    void afterRead(QDemonDynamicObjectClass &inCls) { m_class = &inCls; }
 };
 
 struct QDemonShaderMapKey
@@ -799,7 +799,7 @@ bool QDemonMaterialSystem::registerMaterialClass(const QString &inName, const QD
                                                             inProperties,
                                                             sizeof(QDemonRenderCustomMaterial),
                                                             QDemonRenderGraphObject::Type::CustomMaterial);
-    QDemonDynamicObjectClassInterface *theClass = context->dynamicObjectSystem()->dynamicObjectClass(inName);
+    QDemonDynamicObjectClass *theClass = context->dynamicObjectSystem()->dynamicObjectClass(inName);
     if (theClass == nullptr) {
         Q_ASSERT(false);
         return false;
@@ -824,9 +824,7 @@ const QDemonMaterialClass *QDemonMaterialSystem::getMaterialClass(const QString 
 
 QDemonDataView<dynamic::QDemonPropertyDefinition> QDemonMaterialSystem::getCustomMaterialProperties(const QString &inCustomMaterialName) const
 {
-    QDemonDynamicObjectClassInterface *theMaterialClass = context->dynamicObjectSystem()->dynamicObjectClass(
-                inCustomMaterialName);
-
+    QDemonDynamicObjectClass *theMaterialClass = context->dynamicObjectSystem()->dynamicObjectClass(inCustomMaterialName);
     if (theMaterialClass)
         return theMaterialClass->getProperties();
 

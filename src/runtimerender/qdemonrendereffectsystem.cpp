@@ -69,9 +69,9 @@ namespace {
 struct QDemonEffectClass
 {
     QAtomicInt ref;
-    QDemonDynamicObjectClassInterface *dynamicClass;
+    QDemonDynamicObjectClass *dynamicClass;
 
-    QDemonEffectClass(QDemonDynamicObjectClassInterface &dynClass) : dynamicClass(&dynClass) {}
+    QDemonEffectClass(QDemonDynamicObjectClass &dynClass) : dynamicClass(&dynClass) {}
 };
 
 struct QDemonAllocatedBufferEntry
@@ -477,7 +477,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             return false;
 
         m_context->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
-        QDemonDynamicObjectClassInterface &theClass = *m_context->dynamicObjectSystem()->dynamicObjectClass(inName);
+        QDemonDynamicObjectClass &theClass = *m_context->dynamicObjectSystem()->dynamicObjectClass(inName);
 
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(theClass));
         m_effectClasses.insert(inName, theEffect);
