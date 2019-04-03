@@ -44,7 +44,7 @@ private:
     void removeNodeFromLayer(QDemonRenderNode *node);
     QDemonSceneManager *m_sceneManager = nullptr;
     QDemonRenderLayer *m_layer = nullptr;
-    QDemonRef<QDemonRenderContextInterface> m_sgContext;
+    QDemonRenderContextInterface::QDemonRenderContextInterfacePtr m_sgContext;
     QDemonRef<QDemonRenderContext> m_renderContext;
     QSize m_surfaceSize;
     void *data = nullptr;

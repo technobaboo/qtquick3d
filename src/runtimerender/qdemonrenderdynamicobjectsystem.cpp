@@ -30,7 +30,6 @@
 #include "qdemonrenderdynamicobjectsystem.h"
 
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
@@ -178,197 +177,6 @@ void QDemonCommand::copyConstructCommand(quint8 *inDataBuffer, const QDemonComma
 }
 }
 
-namespace {
-
-quint32 align(quint32 inValue)
-{
-    if (inValue % 4)
-        return inValue + (4 - (inValue % 4));
-    return inValue;
-}
-
-quint32 align8(quint32 inValue)
-{
-    if (inValue % 8)
-        return inValue + (8 - (inValue % 8));
-    return inValue;
-}
-
-inline const char *getShaderDatatypeName(QDemonRenderShaderDataType inValue)
-{
-    switch (inValue) {
-    case QDemonRenderShaderDataType::Unknown:
-        return "";
-    case QDemonRenderShaderDataType::Integer:
-        return "qint32";
-    case QDemonRenderShaderDataType::IntegerVec2:
-        return "qint32_2";
-    case QDemonRenderShaderDataType::IntegerVec3:
-        return "qint32_3";
-    case QDemonRenderShaderDataType::IntegerVec4:
-        return "qint32_4";
-    case QDemonRenderShaderDataType::Boolean:
-        return "bool";
-    case QDemonRenderShaderDataType::BooleanVec2:
-        return "bool_2";
-    case QDemonRenderShaderDataType::BooleanVec3:
-        return "bool_3";
-    case QDemonRenderShaderDataType::BooleanVec4:
-        return "bool_4";
-    case QDemonRenderShaderDataType::Float:
-        return "float";
-    case QDemonRenderShaderDataType::Vec2:
-        return "QVector2D";
-    case QDemonRenderShaderDataType::Vec3:
-        return "QVector3D";
-    case QDemonRenderShaderDataType::Vec4:
-        return "QVector4D";
-    case QDemonRenderShaderDataType::UnsignedInteger:
-        return "quint32";
-    case QDemonRenderShaderDataType::UnsignedIntegerVec2:
-        return "quint32_2";
-    case QDemonRenderShaderDataType::UnsignedIntegerVec3:
-        return "quint32_3";
-    case QDemonRenderShaderDataType::UnsignedIntegerVec4:
-        return "quint32_4";
-    case QDemonRenderShaderDataType::Matrix3x3:
-        return "QMatrix3x3";
-    case QDemonRenderShaderDataType::Matrix4x4:
-        return "QMatrix4x4";
-    case QDemonRenderShaderDataType::Texture2D:
-        return "QDemonRenderTexture2DPtr";
-    case QDemonRenderShaderDataType::Texture2DHandle:
-        return "QDemonRenderTexture2DHandle";
-    case QDemonRenderShaderDataType::Texture2DArray:
-        return "QDemonRenderTexture2DArrayPtr";
-    case QDemonRenderShaderDataType::TextureCube:
-        return "QDemonRenderTextureCubePtr";
-    case QDemonRenderShaderDataType::TextureCubeHandle:
-        return "QDemonRenderTextureCubeHandle";
-    case QDemonRenderShaderDataType::Image2D:
-        return "QDemonRenderImage2DPtr";
-    case QDemonRenderShaderDataType::DataBuffer:
-        return "QDemonRenderDataBufferPtr";
-    }
-    Q_ASSERT(false);
-    return "";
-}
-}
-
-QDemonDynamicObjectClass::QDemonDynamicObjectClass(QString id,
-                                                   QDemonDataView<dynamic::QDemonPropertyDefinition> definitions,
-                                                   quint32 propertySectionByteSize,
-                                                   quint32 baseObjectSize,
-                                                   QDemonRenderGraphObject::Type objectType,
-                                                   quint8 *propDefaultData,
-                                                   bool inRequiresDepthTexture,
-                                                   QDemonRenderTextureFormat inOutputFormat)
-    : m_id(id)
-    , m_propertyDefinitions(definitions)
-    , m_propertySectionByteSize(propertySectionByteSize)
-    , m_baseObjectSize(baseObjectSize)
-    , m_graphObjectType(objectType)
-    , m_propertyDefaultData(propDefaultData)
-    , m_requiresDepthTexture(inRequiresDepthTexture)
-    , m_requiresCompilation(false)
-    , m_outputFormat(inOutputFormat)
-{
-}
-
-QDemonDynamicObjectClass::~QDemonDynamicObjectClass()
-{
-    if (m_propertyDefinitions.size()) {
-        for (quint32 idx = 0, end = m_propertyDefinitions.size(); idx < end; ++idx) {
-            if (m_propertyDefinitions[idx].enumValueNames.size()) // ### You can't free a QString like this!
-                ::free((void *)m_propertyDefinitions[idx].enumValueNames.begin());
-        }
-    }
-    releaseCommands();
-}
-
-void QDemonDynamicObjectClass::releaseCommands()
-{
-    if (m_renderCommands.size()) {
-        ::free(const_cast<dynamic::QDemonCommand *>(*m_renderCommands.begin()));
-        m_renderCommands = QDemonDataView<dynamic::QDemonCommand *>();
-    }
-}
-
-QString QDemonDynamicObjectClass::getId() const
-{
-    return m_id;
-}
-
-QDemonDataView<dynamic::QDemonPropertyDefinition> QDemonDynamicObjectClass::getProperties() const
-{
-    return m_propertyDefinitions;
-}
-
-quint32 QDemonDynamicObjectClass::getPropertySectionByteSize() const
-{
-    return m_propertySectionByteSize;
-}
-
-const quint8 *QDemonDynamicObjectClass::getDefaultValueBuffer() const
-{
-    return m_propertyDefaultData;
-}
-
-quint32 QDemonDynamicObjectClass::getBaseObjectSize() const
-{
-    return m_baseObjectSize;
-}
-
-QDemonRenderGraphObject::Type QDemonDynamicObjectClass::graphObjectType() const
-{
-    return m_graphObjectType;
-}
-
-const dynamic::QDemonPropertyDefinition *QDemonDynamicObjectClass::findDefinition(QString &str) const
-{
-    for (quint32 idx = 0, end = m_propertyDefinitions.size(); idx < end; ++idx) {
-        const dynamic::QDemonPropertyDefinition &def(m_propertyDefinitions[idx]);
-        if (def.name == str)
-            return &def;
-    }
-    return nullptr;
-}
-
-const dynamic::QDemonPropertyDefinition *QDemonDynamicObjectClass::findPropertyByName(QString inName) const
-{
-    return findDefinition(inName);
-}
-
-QDemonDataView<dynamic::QDemonCommand *> QDemonDynamicObjectClass::getRenderCommands() const
-{
-    return m_renderCommands;
-}
-
-bool QDemonDynamicObjectClass::requiresDepthTexture() const
-{
-    return m_requiresDepthTexture;
-}
-
-void QDemonDynamicObjectClass::setRequiresDepthTexture(bool inVal)
-{
-    m_requiresDepthTexture = inVal;
-}
-
-bool QDemonDynamicObjectClass::requiresCompilation() const
-{
-    return m_requiresCompilation;
-}
-
-void QDemonDynamicObjectClass::setRequiresCompilation(bool inVal)
-{
-    m_requiresCompilation = inVal;
-}
-
-QDemonRenderTextureFormat QDemonDynamicObjectClass::getOutputTextureFormat() const
-{
-    return m_outputFormat;
-}
-
 QString QDemonDynamicObjectSystem::getShaderCodeLibraryDirectory()
 {
     return QStringLiteral("res/effectlib");
@@ -385,224 +193,57 @@ QDemonDynamicObjectSystem::QDemonDynamicObjectSystem(QDemonRenderContextInterfac
 
 QDemonDynamicObjectSystem::~QDemonDynamicObjectSystem() {}
 
-bool QDemonDynamicObjectSystem::isRegistered(QString inStr)
-{
-    return m_classes.find(inStr) != m_classes.end();
-}
-
-bool QDemonDynamicObjectSystem::doRegister(QString inName,
-                                           QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties,
-                                           quint32 inBaseObjectSize,
-                                           QDemonRenderGraphObject::Type inGraphObjectType)
-{
-    if (isRegistered(inName)) {
-        Q_ASSERT(false);
-        return false;
-    }
-    QVector<dynamic::QDemonPropertyDefinition> definitions;
-    quint32 theCurrentOffset = 0;
-    for (quint32 idx = 0, end = inProperties.size(); idx < end; ++idx) {
-        const dynamic::QDemonPropertyDeclaration &thePropDec = inProperties[idx];
-        quint32 propSize = dynamic::getSizeofShaderDataType(thePropDec.dataType);
-        definitions.push_back(dynamic::QDemonPropertyDefinition(thePropDec.name, thePropDec.dataType, theCurrentOffset, propSize));
-        theCurrentOffset += propSize;
-        theCurrentOffset = align(theCurrentOffset);
-    }
-    quint32 dataSectionSize = theCurrentOffset;
-    quint32 clsSize = align(sizeof(QDemonDynamicObjectClass));
-    quint32 defSize = align(sizeof(dynamic::QDemonPropertyDefinition) * inProperties.size());
-    quint32 defaultSize = dataSectionSize;
-    quint32 allocSize = clsSize + defSize + defaultSize;
-    quint8 *allocData = reinterpret_cast<quint8 *>(::malloc(allocSize));
-    quint8 *defData = allocData + clsSize;
-    quint8 *defaultData = defData + defSize;
-    dynamic::QDemonPropertyDefinition *defPtr = reinterpret_cast<dynamic::QDemonPropertyDefinition *>(defData);
-    if (defSize)
-        ::memcpy(defPtr, definitions.data(), defSize);
-    if (defaultSize)
-        memset(defaultData, 0, defaultSize);
-    QDemonRef<QDemonDynamicObjectClass> theClass(
-            new (allocData)
-                    QDemonDynamicObjectClass(inName, toDataView(defPtr, inProperties.size()), dataSectionSize, inBaseObjectSize, inGraphObjectType, defaultData));
-    m_classes.insert(inName, theClass);
-    return true;
-}
-
-bool QDemonDynamicObjectSystem::unregister(QString inName)
-{
-    if (!isRegistered(inName)) {
-        Q_ASSERT(false);
-        return false;
-    }
-    TStringClassMap::iterator iter = m_classes.find(inName);
-    if (iter != m_classes.end())
-        m_classes.erase(iter);
-    return true;
-}
-
-QDemonRef<QDemonDynamicObjectClass> QDemonDynamicObjectSystem::findClass(QString inName)
-{
-    TStringClassMap::iterator iter = m_classes.find(inName);
-    if (iter != m_classes.end())
-        return iter.value();
-    return nullptr;
-}
-
-QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>> QDemonDynamicObjectSystem::findProperty(QString inName, QString inPropName)
-{
-    QDemonRef<QDemonDynamicObjectClass> cls = findClass(inName);
-    if (cls) {
-        const dynamic::QDemonPropertyDefinition *def = cls->findDefinition(inPropName);
-        if (def)
-            return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>>(def, cls);
-    }
-    return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>>(nullptr, nullptr);
-}
-
-void QDemonDynamicObjectSystem::setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonByteView &inDefaultData)
-{
-    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>> def = findProperty(inName, inPropName);
-    if (def.first && inDefaultData.size() >= qint32(def.first->byteSize)) {
-        ::memcpy(def.second->m_propertyDefaultData + def.first->offset, inDefaultData.begin(), def.first->byteSize);
-    } else {
-        Q_ASSERT(false);
-    }
-}
-
-void QDemonDynamicObjectSystem::setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames)
-{
-
-    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>> def = findProperty(inName, inPropName);
-    dynamic::QDemonPropertyDefinition *theDefinitionPtr = const_cast<dynamic::QDemonPropertyDefinition *>(def.first);
-    if (theDefinitionPtr == nullptr) {
-        Q_ASSERT(false);
-        return;
-    }
-    if (theDefinitionPtr->enumValueNames.size()) {
-        ::free((void *)theDefinitionPtr->enumValueNames.begin());
-        theDefinitionPtr->enumValueNames = QDemonDataView<QString>();
-    }
-    theDefinitionPtr->isEnumProperty = true;
-    if (inNames.size()) {
-        // TODO:
-        QString *theNameValues = new QString[inName.size()];
-        ::memcpy(theNameValues, inNames.begin(), inNames.size() * sizeof(QString));
-        theDefinitionPtr->enumValueNames = QDemonDataView<QString>(theNameValues, inNames.size());
-    }
-}
-
-QDemonDataView<QString> QDemonDynamicObjectSystem::getPropertyEnumNames(const QString &inName, const QString &inPropName) const
-{
-    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>>
-            def = const_cast<QDemonDynamicObjectSystem &>(*this).findProperty(inName, inPropName);
-    if (def.first)
-        return def.first->enumValueNames;
-    return QDemonDataView<QString>();
-}
-
-QDemonDataView<dynamic::QDemonPropertyDefinition> QDemonDynamicObjectSystem::getProperties(const QString &inName) const
-{
-    QMutexLocker locker(&m_propertyLoadMutex);
-    QDemonRef<QDemonDynamicObjectClass> cls = const_cast<QDemonDynamicObjectSystem &>(*this).findClass(inName);
-    if (cls)
-        return cls->m_propertyDefinitions;
-    return QDemonDataView<dynamic::QDemonPropertyDefinition>();
-}
-
-void QDemonDynamicObjectSystem::setPropertyTextureSettings(const QString &inName,
-                                                           const QString &inPropName,
-                                                           const QString &inPropPath,
-                                                           QDemonRenderTextureTypeValue inTexType,
-                                                           QDemonRenderTextureCoordOp inCoordOp,
-                                                           QDemonRenderTextureMagnifyingOp inMagFilterOp,
-                                                           QDemonRenderTextureMinifyingOp inMinFilterOp)
-{
-    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>> def = findProperty(inName, inPropName);
-    dynamic::QDemonPropertyDefinition *theDefinitionPtr = const_cast<dynamic::QDemonPropertyDefinition *>(def.first);
-    if (theDefinitionPtr == nullptr) {
-        Q_ASSERT(false);
-        return;
-    }
-    QByteArray *data = new QByteArray(inPropPath.toLatin1());
-    theDefinitionPtr->imagePath = data->constData(); // inPropPath.toLatin1().constData(); // TODO: Lifetime
-    theDefinitionPtr->texUsageType = inTexType;
-    theDefinitionPtr->coordOp = inCoordOp;
-    theDefinitionPtr->magFilterOp = inMagFilterOp;
-    theDefinitionPtr->minFilterOp = inMinFilterOp;
-}
-
-QDemonDynamicObjectClass *QDemonDynamicObjectSystem::dynamicObjectClass(const QString &inName)
-{
-    // TODO: Should probably shared pointer
-    return findClass(inName).data();
-}
-
 void QDemonDynamicObjectSystem::setRenderCommands(const QString &inClassName, const QDemonDataView<dynamic::QDemonCommand *> &inCommands)
 {
-    QDemonRef<QDemonDynamicObjectClass> theClass = const_cast<QDemonDynamicObjectSystem &>(*this).findClass(inClassName);
-    if (theClass == nullptr) {
-        Q_ASSERT(false);
-        return;
-    }
-    theClass->releaseCommands();
-    quint32 commandAllocationSize = 0;
-    for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {
-        quint32 commandSize = align(dynamic::QDemonCommand::getSizeofCommand(*inCommands[idx]));
-        commandAllocationSize += commandSize;
-    }
-    quint32 commandPtrSize = inCommands.size() * sizeof(dynamic::QDemonCommand *);
-    quint32 totalAllocationSize = align8(commandAllocationSize) + commandPtrSize;
-    quint8 *theCommandDataBegin = (quint8 *)::malloc(totalAllocationSize);
-    quint8 *theCurrentCommandData(theCommandDataBegin);
-    dynamic::QDemonCommand **theCommandPtrBegin = reinterpret_cast<dynamic::QDemonCommand **>(
-            theCommandDataBegin + align8(commandAllocationSize));
-    dynamic::QDemonCommand **theCurrentCommandPtr = theCommandPtrBegin;
-    memset(theCommandDataBegin, 0, totalAllocationSize);
+    Q_UNUSED(inClassName)
+    Q_UNUSED(inCommands)
+//    QDemonRef<QDemonDynamicObjectClass> theClass = nullptr;// = const_cast<QDemonDynamicObjectSystem &>(*this).findClass(inClassName);
+//    if (theClass == nullptr) {
+//        Q_ASSERT(false);
+//        return;
+//    }
+//    theClass->releaseCommands();
+//    quint32 commandAllocationSize = 0;
+//    for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {
+//        quint32 commandSize = align(dynamic::QDemonCommand::getSizeofCommand(*inCommands[idx]));
+//        commandAllocationSize += commandSize;
+//    }
+//    quint32 commandPtrSize = inCommands.size() * sizeof(dynamic::QDemonCommand *);
+//    quint32 totalAllocationSize = align8(commandAllocationSize) + commandPtrSize;
+//    quint8 *theCommandDataBegin = (quint8 *)::malloc(totalAllocationSize);
+//    quint8 *theCurrentCommandData(theCommandDataBegin);
+//    dynamic::QDemonCommand **theCommandPtrBegin = reinterpret_cast<dynamic::QDemonCommand **>(
+//            theCommandDataBegin + align8(commandAllocationSize));
+//    dynamic::QDemonCommand **theCurrentCommandPtr = theCommandPtrBegin;
+//    memset(theCommandDataBegin, 0, totalAllocationSize);
 
-    theClass->m_requiresDepthTexture = false;
-    for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {
-        dynamic::QDemonCommand &theCommand(*inCommands[idx]);
-        quint32 theCommandSize = dynamic::QDemonCommand::getSizeofCommand(theCommand);
-        dynamic::QDemonCommand::copyConstructCommand(theCurrentCommandData, theCommand);
-        if (theCommand.m_type == dynamic::CommandType::ApplyDepthValue)
-            theClass->m_requiresDepthTexture = true;
-        if (theCommand.m_type == dynamic::CommandType::BindTarget) {
-            dynamic::QDemonBindTarget *bt = reinterpret_cast<dynamic::QDemonBindTarget *>(&theCommand);
-            theClass->m_outputFormat = bt->m_outputFormat;
-        }
+//    theClass->m_requiresDepthTexture = false;
+//    for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {
+//        dynamic::QDemonCommand &theCommand(*inCommands[idx]);
+//        quint32 theCommandSize = dynamic::QDemonCommand::getSizeofCommand(theCommand);
+//        dynamic::QDemonCommand::copyConstructCommand(theCurrentCommandData, theCommand);
+//        if (theCommand.m_type == dynamic::CommandType::ApplyDepthValue)
+//            theClass->m_requiresDepthTexture = true;
+//        if (theCommand.m_type == dynamic::CommandType::BindTarget) {
+//            dynamic::QDemonBindTarget *bt = reinterpret_cast<dynamic::QDemonBindTarget *>(&theCommand);
+//            theClass->m_outputFormat = bt->m_outputFormat;
+//        }
 
-        *theCurrentCommandPtr = reinterpret_cast<dynamic::QDemonCommand *>(theCurrentCommandData);
-        ++theCurrentCommandPtr;
-        theCurrentCommandData += align(theCommandSize);
-    }
-    Q_ASSERT(theCurrentCommandData - theCommandDataBegin == (int)commandAllocationSize);
-    Q_ASSERT((quint8 *)theCurrentCommandPtr - theCommandDataBegin == (int)totalAllocationSize);
-    theClass->m_renderCommands = QDemonDataView<dynamic::QDemonCommand *>(theCommandPtrBegin, inCommands.size());
+//        *theCurrentCommandPtr = reinterpret_cast<dynamic::QDemonCommand *>(theCurrentCommandData);
+//        ++theCurrentCommandPtr;
+//        theCurrentCommandData += align(theCommandSize);
+//    }
+//    Q_ASSERT(theCurrentCommandData - theCommandDataBegin == (int)commandAllocationSize);
+//    Q_ASSERT((quint8 *)theCurrentCommandPtr - theCommandDataBegin == (int)totalAllocationSize);
+//    theClass->m_renderCommands = QDemonDataView<dynamic::QDemonCommand *>(theCommandPtrBegin, inCommands.size());
 }
 
 QDemonDataView<dynamic::QDemonCommand *> QDemonDynamicObjectSystem::getRenderCommands(const QString &inClassName) const
 {
-    QDemonRef<QDemonDynamicObjectClass> cls = const_cast<QDemonDynamicObjectSystem &>(*this).findClass(inClassName);
-    if (cls)
-        return cls->m_renderCommands;
+//    QDemonRef<QDemonDynamicObjectClass> cls = nullptr; //const_cast<QDemonDynamicObjectSystem &>(*this).findClass(inClassName);
+//    if (cls)
+//        return cls->m_renderCommands;
     return QDemonDataView<dynamic::QDemonCommand *>();
-}
-
-QDemonRenderDynamicGraphObject *QDemonDynamicObjectSystem::createInstance(const QString &inClassName)
-{
-    QDemonRef<QDemonDynamicObjectClass> theClass = findClass(inClassName);
-    if (!theClass) {
-        Q_ASSERT(false);
-        return nullptr;
-    }
-    quint32 totalObjectSize = theClass->m_baseObjectSize + theClass->m_propertySectionByteSize;
-    QDemonRenderDynamicGraphObject *retval = reinterpret_cast<QDemonRenderDynamicGraphObject *>(::malloc(totalObjectSize));
-    new (retval) QDemonRenderDynamicGraphObject(theClass->m_graphObjectType,
-                                                inClassName,
-                                                theClass->m_propertySectionByteSize,
-                                                theClass->m_baseObjectSize);
-    ::memcpy(retval->getDataSectionBegin(), theClass->m_propertyDefaultData, theClass->m_propertySectionByteSize);
-    return retval;
 }
 
 void QDemonDynamicObjectSystem::setShaderData(const QString &inPath,

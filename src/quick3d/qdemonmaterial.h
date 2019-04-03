@@ -4,6 +4,8 @@
 #include <QtQuick3d/qdemonobject.h>
 #include <QtQuick3d/qdemonimage.h>
 
+#include <QtCore/qvector.h>
+
 QT_BEGIN_NAMESPACE
 
 class QDemonSceneManager;
@@ -61,6 +63,8 @@ Q_SIGNALS:
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
     void itemChange(ItemChange, const ItemChangeData &) override;
+
+    void setDynamicTextureMap(QDemonImage *textureMap);
 private:
     void updateSceneRenderer(QDemonSceneManager *sceneRenderer);
     QDemonImage *m_lightmapIndirect = nullptr;
@@ -74,6 +78,7 @@ private:
     float m_displacementAmount = 0.0f;
 
     QHash<QObject*, QMetaObject::Connection> m_connections;
+    QVector<QDemonImage *> m_dynamicTextureMaps;
 };
 
 QT_END_NAMESPACE

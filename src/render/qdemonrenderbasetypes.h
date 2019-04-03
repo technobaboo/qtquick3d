@@ -1690,6 +1690,17 @@ typedef QDemonRenderGenericVec2<qint32> qint32_2;
 typedef QDemonRenderGenericVec3<qint32> qint32_3;
 typedef QDemonRenderGenericVec4<qint32> qint32_4;
 
+Q_DECLARE_METATYPE(bool_2)
+Q_DECLARE_METATYPE(bool_3)
+Q_DECLARE_METATYPE(bool_4)
+Q_DECLARE_METATYPE(quint32_2)
+Q_DECLARE_METATYPE(quint32_3)
+Q_DECLARE_METATYPE(quint32_4)
+Q_DECLARE_METATYPE(qint32_2)
+Q_DECLARE_METATYPE(qint32_3)
+Q_DECLARE_METATYPE(qint32_4)
+
+
 enum class QDemonRenderShaderDataType : quint32
 {
     Unknown = 0,

@@ -140,9 +140,28 @@ private:
     QRect presentationViewport(const QRect &inViewerViewport, ScaleModes inScaleToFit, const QSize &inPresDimensions) const;
     void setupRenderTarget();
     void teardownRenderTarget();
+    QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const QString &inApplicationDirectory);
+
+    static void releaseRenderContextInterface(quintptr wid);
 
 public:
-    QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const QString &inApplicationDirectory);
+    // TODO: temp workaround for now
+    struct QDemonRenderContextInterfacePtr
+    {
+        QDemonRenderContextInterfacePtr() = default;
+        QDemonRenderContextInterfacePtr(QDemonRenderContextInterface *ptr, quintptr wid) : m_ptr(ptr), m_wid(wid) {}
+        QDemonRenderContextInterface * operator-> () const { return m_ptr.data(); }
+        ~QDemonRenderContextInterfacePtr() { if (!m_ptr.isNull() && m_ptr->ref == 0) QDemonRenderContextInterface::releaseRenderContextInterface(m_wid); }
+        bool isNull() const { return m_ptr.data() == nullptr; }
+    private:
+        friend QDemonRenderContextInterface;
+        QDemonRef<QDemonRenderContextInterface> m_ptr;
+        quintptr m_wid = 0;
+    };
+
+    static QDemonRenderContextInterface::QDemonRenderContextInterfacePtr getRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const QString &inApplicationDirectory, quintptr wid);
+    static QDemonRenderContextInterface::QDemonRenderContextInterfacePtr getRenderContextInterface(quintptr wid);
+
     ~QDemonRenderContextInterface();
     QDemonRef<QDemonRendererInterface> renderer();
     QDemonRef<QDemonRendererImpl> renderWidgetContext();

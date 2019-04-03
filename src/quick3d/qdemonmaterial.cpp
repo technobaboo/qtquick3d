@@ -253,6 +253,29 @@ void QDemonMaterial::itemChange(QDemonObject::ItemChange change, const QDemonObj
         updateSceneRenderer(value.sceneRenderer);
 }
 
+void QDemonMaterial::setDynamicTextureMap(QDemonImage *textureMap)
+{
+    if (!textureMap)
+        return;
+
+    auto it = m_dynamicTextureMaps.begin();
+    const auto end = m_dynamicTextureMaps.end();
+    for (; it != end; ++it) {
+        if (*it == textureMap)
+            break;
+    }
+
+    if (it != end)
+        return;
+
+    updateProperyListener(textureMap, nullptr, sceneRenderer(), m_connections, [this](QDemonObject *n) {
+        setDynamicTextureMap(qobject_cast<QDemonImage *>(n));
+    });
+
+    m_dynamicTextureMaps.push_back(textureMap);
+    update();
+}
+
 void QDemonMaterial::updateSceneRenderer(QDemonSceneManager *window)
 {
     if (window) {
@@ -274,6 +297,8 @@ void QDemonMaterial::updateSceneRenderer(QDemonSceneManager *window)
         if (m_displacementMap) {
            QDemonObjectPrivate::get(m_displacementMap)->refSceneRenderer(window);
         }
+        for (auto it : m_dynamicTextureMaps)
+            QDemonObjectPrivate::get(it)->refSceneRenderer(window);
     } else {
         if (m_lightmapIndirect) {
            QDemonObjectPrivate::get(m_lightmapIndirect)->derefSceneRenderer();
@@ -293,6 +318,8 @@ void QDemonMaterial::updateSceneRenderer(QDemonSceneManager *window)
         if (m_displacementMap) {
            QDemonObjectPrivate::get(m_displacementMap)->derefSceneRenderer();
         }
+        for (auto it : m_dynamicTextureMaps)
+            QDemonObjectPrivate::get(it)->derefSceneRenderer();
     }
 }
 

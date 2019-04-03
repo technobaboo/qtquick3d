@@ -170,61 +170,18 @@ struct QDemonDynamicObjectShaderInfo
     }
 };
 
-struct QDemonDynamicObjectClass
-{
-    QAtomicInt ref;
-    QString m_id;
-    QDemonDataView<dynamic::QDemonPropertyDefinition> m_propertyDefinitions;
-    quint32 m_propertySectionByteSize;
-    quint32 m_baseObjectSize;
-    QDemonRenderGraphObject::Type m_graphObjectType;
-    quint8 *m_propertyDefaultData;
-    QDemonDataView<dynamic::QDemonCommand *> m_renderCommands;
-    bool m_requiresDepthTexture;
-    bool m_requiresCompilation;
-    QDemonRenderTextureFormat m_outputFormat;
-
-    QDemonDynamicObjectClass(QString id,
-                             QDemonDataView<dynamic::QDemonPropertyDefinition> definitions,
-                             quint32 propertySectionByteSize,
-                             quint32 baseObjectSize,
-                             QDemonRenderGraphObject::Type objectType,
-                             quint8 *propDefaultData,
-                             bool inRequiresDepthTexture = false,
-                             QDemonRenderTextureFormat inOutputFormat = QDemonRenderTextureFormat::RGBA8);
-
-    ~QDemonDynamicObjectClass();
-
-    void releaseCommands();
-
-    QString getId() const;
-    QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties() const;
-    quint32 getPropertySectionByteSize() const;
-    const quint8 *getDefaultValueBuffer() const;
-    quint32 getBaseObjectSize() const;
-    QDemonRenderGraphObject::Type graphObjectType() const;
-    const dynamic::QDemonPropertyDefinition *findDefinition(QString &str) const;
-    const dynamic::QDemonPropertyDefinition *findPropertyByName(QString inName) const;
-    QDemonDataView<dynamic::QDemonCommand *> getRenderCommands() const;
-    bool requiresDepthTexture() const;
-    void setRequiresDepthTexture(bool inVal);
-    bool requiresCompilation() const;
-    void setRequiresCompilation(bool inVal);
-    QDemonRenderTextureFormat getOutputTextureFormat() const;
-};
-
 typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShaderProgramFlags> TShaderAndFlags;
 
 struct QDemonDynamicObjectSystem
 {
-    typedef QHash<QString, QDemonRef<QDemonDynamicObjectClass>> TStringClassMap;
+//    typedef QHash<QString, QDemonRef<QDemonDynamicObjectClass>> TStringClassMap;
     typedef QHash<QString, QByteArray> TPathDataMap;
     typedef QHash<QString, QDemonDynamicObjectShaderInfo> TShaderInfoMap;
     typedef QSet<QString> TPathSet;
     typedef QHash<dynamic::QDemonDynamicShaderMapKey, TShaderAndFlags> TShaderMap;
 
     QDemonRenderContextInterface *m_context;
-    TStringClassMap m_classes;
+//    TStringClassMap m_classes;
     TPathDataMap m_expandedFiles;
     TShaderMap m_shaderMap;
     TShaderInfoMap m_shaderInfoMap;
@@ -242,43 +199,9 @@ struct QDemonDynamicObjectSystem
 
     ~QDemonDynamicObjectSystem();
 
-    bool isRegistered(QString inStr);
-
-    bool doRegister(QString inName,
-                    QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties,
-                    quint32 inBaseObjectSize,
-                    QDemonRenderGraphObject::Type inGraphObjectType);
-
-    bool unregister(QString inName);
-
-    QDemonRef<QDemonDynamicObjectClass> findClass(QString inName);
-
-    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjectClass>> findProperty(QString inName, QString inPropName);
-
-    void setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonByteView &inDefaultData);
-
-    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames);
-
-    QDemonDataView<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const;
-
-    // Called during loading which is pretty heavily multithreaded.
-    QDemonDataView<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const;
-
-    void setPropertyTextureSettings(const QString &inName,
-                                    const QString &inPropName,
-                                    const QString &inPropPath,
-                                    QDemonRenderTextureTypeValue inTexType,
-                                    QDemonRenderTextureCoordOp inCoordOp,
-                                    QDemonRenderTextureMagnifyingOp inMagFilterOp,
-                                    QDemonRenderTextureMinifyingOp inMinFilterOp);
-
-    QDemonDynamicObjectClass *dynamicObjectClass(const QString &inName);
-
     void setRenderCommands(const QString &inClassName, const QDemonDataView<dynamic::QDemonCommand *> &inCommands);
 
     QDemonDataView<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const;
-
-    QDemonRenderDynamicGraphObject *createInstance(const QString &inClassName);
 
     void setShaderData(const QString &inPath,
                        const QByteArray &inData,

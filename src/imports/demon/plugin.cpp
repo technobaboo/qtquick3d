@@ -86,6 +86,15 @@ public:
 
         qmlRegisterType<QDemonCamera>(uri, 1, 0, "DemonCamera");
         qmlRegisterType<QDemonCustomMaterial>(uri, 1, 0, "DemonCustomMaterial");
+        qmlRegisterType<QDemonCustomMaterialShader>(uri, 1, 0, "DemonCustomMaterialShader");
+        qmlRegisterType<QDemonCustomMaterialShaderInfo>(uri, 1, 0, "DemonCustomMaterialShaderInfo");
+        qmlRegisterType<QDemonCustomMaterialTexture>(uri, 1, 0, "DemonCustomMaterialTexture");
+        qmlRegisterType<QDemonCustomMaterialRenderPass>(uri, 1, 0, "DemonCustomMaterialPass");
+        qmlRegisterType<QDemonCustomMaterialRenderCommand>(uri, 1, 0, "DemonCustomMaterialCommand");
+        qmlRegisterType<QDemonCustomMaterialBufferInput>(uri, 1, 0, "DemonCustomMaterialBufferInput");
+        qmlRegisterType<QDemonCustomMaterialBufferBlit>(uri, 1, 0, "DemonCustomMaterialBufferBlit");
+        qmlRegisterType<QDemonCustomMaterialBlending>(uri, 1, 0, "DemonCustomMaterialBlending");
+        qmlRegisterType<QDemonCustomMaterialRenderState>(uri, 1, 0, "DemonCustomMaterialRenderState");
         qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DemonDefaultMaterial");
         qmlRegisterType<QDemonEffect>(uri, 1, 0, "DemonEffect");
         qmlRegisterType<QDemonImage>(uri, 1, 0, "DemonImage");

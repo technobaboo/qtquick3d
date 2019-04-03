@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>maps/shadow.png</file>
+        <file>maps/spherical_checker.png</file>
+        <file>maps/OpenfootageNET_garage-1024.hdr</file>
+    </qresource>
+</RCC>

@@ -176,8 +176,8 @@ public:
 
     QDemonSceneManager *sceneManager;
     int windowRefCount;
-//    inline QDemonRenderContextInterface *sceneGraphContext() const;
-//    inline QDemonRenderContext *sceneGraphRenderContext() const;
+//    QDemonRenderContextInterface *sceneGraphContext() const;
+//    QDemonRenderContext *sceneGraphRenderContext() const;
 
     QDemonObject *parentItem;
 

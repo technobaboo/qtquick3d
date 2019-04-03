@@ -30,21 +30,115 @@
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_H
 
-#include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 #include <QtDemonRuntimeRender/qdemonrenderlightmaps.h>
 
+#include <QtCore/qurl.h>
+#include <QtCore/qvector.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystemcommands.h>
+
 QT_BEGIN_NAMESPACE
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonRenderDynamicGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonRenderGraphObject
 {
-private:
-    // These objects are only created via the dynamic object system.
-    QDemonRenderCustomMaterial(const QDemonRenderCustomMaterial &);
-    QDemonRenderCustomMaterial &operator=(const QDemonRenderCustomMaterial &);
-    QDemonRenderCustomMaterial();
+    QDemonRenderCustomMaterial() : QDemonRenderGraphObject(Type::CustomMaterial) {}
 
-public:
+    struct TextureProperty
+    {
+        QDemonRenderImage *texImage = nullptr;
+        QByteArray name;
+        QDemonRenderShaderDataType shaderDataType;
+        // TODO: Note needed?
+        QDemonRenderTextureMagnifyingOp magFilterType = QDemonRenderTextureMagnifyingOp::Linear;
+        QDemonRenderTextureMinifyingOp minFilterType = QDemonRenderTextureMinifyingOp::Linear;
+        QDemonRenderTextureCoordOp clampType = QDemonRenderTextureCoordOp::ClampToEdge;
+        QDemonRenderTextureTypeValue usageType;
+    };
+
+    QVector<TextureProperty> textureProperties;
+
+    struct Property
+    {
+        QByteArray name;
+        mutable QVariant value;
+        QDemonRenderShaderDataType shaderDataType;
+        int pid = -1;
+    };
+
+    QVector<Property> properties;
+
+    struct ShaderInfo
+    {
+        QByteArray version;
+        QByteArray type; // I.e., GLSL
+        QByteArray shaderPrefix;
+    };
+
+    ShaderInfo shaderInfo;
+
+    struct Shader
+    {
+        enum class Stage : quint8
+        {
+            Shared,
+            Vertex,
+            Fragment
+        };
+
+        QString code;
+        Stage stage;
+    };
+
+    QVector<Shader> shaders;
+
+    struct Pass
+    {
+        struct BufferInput
+        {
+            QString bufferName;
+            QString shaderParam;
+            // dynamic::QDemonApplyBufferValue(bufferName, shaderParam)
+        };
+
+        struct BufferBlit
+        {
+            QString source;
+            QString dest;
+            // dynamic::QDemonApplyBlitFramebuffer(source, dest)
+        };
+
+        struct Blending
+        {
+            QDemonRenderSrcBlendFunc source = QDemonRenderSrcBlendFunc::One;
+            QDemonRenderDstBlendFunc dest = QDemonRenderDstBlendFunc::One;
+            // hasBlending = true; when used
+            // dynamic::QDemonApplyBlending(source, dest)
+        };
+
+        struct RenderState
+        {
+            QDemonRenderState renderState = QDemonRenderState::Unknown;
+            bool enabled;
+            // dynamic::QDemonApplyRenderState(renderState, enabled)
+        };
+
+        QString shaderName;
+        QString input;
+        QString output;
+        QDemonRenderTextureFormat::Format outputFormat;
+        bool needsClear;
+
+        Pass()
+            : input(QLatin1String("[source]"))
+            , output(QLatin1String("[dest]"))
+            , outputFormat(QDemonRenderTextureFormat::RGBA8)
+            , needsClear(false)
+        {}
+    };
+
+    QVector<Pass> passes;
+    QVector<dynamic::QDemonCommand *> commands;
+
     // IMPORTANT: These flags matches the key produced by a MDL export file
     enum class MaterialShaderKeyValues
     {
@@ -60,41 +154,29 @@ public:
     };
     Q_DECLARE_FLAGS(MaterialShaderKeyFlags, MaterialShaderKeyValues)
 
-    const char *imagePath = nullptr;
+    using Flag = QDemonRenderNode::Flag;
+    Q_DECLARE_FLAGS(Flags, Flag)
+
+    const char *className = nullptr;
 
     // lightmap section
     QDemonRenderLightmaps m_lightmaps;
     // material section
-    bool m_hasTransparency;
-    bool m_hasRefraction;
-    bool m_hasVolumetricDF;
-    QDemonRenderImage *m_iblProbe;
-    QDemonRenderImage *m_emissiveMap2;
-    QDemonRenderImage *m_displacementMap;
-    float m_displaceAmount; ///< depends on the object size
+    bool m_hasTransparency = false;
+    bool m_hasRefraction = false;
+    bool m_hasVolumetricDF = false;
+    QDemonRenderImage *m_iblProbe = nullptr;
+    QDemonRenderImage *m_emissiveMap2 = nullptr;
+    QDemonRenderImage *m_displacementMap = nullptr;
+    float m_displaceAmount = 0.0f; ///< depends on the object size
 
-    QDemonRenderGraphObject *m_nextSibling;
+    QDemonRenderGraphObject *m_nextSibling = nullptr;
 
     MaterialShaderKeyFlags m_shaderKeyValues; ///< input from MDL files
-    quint32 m_layerCount; ///< input from MDL files
+    quint32 m_layerCount = 0; ///< input from MDL files
 
-    void initialize(quint32 inKey, quint32 inLayerCount)
-    {
-        m_lightmaps.m_lightmapIndirect = nullptr;
-        m_lightmaps.m_lightmapRadiosity = nullptr;
-        m_lightmaps.m_lightmapShadow = nullptr;
-        m_hasTransparency = false;
-        m_hasRefraction = false;
-        m_hasVolumetricDF = false;
-        m_nextSibling = nullptr;
-        m_dirtyFlagWithInFrame = flags.testFlag(Flag::Dirty);
-        m_iblProbe = nullptr;
-        m_emissiveMap2 = nullptr;
-        m_displacementMap = nullptr;
-        m_displaceAmount = 0.0;
-        m_shaderKeyValues = static_cast<MaterialShaderKeyFlags>(inKey);
-        m_layerCount = inLayerCount;
-    }
+    Flags flags;
+    bool m_alwaysDirty = false;
 
     bool isDielectric() const { return m_shaderKeyValues & MaterialShaderKeyValues::diffuse; }
     bool isSpecularEnabled() const { return m_shaderKeyValues & MaterialShaderKeyValues::specular; }
@@ -105,7 +187,7 @@ public:
 
     // Dirty
     bool m_dirtyFlagWithInFrame;
-    bool isDirty() const { return flags.testFlag(Flag::Dirty) || m_dirtyFlagWithInFrame; }
+    bool isDirty() const { return flags.testFlag(Flag::Dirty) || m_dirtyFlagWithInFrame || m_alwaysDirty; }
     void updateDirtyForFrame()
     {
         m_dirtyFlagWithInFrame = flags.testFlag(Flag::Dirty);

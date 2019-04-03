@@ -240,7 +240,7 @@ QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
     if (m_renderContext.isNull())
         m_renderContext = QDemonRenderContext::createGl(m_openGLContext->format());
     if (m_sgContext.isNull())
-        m_sgContext = new QDemonRenderContextInterface(m_renderContext, QString::fromLatin1("./"));
+        m_sgContext = QDemonRenderContextInterface::getRenderContextInterface(m_renderContext, QString::fromLatin1("./"), quintptr(window));
     m_openGLContext->doneCurrent();
     oldContext->makeCurrent(window);
 }

@@ -136,6 +136,54 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
 #endif
 }
 
+Q_GLOBAL_STATIC(QVector<QDemonRenderContextInterface::QDemonRenderContextInterfacePtr>, g_renderContexts)
+
+void QDemonRenderContextInterface::releaseRenderContextInterface(quintptr wid)
+{
+    auto it = g_renderContexts->cbegin();
+    const auto end = g_renderContexts->cend();
+    for (; it != end; ++it) {
+        if (it->m_wid == wid)
+            break;
+    }
+
+    if (it != end)
+        g_renderContexts->remove(int(end - it));
+}
+
+QDemonRenderContextInterface::QDemonRenderContextInterfacePtr QDemonRenderContextInterface::getRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const QString &inApplicationDirectory, quintptr wid)
+{
+    auto it = g_renderContexts->cbegin();
+    const auto end = g_renderContexts->cend();
+    for (; it != end; ++it) {
+        if (it->m_wid == wid)
+            break;
+    }
+
+    if (it != end)
+        return *it;
+
+    QDemonRenderContextInterfacePtr ptr { new QDemonRenderContextInterface(ctx, inApplicationDirectory), wid };
+    g_renderContexts->push_back(ptr);
+
+    return ptr;
+}
+
+QDemonRenderContextInterface::QDemonRenderContextInterfacePtr QDemonRenderContextInterface::getRenderContextInterface(quintptr wid)
+{
+    auto it = g_renderContexts->cbegin();
+    const auto end = g_renderContexts->cend();
+    for (; it != end; ++it) {
+        if (it->m_wid == wid)
+            break;
+    }
+
+    if (it != end)
+        return *it;
+
+    return QDemonRenderContextInterfacePtr();
+}
+
 QDemonRef<QDemonRendererInterface> QDemonRenderContextInterface::renderer() { return m_renderer; }
 
 QDemonRef<QDemonBufferManager> QDemonRenderContextInterface::bufferManager() { return m_bufferManager; }

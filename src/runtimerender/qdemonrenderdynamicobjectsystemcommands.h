@@ -291,12 +291,12 @@ struct QDemonApplyBufferValue : public QDemonCommand
 {
     // If no buffer name is given then the special buffer [source]
     // is assumed.
-    QString m_bufferName;
+    QByteArray m_bufferName;
     // If no param name is given, the buffer is bound to the
     // input texture parameter (texture0).
-    QString m_paramName;
+    QByteArray m_paramName;
 
-    QDemonApplyBufferValue(QString bufferName, QString shaderParam)
+    QDemonApplyBufferValue(const QByteArray &bufferName, const QByteArray &shaderParam)
         : QDemonCommand(CommandType::ApplyBufferValue), m_bufferName(bufferName), m_paramName(shaderParam)
     {
     }
@@ -407,12 +407,12 @@ struct QDemonApplyBlitFramebuffer : public QDemonCommand
 {
     // If no buffer name is given then the special buffer [source]
     // is assumed. Which is the default render target
-    QString m_sourceBufferName;
+    QByteArray m_sourceBufferName;
     // If no buffer name is given then the special buffer [dest]
     // is assumed. Which is the default render target
-    QString m_destBufferName;
+    QByteArray m_destBufferName;
 
-    QDemonApplyBlitFramebuffer(QString inSourceBufferName, QString inDestBufferName)
+    QDemonApplyBlitFramebuffer(const QByteArray &inSourceBufferName, const QByteArray &inDestBufferName)
         : QDemonCommand(CommandType::ApplyBlitFramebuffer), m_sourceBufferName(inSourceBufferName), m_destBufferName(inDestBufferName)
     {
     }

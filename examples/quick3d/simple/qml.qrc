@@ -6,5 +6,17 @@
         <file>WeirdShape.qml</file>
         <file>texture.png</file>
         <file>TexturedCube.qml</file>
+        <file>CopperCube.qml</file>
+        <file>CopperMaterial.qml</file>
+        <file>copper.frag</file>
+        <file>SimpleGlassMaterial.qml</file>
+        <file>PorcelainMaterial.qml</file>
+        <file>porcelain.frag</file>
+        <file>simpleGlass.frag</file>
+        <file>frostedThinGlass.frag</file>
+        <file>FrostedThinGlassMaterial.qml</file>
+        <file>frostedThinGlassPreBlur.frag</file>
+        <file>frostedThinGlassBlurX.frag</file>
+        <file>frostedThinGlassBlurY.frag</file>
     </qresource>
 </RCC>

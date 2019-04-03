@@ -32,7 +32,6 @@
 
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 
 QT_BEGIN_NAMESPACE
 struct QDemonRenderLayer;
@@ -43,22 +42,17 @@ class QDemonEffectSystemInterface;
 // them and they have completely variable properties.
 // see IEffectManager in order to create these effects.
 // The data for the effect immediately follows the effect
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderEffect : public QDemonRenderDynamicGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderEffect : public QDemonRenderGraphObject
 {
-private:
-    // These objects are only created via the dynamic object system.
-    QDemonRenderEffect(const QDemonRenderEffect &) = delete;
-    QDemonRenderEffect &operator=(const QDemonRenderEffect &) = delete;
-    QDemonRenderEffect() = delete;
+    QDemonRenderEffect() : QDemonRenderGraphObject(Type::Effect) {}
     ~QDemonRenderEffect();
 
-public:
     QDemonRenderLayer *m_layer;
     QDemonRenderEffect *m_nextEffect;
     // Opaque pointer to context type implemented by the effect system.
     // May be null in which case the effect system will generate a new context
     // the first time it needs to render this effect.
-    QDemonRef<QDemonEffectContext> m_context;
+    QDemonEffectContext *m_context = nullptr;
 
     void initialize();
 
@@ -67,6 +61,12 @@ public:
     void setActive(bool inActive, QDemonEffectSystemInterface &inSystem);
 
     void reset(QDemonEffectSystemInterface &inSystem);
+
+    using Flag = QDemonRenderNode::Flag;
+    Q_DECLARE_FLAGS(Flags, Flag)
+
+    Flags flags;
+    const char *className = nullptr;
 };
 
 QT_END_NAMESPACE
