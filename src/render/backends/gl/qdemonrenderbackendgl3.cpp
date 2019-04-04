@@ -414,7 +414,8 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
 #endif
     }
 
-    if (inputAssembler->m_cachedShaderHandle != programID) {
+    //if (inputAssembler->m_cachedShaderHandle != programID) {
+    if (true) {
         GL_CALL_EXTRA_FUNCTION(glBindVertexArray(inputAssembler->m_vaoID));
         inputAssembler->m_cachedShaderHandle = programID;
 

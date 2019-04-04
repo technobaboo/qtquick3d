@@ -376,8 +376,10 @@ void QDemonRenderContextInterface::setupRenderTarget()
         QVector4D theClearColor;
         if (m_matteColor.hasValue())
             theClearColor = m_matteColor;
-        else
+        else if (m_sceneColor.hasValue())
             theClearColor = m_sceneColor;
+        else
+            theClearColor = QVector4D(0.0, 0.0, 0.0, 0.0);
         if (m_sceneColor.hasValue() && m_sceneColor.getValue().w() != 0.0f) {
             m_renderContext->setClearColor(theClearColor);
             m_renderContext->clear(QDemonRenderClearValues::Color);

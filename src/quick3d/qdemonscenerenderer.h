@@ -19,23 +19,13 @@ struct QDemonRenderLayer;
 class QDemonSceneRenderer
 {
 public:
-    struct FrambufferObject {
-        FrambufferObject(const QSize &s, QDemonRef<QDemonRenderContext> context);
-        ~FrambufferObject();
-        QSize size;
-        QDemonRef<QDemonRenderContext> renderContext;
-        QDemonRef<QDemonRenderFrameBuffer> fbo;
-        QDemonRef<QDemonRenderTexture2D> color0;
-        QDemonRef<QDemonRenderTexture2D> depthStencil;
-    };
-
     QDemonSceneRenderer();
 protected:
-    void render();
-    QDemonSceneRenderer::FrambufferObject *createFramebufferObject(const QSize &size);
-    void synchronize(QDemonView3D *item);
+    GLuint render();
+    void synchronize(QDemonView3D *item, const QSize &size);
     void update();
     void invalidateFramebufferObject();
+    QSize surfaceSize() const { return m_surfaceSize; }
 
 private:
     void updateLayerNode(QDemonView3D *view3D);
@@ -45,9 +35,12 @@ private:
     QDemonRef<QDemonRenderContext> m_renderContext;
     QSize m_surfaceSize;
     void *data = nullptr;
+    bool m_layerSizeIsDirty = true;
     friend class SGFramebufferObjectNode;
     friend class QDemonView3D;
 };
+
+class QOpenGLVertexArrayObjectHelper;
 
 class SGFramebufferObjectNode : public QSGTextureProvider, public QSGSimpleTextureNode
 {
@@ -68,7 +61,6 @@ public Q_SLOTS:
 
 public:
     QQuickWindow *window;
-    QDemonSceneRenderer::FrambufferObject *fbo;
     QDemonSceneRenderer *renderer;
     QDemonView3D *quickFbo;
 
@@ -76,6 +68,10 @@ public:
     bool invalidatePending;
 
     qreal devicePixelRatio;
+
+private:
+    void resetOpenGLState();
+    QOpenGLVertexArrayObjectHelper *m_vaoHelper = nullptr;
 };
 
 QT_END_NAMESPACE

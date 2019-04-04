@@ -50,7 +50,7 @@ enum class QDemonOffscreenRendererDepthValues
     Depth24Stencil8 // 24 bit depth buffer 8 bit stencil buffer
 };
 
-struct QDemonOffscreenRendererEnvironment
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRendererEnvironment
 {
     qint32 width = 0;
     qint32 height = 0;
@@ -80,7 +80,7 @@ struct QDemonOffscreenRendererEnvironment
     }
 };
 
-struct QDemonOffscreenRenderFlags
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderFlags
 {
     bool hasTransparency = false;
     bool hasChangedSinceLastFrame = false;
@@ -93,7 +93,7 @@ struct QDemonOffscreenRenderFlags
 
 typedef void *QDemonRenderInstanceId;
 
-class QDemonOffscreenRendererInterface
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRendererInterface
 {
 public:
     QAtomicInt ref;
@@ -145,7 +145,7 @@ public:
     virtual bool pick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, const QDemonRenderInstanceId instanceId) = 0;
 };
 
-struct QDemonOffscreenRenderResult
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderResult
 {
     QDemonRef<QDemonOffscreenRendererInterface> renderer;
     QDemonRef<QDemonRenderTexture2D> texture;

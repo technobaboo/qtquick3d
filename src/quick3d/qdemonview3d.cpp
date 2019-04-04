@@ -114,7 +114,7 @@ QSGTextureProvider *QDemonView3D::textureProvider() const
 
     QQuickWindow *w = window();
     if (!w || !w->openglContext() || QThread::currentThread() != w->openglContext()->thread()) {
-        qWarning("QQuickFramebufferObject::textureProvider: can only be queried on the rendering thread of an exposed window");
+        qWarning("QDemonView3D::textureProvider: can only be queried on the rendering thread of an exposed window");
         return nullptr;
     }
     if (!m_node)
@@ -161,9 +161,6 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
         connect(window(), SIGNAL(beforeRendering()), n, SLOT(render()));
         connect(window(), SIGNAL(screenChanged(QScreen*)), n, SLOT(handleScreenChange()));
     }
-
-    n->renderer->synchronize(this);
-
     QSize minFboSize = QQuickItemPrivate::get(this)->sceneGraphContext()->minimumFBOSize();
     QSize desiredFboSize(qMax<int>(minFboSize.width(), width()),
                          qMax<int>(minFboSize.height(), height()));
@@ -171,22 +168,7 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
     n->devicePixelRatio = window()->effectiveDevicePixelRatio();
     desiredFboSize *= n->devicePixelRatio;
 
-    if (n->fbo && (n->fbo->size != desiredFboSize || n->invalidatePending)) {
-        delete n->texture();
-        delete n->fbo;
-        n->fbo = nullptr;
-        n->invalidatePending = false;
-    }
-
-    if (!n->fbo) {
-        n->fbo = n->renderer->createFramebufferObject(desiredFboSize);
-
-        GLuint displayTexture = HandleToID_cast(GLuint, size_t, n->fbo->color0->handle());
-
-        n->setTexture(window()->createTextureFromId(displayTexture,
-                                                    n->fbo->size,
-                                                    QQuickWindow::TextureHasAlphaChannel));
-    }
+    n->renderer->synchronize(this, desiredFboSize);
 
     n->setFiltering(smooth() ? QSGTexture::Linear : QSGTexture::Nearest);
     n->setRect(0, 0, width(), height());

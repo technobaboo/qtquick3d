@@ -1325,6 +1325,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         fragmentShader.append("    fragOutput = vec4( clamp( vertColor * global_diffuse_light.xyz + "
                               "global_specular_light.xyz, 0.0, 65519.0 ), global_diffuse_light.a "
                               ");");
+        // ###############
+        fragmentShader.append("    fragOutput = vec4(0.0, 1.0, 0.0, 1.0);");
 
         if (vertexGenerator().hasActiveWireframe()) {
             fragmentShader.append("vec3 edgeDistance = varEdgeDistance * gl_FragCoord.w;");
