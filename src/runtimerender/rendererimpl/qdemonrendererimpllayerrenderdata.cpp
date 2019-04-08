@@ -99,9 +99,9 @@ QDemonLayerRenderData::~QDemonLayerRenderData()
     if (m_advancedBlendDrawTexture)
         m_advancedBlendDrawTexture = nullptr;
 }
-void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions)
+void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions, bool forceDirectRender)
 {
-    QDemonLayerRenderPreparationData::prepareForRender(inViewportDimensions);
+    QDemonLayerRenderPreparationData::prepareForRender(inViewportDimensions, forceDirectRender);
     QDemonLayerRenderPreparationResult &thePrepResult(*layerPrepResult);
     QDemonRef<QDemonResourceManager> theResourceManager(renderer->demonContext()->resourceManager());
     // at that time all values shoud be updated
@@ -1662,6 +1662,14 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                                       &QDemonRenderContext::clearColor,
                                                                       &QDemonRenderContext::setClearColor,
                                                                       QVector4D(layer.clearColor, 0.0f));
+            theContext->clear(QDemonRenderClearValues::Color);
+        } else {
+            // ### will need to address this later because when not rendering to an FBO
+            // we would clear anything in the window target which is not what we want
+            QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
+                                                                      &QDemonRenderContext::clearColor,
+                                                                      &QDemonRenderContext::setClearColor,
+                                                                      QVector4D(0.0, 0.0, 0.0, 0.0f));
             theContext->clear(QDemonRenderClearValues::Color);
         }
         renderToViewport();

@@ -977,7 +977,7 @@ struct QDemonLightNodeMarker
 };
 
 // m_Layer.m_Camera->CalculateViewProjectionMatrix(m_ViewProjection);
-void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportDimensions)
+void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportDimensions, bool forceDirectRender)
 {
     QDemonStackPerfTimer perfTimer(renderer->demonContext()->performanceTimer(), Q_FUNC_INFO);
     if (layerPrepResult.hasValue())
@@ -1032,7 +1032,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
         bool shouldRenderToTexture = true;
 
-        if (hasOffscreenRenderer) {
+        if (hasOffscreenRenderer || forceDirectRender) {
             // We don't render to texture with offscreen renderers, we just render them to the
             // viewport.
             shouldRenderToTexture = false;

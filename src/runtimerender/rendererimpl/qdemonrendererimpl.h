@@ -211,7 +211,8 @@ public:
     bool prepareLayerForRender(QDemonRenderLayer &inLayer,
                                const QSize &surfaceSize,
                                bool inRenderSiblings,
-                               const QDemonRenderInstanceId id) override;
+                               const QDemonRenderInstanceId id,
+                               bool forceDirectRender = false) override;
     void renderLayer(QDemonRenderLayer &inLayer,
                      const QSize &surfaceSize,
                      bool clear,

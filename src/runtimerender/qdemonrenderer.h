@@ -114,7 +114,8 @@ public:
     virtual bool prepareLayerForRender(QDemonRenderLayer &inLayer,
                                        const QSize &surfaceSize,
                                        bool inRenderSiblings = true,
-                                       const QDemonRenderInstanceId id = nullptr) = 0;
+                                       const QDemonRenderInstanceId id = nullptr,
+                                       bool forceDirectRender = false) = 0;
     virtual void renderLayer(QDemonRenderLayer &inLayer,
                              const QSize &surfaceSize,
                              bool clear,

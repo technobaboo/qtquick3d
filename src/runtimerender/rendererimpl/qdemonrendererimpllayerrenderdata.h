@@ -97,7 +97,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     void prepareForRender();
 
     // Internal Call
-    void prepareForRender(const QSize &inViewportDimensions) override;
+    void prepareForRender(const QSize &inViewportDimensions, bool forceDirectRender = false) override;
 
     QDemonRenderTextureFormat getDepthBufferFormat();
     QDemonRenderFrameBufferAttachment getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormat depthFormat);

@@ -93,7 +93,8 @@ void SGFramebufferObjectNode::render()
     if (renderPending) {
         renderPending = false;
         GLuint textureId = renderer->render();
-        resetOpenGLState();
+
+        //resetOpenGLState();
 
         if (texture() && (texture()->textureId() != textureId || texture()->textureSize() != renderer->surfaceSize())) {
             delete texture();
@@ -117,13 +118,29 @@ void SGFramebufferObjectNode::handleScreenChange()
 }
 
 
-QDemonSceneRenderer::QDemonSceneRenderer()
+QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
+    : m_window(window)
 {
-    QOpenGLContext *context = QOpenGLContext::currentContext();
+    QOpenGLContext *oldContext = QOpenGLContext::currentContext();
+
+    m_openGLContext = new QOpenGLContext();
+    m_openGLContext->setFormat(oldContext->format());
+    m_openGLContext->setShareContext(oldContext);
+    m_openGLContext->create();
+
+    m_openGLContext->makeCurrent(m_window);
+
     if (m_renderContext.isNull())
-        m_renderContext = QDemonRenderContext::createGl(context->format());
+        m_renderContext = QDemonRenderContext::createGl(oldContext->format());
     if (m_sgContext.isNull())
         m_sgContext = new QDemonRenderContextInterface(m_renderContext, QString::fromLatin1("./"));
+    m_openGLContext->doneCurrent();
+    oldContext->makeCurrent(window);
+}
+
+QDemonSceneRenderer::~QDemonSceneRenderer()
+{
+    delete m_openGLContext;
 }
 
 GLuint QDemonSceneRenderer::render()
@@ -131,12 +148,17 @@ GLuint QDemonSceneRenderer::render()
     if (!m_layer)
         return 0;
 
+    QOpenGLContext *oldContext = QOpenGLContext::currentContext();
+
+    m_openGLContext->makeCurrent(m_window);
     m_sgContext->beginFrame();
     m_sgContext->offscreenRenderManager()->beginFrame();
     auto result = m_sgContext->offscreenRenderManager()->getRenderedItem(QDemonOffscreenRendererKey(m_layer));
     m_sgContext->runRenderTasks();
     m_sgContext->offscreenRenderManager()->endFrame();
     m_sgContext->endFrame();
+    m_openGLContext->doneCurrent();
+    oldContext->makeCurrent(m_window);
 
     if (!result.texture.isNull())
         return HandleToID_cast(GLuint, size_t, result.texture->handle());

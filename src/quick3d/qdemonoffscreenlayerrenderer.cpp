@@ -49,7 +49,7 @@ QDemonOffscreenRenderFlags QDemonOffscreenLayerRenderer::needsRender(const QDemo
 {
     Q_UNUSED(inPresentationScaleFactor)
     bool hasTransparency = m_layer->background == QDemonRenderLayer::Background::Transparent;
-    bool wasDirty = m_renderContext->renderer()->prepareLayerForRender(*m_layer, QSize(m_layer->m_width, m_layer->m_height), false, instanceId);
+    bool wasDirty = m_renderContext->renderer()->prepareLayerForRender(*m_layer, QSize(m_layer->m_width, m_layer->m_height), false, instanceId, true);
     return QDemonOffscreenRenderFlags(hasTransparency, wasDirty);
 }
 
@@ -65,7 +65,7 @@ void QDemonOffscreenLayerRenderer::render(const QDemonOffscreenRendererEnvironme
     m_renderContext->setInSubPresentation(true);
     m_renderContext->setPresentationDimensions(QSize(inEnvironment.width, inEnvironment.height));
     m_renderContext->renderer()->renderLayer(*m_layer, QSize(inEnvironment.width, inEnvironment.height),
-                                             false, QVector3D(), false, instanceId);
+                                             true, QVector3D(), false, instanceId);
 
 }
 

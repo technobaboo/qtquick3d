@@ -311,7 +311,7 @@ struct QDemonLayerRenderPreparationData
 
     // returns true if this object will render something different than it rendered the last
     // time.
-    virtual void prepareForRender(const QSize &inViewportDimensions);
+    virtual void prepareForRender(const QSize &inViewportDimensions, bool forceDirectRender = false);
     bool checkLightProbeDirty(QDemonRenderImage &inLightProbe);
     void addRenderWidget(QDemonRenderWidgetInterface &inWidget);
     void setShaderFeature(const QByteArray &inName, bool inValue);

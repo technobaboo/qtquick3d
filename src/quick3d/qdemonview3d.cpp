@@ -96,7 +96,7 @@ QDemonNode *QDemonView3D::referencedScene() const
 
 QDemonSceneRenderer *QDemonView3D::createRenderer() const
 {
-    return new QDemonSceneRenderer();
+    return new QDemonSceneRenderer(this->window());
 }
 
 bool QDemonView3D::isTextureProvider() const

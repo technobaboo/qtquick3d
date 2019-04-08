@@ -145,7 +145,8 @@ static void buildRenderableLayers(QDemonRenderLayer &inLayer, QVector<QDemonRend
 bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
                                                const QSize &surfaceSize,
                                                bool inRenderSiblings,
-                                               const QDemonRenderInstanceId id)
+                                               const QDemonRenderInstanceId id,
+                                               bool forceDirectRender)
 {
     QVector<QDemonRenderLayer *> renderableLayers;
     // Found by fair roll of the dice.
@@ -162,7 +163,7 @@ bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
         QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (theRenderData) {
-            theRenderData->prepareForRender(surfaceSize);
+            theRenderData->prepareForRender(surfaceSize, forceDirectRender);
             retval = retval || theRenderData->layerPrepResult->flags.wasDirty();
         } else {
             Q_ASSERT(false);
@@ -208,7 +209,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
             theRenderContext->setRenderTarget(m_blendFb);
             theRenderContext->setScissorTestEnabled(false);
             QVector4D color(0.0f, 0.0f, 0.0f, 0.0f);
-            if (clear) {
+            if (clear && !clearColor.isNull()) {
                 color.setX(clearColor.x());
                 color.setY(clearColor.y());
                 color.setZ(clearColor.z());

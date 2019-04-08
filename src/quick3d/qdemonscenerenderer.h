@@ -19,7 +19,8 @@ struct QDemonRenderLayer;
 class QDemonSceneRenderer
 {
 public:
-    QDemonSceneRenderer();
+    QDemonSceneRenderer(QWindow *window);
+    ~QDemonSceneRenderer();
 protected:
     GLuint render();
     void synchronize(QDemonView3D *item, const QSize &size);
@@ -36,6 +37,8 @@ private:
     QSize m_surfaceSize;
     void *data = nullptr;
     bool m_layerSizeIsDirty = true;
+    QOpenGLContext *m_openGLContext = nullptr;
+    QWindow *m_window;
     friend class SGFramebufferObjectNode;
     friend class QDemonView3D;
 };
