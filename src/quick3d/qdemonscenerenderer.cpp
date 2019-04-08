@@ -193,12 +193,28 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size)
 
     // Set the root item for the scene to the layer
     auto rootNode = static_cast<QDemonRenderNode*>(QDemonObjectPrivate::get(view3D->scene())->spatialNode);
-    if (rootNode) {
-        if (m_layer->firstChild != nullptr && m_layer->firstChild != rootNode)
-            m_layer->removeChild(*m_layer->firstChild);
+    if (rootNode != m_sceneRootNode) {
+        if (m_sceneRootNode)
+            removeNodeFromLayer(m_sceneRootNode);
 
-        if (m_layer->firstChild == nullptr)
-            m_layer->addChild(*rootNode);
+        if (rootNode)
+            addNodeToLayer(rootNode);
+
+        m_sceneRootNode = rootNode;
+    }
+
+    // Add the referenced scene root node to the layer as well if available
+    QDemonRenderNode* referencedRootNode = nullptr;
+    if (view3D->referencedScene())
+        referencedRootNode = static_cast<QDemonRenderNode*>(QDemonObjectPrivate::get(view3D->referencedScene())->spatialNode);
+    if (referencedRootNode != m_referencedRootNode) {
+        if (m_referencedRootNode)
+            removeNodeFromLayer(m_referencedRootNode);
+
+        if (referencedRootNode)
+            addNodeToLayer(referencedRootNode);
+
+        m_referencedRootNode = referencedRootNode;
     }
 
     auto offscreenRenderer = m_sgContext->offscreenRenderManager()->getOffscreenRenderer(QDemonOffscreenRendererKey(m_layer));
@@ -275,6 +291,22 @@ void QDemonSceneRenderer::updateLayerNode(QDemonView3D *view3D)
     layerNode->probe2Window = view3D->environment()->probe2Window();
     layerNode->probe2Pos = view3D->environment()->probe2Postion();
     layerNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
+}
+
+void QDemonSceneRenderer::removeNodeFromLayer(QDemonRenderNode *node)
+{
+    if (!m_layer)
+        return;
+
+    m_layer->removeChild(*node);
+}
+
+void QDemonSceneRenderer::addNodeToLayer(QDemonRenderNode *node)
+{
+    if (!m_layer)
+        return;
+
+    m_layer->addChild(*node);
 }
 
 QT_END_NAMESPACE

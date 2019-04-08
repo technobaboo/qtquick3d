@@ -30,6 +30,8 @@ protected:
 
 private:
     void updateLayerNode(QDemonView3D *view3D);
+    void addNodeToLayer(QDemonRenderNode *node);
+    void removeNodeFromLayer(QDemonRenderNode *node);
     QDemonSceneManager *m_sceneManager = nullptr;
     QDemonRenderLayer *m_layer = nullptr;
     QDemonRef<QDemonRenderContextInterface> m_sgContext;
@@ -39,6 +41,10 @@ private:
     bool m_layerSizeIsDirty = true;
     QOpenGLContext *m_openGLContext = nullptr;
     QWindow *m_window;
+
+    QDemonRenderNode *m_sceneRootNode = nullptr;
+    QDemonRenderNode *m_referencedRootNode = nullptr;
+
     friend class SGFramebufferObjectNode;
     friend class QDemonView3D;
 };

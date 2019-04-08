@@ -203,10 +203,18 @@ void QDemonView3D::setScene(QDemonNode *sceneRoot)
     // ### We may need consider the case where there is
     // already a scene tree here
     if (m_referencedScene) {
-        // ### remove referenced tree
+        // if there was previously a reference scene, disconnect
+        if (!QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer)
+            disconnect(QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
     }
     m_referencedScene = sceneRoot;
-    // ### add referenced tree
+    if (m_referencedScene) {
+        // If the referenced scene doesn't have a manager, add one (scenes defined outside of an view3d)
+        if (!QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer)
+            QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer = new QDemonSceneManager(m_referencedScene);
+        connect(QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
+    }
+
 }
 
 void QDemonView3D::invalidateSceneGraph()

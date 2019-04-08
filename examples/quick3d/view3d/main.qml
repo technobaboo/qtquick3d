@@ -7,6 +7,7 @@ Window {
     width: 1280
     height: 720
     visible: true
+    color: "black"
 
     DemonView3D {
         id: leftView
@@ -21,9 +22,6 @@ Window {
             z: -600
         }
 
-//        DemonCamera {
-//            id: camera2
-//        }
 
         DemonLight {
             id: light
@@ -43,14 +41,22 @@ Window {
         }
     }
 
-//    DemonView3D {
-//        id: rightView
-//        anchors.top: parent.top
-//        anchors.right: parent.right
-//        anchors.bottom: parent.bottom
-//        width: parent.width * 0.5
-//        scene: leftView.scene
-//        camera: camera2
-//    }
+    DemonView3D {
+        id: rightView
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        width: parent.width * 0.5
+        scene: leftView.scene
+        camera: camera2
+
+        DemonCamera {
+            id: camera2
+
+            x: -200
+            rotation: Qt.vector3d(-90, 0, 0)
+        }
+
+    }
 
 }
