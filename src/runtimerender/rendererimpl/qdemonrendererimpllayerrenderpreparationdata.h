@@ -231,11 +231,12 @@ struct QDemonLayerRenderPreparationData
     // Built at the same time as the renderable nodes map.
     // these are processed so they are available when the shaders for the models
     // are being generated.
-    QVector<QDemonRenderNode *> camerasAndLights;
+    QVector<QDemonRenderCamera *> cameras;
+    QVector<QDemonRenderLight *> lights;
 
     // Results of prepare for render.
     QDemonRenderCamera *camera;
-    QVector<QDemonRenderLight *> lights; // Only contains lights that are global.
+    QVector<QDemonRenderLight *> globalLights; // Only contains lights that are global.
     TRenderableObjectList opaqueObjects;
     TRenderableObjectList transparentObjects;
     // Sorted lists of the rendered objects.  There may be other transforms applied so

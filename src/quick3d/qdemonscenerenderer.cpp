@@ -5,6 +5,7 @@
 #include "qdemonscenemanager_p.h"
 #include "qdemonimage.h"
 #include "qdemonoffscreenlayerrenderer.h"
+#include "qdemoncamera.h"
 
 #include <private/qopenglvertexarrayobject_p.h>
 
@@ -286,6 +287,11 @@ void QDemonSceneRenderer::updateLayerNode(QDemonView3D *view3D)
         layerNode->lightProbe2 = view3D->environment()->lightProbe()->getRenderImage();
     else
         layerNode->lightProbe2 = nullptr;
+
+    if (view3D->camera()) {
+        layerNode->activeCamera = view3D->camera()->getCameraNode();
+    }
+
 
     layerNode->probe2Fade = view3D->environment()->probe2Fade();
     layerNode->probe2Window = view3D->environment()->probe2Window();

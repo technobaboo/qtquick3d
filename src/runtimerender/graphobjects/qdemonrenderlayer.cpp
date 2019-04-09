@@ -74,6 +74,7 @@ QDemonRenderLayer::QDemonRenderLayer()
     , probe2Window(1.0f)
     , probe2Pos(0.5f)
     , temporalAAEnabled(false)
+    , activeCamera(nullptr)
 {
     flags.setFlag(Flag::LayerRenderToTarget);
     flags.setFlag(Flag::LayerEnableDepthTest);

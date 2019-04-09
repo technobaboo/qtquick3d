@@ -111,7 +111,8 @@ void QDemonRendererImpl::childrenUpdated(QDemonRenderNode &inParent)
     if (inParent.type == QDemonRenderGraphObject::Type::Layer) {
         TInstanceRenderMap::iterator theIter = m_instanceRenderMap.find(static_cast<QDemonRenderInstanceId>(&inParent));
         if (theIter != m_instanceRenderMap.end()) {
-            theIter.value()->camerasAndLights.clear();
+            theIter.value()->cameras.clear();
+            theIter.value()->lights.clear();
             theIter.value()->renderableNodes.clear();
         }
     } else if (inParent.parent)
@@ -1300,7 +1301,7 @@ QDemonLayerGlobalRenderProperties QDemonRendererImpl::getLayerGlobalRenderProper
     return QDemonLayerGlobalRenderProperties{ theLayer,
                                               *theData.camera,
                                               *theData.cameraDirection,
-                                              theData.lights,
+                                              theData.globalLights,
                                               theData.lightDirections,
                                               theData.shadowMapManager,
                                               theData.m_layerDepthTexture,

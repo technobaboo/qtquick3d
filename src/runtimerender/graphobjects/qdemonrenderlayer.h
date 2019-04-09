@@ -155,6 +155,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonRenderNode
 
     bool temporalAAEnabled;
 
+    QDemonRenderCamera *activeCamera;
+
     QDemonRenderLayer();
 
     void addEffect(QDemonRenderEffect &inEffect);
