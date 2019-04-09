@@ -21,8 +21,8 @@ QDemonView3D::QDemonView3D(QQuickItem *parent)
     m_environment = new QDemonSceneEnvironment(this);
     m_camera = nullptr;
     m_sceneRoot = new QDemonNode();
-    QDemonObjectPrivate::get(m_sceneRoot)->sceneRenderer = new QDemonSceneManager(m_sceneRoot);
-    connect(QDemonObjectPrivate::get(m_sceneRoot)->sceneRenderer, &QDemonSceneManager::needsUpdate,
+    QDemonObjectPrivate::get(m_sceneRoot)->sceneManager = new QDemonSceneManager(m_sceneRoot);
+    connect(QDemonObjectPrivate::get(m_sceneRoot)->sceneManager, &QDemonSceneManager::needsUpdate,
             this, &QQuickItem::update);
 }
 
@@ -204,15 +204,17 @@ void QDemonView3D::setScene(QDemonNode *sceneRoot)
     // already a scene tree here
     if (m_referencedScene) {
         // if there was previously a reference scene, disconnect
-        if (!QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer)
-            disconnect(QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
+        if (!QDemonObjectPrivate::get(m_referencedScene)->sceneManager)
+            disconnect(QDemonObjectPrivate::get(m_referencedScene)->sceneManager, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
     }
     m_referencedScene = sceneRoot;
     if (m_referencedScene) {
         // If the referenced scene doesn't have a manager, add one (scenes defined outside of an view3d)
-        if (!QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer)
-            QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer = new QDemonSceneManager(m_referencedScene);
-        connect(QDemonObjectPrivate::get(m_referencedScene)->sceneRenderer, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
+        auto privateObject = QDemonObjectPrivate::get(m_referencedScene);
+        // ### BUG: This will probably leak, need to think harder about this
+        if (!privateObject->sceneManager)
+            privateObject->refSceneRenderer(new QDemonSceneManager(m_referencedScene));
+        connect(QDemonObjectPrivate::get(m_referencedScene)->sceneManager, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
     }
 
 }

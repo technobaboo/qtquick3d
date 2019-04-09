@@ -174,7 +174,7 @@ public:
 
     void setCulled(bool);
 
-    QDemonSceneManager *sceneRenderer;
+    QDemonSceneManager *sceneManager;
     int windowRefCount;
 //    inline QDemonRenderContextInterface *sceneGraphContext() const;
 //    inline QDemonRenderContext *sceneGraphRenderContext() const;

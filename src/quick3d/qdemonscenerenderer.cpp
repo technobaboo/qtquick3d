@@ -178,11 +178,11 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size)
     }
 
     auto view3D = static_cast<QDemonView3D*>(item);
-    m_sceneManager = QDemonObjectPrivate::get(view3D->scene())->sceneRenderer;
+    m_sceneManager = QDemonObjectPrivate::get(view3D->scene())->sceneManager;
     m_sceneManager->updateDirtyNodes();
 
     if (view3D->referencedScene()) {
-        QDemonObjectPrivate::get(view3D->referencedScene())->sceneRenderer->updateDirtyNodes();
+        QDemonObjectPrivate::get(view3D->referencedScene())->sceneManager->updateDirtyNodes();
     }
 
     // Generate layer node

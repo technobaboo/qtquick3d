@@ -25,7 +25,7 @@ QDemonObject::~QDemonObject()
         d->windowRefCount = 1; // Make sure window is set to null in next call to derefWindow().
     if (d->parentItem)
         setParentItem(nullptr);
-    else if (d->sceneRenderer)
+    else if (d->sceneManager)
         d->derefSceneRenderer();
 
     // XXX todo - optimize
@@ -72,16 +72,16 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
         if (wasVisible) {
             emit oldParentItem->visibleChildrenChanged();
         }
-    } else if (d->sceneRenderer) {
-        d->sceneRenderer->parentlessItems.remove(this);
+    } else if (d->sceneManager) {
+        d->sceneManager->parentlessItems.remove(this);
     }
 
-    QDemonSceneManager *parentSceneRenderer = parentItem ? QDemonObjectPrivate::get(parentItem)->sceneRenderer : nullptr;
-    if (d->sceneRenderer == parentSceneRenderer) {
+    QDemonSceneManager *parentSceneRenderer = parentItem ? QDemonObjectPrivate::get(parentItem)->sceneManager : nullptr;
+    if (d->sceneManager == parentSceneRenderer) {
         // Avoid freeing and reallocating resources if the window stays the same.
         d->parentItem = parentItem;
     } else {
-        if (d->sceneRenderer)
+        if (d->sceneManager)
             d->derefSceneRenderer();
         d->parentItem = parentItem;
         if (parentSceneRenderer)
@@ -92,8 +92,8 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
 
     if (d->parentItem)
         QDemonObjectPrivate::get(d->parentItem)->addChild(this);
-    else if (d->sceneRenderer)
-        d->sceneRenderer->parentlessItems.insert(this);
+    else if (d->sceneManager)
+        d->sceneManager->parentlessItems.insert(this);
 
     d->itemChange(ItemParentHasChanged, d->parentItem);
 
@@ -151,7 +151,7 @@ QList<QDemonObject *> QDemonObject::childItems() const
 QDemonSceneManager *QDemonObject::sceneRenderer() const
 {
     Q_D(const QDemonObject);
-    return d->sceneRenderer;
+    return d->sceneManager;
 }
 
 QDemonObject *QDemonObject::parentItem() const
@@ -202,9 +202,9 @@ void QDemonObject::componentComplete()
     if (d->_stateGroup)
         d->_stateGroup->componentComplete();
 
-    if (d->sceneRenderer && d->dirtyAttributes) {
+    if (d->sceneManager && d->dirtyAttributes) {
         d->addToDirtyList();
-        d->sceneRenderer->dirtyItem(this);
+        d->sceneManager->dirtyItem(this);
     }
 }
 
@@ -214,7 +214,7 @@ QDemonObjectPrivate::QDemonObjectPrivate()
     , dirtyAttributes(0)
     , nextDirtyItem(nullptr)
     , prevDirtyItem(nullptr)
-    , sceneRenderer(nullptr)
+    , sceneManager(nullptr)
     , windowRefCount(0)
     , parentItem(nullptr)
     , sortedChildItems(&childItems)
@@ -548,11 +548,11 @@ QString QDemonObjectPrivate::dirtyToString() const
 void QDemonObjectPrivate::dirty(QDemonObjectPrivate::DirtyType type)
 {
     Q_Q(QDemonObject);
-    if (!(dirtyAttributes & type) || (sceneRenderer && !prevDirtyItem)) {
+    if (!(dirtyAttributes & type) || (sceneManager && !prevDirtyItem)) {
         dirtyAttributes |= type;
-        if (sceneRenderer && componentComplete) {
+        if (sceneManager && componentComplete) {
             addToDirtyList();
-            sceneRenderer->dirtyItem(q);
+            sceneManager->dirtyItem(q);
         }
     }
 }
@@ -561,7 +561,7 @@ void QDemonObjectPrivate::addToDirtyList()
 {
     Q_Q(QDemonObject);
 
-    Q_ASSERT(sceneRenderer);
+    Q_ASSERT(sceneManager);
     if (!prevDirtyItem) {
         Q_ASSERT(!nextDirtyItem);
 
@@ -569,27 +569,27 @@ void QDemonObjectPrivate::addToDirtyList()
             if (q->type() == QDemonObject::Image) {
                 // Will likely need to refactor this, but images need to come before other
                 // resources
-                nextDirtyItem = sceneRenderer->dirtyImageList;
+                nextDirtyItem = sceneManager->dirtyImageList;
                 if (nextDirtyItem)
                     QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
-                prevDirtyItem = &sceneRenderer->dirtyImageList;
-                sceneRenderer->dirtyImageList = q;
+                prevDirtyItem = &sceneManager->dirtyImageList;
+                sceneManager->dirtyImageList = q;
             } else {
-                nextDirtyItem = sceneRenderer->dirtyResourceList;
+                nextDirtyItem = sceneManager->dirtyResourceList;
                 if (nextDirtyItem)
                     QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
-                prevDirtyItem = &sceneRenderer->dirtyResourceList;
-                sceneRenderer->dirtyResourceList = q;
+                prevDirtyItem = &sceneManager->dirtyResourceList;
+                sceneManager->dirtyResourceList = q;
             }
         } else {
-            nextDirtyItem = sceneRenderer->dirtySpatialNodeList;
+            nextDirtyItem = sceneManager->dirtySpatialNodeList;
             if (nextDirtyItem)
                 QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
-            prevDirtyItem = &sceneRenderer->dirtySpatialNodeList;
-            sceneRenderer->dirtySpatialNodeList = q;
+            prevDirtyItem = &sceneManager->dirtySpatialNodeList;
+            sceneManager->dirtySpatialNodeList = q;
         }
 
-        sceneRenderer->dirtyItem(q);
+        sceneManager->dirtyItem(q);
     }
     Q_ASSERT(prevDirtyItem);
 }
@@ -754,22 +754,22 @@ void QDemonObjectPrivate::refSceneRenderer(QDemonSceneManager *c)
     // derefWindow() decrements the reference count.
 
     Q_Q(QDemonObject);
-    Q_ASSERT((sceneRenderer != nullptr) == (windowRefCount > 0));
+    Q_ASSERT((sceneManager != nullptr) == (windowRefCount > 0));
     Q_ASSERT(c);
     if (++windowRefCount > 1) {
-        if (c != sceneRenderer)
+        if (c != sceneManager)
             qWarning("QDemonObject: Cannot use same item on different windows at the same time.");
         return; // Window already set.
     }
 
-    Q_ASSERT(sceneRenderer == nullptr);
-    sceneRenderer = c;
+    Q_ASSERT(sceneManager == nullptr);
+    sceneManager = c;
 
     //    if (polishScheduled)
     //        QDemonWindowPrivate::get(window)->itemsToPolish.append(q);
 
     if (!parentItem)
-        sceneRenderer->parentlessItems.insert(q);
+        sceneManager->parentlessItems.insert(q);
 
     for (int ii = 0; ii < childItems.count(); ++ii) {
         QDemonObject *child = childItems.at(ii);
@@ -785,21 +785,21 @@ void QDemonObjectPrivate::derefSceneRenderer()
 {
     Q_Q(QDemonObject);
 
-    if (!sceneRenderer)
+    if (!sceneManager)
         return; // This can happen when destroying recursive shader effect sources.
 
     if (--windowRefCount > 0)
         return; // There are still other references, so don't set window to null yet.
 
     removeFromDirtyList();
-    QDemonSceneManager *c = sceneRenderer;
+    QDemonSceneManager *c = sceneManager;
 
     if (spatialNode)
         c->cleanup(spatialNode);
     if (!parentItem)
         c->parentlessItems.remove(q);
 
-    sceneRenderer = nullptr;
+    sceneManager = nullptr;
 
     spatialNode = nullptr;
 
