@@ -40,7 +40,7 @@ QDemonOffscreenRendererEnvironment QDemonOffscreenLayerRenderer::getDesiredEnvir
                                               m_size.height(),
                                               format,
                                               QDemonOffscreenRendererDepthValues::Depth24Stencil8,
-                                              false,
+                                              true,
                                               QDemonRenderLayer::AAMode::NoAA);
 }
 
