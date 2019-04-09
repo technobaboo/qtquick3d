@@ -1,5 +1,6 @@
 #include "qdemonoffscreenlayerrenderer.h"
-#include <qdemonrenderrenderlist.h>
+#include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -56,12 +57,10 @@ QDemonOffscreenRenderFlags QDemonOffscreenLayerRenderer::needsRender(const QDemo
 void QDemonOffscreenLayerRenderer::render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                           QDemonRenderContext &inRenderContext,
                                           QVector2D inPresentationScaleFactor,
-                                          QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                                           const QDemonRenderInstanceId instanceId)
 {
     Q_UNUSED(inRenderContext)
     Q_UNUSED(inPresentationScaleFactor)
-    Q_UNUSED(inColorBufferNeedsClear)
     m_renderContext->setInSubPresentation(true);
     m_renderContext->setPresentationDimensions(QSize(inEnvironment.width, inEnvironment.height));
     m_renderContext->renderer()->renderLayer(*m_layer, QSize(inEnvironment.width, inEnvironment.height),
@@ -72,7 +71,6 @@ void QDemonOffscreenLayerRenderer::render(const QDemonOffscreenRendererEnvironme
 void QDemonOffscreenLayerRenderer::renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                                    QDemonRenderContext &inRenderContext,
                                                    QVector2D inPresentationScaleFactor,
-                                                   QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                                                    QVector3D inclearColor,
                                                    const QDemonRenderInstanceId instanceId)
 {
@@ -80,11 +78,8 @@ void QDemonOffscreenLayerRenderer::renderWithClear(const QDemonOffscreenRenderer
     Q_UNUSED(inPresentationScaleFactor)
     m_renderContext->setInSubPresentation(true);
     m_renderContext->setPresentationDimensions(QSize(inEnvironment.width, inEnvironment.height));
-    bool clear = false;
-    if (inColorBufferNeedsClear == QDemonRenderScene::RenderClearCommand::AlwaysClear)
-        clear = true;
     m_renderContext->renderer()->renderLayer(*m_layer, QSize(inEnvironment.width, inEnvironment.height),
-                                             clear, inclearColor, false, instanceId);
+                                             true, inclearColor, false, instanceId);
 }
 
 QDemonGraphObjectPickQueryInterface *QDemonOffscreenLayerRenderer::getGraphObjectPickQuery(const QDemonRenderInstanceId instanceId)

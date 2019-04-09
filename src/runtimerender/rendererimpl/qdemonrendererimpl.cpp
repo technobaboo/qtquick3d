@@ -37,8 +37,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>

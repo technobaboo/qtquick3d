@@ -31,6 +31,7 @@
 #define QDEMON_OFFSCREEN_RENDER_MANAGER_H
 
 #include <QtDemon/qdemonoption.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 
@@ -121,12 +122,10 @@ public:
     virtual void render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                         QDemonRenderContext &inRenderContext,
                         QVector2D inPresentationScaleFactor,
-                        QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                         const QDemonRenderInstanceId instanceId) = 0;
     virtual void renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                  QDemonRenderContext &inRenderContext,
                                  QVector2D inPresentationScaleFactor,
-                                 QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                                  QVector3D inclearColor,
                                  const QDemonRenderInstanceId instanceId) = 0;
 

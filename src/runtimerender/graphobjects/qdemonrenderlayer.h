@@ -30,7 +30,6 @@
 #ifndef QDEMON_RENDER_LAYER_H
 #define QDEMON_RENDER_LAYER_H
 
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 
@@ -38,7 +37,6 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
 struct QDemonRenderPresentation;
 struct QDemonRenderEffect;
-struct SRenderPlugin; // TODO: ???
 struct QDemonRenderImage;
 
 // A layer is a special node.  It *always* presents its global transform
@@ -94,8 +92,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonRenderNode
         ColorDodge
     };
 
-    QDemonRenderScene *scene;
-
     // First effect in a list of effects.
     QDemonRenderEffect *firstEffect;
 
@@ -106,7 +102,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonRenderNode
     // render target given a specific viewport (that is also scissored if necessary).
     QString texturePath;
 
-    SRenderPlugin *renderPlugin; // Overrides texture path if available.
+    //SRenderPlugin *renderPlugin; // Overrides texture path if available.
 
     QDemonRenderLayer::AAMode progressiveAAMode;
     QDemonRenderLayer::AAMode multisampleAAMode;

@@ -338,9 +338,13 @@ void QDemonRenderNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
 
 void QDemonRenderNode::addChild(QDemonRenderNode &inChild)
 {
-    if (inChild.parent)
-        inChild.parent->removeChild(inChild);
-    inChild.parent = this;
+    // Adding children to a layer does not reset parent
+    // because layers can share children over with other layers
+    if (this->type != QDemonRenderNode::Type::Layer) {
+        if (inChild.parent)
+            inChild.parent->removeChild(inChild);
+        inChild.parent = this;
+    }
     if (firstChild == nullptr) {
         firstChild = &inChild;
         inChild.nextSibling = nullptr;
@@ -359,10 +363,15 @@ void QDemonRenderNode::addChild(QDemonRenderNode &inChild)
 
 void QDemonRenderNode::removeChild(QDemonRenderNode &inChild)
 {
-    if (inChild.parent != this) {
-        Q_ASSERT(false);
-        return;
+    // Removing children from a layer does not care about parenting
+    // because layers can share children over with other layers
+    if (this->type != QDemonRenderNode::Type::Layer) {
+        if (inChild.parent != this) {
+            Q_ASSERT(false);
+            return;
+        }
     }
+
     for (QDemonRenderNode *child = firstChild; child; child = child->nextSibling) {
         if (child == &inChild) {
             if (child->previousSibling)

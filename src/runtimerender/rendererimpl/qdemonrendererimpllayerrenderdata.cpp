@@ -34,8 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
@@ -1118,14 +1116,12 @@ void QDemonLayerRenderData::renderToViewport()
                 lastFrameOffscreenRenderer->renderWithClear(createOffscreenRenderEnvironment(),
                                                             *renderer->context(),
                                                             renderer->demonContext()->presentationScaleFactor(),
-                                                            QDemonRenderScene::AlwaysClear,
                                                             layer.clearColor,
                                                             &layer);
             } else {
                 lastFrameOffscreenRenderer->render(createOffscreenRenderEnvironment(),
                                                    *renderer->context(),
                                                    renderer->demonContext()->presentationScaleFactor(),
-                                                   QDemonRenderScene::ClearIsOptional,
                                                    &layer);
             }
         } else {

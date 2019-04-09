@@ -8,6 +8,7 @@
 
 class QDemonRenderContextInterface;
 class QDemonRenderContext;
+class QDemonRenderLayer;
 struct QDemonRenderPresentation;
 struct QDemonRenderScene;
 struct QDemonRenderModel;
@@ -41,10 +42,9 @@ private:
     bool m_autoUpdate = true;
     bool m_isIntialized = false;
     QOpenGLContext *m_glContext;
+    QDemonRenderLayer *m_layer;
     QDemonRef<QDemonRenderContextInterface> m_context;
     QDemonRef<QDemonRenderContext> m_renderContext;
-    QDemonRef<QDemonRenderPresentation> m_presentation;
-    QDemonRef<QDemonRenderScene> m_scene;
     QDemonRenderModel *m_cube;
 
 };

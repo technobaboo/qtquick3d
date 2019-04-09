@@ -2,8 +2,6 @@
 #define QDEMONSCENEMANAGER_P_H
 
 #include <QtCore/QObject>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 
 #include <QtQuick3d/private/qtquick3dglobal_p.h>
 

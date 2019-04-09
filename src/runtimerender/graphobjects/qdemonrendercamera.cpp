@@ -30,7 +30,6 @@
 
 #include "qdemonrendercamera.h"
 
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendererutil.h>
 
 #include <QtDemonRender/qdemonrendertexture2d.h>

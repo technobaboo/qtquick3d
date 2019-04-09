@@ -29,12 +29,10 @@ public:
     void render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                 QDemonRenderContext &inRenderContext,
                 QVector2D inPresentationScaleFactor,
-                QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                 const QDemonRenderInstanceId instanceId) override;
     void renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
                          QDemonRenderContext &inRenderContext,
                          QVector2D inPresentationScaleFactor,
-                         QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                          QVector3D inclearColor,
                          const QDemonRenderInstanceId instanceId) override;
     QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const QDemonRenderInstanceId instanceId) override;

@@ -34,8 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>

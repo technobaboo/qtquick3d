@@ -196,20 +196,13 @@ QPair<QRect, QRect> QDemonRenderContextInterface::getPresentationViewportAndOute
 {
     QSize thePresentationDimensions(m_presentationDimensions);
     QRect theOuterViewport(contextViewport());
-    if (m_rotation == RenderRotationValues::Clockwise90 || m_rotation == RenderRotationValues::Clockwise270) {
-        theOuterViewport = { theOuterViewport.y(), theOuterViewport.x(), theOuterViewport.height(), theOuterViewport.width() };
-    }
     // Calculate the presentation viewport perhaps with the window width and height swapped.
     return QPair<QRect, QRect>(presentationViewport(theOuterViewport, m_scaleMode, thePresentationDimensions), theOuterViewport);
 }
 
 QVector2D QDemonRenderContextInterface::mousePickViewport() const
 {
-    bool renderOffscreen = m_rotation != RenderRotationValues::NoRotation;
-    if (renderOffscreen)
-        return QVector2D((float)m_presentationViewport.width(), (float)m_presentationViewport.height());
-    else
-        return QVector2D((float)m_windowDimensions.width(), (float)m_windowDimensions.height());
+    return QVector2D((float)m_windowDimensions.width(), (float)m_windowDimensions.height());
 }
 
 QRect QDemonRenderContextInterface::contextViewport() const
@@ -225,37 +218,6 @@ QRect QDemonRenderContextInterface::contextViewport() const
 
 QVector2D QDemonRenderContextInterface::mousePickMouseCoords(const QVector2D &inMouseCoords) const
 {
-    bool renderOffscreen = m_rotation != RenderRotationValues::NoRotation;
-    if (renderOffscreen) {
-        QSize thePresentationDimensions(m_renderPresentationDimensions);
-        QRect theViewport(contextViewport());
-        // Calculate the presentation viewport perhaps with the presentation width and height
-        // swapped.
-        QRect thePresentationViewport = presentationViewport(theViewport, m_scaleMode, thePresentationDimensions);
-        // Translate pick into presentation space without rotations or anything else.
-        float YHeightDiff = (float)((float)m_windowDimensions.height() - (float)thePresentationViewport.height());
-        QVector2D theLocalMouse((inMouseCoords.x() - thePresentationViewport.x()),
-                                (inMouseCoords.y() - YHeightDiff + thePresentationViewport.y()));
-        switch (m_rotation) {
-        default:
-        case RenderRotationValues::NoRotation:
-            Q_ASSERT(false);
-            break;
-        case RenderRotationValues::Clockwise90:
-            swapXY(theLocalMouse);
-            theLocalMouse.setY(thePresentationViewport.width() - theLocalMouse.y());
-            break;
-        case RenderRotationValues::Clockwise180:
-            theLocalMouse.setY(thePresentationViewport.height() - theLocalMouse.y());
-            theLocalMouse.setX(thePresentationViewport.width() - theLocalMouse.x());
-            break;
-        case RenderRotationValues::Clockwise270:
-            swapXY(theLocalMouse);
-            theLocalMouse.setX(thePresentationViewport.height() - theLocalMouse.x());
-            break;
-        }
-        return theLocalMouse;
-    }
     return inMouseCoords;
 }
 
@@ -321,7 +283,6 @@ void QDemonRenderContextInterface::beginFrame()
     } else {
         theRenderList.setScissorTestEnabled(false);
     }
-    bool renderOffscreen = m_rotation != RenderRotationValues::NoRotation;
     QPair<QRect, QRect> thePresViewportAndOuterViewport = getPresentationViewportAndOuterViewport();
     QRect theOuterViewport = thePresViewportAndOuterViewport.second;
     // Calculate the presentation viewport perhaps with the window width and height swapped.
@@ -331,27 +292,17 @@ void QDemonRenderContextInterface::beginFrame()
                                     (float)thePresentationViewport.height() / (float)thePresentationDimensions.height());
     QSize fboDimensions;
     if (thePresentationViewport.width() > 0 && thePresentationViewport.height() > 0) {
-        if (renderOffscreen == false) {
-            m_presentationDimensions = QSize(thePresentationViewport.width(), thePresentationViewport.height());
-            m_renderList->setViewport(thePresentationViewport);
-            if (thePresentationViewport.x() || thePresentationViewport.y()
-                    || thePresentationViewport.width() != (qint32)theOuterViewport.width()
-                    || thePresentationViewport.height() != (qint32)theOuterViewport.height()) {
-                m_renderList->setScissorRect(thePresentationViewport);
-                m_renderList->setScissorTestEnabled(true);
-            }
-        } else {
-            quint32 imageWidth = QDemonRendererUtil::nextMultipleOf4(thePresentationViewport.width());
-            quint32 imageHeight = QDemonRendererUtil::nextMultipleOf4(thePresentationViewport.height());
-            fboDimensions = QSize(imageWidth, imageHeight);
-            m_presentationDimensions = QSize(thePresentationViewport.width(), thePresentationViewport.height());
-            QRect theSceneViewport = QRect(0, 0, imageWidth, imageHeight);
-            m_renderList->setScissorTestEnabled(false);
-            m_renderList->setViewport(theSceneViewport);
+        m_presentationDimensions = QSize(thePresentationViewport.width(), thePresentationViewport.height());
+        m_renderList->setViewport(thePresentationViewport);
+        if (thePresentationViewport.x() || thePresentationViewport.y()
+                || thePresentationViewport.width() != (qint32)theOuterViewport.width()
+                || thePresentationViewport.height() != (qint32)theOuterViewport.height()) {
+            m_renderList->setScissorRect(thePresentationViewport);
+            m_renderList->setScissorTestEnabled(true);
         }
     }
 
-    m_beginFrameResult = BeginFrameResult(renderOffscreen,
+    m_beginFrameResult = BeginFrameResult(false,
                                           m_presentationDimensions,
                                           m_renderList->isScissorTestEnabled(),
                                           m_renderList->getScissor(),
@@ -445,28 +396,11 @@ void QDemonRenderContextInterface::teardownRenderTarget()
         QRect theOuterViewport(contextViewport());
         m_renderContext->setRenderTarget(m_contextRenderTarget);
         QSize thePresentationDimensions = currentPresentationDimensions();
-        if (m_rotation == RenderRotationValues::Clockwise90 || m_rotation == RenderRotationValues::Clockwise270) {
-            thePresentationDimensions = QSize(thePresentationDimensions.height(), thePresentationDimensions.width());
-        }
         m_renderPresentationDimensions = thePresentationDimensions;
         // Calculate the presentation viewport perhaps with the presentation width and height
         // swapped.
         QRect thePresentationViewport = presentationViewport(theOuterViewport, theScaleToFit, thePresentationDimensions);
         QDemonRenderCamera theCamera;
-        switch (m_rotation) {
-        default:
-            Q_ASSERT(false);
-            break;
-        case RenderRotationValues::Clockwise90:
-            theCamera.rotation.setZ(90);
-            break;
-        case RenderRotationValues::Clockwise180:
-            theCamera.rotation.setZ(180);
-            break;
-        case RenderRotationValues::Clockwise270:
-            theCamera.rotation.setZ(270);
-            break;
-        }
         float z = theCamera.rotation.z();
         TORAD(z);
         theCamera.rotation.setZ(z);
