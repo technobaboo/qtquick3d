@@ -4,11 +4,11 @@
 #include "qdemonnode.h"
 #include "qdemonscenemanager_p.h"
 #include "qdemonimage.h"
-#include "qdemonoffscreenlayerrenderer.h"
 #include "qdemoncamera.h"
 
 #include <private/qopenglvertexarrayobject_p.h>
 
+#include <QtDemonRender/QDemonRenderFrameBuffer>
 #include <QtDemonRuntimeRender/QDemonRenderLayer>
 #include <QtDemonRuntimeRender/QDemonOffscreenRendererKey>
 #include <QtQuick/QQuickWindow>
@@ -42,52 +42,52 @@ QSGTexture *SGFramebufferObjectNode::texture() const
     return QSGSimpleTextureNode::texture();
 }
 
-void SGFramebufferObjectNode::resetOpenGLState() {
-    QOpenGLContext *ctx = QOpenGLContext::currentContext();
-    QOpenGLFunctions *gl = ctx->functions();
+//void SGFramebufferObjectNode::resetOpenGLState() {
+//    QOpenGLContext *ctx = QOpenGLContext::currentContext();
+//    QOpenGLFunctions *gl = ctx->functions();
 
-    if (!m_vaoHelper)
-        m_vaoHelper = new QOpenGLVertexArrayObjectHelper(ctx);
-    if (m_vaoHelper->isValid())
-        m_vaoHelper->glBindVertexArray(0);
+//    if (!m_vaoHelper)
+//        m_vaoHelper = new QOpenGLVertexArrayObjectHelper(ctx);
+//    if (m_vaoHelper->isValid())
+//        m_vaoHelper->glBindVertexArray(0);
 
-    gl->glBindBuffer(GL_ARRAY_BUFFER, 0);
-    gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+//    gl->glBindBuffer(GL_ARRAY_BUFFER, 0);
+//    gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    if (ctx->isOpenGLES() || (gl->openGLFeatures() & QOpenGLFunctions::FixedFunctionPipeline)) {
-        int maxAttribs;
-        gl->glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
-        for (int i=0; i<maxAttribs; ++i) {
-            gl->glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
-            gl->glDisableVertexAttribArray(i);
-        }
-    }
+//    if (ctx->isOpenGLES() || (gl->openGLFeatures() & QOpenGLFunctions::FixedFunctionPipeline)) {
+//        int maxAttribs;
+//        gl->glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
+//        for (int i=0; i<maxAttribs; ++i) {
+//            gl->glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+//            gl->glDisableVertexAttribArray(i);
+//        }
+//    }
 
-    gl->glActiveTexture(GL_TEXTURE0);
-    gl->glBindTexture(GL_TEXTURE_2D, 0);
+//    gl->glActiveTexture(GL_TEXTURE0);
+//    gl->glBindTexture(GL_TEXTURE_2D, 0);
 
-    gl->glDisable(GL_DEPTH_TEST);
-    gl->glDisable(GL_STENCIL_TEST);
-    gl->glDisable(GL_SCISSOR_TEST);
+//    gl->glDisable(GL_DEPTH_TEST);
+//    gl->glDisable(GL_STENCIL_TEST);
+//    gl->glDisable(GL_SCISSOR_TEST);
 
-    gl->glColorMask(true, true, true, true);
-    gl->glClearColor(0, 0, 0, 0);
+//    gl->glColorMask(true, true, true, true);
+//    gl->glClearColor(0, 0, 0, 0);
 
-    gl->glDepthMask(true);
-    gl->glDepthFunc(GL_LESS);
-    gl->glClearDepthf(1);
+//    gl->glDepthMask(true);
+//    gl->glDepthFunc(GL_LESS);
+//    gl->glClearDepthf(1);
 
-    gl->glStencilMask(0xff);
-    gl->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    gl->glStencilFunc(GL_ALWAYS, 0, 0xff);
+//    gl->glStencilMask(0xff);
+//    gl->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+//    gl->glStencilFunc(GL_ALWAYS, 0, 0xff);
 
-    gl->glDisable(GL_BLEND);
-    gl->glBlendFunc(GL_ONE, GL_ZERO);
+//    gl->glDisable(GL_BLEND);
+//    gl->glBlendFunc(GL_ONE, GL_ZERO);
 
-    gl->glUseProgram(0);
+//    gl->glUseProgram(0);
 
-    QOpenGLFramebufferObject::bindDefault();
-}
+//    QOpenGLFramebufferObject::bindDefault();
+//}
 
 void SGFramebufferObjectNode::render()
 {
@@ -153,18 +153,19 @@ GLuint QDemonSceneRenderer::render()
 
     m_openGLContext->makeCurrent(m_window);
     m_sgContext->beginFrame();
-    m_sgContext->offscreenRenderManager()->beginFrame();
-    auto result = m_sgContext->offscreenRenderManager()->getRenderedItem(QDemonOffscreenRendererKey(m_layer));
+    m_renderContext->setRenderTarget(m_fbo->fbo);
+    m_sgContext->renderList()->setViewport(QRect(0, 0, m_surfaceSize.width(), m_surfaceSize.height()));
+    m_sgContext->setWindowDimensions(m_surfaceSize);
+
+    m_sgContext->renderer()->prepareLayerForRender(*m_layer, m_surfaceSize, false, nullptr, true);
     m_sgContext->runRenderTasks();
-    m_sgContext->offscreenRenderManager()->endFrame();
+    m_sgContext->renderer()->renderLayer(*m_layer, m_surfaceSize, true, QVector3D(0, 0, 0), false);
     m_sgContext->endFrame();
     m_openGLContext->doneCurrent();
     oldContext->makeCurrent(m_window);
 
-    if (!result.texture.isNull())
-        return HandleToID_cast(GLuint, size_t, result.texture->handle());
-
-    return 0;
+    //if (!result.texture.isNull())
+    return HandleToID_cast(GLuint, size_t, m_fbo->color0->handle());
 }
 
 void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size)
@@ -218,14 +219,20 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size)
         m_referencedRootNode = referencedRootNode;
     }
 
-    auto offscreenRenderer = m_sgContext->offscreenRenderManager()->getOffscreenRenderer(QDemonOffscreenRendererKey(m_layer));
-    if (offscreenRenderer.isNull() || m_layerSizeIsDirty) {
-        if (!offscreenRenderer.isNull())
-            m_sgContext->offscreenRenderManager()->releaseOffscreenRenderer(QDemonOffscreenRendererKey(m_layer));
-        offscreenRenderer = new QDemonOffscreenLayerRenderer(m_sgContext, m_layer, m_surfaceSize);
-        m_sgContext->offscreenRenderManager()->registerOffscreenRenderer(QDemonOffscreenRendererKey(m_layer), offscreenRenderer);
+    if (!m_fbo || m_layerSizeIsDirty) {
+        QOpenGLContext *oldContext = QOpenGLContext::currentContext();
+
+        m_openGLContext->makeCurrent(m_window);
+
+        if (m_fbo)
+            delete m_fbo;
+
+        m_fbo = new FramebufferObject(m_surfaceSize, m_renderContext);
         m_layerSizeIsDirty = false;
+        m_openGLContext->doneCurrent();
+        oldContext->makeCurrent(m_window);
     }
+
 }
 
 void QDemonSceneRenderer::update()
@@ -315,7 +322,23 @@ void QDemonSceneRenderer::addNodeToLayer(QDemonRenderNode *node)
     m_layer->addChild(*node);
 }
 
+QDemonSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, QDemonRef<QDemonRenderContext> context)
+{
+    size = s;
+    renderContext = context;
+
+    depthStencil = new QDemonRenderTexture2D(renderContext);
+    depthStencil->setTextureData(QDemonByteView(), 0, size.width(), size.height(), QDemonRenderTextureFormat::Depth24Stencil8);
+    color0 = new QDemonRenderTexture2D(renderContext);
+    color0->setTextureData(QDemonByteView(), 0, size.width(), size.height(), QDemonRenderTextureFormat::RGBA8);
+    fbo = new QDemonRenderFrameBuffer(renderContext);
+    fbo->attach(QDemonRenderFrameBufferAttachment::Color0, color0);
+    fbo->attach(QDemonRenderFrameBufferAttachment::DepthStencil, depthStencil);
+}
+
+QDemonSceneRenderer::FramebufferObject::~FramebufferObject()
+{
+
+}
+
 QT_END_NAMESPACE
-
-
-

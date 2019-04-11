@@ -19,6 +19,16 @@ struct QDemonRenderLayer;
 class QDemonSceneRenderer
 {
 public:
+    struct FramebufferObject {
+        FramebufferObject(const QSize &s, QDemonRef<QDemonRenderContext> context);
+        ~FramebufferObject();
+        QSize size;
+        QDemonRef<QDemonRenderContext> renderContext;
+        QDemonRef<QDemonRenderFrameBuffer> fbo;
+        QDemonRef<QDemonRenderTexture2D> color0;
+        QDemonRef<QDemonRenderTexture2D> depthStencil;
+    };
+
     QDemonSceneRenderer(QWindow *window);
     ~QDemonSceneRenderer();
 protected:
@@ -40,7 +50,8 @@ private:
     void *data = nullptr;
     bool m_layerSizeIsDirty = true;
     QOpenGLContext *m_openGLContext = nullptr;
-    QWindow *m_window;
+    QWindow *m_window = nullptr;
+    FramebufferObject *m_fbo = nullptr;
 
     QDemonRenderNode *m_sceneRootNode = nullptr;
     QDemonRenderNode *m_referencedRootNode = nullptr;

@@ -22,8 +22,7 @@ SOURCES += \
     qdemonview3d.cpp \
     qdemonsceneenvironment.cpp \
     qdemonscenemanager.cpp \
-    qdemonscenerenderer.cpp \
-    qdemonoffscreenlayerrenderer.cpp
+    qdemonscenerenderer.cpp
 
 HEADERS += \
     qdemonobject.h \
@@ -47,7 +46,6 @@ HEADERS += \
     qdemonview3d.h \
     qdemonsceneenvironment.h \
     qdemonscenemanager_p.h \
-    qdemonscenerenderer.h \
-    qdemonoffscreenlayerrenderer.h
+    qdemonscenerenderer.h
 
 load(qt_module)

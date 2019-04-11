@@ -13,6 +13,7 @@ class Q_QUICK3D_EXPORT QDemonCamera : public QDemonNode
     Q_PROPERTY(float clipFar READ clipFar WRITE setClipFar NOTIFY clipFarChanged)
     Q_PROPERTY(float fieldOfView READ fieldOfView WRITE setFieldOfView NOTIFY fieldOfViewChanged)
     Q_PROPERTY(bool isFieldOFViewHorizontal READ isFieldOFViewHorizontal WRITE setIsFieldOFViewHorizontal NOTIFY isFieldOFViewHorizontalChanged)
+    Q_PROPERTY(QDemonCameraProjectionMode projectionMode READ projectionMode WRITE setProjectionMode NOTIFY projectionModeChanged)
     Q_PROPERTY(QDemonCameraScaleModes scaleMode READ scaleMode WRITE setScaleMode NOTIFY scaleModeChanged)
     Q_PROPERTY(QDemonCameraScaleAnchors scaleAnchor READ scaleAnchor WRITE setScaleAnchor NOTIFY scaleAnchorChanged)
     Q_PROPERTY(float frustumScaleX READ frustumScaleX WRITE setFrustumScaleX NOTIFY frustumScaleXChanged)
@@ -40,6 +41,12 @@ public:
     };
     Q_ENUM(QDemonCameraScaleAnchors)
 
+    enum QDemonCameraProjectionMode {
+        Perspective,
+        Orthographic
+    };
+    Q_ENUM(QDemonCameraProjectionMode)
+
     QDemonCamera();
 
     float clipNear() const;
@@ -53,6 +60,8 @@ public:
     QDemonObject::Type type() const override;
 
     QDemonRenderCamera *getCameraNode() const;
+
+    QDemonCameraProjectionMode projectionMode() const;
 
 public Q_SLOTS:
     void setClipNear(float clipNear);
@@ -68,6 +77,8 @@ public Q_SLOTS:
     void setFrustumScaleX(float frustumScaleX);
 
     void setFrustumScaleY(float frustumScaleY);
+
+    void setProjectionMode(QDemonCameraProjectionMode projectionMode);
 
 Q_SIGNALS:
     void clipNearChanged(float clipNear);
@@ -86,6 +97,8 @@ Q_SIGNALS:
 
     void frustumScaleYChanged(float frustumScaleY);
 
+    void projectionModeChanged(QDemonCameraProjectionMode projectionMode);
+
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
@@ -100,6 +113,7 @@ private:
     bool m_isFieldOFViewHorizontal = false;
 
     QDemonRenderCamera *m_cameraNode = nullptr;
+    QDemonCameraProjectionMode m_projectionMode;
 };
 
 QT_END_NAMESPACE
