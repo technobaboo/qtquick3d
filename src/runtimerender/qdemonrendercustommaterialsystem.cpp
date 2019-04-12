@@ -895,7 +895,9 @@ void QDemonMaterialSystem::setPropertyTextureSettings(const QString &inName, con
             ->setPropertyTextureSettings(inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
 }
 
-void QDemonMaterialSystem::setMaterialClassShader(QString inName, const char *inShaderType, const char *inShaderVersion, const char *inShaderData, bool inHasGeomShader, bool inIsComputeShader)
+// TODO: Use an enum for the shader type?
+void QDemonMaterialSystem::setMaterialClassShader(QString inName, const QByteArray &inShaderType, const QByteArray &inShaderVersion,
+                                                  const QByteArray &inShaderData, bool inHasGeomShader, bool inIsComputeShader)
 {
     context->dynamicObjectSystem()->setShaderData(inName, inShaderData, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
 }
@@ -1054,19 +1056,20 @@ QDemonMaterialOrComputeShader QDemonMaterialSystem::bindShader(QDemonCustomMater
     return QDemonMaterialOrComputeShader();
 }
 
-void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &, quint8 *inDataPtr, const QString &inPropertyName, QDemonRenderShaderDataType inPropertyType, const QDemonRef<QDemonRenderShaderProgram> &inShader, const dynamic::QDemonPropertyDefinition &inDefinition)
+void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &inMaterial, quint8 *inDataPtr, const QString &inPropertyName, QDemonRenderShaderDataType inPropertyType, const QDemonRef<QDemonRenderShaderProgram> &inShader, const dynamic::QDemonPropertyDefinition &inDefinition)
 {
     QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inPropertyName.toLocal8Bit());
     if (theConstant) {
         if (theConstant->getShaderConstantType() == inPropertyType) {
             if (inPropertyType == QDemonRenderShaderDataType::Texture2D) {
                 //                    StaticAssert<sizeof(QString) == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
-                QString *theStrPtr = reinterpret_cast<QString *>(inDataPtr);
+                const char *theStrPtr = inMaterial.imagePath;
+                const char *theStrPtrTst = reinterpret_cast<const char *>(inDataPtr); // TODO:
                 QDemonRef<QDemonBufferManager> theBufferManager(context->bufferManager());
                 QDemonRef<QDemonRenderTexture2D> theTexture;
 
-                if (!theStrPtr->isNull()) {
-                    QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(*theStrPtr);
+                if (theStrPtr) {
+                    QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(QString::fromLocal8Bit(theStrPtr));
                     if (theTextureData.m_texture) {
                         theTexture = theTextureData.m_texture;
                         setTexture(inShader,
@@ -1188,13 +1191,13 @@ void QDemonMaterialSystem::applyInstanceValue(QDemonRenderCustomMaterial &inMate
         QDemonDataView<dynamic::QDemonPropertyDefinition> theDefs = inClass.m_class->getProperties();
         for (quint32 idx = 0, end = theDefs.size(); idx < end; ++idx) {
             const dynamic::QDemonPropertyDefinition &theDefinition(theDefs[idx]);
-            QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(
-                        theDefinition.name.toLocal8Bit().constData());
+            QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(theDefinition.name);
 
             // This is fine, the property wasn't found and we continue, no problem.
             if (!theConstant)
                 continue;
             quint8 *dataPtr = inMaterial.getDataSectionBegin() + theDefinition.offset;
+            inMaterial.imagePath = theDefinition.imagePath;
             doApplyInstanceValue(inMaterial, dataPtr, theDefinition.name, theDefinition.dataType, inShader, theDefinition);
         }
     }
@@ -1644,6 +1647,8 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
         case dynamic::CommandType::ApplyBlitFramebuffer:
             blitFramebuffer(inRenderContext, static_cast<const dynamic::QDemonApplyBlitFramebuffer &>(theCommand), inTarget);
             break;
+        case dynamic::CommandType::ApplyRenderState:
+            break; // TODO: "simple_glass.material
         default:
             Q_ASSERT(false);
             break;

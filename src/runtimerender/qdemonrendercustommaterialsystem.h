@@ -184,9 +184,9 @@ public:
     void setCustomMaterialCommands(QString inName, QDemonDataView<dynamic::QDemonCommand *> inCommands);
 
     void setMaterialClassShader(QString inName,
-                                        const char *inShaderType,
-                                        const char *inShaderVersion,
-                                        const char *inShaderData,
+                                        const QByteArray &inShaderType,
+                                        const QByteArray &inShaderVersion,
+                                        const QByteArray &inShaderData,
                                         bool inHasGeomShader,
                                         bool inIsComputeShader);
 

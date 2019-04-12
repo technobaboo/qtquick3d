@@ -400,9 +400,8 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         quint32 theCurrentOffset = 0;
         for (quint32 idx = 0, end = inProperties.size(); idx < end; ++idx) {
             const dynamic::QDemonPropertyDeclaration &thePropDec = inProperties[idx];
-            QString thePropName(QString::fromLocal8Bit(thePropDec.name));
             quint32 propSize = dynamic::getSizeofShaderDataType(thePropDec.dataType);
-            definitions.push_back(dynamic::QDemonPropertyDefinition(thePropName, thePropDec.dataType, theCurrentOffset, propSize));
+            definitions.push_back(dynamic::QDemonPropertyDefinition(thePropDec.name, thePropDec.dataType, theCurrentOffset, propSize));
             theCurrentOffset += propSize;
             theCurrentOffset = align(theCurrentOffset);
         }
@@ -522,7 +521,8 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             Q_ASSERT(false);
             return;
         }
-        theDefinitionPtr->imagePath = inPropPath;
+        QByteArray *data = new QByteArray(inPropPath.toLatin1());
+        theDefinitionPtr->imagePath = data->constData(); //inPropPath.toLatin1().constData(); // TODO: Lifetime
         theDefinitionPtr->texUsageType = inTexType;
         theDefinitionPtr->coordOp = inCoordOp;
         theDefinitionPtr->magFilterOp = inMagFilterOp;
@@ -601,28 +601,27 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     }
 
     void setShaderData(const QString &inPath,
-                       const char *inData,
-                       const char *inShaderType,
-                       const char *inShaderVersion,
+                       const QByteArray &inData,
+                       const QByteArray &inShaderType,
+                       const QByteArray &inShaderVersion,
                        bool inHasGeomShader,
                        bool inIsComputeShader) override
     {
-        inData = inData ? inData : "";
+//        inData = inData ? inData : "";
         auto foundIt = m_expandedFiles.find(inPath);
-        const QByteArray newData(inData);
         if (foundIt != m_expandedFiles.end())
-            foundIt.value() = newData;
+            foundIt.value() = inData;
         else
-            m_expandedFiles.insert(inPath, newData);
+            m_expandedFiles.insert(inPath, inData);
 
         // set shader type and version if available
-        if (inShaderType || inShaderVersion || inHasGeomShader || inIsComputeShader) {
+        if (!inShaderType.isNull() || !inShaderVersion.isNull() || inHasGeomShader || inIsComputeShader) {
             // UdoL TODO: Add this to the load / save setction
             // In addition we should merge the source code into SDynamicObjectShaderInfo as well
             QDemonDynamicObjectShaderInfo
                     &theShaderInfo = m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
-            theShaderInfo.m_type = QString::fromLocal8Bit(nonNull(inShaderType));
-            theShaderInfo.m_version = QString::fromLocal8Bit(nonNull(inShaderVersion));
+            theShaderInfo.m_type = QString::fromLocal8Bit(inShaderType);
+            theShaderInfo.m_version = QString::fromLocal8Bit(inShaderVersion);
             theShaderInfo.m_hasGeomShader = inHasGeomShader;
             theShaderInfo.m_isComputeShader = inIsComputeShader;
         }

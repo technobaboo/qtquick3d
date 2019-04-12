@@ -732,7 +732,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                float inOpacity,
                                const QDemonLayerGlobalRenderProperties &inRenderProperties) override
     {
-        const QDemonRenderCustomMaterial &theCustomMaterial(reinterpret_cast<const QDemonRenderCustomMaterial &>(inMaterial));
+        const QDemonRenderCustomMaterial &theCustomMaterial = static_cast<const QDemonRenderCustomMaterial &>(inMaterial);
         Q_ASSERT(inMaterial.type == QDemonRenderGraphObject::Type::CustomMaterial);
 
         setGlobalProperties(inProgram,

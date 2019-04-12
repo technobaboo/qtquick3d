@@ -79,26 +79,32 @@ struct QDemonCommand;
 
 struct QDemonPropertyDeclaration
 {
+    // NOTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // The data here is memcpyied, so only trivial type with know life expectency!!!
+    // Alternatively we need to do a copyConstruct as done for the commands
     const char *name;
     // The datatypes map directly to the obvious types *except*
     // for QDemonRenderTexture2DPtr.  This type will be interpreted as a
     // QString (they are the same binary size)
     // and will be used to lookup the texture from the buffer manager.
-    QDemonRenderShaderDataType dataType;
+    QDemonRenderShaderDataType dataType = QDemonRenderShaderDataType::Unknown;
 
     QDemonPropertyDeclaration(const char *inName, QDemonRenderShaderDataType inDtype)
         : name(inName), dataType(inDtype)
     {
     }
-    QDemonPropertyDeclaration() : name(""), dataType(QDemonRenderShaderDataType::Unknown) {}
+    QDemonPropertyDeclaration() = default;
 };
 
 struct QDemonPropertyDefinition
 {
-    QString name;
+    // NOTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // The data here is memcpyied, so only trivial type with know life expectency!!!
+    // Alternatively we need to do a copyConstruct as done for the commands
+    const char *name = nullptr;
 
     //*not* relative to the presentation directory
-    QString imagePath;
+    const char *imagePath = nullptr;
     // The datatypes map directly to the obvious types *except*
     // for QDemonRenderTexture2DPtr.  This type will be interpreted as a
     // QString and will be used to lookup the texture
@@ -122,7 +128,7 @@ struct QDemonPropertyDefinition
     bool isEnumProperty = false;
 
     QDemonPropertyDefinition() = default;
-    QDemonPropertyDefinition(QString inName, QDemonRenderShaderDataType inType, quint32 inOffset, quint32 inByteSize)
+    QDemonPropertyDefinition(const char *inName, QDemonRenderShaderDataType inType, quint32 inOffset, quint32 inByteSize)
         : name(inName), dataType(inType), offset(inOffset), byteSize(inByteSize)
     {
     }
@@ -226,9 +232,9 @@ public:
     // auto-generated.  The system will look for data under this path key during the BindShader
     // effect command.
     virtual void setShaderData(const QString &inPath,
-                               const char *inData,
-                               const char *inShaderType = nullptr,
-                               const char *inShaderVersion = nullptr,
+                               const QByteArray &inData,
+                               const QByteArray &inShaderType = nullptr,
+                               const QByteArray &inShaderVersion = nullptr,
                                bool inHasGeomShader = false,
                                bool inIsComputeShader = false) = 0;
 

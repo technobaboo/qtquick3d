@@ -1068,7 +1068,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             QDemonDataView<QDemonPropertyDefinition> theDefs = inClass->dynamicClass->getProperties();
             for (quint32 idx = 0, end = theDefs.size(); idx < end; ++idx) {
                 const QDemonPropertyDefinition &theDefinition(theDefs[idx]);
-                auto theConstant = inShader->shaderConstant(theDefinition.name.toLatin1());
+                auto theConstant = inShader->shaderConstant(theDefinition.name);
 
                 // This is fine, the property wasn't found and we continue, no problem.
                 if (!theConstant)

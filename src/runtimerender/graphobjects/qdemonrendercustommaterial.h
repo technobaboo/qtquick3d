@@ -60,6 +60,8 @@ public:
     };
     Q_DECLARE_FLAGS(MaterialShaderKeyFlags, MaterialShaderKeyValues)
 
+    const char *imagePath = nullptr;
+
     // lightmap section
     QDemonRenderLightmaps m_lightmaps;
     // material section

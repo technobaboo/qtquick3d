@@ -91,9 +91,9 @@ void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPrope
 }
 template<typename TStrType>
 void QDemonRenderDynamicGraphObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
-                                               const char *inValue,
-                                               const char *inProjectDir,
-                                               TStrType &ioWorkspace)
+                                                          const char *inValue,
+                                                          const char *inProjectDir,
+                                                          TStrType &ioWorkspace)
 {
     if (inValue == nullptr)
         inValue = "";
@@ -117,7 +117,8 @@ void QDemonRenderDynamicGraphObject::setStrPropertyValueT(dynamic::QDemonPropert
             setPropertyValueT(inDefinition, ioWorkspace);
             // We also adjust the image path in the definition
             // I could not find a better place
-            inDefinition.imagePath = ioWorkspace;
+            QByteArray *data = new QByteArray(ioWorkspace.toLatin1());
+            inDefinition.imagePath = data->constData(); //ioWorkspace.toLatin1().constData(); // TODO: Life time
         } else {
             setPropertyValueT(inDefinition, inValue);
         }
@@ -131,9 +132,9 @@ void QDemonRenderDynamicGraphObject::setStrPropertyValueT(dynamic::QDemonPropert
 }
 
 void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
-                                           const char *inValue,
-                                           const char *inProjectDir,
-                                           QString &ioWorkspace)
+                                                      const char *inValue,
+                                                      const char *inProjectDir,
+                                                      QString &ioWorkspace)
 {
     setStrPropertyValueT(const_cast<dynamic::QDemonPropertyDefinition &>(inDefinition), inValue, inProjectDir, ioWorkspace);
 }
