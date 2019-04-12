@@ -269,10 +269,10 @@ void QDemonMaterial::updateSceneRenderer(QDemonSceneManager *window)
            QDemonObjectPrivate::get(m_iblProbe)->refSceneRenderer(window);
         }
         if (m_emissiveMap2) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->refSceneRenderer(window);
+           QDemonObjectPrivate::get(m_emissiveMap2)->refSceneRenderer(window);
         }
         if (m_displacementMap) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->refSceneRenderer(window);
+           QDemonObjectPrivate::get(m_displacementMap)->refSceneRenderer(window);
         }
     } else {
         if (m_lightmapIndirect) {
@@ -288,10 +288,10 @@ void QDemonMaterial::updateSceneRenderer(QDemonSceneManager *window)
            QDemonObjectPrivate::get(m_iblProbe)->derefSceneRenderer();
         }
         if (m_emissiveMap2) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->derefSceneRenderer();
+           QDemonObjectPrivate::get(m_emissiveMap2)->derefSceneRenderer();
         }
         if (m_displacementMap) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->derefSceneRenderer();
+           QDemonObjectPrivate::get(m_displacementMap)->derefSceneRenderer();
         }
     }
 }
