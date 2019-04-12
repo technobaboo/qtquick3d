@@ -31,6 +31,7 @@
 #define QDEMON_OFFSCREEN_RENDER_MANAGER_H
 
 #include <QtDemon/qdemonoption.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 
@@ -50,7 +51,7 @@ enum class QDemonOffscreenRendererDepthValues
     Depth24Stencil8 // 24 bit depth buffer 8 bit stencil buffer
 };
 
-struct QDemonOffscreenRendererEnvironment
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRendererEnvironment
 {
     qint32 width = 0;
     qint32 height = 0;
@@ -80,7 +81,7 @@ struct QDemonOffscreenRendererEnvironment
     }
 };
 
-struct QDemonOffscreenRenderFlags
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderFlags
 {
     bool hasTransparency = false;
     bool hasChangedSinceLastFrame = false;
@@ -93,7 +94,7 @@ struct QDemonOffscreenRenderFlags
 
 typedef void *QDemonRenderInstanceId;
 
-class QDemonOffscreenRendererInterface
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRendererInterface
 {
 public:
     QAtomicInt ref;
@@ -121,12 +122,10 @@ public:
     virtual void render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                         QDemonRenderContext &inRenderContext,
                         QVector2D inPresentationScaleFactor,
-                        QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                         const QDemonRenderInstanceId instanceId) = 0;
     virtual void renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                  QDemonRenderContext &inRenderContext,
                                  QVector2D inPresentationScaleFactor,
-                                 QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                                  QVector3D inclearColor,
                                  const QDemonRenderInstanceId instanceId) = 0;
 
@@ -145,7 +144,7 @@ public:
     virtual bool pick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, const QDemonRenderInstanceId instanceId) = 0;
 };
 
-struct QDemonOffscreenRenderResult
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderResult
 {
     QDemonRef<QDemonOffscreenRendererInterface> renderer;
     QDemonRef<QDemonRenderTexture2D> texture;

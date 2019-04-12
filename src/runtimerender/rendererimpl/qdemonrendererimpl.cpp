@@ -37,8 +37,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
@@ -113,7 +111,8 @@ void QDemonRendererImpl::childrenUpdated(QDemonRenderNode &inParent)
     if (inParent.type == QDemonRenderGraphObject::Type::Layer) {
         TInstanceRenderMap::iterator theIter = m_instanceRenderMap.find(static_cast<QDemonRenderInstanceId>(&inParent));
         if (theIter != m_instanceRenderMap.end()) {
-            theIter.value()->camerasAndLights.clear();
+            theIter.value()->cameras.clear();
+            theIter.value()->lights.clear();
             theIter.value()->renderableNodes.clear();
         }
     } else if (inParent.parent)
@@ -143,11 +142,11 @@ static void buildRenderableLayers(QDemonRenderLayer &inLayer, QVector<QDemonRend
 }
 
 bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
-                                               const QVector2D &inViewportDimensions,
+                                               const QSize &surfaceSize,
                                                bool inRenderSiblings,
-                                               const QDemonRenderInstanceId id)
+                                               const QDemonRenderInstanceId id,
+                                               bool forceDirectRender)
 {
-    (void)inViewportDimensions;
     QVector<QDemonRenderLayer *> renderableLayers;
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
@@ -163,7 +162,7 @@ bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
         QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (theRenderData) {
-            theRenderData->prepareForRender();
+            theRenderData->prepareForRender(surfaceSize, forceDirectRender);
             retval = retval || theRenderData->layerPrepResult->flags.wasDirty();
         } else {
             Q_ASSERT(false);
@@ -174,13 +173,12 @@ bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
 }
 
 void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
-                                     const QVector2D &inViewportDimensions,
+                                     const QSize &surfaceSize,
                                      bool clear,
                                      QVector3D clearColor,
                                      bool inRenderSiblings,
                                      const QDemonRenderInstanceId id)
 {
-    (void)inViewportDimensions;
     QVector<QDemonRenderLayer *> renderableLayers;
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
@@ -210,7 +208,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
             theRenderContext->setRenderTarget(m_blendFb);
             theRenderContext->setScissorTestEnabled(false);
             QVector4D color(0.0f, 0.0f, 0.0f, 0.0f);
-            if (clear) {
+            if (clear && !clearColor.isNull()) {
                 color.setX(clearColor.x());
                 color.setY(clearColor.y());
                 color.setZ(clearColor.z());
@@ -1303,7 +1301,7 @@ QDemonLayerGlobalRenderProperties QDemonRendererImpl::getLayerGlobalRenderProper
     return QDemonLayerGlobalRenderProperties{ theLayer,
                                               *theData.camera,
                                               *theData.cameraDirection,
-                                              theData.lights,
+                                              theData.globalLights,
                                               theData.lightDirections,
                                               theData.shadowMapManager,
                                               theData.m_layerDepthTexture,

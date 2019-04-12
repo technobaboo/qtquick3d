@@ -100,12 +100,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
         return (type == Type::Model || type == Type::Path);
     }
 
-    inline bool isLightCameraType() const Q_DECL_NOTHROW
-    {
-        return (type == Type::Camera || type == Type::Light);
-    }
-
-
     inline bool isMaterial() const Q_DECL_NOTHROW
     {
         return type == QDemonRenderGraphObject::Type::CustomMaterial ||

@@ -94,7 +94,13 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderNode : public QDemonRenderGraphOb
     float localOpacity = 1.0f;
 
     // results of clearing dirty.
-    Flags flags { Flag::Dirty, Flag::TransformDirty, Flag::LeftHanded, Flag::Active, Flag::LocallyPickable };
+    Flags flags {
+        Flag::Dirty,
+        Flag::TransformDirty,
+        Flag::LeftHanded,
+        Flag::Active,
+        Flag::LocallyPickable
+    };
     // These end up right handed
     QMatrix4x4 localTransform;
     QMatrix4x4 globalTransform;

@@ -34,10 +34,8 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderLayer::QDemonRenderLayer()
-    : QDemonRenderNode(QDemonRenderGraphObject::Type::Layer)
-    , scene(nullptr)
+    : QDemonRenderNode(QDemonRenderNode::Type::Layer)
     , firstEffect(nullptr)
-    , renderPlugin(nullptr)
     , progressiveAAMode(QDemonRenderLayer::AAMode::NoAA)
     , multisampleAAMode(QDemonRenderLayer::AAMode::NoAA)
     , background(QDemonRenderLayer::Background::Transparent)
@@ -76,6 +74,7 @@ QDemonRenderLayer::QDemonRenderLayer()
     , probe2Window(1.0f)
     , probe2Pos(0.5f)
     , temporalAAEnabled(false)
+    , activeCamera(nullptr)
 {
     flags.setFlag(Flag::LayerRenderToTarget);
     flags.setFlag(Flag::LayerEnableDepthTest);

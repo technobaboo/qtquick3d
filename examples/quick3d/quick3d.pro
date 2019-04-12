@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS += \
-    simple
+    simple \
+    view3d

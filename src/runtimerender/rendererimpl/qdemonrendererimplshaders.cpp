@@ -440,7 +440,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSu
                                                                                inRenderable.shaderDescription,
                                                                                pipeline,
                                                                                inFeatureSet,
-                                                                               m_currentLayer->lights,
+                                                                               m_currentLayer->globalLights,
                                                                                inRenderable.firstImage,
                                                                                inRenderable.renderableFlags.hasTransparency(),
                                                                                logPrefix);

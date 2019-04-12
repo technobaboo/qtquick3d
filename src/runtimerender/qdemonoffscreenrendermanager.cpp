@@ -205,7 +205,7 @@ void QDemonOffscreenRenderManager::renderItem(QDemonRendererData &theData, QDemo
                                                                                          &QDemonRenderContext::renderTarget,
                                                                                          &QDemonRenderContext::setRenderTarget);
 
-    quint32 theSampleCount = 1;
+    qint32 theSampleCount = 1;
     bool isMultisamplePass = false;
     if (theDesiredEnvironment.msaaMode != QDemonRenderLayer::AAMode::NoAA) {
         switch (theDesiredEnvironment.msaaMode) {
@@ -255,7 +255,6 @@ void QDemonOffscreenRenderManager::renderItem(QDemonRendererData &theData, QDemo
     if (theSampleCount > 1)
         m_context->renderContext()->setMultisampleEnabled(true);
 
-    QDemonRenderClearFlags theClearFlags;
     QDemonRenderTextureFormat theDepthStencilTextureFormat(QDemonRenderTextureFormat::Unknown);
     QDemonRenderFrameBufferAttachment theAttachmentLocation(QDemonRenderFrameBufferAttachment::Unknown);
     if (theDesiredEnvironment.stencil) {
@@ -299,7 +298,7 @@ void QDemonOffscreenRenderManager::renderItem(QDemonRendererData &theData, QDemo
     theContext->setScissorTestEnabled(false);
 
     theContext->setBlendingEnabled(false);
-    theData.renderer->render(theDesiredEnvironment, *theContext, thePresScaleFactor, QDemonRenderScene::AlwaysClear, this);
+    theData.renderer->render(theDesiredEnvironment, *theContext, thePresScaleFactor, this);
 
     if (theSampleCount > 1) {
         QDemonResourceTexture2D theResult(m_resourceManager, theData.texture);

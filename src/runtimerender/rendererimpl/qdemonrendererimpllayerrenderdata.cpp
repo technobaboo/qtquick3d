@@ -34,8 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
@@ -99,9 +97,9 @@ QDemonLayerRenderData::~QDemonLayerRenderData()
     if (m_advancedBlendDrawTexture)
         m_advancedBlendDrawTexture = nullptr;
 }
-void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions)
+void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions, bool forceDirectRender)
 {
-    QDemonLayerRenderPreparationData::prepareForRender(inViewportDimensions);
+    QDemonLayerRenderPreparationData::prepareForRender(inViewportDimensions, forceDirectRender);
     QDemonLayerRenderPreparationResult &thePrepResult(*layerPrepResult);
     QDemonRef<QDemonResourceManager> theResourceManager(renderer->demonContext()->resourceManager());
     // at that time all values shoud be updated
@@ -480,11 +478,11 @@ inline void renderRenderableShadowMapPass(QDemonLayerRenderData &inData,
     QDemonShadowMapEntry *pEntry = inData.shadowMapManager->getShadowMapEntry(lightIndex);
 
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
-        static_cast<QDemonSubsetRenderableBase &>(inObject).renderShadowMapPass(inCameraProps, inData.lights[lightIndex], inCamera, pEntry);
+        static_cast<QDemonSubsetRenderableBase &>(inObject).renderShadowMapPass(inCameraProps, inData.globalLights[lightIndex], inCamera, pEntry);
     else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
-        static_cast<QDemonSubsetRenderableBase &>(inObject).renderShadowMapPass(inCameraProps, inData.lights[lightIndex], inCamera, pEntry);
+        static_cast<QDemonSubsetRenderableBase &>(inObject).renderShadowMapPass(inCameraProps, inData.globalLights[lightIndex], inCamera, pEntry);
     } else if (inObject.renderableFlags.isPath()) {
-        static_cast<QDemonPathRenderable &>(inObject).renderShadowMapPass(inCameraProps, inData.lights[lightIndex], inCamera, pEntry);
+        static_cast<QDemonPathRenderable &>(inObject).renderShadowMapPass(inCameraProps, inData.globalLights[lightIndex], inCamera, pEntry);
     }
 }
 
@@ -636,7 +634,7 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
     createShadowMapManager();
 
     // Check if we have anything to render
-    if (opaqueObjects.size() == 0 || lights.size() == 0)
+    if (opaqueObjects.size() == 0 || globalLights.size() == 0)
         return;
 
     renderer->beginLayerDepthPassRender(*this);
@@ -662,16 +660,16 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
     QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Depth | QDemonRenderClearValues::Stencil
                                       | QDemonRenderClearValues::Color);
 
-    for (int i = 0; i < lights.size(); i++) {
+    for (int i = 0; i < globalLights.size(); i++) {
         // don't render shadows when not casting
-        if (lights[i]->m_castShadow == false)
+        if (globalLights[i]->m_castShadow == false)
             continue;
         QDemonShadowMapEntry *pEntry = shadowMapManager->getShadowMapEntry(i);
         if (pEntry && pEntry->m_depthMap && pEntry->m_depthCopy && pEntry->m_depthRender) {
             QDemonRenderCamera theCamera;
 
             QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
-            setupCameraForShadowMap(theCameraProps, *renderer->context(), __viewport.m_initialValue, *camera, lights[i], theCamera);
+            setupCameraForShadowMap(theCameraProps, *renderer->context(), __viewport.m_initialValue, *camera, globalLights[i], theCamera);
             // we need this matrix for the final rendering
             theCamera.calculateViewProjectionMatrix(pEntry->m_lightVP);
             pEntry->m_lightView = mat44::getInverse(theCamera.globalTransform);
@@ -684,11 +682,11 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
             theRenderContext->clear(clearFlags);
 
             runRenderPass(renderRenderableShadowMapPass, false, true, true, i, theCamera);
-            renderShadowMapBlurPass(theFB, pEntry->m_depthMap, pEntry->m_depthCopy, lights[i]->m_shadowFilter, lights[i]->m_shadowMapFar);
+            renderShadowMapBlurPass(theFB, pEntry->m_depthMap, pEntry->m_depthCopy, globalLights[i]->m_shadowFilter, globalLights[i]->m_shadowMapFar);
         } else if (pEntry && pEntry->m_depthCube && pEntry->m_cubeCopy && pEntry->m_depthRender) {
             QDemonRenderCamera theCameras[6];
 
-            setupCubeShadowCameras(lights[i], theCameras);
+            setupCubeShadowCameras(globalLights[i], theCameras);
 
             // pEntry->m_LightView = m_Lights[i]->m_LightType == RenderLightTypes::Point ?
             // QMatrix4x4::createIdentity()
@@ -724,8 +722,8 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
             renderShadowCubeBlurPass(theFB,
                                      pEntry->m_depthCube,
                                      pEntry->m_cubeCopy,
-                                     lights[i]->m_shadowFilter,
-                                     lights[i]->m_shadowMapFar);
+                                     globalLights[i]->m_shadowFilter,
+                                     globalLights[i]->m_shadowMapFar);
         }
     }
 
@@ -752,9 +750,9 @@ inline void renderRenderableDepthPass(QDemonLayerRenderData &inData,
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
         static_cast<QDemonSubsetRenderable &>(inObject).renderDepthPass(inCameraProps);
     else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
-        static_cast<QDemonCustomMaterialRenderable &>(inObject).renderDepthPass(inCameraProps, inData.layer, inData.lights, inCamera, nullptr);
+        static_cast<QDemonCustomMaterialRenderable &>(inObject).renderDepthPass(inCameraProps, inData.layer, inData.globalLights, inCamera, nullptr);
     } else if (inObject.renderableFlags.isPath()) {
-        static_cast<QDemonPathRenderable &>(inObject).renderDepthPass(inCameraProps, inData.layer, inData.lights, inCamera, nullptr);
+        static_cast<QDemonPathRenderable &>(inObject).renderDepthPass(inCameraProps, inData.layer, inData.globalLights, inCamera, nullptr);
     } else {
         Q_ASSERT(false);
     }
@@ -810,7 +808,7 @@ inline void renderRenderable(QDemonLayerRenderData &inData,
         static_cast<QDemonCustomMaterialRenderable &>(inObject).render(inCameraProps,
                                                                        inData,
                                                                        inData.layer,
-                                                                       inData.lights,
+                                                                       inData.globalLights,
                                                                        inCamera,
                                                                        inData.m_layerDepthTexture,
                                                                        inData.m_layerSsaoTexture,
@@ -818,7 +816,7 @@ inline void renderRenderable(QDemonLayerRenderData &inData,
     } else if (inObject.renderableFlags.isPath()) {
         static_cast<QDemonPathRenderable &>(inObject).render(inCameraProps,
                                                              inData.layer,
-                                                             inData.lights,
+                                                             inData.globalLights,
                                                              inCamera,
                                                              inData.m_layerDepthTexture,
                                                              inData.m_layerSsaoTexture,
@@ -853,8 +851,8 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
 
     for (quint32 idx = 0, end = theOpaqueObjects.size(); idx < end; ++idx) {
         QDemonRenderableObject &theObject(*theOpaqueObjects[idx]);
-        QDemonScopedLightsListScope lightsScope(lights, lightDirections, sourceLightDirections, theObject.scopedLights);
-        setShaderFeature(cgLightingFeatureName, lights.empty() == false);
+        QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject.scopedLights);
+        setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
         inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
     }
 
@@ -884,8 +882,8 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                     if (useBlendFallback)
                         setupDrawFB(true);
 #endif
-                    QDemonScopedLightsListScope lightsScope(lights, lightDirections, sourceLightDirections, theObject.scopedLights);
-                    setShaderFeature(cgLightingFeatureName, lights.empty() == false);
+                    QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject.scopedLights);
+                    setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
 
                     inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
@@ -928,8 +926,8 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                             setupDrawFB(false);
                     }
 #endif
-                    QDemonScopedLightsListScope lightsScope(lights, lightDirections, sourceLightDirections, theObject.scopedLights);
-                    setShaderFeature(cgLightingFeatureName, lights.empty() == false);
+                    QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject.scopedLights);
+                    setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
                     inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     if (useBlendFallback) {
@@ -1118,14 +1116,12 @@ void QDemonLayerRenderData::renderToViewport()
                 lastFrameOffscreenRenderer->renderWithClear(createOffscreenRenderEnvironment(),
                                                             *renderer->context(),
                                                             renderer->demonContext()->presentationScaleFactor(),
-                                                            QDemonRenderScene::AlwaysClear,
                                                             layer.clearColor,
                                                             &layer);
             } else {
                 lastFrameOffscreenRenderer->render(createOffscreenRenderEnvironment(),
                                                    *renderer->context(),
                                                    renderer->demonContext()->presentationScaleFactor(),
-                                                   QDemonRenderScene::ClearIsOptional,
                                                    &layer);
             }
         } else {
@@ -1662,6 +1658,14 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                                       &QDemonRenderContext::clearColor,
                                                                       &QDemonRenderContext::setClearColor,
                                                                       QVector4D(layer.clearColor, 0.0f));
+            theContext->clear(QDemonRenderClearValues::Color);
+        } else {
+            // ### will need to address this later because when not rendering to an FBO
+            // we would clear anything in the window target which is not what we want
+            QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
+                                                                      &QDemonRenderContext::clearColor,
+                                                                      &QDemonRenderContext::setClearColor,
+                                                                      QVector4D(0.0, 0.0, 0.0, 0.0f));
             theContext->clear(QDemonRenderClearValues::Color);
         }
         renderToViewport();

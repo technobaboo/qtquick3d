@@ -30,7 +30,6 @@
 #ifndef QDEMON_RENDER_CONTEXT_CORE_H
 #define QDEMON_RENDER_CONTEXT_CORE_H
 
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
@@ -100,7 +99,6 @@ private:
     bool m_isInSubPresentation = false;
     QDemonOption<QVector4D> m_sceneColor;
     QDemonOption<QVector4D> m_matteColor;
-    RenderRotationValues m_rotation = RenderRotationValues::NoRotation;
     QDemonRef<QDemonRenderFrameBuffer> m_rotationFbo;
     QDemonRef<QDemonRenderTexture2D> m_rotationTexture;
     QDemonRef<QDemonRenderRenderBuffer> m_rotationDepthBuffer;
@@ -227,9 +225,6 @@ public:
         m_presentationDimensions = inPresentationDimensions;
     }
     QSize currentPresentationDimensions() const { return m_presentationDimensions; }
-
-    void setRenderRotation(RenderRotationValues inRotation) { m_rotation = inRotation; }
-    RenderRotationValues renderRotation() const { return m_rotation; }
 
     QVector2D mousePickViewport() const;
     QVector2D mousePickMouseCoords(const QVector2D &inMouseCoords) const;

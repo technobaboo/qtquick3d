@@ -51,8 +51,6 @@ HEADERS += \
     qdemonrendershadercodegeneratorv2.h \
     qdemonrendershaderkeys.h \
     qdemonrendershadowmap.h \
-    qdemonrendersubpresentation.h \
-    qdemonrendersubpresentationhelper.h \
     qdemonrendertessmodevalues.h \
     qdemonrenderthreadpool.h \
 #    qdemonrenderuipsharedtranslation.h \
@@ -86,7 +84,6 @@ SOURCES += \
     qdemonrendershadercodegenerator.cpp \
     qdemonrendershadercodegeneratorv2.cpp \
     qdemonrendershadowmap.cpp \
-    qdemonrendersubpresentation.cpp \
     qdemonrenderthreadpool.cpp \
 #    qdemonrenderuipsharedtranslation.cpp \
     qdemonrenderwidgets.cpp \

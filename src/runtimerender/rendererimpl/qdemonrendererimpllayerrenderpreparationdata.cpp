@@ -34,8 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>
@@ -75,18 +73,21 @@ inline bool iSRenderObjectPtrGreatThan(const QDemonRenderableObject *lhs, const 
 
 void MaybeQueueNodeForRender(QDemonRenderNode &inNode,
                              QVector<QDemonRenderableNodeEntry> &outRenderables,
-                             QVector<QDemonRenderNode *> &outCamerasAndLights,
+                             QVector<QDemonRenderCamera *> &outCameras,
+                             QVector<QDemonRenderLight *> &outLights,
                              quint32 &ioDFSIndex)
 {
     ++ioDFSIndex;
     inNode.dfsIndex = ioDFSIndex;
     if (inNode.isRenderableType())
         outRenderables.push_back(inNode);
-    else if (inNode.isLightCameraType())
-        outCamerasAndLights.push_back(&inNode);
+    else if (inNode.type == QDemonRenderGraphObject::Type::Camera)
+        outCameras.push_back(static_cast<QDemonRenderCamera *>(&inNode));
+    else if (inNode.type == QDemonRenderGraphObject::Type::Light)
+        outLights.push_back(static_cast<QDemonRenderLight *>(&inNode));
 
     for (QDemonRenderNode *theChild = inNode.firstChild; theChild != nullptr; theChild = theChild->nextSibling)
-        MaybeQueueNodeForRender(*theChild, outRenderables, outCamerasAndLights, ioDFSIndex);
+        MaybeQueueNodeForRender(*theChild, outRenderables, outCameras, outLights, ioDFSIndex);
 }
 
 bool HasValidLightProbe(QDemonRenderImage *inLightProbeImage)
@@ -280,7 +281,7 @@ QDemonShaderDefaultMaterialKey QDemonLayerRenderPreparationData::generateLightin
         const bool lightProbe = layer.lightProbe && layer.lightProbe->m_textureData.m_texture;
         renderer->defaultMaterialShaderKeyProperties().m_hasIbl.setValue(theGeneratedKey, lightProbe);
 
-        quint32 numLights = (quint32)lights.size();
+        quint32 numLights = (quint32)globalLights.size();
         if (numLights > QDemonShaderDefaultMaterialKeyProperties::LightCount && tooManyLightsError == false) {
             tooManyLightsError = true;
             numLights = QDemonShaderDefaultMaterialKeyProperties::LightCount;
@@ -289,8 +290,8 @@ QDemonShaderDefaultMaterialKey QDemonLayerRenderPreparationData::generateLightin
         }
         renderer->defaultMaterialShaderKeyProperties().m_lightCount.setValue(theGeneratedKey, numLights);
 
-        for (quint32 lightIdx = 0, lightEnd = lights.size(); lightIdx < lightEnd; ++lightIdx) {
-            QDemonRenderLight *theLight(lights[lightIdx]);
+        for (quint32 lightIdx = 0, lightEnd = globalLights.size(); lightIdx < lightEnd; ++lightIdx) {
+            QDemonRenderLight *theLight(globalLights[lightIdx]);
             const bool isDirectional = theLight->m_lightType == QDemonRenderLight::Type::Directional;
             const bool isArea = theLight->m_lightType == QDemonRenderLight::Type::Area;
             const bool castShadowsArea = (theLight->m_lightType != QDemonRenderLight::Type::Area) && (theLight->m_castShadow);
@@ -736,8 +737,8 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
 
     bool subsetDirty = false;
 
-    QDemonScopedLightsListScope lightsScope(lights, lightDirections, sourceLightDirections, inScopedLights);
-    setShaderFeature(cgLightingFeatureName, lights.empty() == false);
+    QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, inScopedLights);
+    setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
     for (quint32 idx = 0, end = theMesh->subsets.size(); idx < end && theSourceMaterialObject;
          ++idx, theSourceMaterialObject = theSourceMaterialObject->nextMaterialSibling()) {
         QDemonRenderSubset &theOuterSubset(theMesh->subsets[idx]);
@@ -977,7 +978,7 @@ struct QDemonLightNodeMarker
 };
 
 // m_Layer.m_Camera->CalculateViewProjectionMatrix(m_ViewProjection);
-void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportDimensions)
+void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportDimensions, bool forceDirectRender)
 {
     QDemonStackPerfTimer perfTimer(renderer->demonContext()->performanceTimer(), Q_FUNC_INFO);
     if (layerPrepResult.hasValue())
@@ -1032,7 +1033,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
         bool shouldRenderToTexture = true;
 
-        if (hasOffscreenRenderer) {
+        if (hasOffscreenRenderer || forceDirectRender) {
             // We don't render to texture with offscreen renderers, we just render them to the
             // viewport.
             shouldRenderToTexture = false;
@@ -1043,7 +1044,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
         thePrepResult = QDemonLayerRenderPreparationResult(
                 QDemonLayerRenderHelper(theViewport,
                                         theScissor,
-                                        layer.scene->presentation->presentationDimensions,
+                                        QVector2D(inViewportDimensions.width(), inViewportDimensions.height()),
                                         layer,
                                         shouldRenderToTexture,
                                         renderer->demonContext()->scaleMode(),
@@ -1088,17 +1089,19 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 //            }
             // ### TODO: Really this should only be done if renderableNodes is empty or dirty
             // but we don't have a way to say it's dirty yet (new renderables added to the tree)
-            camerasAndLights.clear();
+            cameras.clear();
+            lights.clear();
             renderableNodes.clear();
             quint32 dfsIndex = 0;
             for (QDemonRenderNode *theChild = layer.firstChild; theChild; theChild = theChild->nextSibling)
-                MaybeQueueNodeForRender(*theChild, renderableNodes, camerasAndLights, dfsIndex);
-            std::reverse(camerasAndLights.begin(), camerasAndLights.end());
+                MaybeQueueNodeForRender(*theChild, renderableNodes, cameras, lights, dfsIndex);
+            std::reverse(cameras.begin(), cameras.end());
+            std::reverse(lights.begin(), lights.end());
             std::reverse(renderableNodes.begin(), renderableNodes.end());
             lightToNodeMap.clear();
 
             camera = nullptr;
-            lights.clear();
+            globalLights.clear();
             opaqueObjects.clear();
             qDeleteAll(opaqueObjects);
             transparentObjects.clear();
@@ -1106,79 +1109,78 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             QVector<QDemonLightNodeMarker> theLightNodeMarkers;
             sourceLightDirections.clear();
 
-            for (quint32 idx = 0, end = camerasAndLights.size(); idx < end; ++idx) {
-                QDemonRenderNode *theNode(camerasAndLights[idx]);
-                wasDataDirty = wasDataDirty || theNode->flags.testFlag(QDemonRenderNode::Flag::Dirty);
-                switch (theNode->type) {
-                case QDemonRenderGraphObject::Type::Camera: {
-                    QDemonRenderCamera *theCamera = static_cast<QDemonRenderCamera *>(theNode);
-                    QDemonCameraGlobalCalculationResult theResult = thePrepResult.setupCameraForRender(*theCamera);
-                    wasDataDirty = wasDataDirty || theResult.m_wasDirty;
-                    if (theCamera->flags.testFlag(QDemonRenderCamera::Flag::GloballyActive))
-                        camera = theCamera;
-                    if (theResult.m_computeFrustumSucceeded == false) {
-                        qCCritical(INTERNAL_ERROR, "Failed to calculate camera frustum");
-                    }
-                } break;
-                case QDemonRenderGraphObject::Type::Light: {
-                    QDemonRenderLight *theLight = static_cast<QDemonRenderLight *>(theNode);
-                    bool lightResult = theLight->calculateGlobalVariables();
-                    wasDataDirty = lightResult || wasDataDirty;
-                    // Note we setup the light index such that it is completely invariant of if
-                    // the
-                    // light is active or scoped.
-                    quint32 lightIndex = (quint32)sourceLightDirections.size();
-                    sourceLightDirections.push_back(QVector3D(0.0, 0.0, 0.0));
-                    // Note we still need a light check when building the renderable light list.
-                    // We also cannot cache shader-light bindings based on layers any more
-                    // because
-                    // the number of lights for a given renderable does not depend on the layer
-                    // as it used to but
-                    // additional perhaps on the light's scoping rules.
-                    if (theLight->flags.testFlag(QDemonRenderLight::Flag::GloballyActive)) {
-                        if (theLight->m_scope == nullptr) {
-                            lights.push_back(theLight);
-                            if (renderer->context()->renderContextType() != QDemonRenderContextType::GLES2
-                                && theLight->m_castShadow) {
-                                createShadowMapManager();
-                                // PKC -- use of "res" as an exponent of two is an annoying
-                                // artifact of the XML interface
-                                // I'll change this with an enum interface later on, but that's
-                                // less important right now.
-                                quint32 mapSize = 1 << theLight->m_shadowMapRes;
-                                ShadowMapModes mapMode = (theLight->m_lightType != QDemonRenderLight::Type::Directional)
-                                        ? ShadowMapModes::CUBE
-                                        : ShadowMapModes::VSM;
-                                shadowMapManager->addShadowMapEntry(lights.size() - 1,
-                                                                    mapSize,
-                                                                    mapSize,
-                                                                    QDemonRenderTextureFormat::R16F,
-                                                                    1,
-                                                                    mapMode,
-                                                                    ShadowFilterValues::NONE);
-                                thePrepResult.flags.setRequiresShadowMapPass(true);
-                                setShaderFeature("QDEMON_ENABLE_SSM", true);
-                            }
-                        }
-                        TLightToNodeMap::iterator iter = lightToNodeMap.insert(theLight, (QDemonRenderNode *)nullptr);
-                        QDemonRenderNode *oldLightScope = iter.value();
-                        QDemonRenderNode *newLightScope = theLight->m_scope;
-
-                        if (oldLightScope != newLightScope) {
-                            iter.value() = newLightScope;
-                            if (oldLightScope)
-                                theLightNodeMarkers.push_back(QDemonLightNodeMarker(*theLight, lightIndex, *oldLightScope, false));
-                            if (newLightScope)
-                                theLightNodeMarkers.push_back(QDemonLightNodeMarker(*theLight, lightIndex, *newLightScope, true));
-                        }
-                        if (newLightScope) {
-                            sourceLightDirections.back() = theLight->getScalingCorrectDirection();
-                        }
-                    }
-                } break;
-                default:
-                    Q_ASSERT(false);
+            // Cameras
+            for (quint32 idx = 0, end = cameras.size(); idx < end; ++idx) {
+                QDemonRenderCamera *theCamera = cameras[idx];
+                wasDataDirty = wasDataDirty || theCamera->flags.testFlag(QDemonRenderNode::Flag::Dirty);
+                QDemonCameraGlobalCalculationResult theResult = thePrepResult.setupCameraForRender(*theCamera);
+                wasDataDirty = wasDataDirty || theResult.m_wasDirty;
+                if (theCamera->flags.testFlag(QDemonRenderCamera::Flag::GloballyActive))
+                    camera = theCamera;
+                if (theResult.m_computeFrustumSucceeded == false) {
+                    qCCritical(INTERNAL_ERROR, "Failed to calculate camera frustum");
+                }
+                // If an active camera has been set on the layer, just use that
+                if (camera == layer.activeCamera)
                     break;
+            }
+
+            // Lights
+            for (quint32 idx = 0, end = lights.size(); idx < end; ++idx) {
+                QDemonRenderLight *theLight = lights[idx];
+                wasDataDirty = wasDataDirty || theLight->flags.testFlag(QDemonRenderNode::Flag::Dirty);
+                bool lightResult = theLight->calculateGlobalVariables();
+                wasDataDirty = lightResult || wasDataDirty;
+                // Note we setup the light index such that it is completely invariant of if
+                // the
+                // light is active or scoped.
+                quint32 lightIndex = (quint32)sourceLightDirections.size();
+                sourceLightDirections.push_back(QVector3D(0.0, 0.0, 0.0));
+                // Note we still need a light check when building the renderable light list.
+                // We also cannot cache shader-light bindings based on layers any more
+                // because
+                // the number of lights for a given renderable does not depend on the layer
+                // as it used to but
+                // additional perhaps on the light's scoping rules.
+                if (theLight->flags.testFlag(QDemonRenderLight::Flag::GloballyActive)) {
+                    if (theLight->m_scope == nullptr) {
+                        globalLights.push_back(theLight);
+                        if (renderer->context()->renderContextType() != QDemonRenderContextType::GLES2
+                                && theLight->m_castShadow) {
+                            createShadowMapManager();
+                            // PKC -- use of "res" as an exponent of two is an annoying
+                            // artifact of the XML interface
+                            // I'll change this with an enum interface later on, but that's
+                            // less important right now.
+                            quint32 mapSize = 1 << theLight->m_shadowMapRes;
+                            ShadowMapModes mapMode = (theLight->m_lightType != QDemonRenderLight::Type::Directional)
+                                    ? ShadowMapModes::CUBE
+                                    : ShadowMapModes::VSM;
+                            shadowMapManager->addShadowMapEntry(globalLights.size() - 1,
+                                                                mapSize,
+                                                                mapSize,
+                                                                QDemonRenderTextureFormat::R16F,
+                                                                1,
+                                                                mapMode,
+                                                                ShadowFilterValues::NONE);
+                            thePrepResult.flags.setRequiresShadowMapPass(true);
+                            setShaderFeature("QDEMON_ENABLE_SSM", true);
+                        }
+                    }
+                    TLightToNodeMap::iterator iter = lightToNodeMap.insert(theLight, (QDemonRenderNode *)nullptr);
+                    QDemonRenderNode *oldLightScope = iter.value();
+                    QDemonRenderNode *newLightScope = theLight->m_scope;
+
+                    if (oldLightScope != newLightScope) {
+                        iter.value() = newLightScope;
+                        if (oldLightScope)
+                            theLightNodeMarkers.push_back(QDemonLightNodeMarker(*theLight, lightIndex, *oldLightScope, false));
+                        if (newLightScope)
+                            theLightNodeMarkers.push_back(QDemonLightNodeMarker(*theLight, lightIndex, *newLightScope, true));
+                    }
+                    if (newLightScope) {
+                        sourceLightDirections.back() = theLight->getScalingCorrectDirection();
+                    }
                 }
             }
 
@@ -1228,8 +1230,8 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
             // Setup the light directions here.
 
-            for (quint32 lightIdx = 0, lightEnd = lights.size(); lightIdx < lightEnd; ++lightIdx) {
-                lightDirections.push_back(lights[lightIdx]->getScalingCorrectDirection());
+            for (quint32 lightIdx = 0, lightEnd = globalLights.size(); lightIdx < lightEnd; ++lightIdx) {
+                lightDirections.push_back(globalLights[lightIdx]->getScalingCorrectDirection());
             }
 
             modelContexts.clear();

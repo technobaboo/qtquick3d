@@ -6,6 +6,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDemonSceneManager;
 class Q_QUICK3D_EXPORT QDemonMaterial : public QDemonObject
 {
     Q_OBJECT
@@ -58,10 +59,10 @@ Q_SIGNALS:
     void displacementAmountChanged(float displacementAmount);
 
 protected:
-    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node);
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
     void itemChange(ItemChange, const ItemChangeData &) override;
 private:
-    void updateWindow(QDemonWindow *window);
+    void updateSceneRenderer(QDemonSceneManager *sceneRenderer);
     QDemonImage *m_lightmapIndirect = nullptr;
     QDemonImage *m_lightmapRadiosity = nullptr;
     QDemonImage *m_lightmapShadow = nullptr;

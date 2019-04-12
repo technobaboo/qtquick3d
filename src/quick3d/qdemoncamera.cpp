@@ -58,6 +58,11 @@ QDemonRenderCamera *QDemonCamera::getCameraNode() const
     return m_cameraNode;
 }
 
+QDemonCamera::QDemonCameraProjectionMode QDemonCamera::projectionMode() const
+{
+    return m_projectionMode;
+}
+
 void QDemonCamera::setClipNear(float clipNear)
 {
     if (qFuzzyCompare(m_clipNear, clipNear))
@@ -138,6 +143,15 @@ void QDemonCamera::setFrustumScaleY(float frustumScaleY)
     update();
 }
 
+void QDemonCamera::setProjectionMode(QDemonCamera::QDemonCameraProjectionMode projectionMode)
+{
+    if (m_projectionMode == projectionMode)
+        return;
+
+    m_projectionMode = projectionMode;
+    emit projectionModeChanged(m_projectionMode);
+}
+
 QDemonRenderGraphObject *QDemonCamera::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
@@ -155,6 +169,9 @@ QDemonRenderGraphObject *QDemonCamera::updateSpatialNode(QDemonRenderGraphObject
     camera->scaleMode = QDemonRenderCamera::ScaleModes(m_scaleMode);
     camera->scaleAnchor = QDemonRenderCamera::ScaleAnchors(m_scaleAnchor);
     camera->frustumScale = QVector2D(m_frustumScaleX, m_frustumScaleY);
+
+    if (m_projectionMode == Orthographic)
+        camera->flags.setFlag(QDemonRenderNode::Flag::Orthographic);
 
     m_cameraNode = camera;
 
