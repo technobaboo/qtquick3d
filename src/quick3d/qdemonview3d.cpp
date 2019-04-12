@@ -170,6 +170,8 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
 
     n->renderer->synchronize(this, desiredFboSize);
 
+
+    n->setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
     n->setFiltering(smooth() ? QSGTexture::Linear : QSGTexture::Nearest);
     n->setRect(0, 0, width(), height());
 

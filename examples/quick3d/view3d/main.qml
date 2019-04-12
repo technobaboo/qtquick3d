@@ -31,11 +31,19 @@ Window {
             z: -600
         }
 
-        DemonCamera {
-            id: camera3
+        DemonNode {
+            id: orbitingCamera2
 
-            x: 200
-            rotation: Qt.vector3d(0, -90, 0)
+            DemonCamera {
+                id: camera3
+
+                x: 500
+                rotation: Qt.vector3d(0, -90, 0)
+            }
+            SequentialAnimation on rotation {
+                loops: Animation.Infinite
+                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 0, 0); from: Qt.vector3d(0, 360, 0) }
+            }
         }
 
 
@@ -54,6 +62,11 @@ Window {
                     diffuseColor: "salmon"
                 }
             ]
+
+            SequentialAnimation on rotation {
+                loops: Animation.Infinite
+                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 0, 0); from: Qt.vector3d(0, 360, 0) }
+            }
         }
     }
 
