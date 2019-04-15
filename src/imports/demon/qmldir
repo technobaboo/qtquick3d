@@ -1,3 +1,4 @@
 module QtDemon
 plugin qdemonplugin
 classname QDemonPlugin
+typeinfo plugins.qmltypes
