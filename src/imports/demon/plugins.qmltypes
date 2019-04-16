@@ -1151,6 +1151,8 @@ Module {
         Property { name: "backgroundMode"; type: "QDemonEnvironmentBackgroundTypes" }
         Property { name: "clearColor"; type: "QColor" }
         Property { name: "blendType"; type: "QDemonEnvironmentBlendTypes" }
+        Property { name: "isDepthTestDisabled"; type: "bool" }
+        Property { name: "isDepthPrePassDisabled"; type: "bool" }
         Property { name: "aoStrength"; type: "float" }
         Property { name: "aoDistance"; type: "float" }
         Property { name: "aoSoftness"; type: "float" }
@@ -1270,6 +1272,14 @@ Module {
             name: "probe2PostionChanged"
             Parameter { name: "probe2Postion"; type: "float" }
         }
+        Signal {
+            name: "isDepthTestDisabledChanged"
+            Parameter { name: "isDepthTestDisabled"; type: "bool" }
+        }
+        Signal {
+            name: "isDepthPrePassDisabledChanged"
+            Parameter { name: "isDepthPrePassDisabled"; type: "bool" }
+        }
         Method {
             name: "setProgressiveAAMode"
             Parameter { name: "progressiveAAMode"; type: "QDemonEnvironmentAAModeValues" }
@@ -1369,6 +1379,14 @@ Module {
         Method {
             name: "setProbe2Postion"
             Parameter { name: "probe2Postion"; type: "float" }
+        }
+        Method {
+            name: "setIsDepthTestDisabled"
+            Parameter { name: "isDepthTestDisabled"; type: "bool" }
+        }
+        Method {
+            name: "setIsDepthPrePassDisabled"
+            Parameter { name: "isDepthPrePassDisabled"; type: "bool" }
         }
     }
     Component {
