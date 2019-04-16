@@ -303,6 +303,17 @@ void QDemonSceneRenderer::updateLayerNode(QDemonView3D *view3D)
     layerNode->probe2Fade = view3D->environment()->probe2Fade();
     layerNode->probe2Window = view3D->environment()->probe2Window();
     layerNode->probe2Pos = view3D->environment()->probe2Postion();
+
+    if (view3D->environment()->isDepthTestDisabled())
+        layerNode->flags.setFlag(QDemonRenderNode::Flag::LayerEnableDepthTest, false);
+    else
+        layerNode->flags.setFlag(QDemonRenderNode::Flag::LayerEnableDepthTest, true);
+
+    if (view3D->environment()->isDepthPrePassDisabled())
+        layerNode->flags.setFlag(QDemonRenderNode::Flag::LayerEnableDepthPrePass, false);
+    else
+        layerNode->flags.setFlag(QDemonRenderNode::Flag::LayerEnableDepthPrePass, true);
+
     layerNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
 }
 
