@@ -117,6 +117,9 @@ PropertyMap::PropertyMap()
     layer->insert(QStringLiteral("probe2pos"), Property(QStringLiteral("probe2Postion"), Q3DS::Float, 0.5f));
 
     layer->insert(QStringLiteral("temporalaa"), Property(QStringLiteral("temporalAAEnabled"), Q3DS::Boolean, false));
+    layer->insert(QStringLiteral("disabledepthtest"), Property(QStringLiteral("isDepthTestDisabled"), Q3DS::Boolean, false));
+    layer->insert(QStringLiteral("disabledepthprepass"), Property(QStringLiteral("isDepthPrePassDisabled"), Q3DS::Boolean, false));
+
     m_properties.insert(GraphObject::Layer, layer);
 
     // Camera
@@ -124,6 +127,7 @@ PropertyMap::PropertyMap()
     PropertiesMap *camera = new PropertiesMap;
     insertNodeProperties(camera);
 
+    camera->insert(QStringLiteral("orthographic"), Property(QStringLiteral("projectionMode"), Q3DS::String, "DemonCamera.Perspective"));
     camera->insert(QStringLiteral("clipnear"), Property(QStringLiteral("clipNear"), Q3DS::Float, 10.0f));
     camera->insert(QStringLiteral("clipfar"), Property(QStringLiteral("clipFar"), Q3DS::Float, 10000.0f));
     camera->insert(QStringLiteral("fov"), Property(QStringLiteral("fieldOfView"), Q3DS::Float, 60.0f));

@@ -21,6 +21,8 @@ class Q_QUICK3D_EXPORT QDemonSceneEnvironment : public QObject
     Q_PROPERTY(QDemonEnvironmentBackgroundTypes backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
     Q_PROPERTY(QColor clearColor READ clearColor WRITE setClearColor NOTIFY clearColorChanged)
     Q_PROPERTY(QDemonEnvironmentBlendTypes blendType READ blendType WRITE setBlendType NOTIFY blendTypeChanged)
+    Q_PROPERTY(bool isDepthTestDisabled READ isDepthTestDisabled WRITE setIsDepthTestDisabled NOTIFY isDepthTestDisabledChanged)
+    Q_PROPERTY(bool isDepthPrePassDisabled READ isDepthPrePassDisabled WRITE setIsDepthPrePassDisabled NOTIFY isDepthPrePassDisabledChanged)
 
     Q_PROPERTY(float aoStrength READ aoStrength WRITE setAoStrength NOTIFY aoStrengthChanged)
     Q_PROPERTY(float aoDistance READ aoDistance WRITE setAoDistance NOTIFY aoDistanceChanged)
@@ -110,6 +112,9 @@ public:
 
     QQmlListProperty<QDemonEffect> effectsList();
 
+    bool isDepthTestDisabled() const;
+    bool isDepthPrePassDisabled() const;
+
 public Q_SLOTS:
     void setProgressiveAAMode(QDemonEnvironmentAAModeValues progressiveAAMode);
     void setMultisampleAAMode(QDemonEnvironmentAAModeValues multisampleAAMode);
@@ -142,6 +147,9 @@ public Q_SLOTS:
     void setProbe2Window(float probe2Window);
     void setProbe2Postion(float probe2Postion);
 
+    void setIsDepthTestDisabled(bool isDepthTestDisabled);
+    void setIsDepthPrePassDisabled(bool isDepthPrePassDisabled);
+
 Q_SIGNALS:
     void progressiveAAModeChanged(QDemonEnvironmentAAModeValues progressiveAAMode);
     void multisampleAAModeChanged(QDemonEnvironmentAAModeValues multisampleAAMode);
@@ -173,6 +181,9 @@ Q_SIGNALS:
     void probe2FadeChanged(float probe2Fade);
     void probe2WindowChanged(float probe2Window);
     void probe2PostionChanged(float probe2Postion);
+
+    void isDepthTestDisabledChanged(bool isDepthTestDisabled);
+    void isDepthPrePassDisabledChanged(bool isDepthPrePassDisabled);
 
 private:
     QDemonEnvironmentAAModeValues m_progressiveAAMode = NoAA;
@@ -210,7 +221,9 @@ private:
     static int qmlEffectsCount(QQmlListProperty<QDemonEffect> *list);
     static void qmlClearEffects(QQmlListProperty<QDemonEffect> *list);
 
-//    QHash<QObject*, QMetaObject::Connection> m_connections;
+    //    QHash<QObject*, QMetaObject::Connection> m_connections;
+    bool m_isDepthTestDisabled;
+    bool m_isDepthPrePassDisabled;
 };
 
 QT_END_NAMESPACE

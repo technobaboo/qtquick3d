@@ -352,6 +352,7 @@ void UipImporter::writeHeader(QTextStream &output)
 {
     output << "import QtDemon 1.0" << endl;
     output << "import QtQuick 2.12" << endl;
+    output << "import QtQuick.Window 2.12" << endl;
     output << "import QtQuick.Timeline 1.0" << endl;
     if (m_referencedMaterials.count() > 0) {
         output << "import \"./materials\" as Materials" << endl;
@@ -444,7 +445,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             writeHeader(output);
 
             // DemonWindow header
-            output << QStringLiteral("DemonWindow {") << endl;
+            output << QStringLiteral("Window {") << endl;
             output << insertTabs(1) << QStringLiteral("visible: true") << endl;
             output << insertTabs(1) << QStringLiteral("width: ") << m_presentation->presentationWidth()<< endl;
             output << insertTabs(1) << QStringLiteral("height: ") << m_presentation->presentationHeight() << endl;

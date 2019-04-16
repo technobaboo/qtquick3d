@@ -1378,7 +1378,7 @@ void LayerNode::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void LayerNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << insertTabs(tabLevel) << "DemonLayer {" << endl;
+    output << insertTabs(tabLevel) << "DemonView3D {" << endl;
 }
 
 namespace {
@@ -1386,13 +1386,13 @@ QString progressiveAAToString(LayerNode::ProgressiveAA mode)
 {
     switch (mode) {
     case LayerNode::NoPAA:
-        return QStringLiteral("DemonLayer.NoAA");
+        return QStringLiteral("DemonSceneEnvironment.NoAA");
     case LayerNode::PAA2x:
-        return QStringLiteral("DemonLayer.X2");
+        return QStringLiteral("DemonSceneEnvironment.X2");
     case LayerNode::PAA4x:
-        return QStringLiteral("DemonLayer.X4");
+        return QStringLiteral("DemonSceneEnvironment.X4");
     case LayerNode::PAA8x:
-        return QStringLiteral("DemonLayer.X8");
+        return QStringLiteral("DemonSceneEnvironment.X8");
     }
 }
 
@@ -1400,13 +1400,13 @@ QString multisampleAAToString(LayerNode::MultisampleAA mode)
 {
     switch (mode) {
     case LayerNode::NoMSAA:
-        return QStringLiteral("DemonLayer.NoAA");
+        return QStringLiteral("DemonSceneEnvironment.NoAA");
     case LayerNode::MSAA2x:
-        return QStringLiteral("DemonLayer.X2");
+        return QStringLiteral("DemonSceneEnvironment.X2");
     case LayerNode::MSAA4x:
-        return QStringLiteral("DemonLayer.X4");
+        return QStringLiteral("DemonSceneEnvironment.X4");
     case LayerNode::SSAA:
-        return QStringLiteral("DemonLayer.SSAA");
+        return QStringLiteral("DemonSceneEnvironment.SSAA");
     }
 }
 
@@ -1414,11 +1414,11 @@ QString layerBackgroundToString(LayerNode::LayerBackground mode)
 {
     switch (mode) {
     case LayerNode::Transparent:
-        return QStringLiteral("DemonLayer.Transparent");
+        return QStringLiteral("DemonSceneEnvironment.Transparent");
     case LayerNode::SolidColor:
-        return QStringLiteral("DemonLayer.Color");
+        return QStringLiteral("DemonSceneEnvironment.Color");
     case LayerNode::Unspecified:
-        return QStringLiteral("DemonLayer.Unspecified");
+        return QStringLiteral("DemonSceneEnvironment.Unspecified");
     }
 }
 
@@ -1426,109 +1426,159 @@ QString blendTypeToString(LayerNode::BlendType type)
 {
     switch (type) {
     case LayerNode::Normal:
-        return QStringLiteral("DemonLayer.Normal");
+        return QStringLiteral("DemonSceneEnvironment.Normal");
     case LayerNode::Screen:
-        return QStringLiteral("DemonLayer.Screen");
+        return QStringLiteral("DemonSceneEnvironment.Screen");
     case LayerNode::Multiply:
-        return QStringLiteral("DemonLayer.Multiply");
+        return QStringLiteral("DemonSceneEnvironment.Multiply");
     case LayerNode::Add:
-        return QStringLiteral("DemonLayer.Add");
+        return QStringLiteral("DemonSceneEnvironment.Add");
     case LayerNode::Subtract:
-        return QStringLiteral("DemonLayer.Subtract");
+        return QStringLiteral("DemonSceneEnvironment.Subtract");
     case LayerNode::Overlay:
-        return QStringLiteral("DemonLayer.Overlay");
+        return QStringLiteral("DemonSceneEnvironment.Overlay");
     case LayerNode::ColorBurn:
-        return QStringLiteral("DemonLayer.ColorBurn");
+        return QStringLiteral("DemonSceneEnvironment.ColorBurn");
     case LayerNode::ColorDodge:
-        return QStringLiteral("DemonLayer.ColorDodge");
+        return QStringLiteral("DemonSceneEnvironment.ColorDodge");
     }
-}
-
-QString horizontalFieldToString(LayerNode::HorizontalFields value)
-{
-    switch (value) {
-    case LayerNode::LeftWidth:
-        return QStringLiteral("DemonLayer.LeftWidth");
-    case LayerNode::LeftRight:
-        return QStringLiteral("DemonLayer.LeftRight");
-    case LayerNode::WidthRight:
-        return QStringLiteral("DemonLayer.WidthRight");
-    }
-}
-
-QString verticalFieldToString(LayerNode::VerticalFields value)
-{
-    switch (value) {
-    case LayerNode::TopHeight:
-        return QStringLiteral("DemonLayer.TopHeight");
-    case LayerNode::TopBottom:
-        return QStringLiteral("DemonLayer.TopBottom");
-    case LayerNode::HeightBottom:
-        return QStringLiteral("DemonLayer.HeightBottom");
-    }
-}
-
-QString layerUnitsToString(LayerNode::Units value)
-{
-    if (value == LayerNode::Percent)
-        return QStringLiteral("DemonLayer.Percent");
-
-    return QStringLiteral("DemonLayer.Pixels");
 }
 }
 
 void LayerNode::writeQmlProperties(QTextStream &output, int tabLevel)
 {
     output << insertTabs(tabLevel) << QStringLiteral("id: ") << qmlId() << endl;
-    if (!m_sourcePath.isEmpty())
-        output << insertTabs(tabLevel) << "texturePath: " <<  sanitizeQmlSourcePath(m_sourcePath) << endl;
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("progressiveaa"), progressiveAAToString(m_progressiveAA));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("multisampleaa"), multisampleAAToString(m_multisampleAA));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("background"), layerBackgroundToString(m_layerBackground));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("backgroundcolor"), m_backgroundColor);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("blendtype"), blendTypeToString(m_blendType));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("horzfields"), horizontalFieldToString(m_horizontalFields));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("vertfields"), verticalFieldToString(m_verticalFields));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("leftunits"), layerUnitsToString(m_leftUnits));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("rightunits"), layerUnitsToString(m_rightUnits));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("bottomunits"), layerUnitsToString(m_bottomUnits));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("topunits"), layerUnitsToString(m_topUnits));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("widthunits"), layerUnitsToString(m_widthUnits));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("heightunits"), layerUnitsToString(m_heightUnits));
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("left"), m_left);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("right"), m_right);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("top"), m_top);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("bottom"), m_bottom);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("width"), m_width);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("height"), m_height);
 
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("aostrength"), m_aoStrength);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("aodistance"), m_aoDistance);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("aosoftness"), m_aoSoftness);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("aodither"), m_aoDither);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("aosamplerate"), m_aoSampleRate);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("aobias"), m_aoBias);
+    // QQuickItem position/anchors
+    if (m_horizontalFields == LeftWidth) {
+        // left anchor
+        output << insertTabs(tabLevel) << QStringLiteral("anchors.left: parent.left") << endl;
+        if (m_leftUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.leftMargin: ") << m_left << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.leftMargin: parent.width * ") << m_left * 0.01f << endl;
 
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("shadowstrength"), m_shadowStrength);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("shadowdistance"), m_shadowDist);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("shadowsoftness"), m_shadowSoftness);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("shadowbias"), m_shadowBias);
+        // width
+        if (m_widthUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("width: ") << m_width << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("width: parent.width * ") << m_width * 0.01f << endl;
+
+    } else if (m_horizontalFields == LeftRight) {
+        // left anchor
+        output << insertTabs(tabLevel) << QStringLiteral("anchors.left: parent.left") << endl;
+        if (m_leftUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.leftMargin: ") << m_left << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.leftMargin: parent.width * ") << m_left * 0.01f << endl;
+
+        // right anchor
+        output << insertTabs(tabLevel) << QStringLiteral("anchors.right: parent.right") << endl;
+        if (m_rightUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.rightMargin: ") << m_right << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.rightMargin: parent.width * ") << m_right * 0.01f << endl;
+
+    } else if (m_horizontalFields == WidthRight) {
+        // width
+        if (m_widthUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("width: ") << m_width << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("width: parent.width * ") << m_width * 0.01f << endl;
+
+        // right anchor
+        output << insertTabs(tabLevel) << QStringLiteral("anchors.right: parent.right") << endl;
+        if (m_rightUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.rightMargin: ") << m_right << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.rightMargin: parent.width * ") << m_right * 0.01f << endl;
+    }
+
+    if (m_verticalFields == TopHeight) {
+        // top anchor
+        output << insertTabs(tabLevel) << QStringLiteral("anchors.top: parent.top") << endl;
+        if (m_topUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.topMargin: ") << m_top << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.topMargin: parent.height * ") << m_top * 0.01f << endl;
+
+        // height
+        if (m_heightUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("height: ") << m_height << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("height: parent.height * ") << m_height * 0.01f << endl;
+
+    } else if (m_verticalFields == TopBottom) {
+        // top anchor
+        output << insertTabs(tabLevel) << QStringLiteral("anchors.top: parent.top") << endl;
+        if (m_topUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.topMargin: ") << m_top << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.topMargin: parent.height * ") << m_top * 0.01f << endl;
+
+        // bottom anchor
+        output << insertTabs(tabLevel) << QStringLiteral("anchors.bottom: parent.bottom") << endl;
+        if (m_bottomUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.bottomMargin: ") << m_bottom << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.bottomMargin: parent.height * ") << m_bottom * 0.01f << endl;
+
+
+    } else if (m_verticalFields == HeightBottom) {
+        // height
+        if (m_heightUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("height: ") << m_height << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("height: parent.height * ") << m_height * 0.01f << endl;
+
+        // bottom anchor
+        output << insertTabs(tabLevel) << QStringLiteral("anchors.bottom: parent.bottom") << endl;
+        if (m_bottomUnits == Pixels)
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.bottomMargin: ") << m_bottom << endl;
+        else
+            output << insertTabs(tabLevel) << QStringLiteral("anchors.bottomMargin: parent.height * ") << m_bottom * 0.01f << endl;
+    }
+
+
+    // SceneEnvironment Properties (seperate component)
+    output << insertTabs(tabLevel) << QStringLiteral("environment: DemonSceneEnvironment {") << endl;
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("progressiveaa"), progressiveAAToString(m_progressiveAA));
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("multisampleaa"), multisampleAAToString(m_multisampleAA));
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("background"), layerBackgroundToString(m_layerBackground));
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("backgroundcolor"), m_backgroundColor);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("blendtype"), blendTypeToString(m_blendType));
+
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aostrength"), m_aoStrength);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aodistance"), m_aoDistance);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aosoftness"), m_aoSoftness);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aodither"), m_aoDither);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aosamplerate"), m_aoSampleRate);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aobias"), m_aoBias);
+
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowstrength"), m_shadowStrength);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowdistance"), m_shadowDist);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowsoftness"), m_shadowSoftness);
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowbias"), m_shadowBias);
+
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("disabledepthtest"),  m_layerFlags.testFlag(DisableDepthTest));
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("disabledepthprepass"),  m_layerFlags.testFlag(DisableDepthPrePass));
 
     if (!m_lightProbe_unresolved.isEmpty()) {
-        output << insertTabs(tabLevel) << "lightProbe: " << sanitizeQmlId(m_lightProbe_unresolved) << endl;
-        writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("probebright"), m_probeBright);
-        writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("fastibl"), m_layerFlags.testFlag(LayerNode::FastIBL));
-        writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("probehorizon"), m_probeHorizon);
-        writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("probefov"), m_probeFov);
+        output << insertTabs(tabLevel + 1) << "lightProbe: " << sanitizeQmlId(m_lightProbe_unresolved) << endl;
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probebright"), m_probeBright);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("fastibl"), m_layerFlags.testFlag(LayerNode::FastIBL));
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probehorizon"), m_probeHorizon);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probefov"), m_probeFov);
     }
 
     if (!m_lightProbe2_unresolved.isEmpty()) {
-        output << insertTabs(tabLevel) << "lightProbe2: " << sanitizeQmlId(m_lightProbe2_unresolved) << endl;
-        writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("probe2fade"), m_probe2Fade);
-        writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("probe2window"), m_probe2Window);
-        writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("probe2pos"), m_probe2Window);
+        output << insertTabs(tabLevel + 1) << "lightProbe2: " << sanitizeQmlId(m_lightProbe2_unresolved) << endl;
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2fade"), m_probe2Fade);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2window"), m_probe2Window);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2pos"), m_probe2Window);
     }
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("temporalaa"), (m_layerFlags.testFlag(LayerNode::TemporalAA)));
+    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("temporalaa"), (m_layerFlags.testFlag(LayerNode::TemporalAA)));
+    output << insertTabs(tabLevel) << QStringLiteral("}") << endl;
 }
 
 template<typename V>
@@ -1665,6 +1715,7 @@ QString cameraScaleAnchorToString(CameraNode::ScaleAnchor anchor)
 void CameraNode::writeQmlProperties(QTextStream &output, int tabLevel)
 {
     Node::writeQmlProperties(output, tabLevel);
+    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("orthographic"), m_orthographic ? QStringLiteral("DemonCamera.Orthographic") : QStringLiteral("DemonCamera.Perspective"));
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("clipnear"), m_clipNear);
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("clipfar"), m_clipFar);
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("fov"), m_fov);

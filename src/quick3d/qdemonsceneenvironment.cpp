@@ -173,6 +173,16 @@ QQmlListProperty<QDemonEffect> QDemonSceneEnvironment::effectsList()
                                           QDemonSceneEnvironment::qmlClearEffects);
 }
 
+bool QDemonSceneEnvironment::isDepthTestDisabled() const
+{
+    return m_isDepthTestDisabled;
+}
+
+bool QDemonSceneEnvironment::isDepthPrePassDisabled() const
+{
+    return m_isDepthPrePassDisabled;
+}
+
 void QDemonSceneEnvironment::setProgressiveAAMode(QDemonSceneEnvironment::QDemonEnvironmentAAModeValues progressiveAAMode)
 {
     if (m_progressiveAAMode == progressiveAAMode)
@@ -395,6 +405,24 @@ void QDemonSceneEnvironment::setProbe2Postion(float probe2Postion)
 
     m_probe2Postion = probe2Postion;
     emit probe2PostionChanged(m_probe2Postion);
+}
+
+void QDemonSceneEnvironment::setIsDepthTestDisabled(bool isDepthTestDisabled)
+{
+    if (m_isDepthTestDisabled == isDepthTestDisabled)
+        return;
+
+    m_isDepthTestDisabled = isDepthTestDisabled;
+    emit isDepthTestDisabledChanged(m_isDepthTestDisabled);
+}
+
+void QDemonSceneEnvironment::setIsDepthPrePassDisabled(bool isDepthPrePassDisabled)
+{
+    if (m_isDepthPrePassDisabled == isDepthPrePassDisabled)
+        return;
+
+    m_isDepthPrePassDisabled = isDepthPrePassDisabled;
+    emit isDepthPrePassDisabledChanged(m_isDepthPrePassDisabled);
 }
 
 void QDemonSceneEnvironment::setTemporalAAEnabled(bool temporalAAEnabled)
