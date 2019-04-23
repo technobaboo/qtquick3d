@@ -1,7 +1,7 @@
 # TODO
 
 ## UIP Exporter
-Update to support View3D based API
+Add Support for translateing Slides -> States
 
 ## View3D
 Make sure the image properties of environment are working correctly

@@ -222,8 +222,8 @@ private:
     static void qmlClearEffects(QQmlListProperty<QDemonEffect> *list);
 
     //    QHash<QObject*, QMetaObject::Connection> m_connections;
-    bool m_isDepthTestDisabled;
-    bool m_isDepthPrePassDisabled;
+    bool m_isDepthTestDisabled = false;
+    bool m_isDepthPrePassDisabled = false;
 };
 
 QT_END_NAMESPACE

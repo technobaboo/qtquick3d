@@ -139,14 +139,6 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
 {
     SGFramebufferObjectNode *n = static_cast<SGFramebufferObjectNode *>(node);
 
-    // We only abort if we never had a node before. This is so that we
-    // don't recreate the renderer object if the thing becomes tiny. In
-    // terms of API it would be horrible if the renderer would go away
-    // that easily so with this logic, the renderer only goes away when
-    // the scenegraph is invalidated or it is removed from the scene.
-    if (!n && (width() <= 0 || height() <= 0))
-        return nullptr;
-
     if (!n) {
         if (!m_node)
             m_node = new SGFramebufferObjectNode;
