@@ -118,6 +118,106 @@ void SGFramebufferObjectNode::handleScreenChange()
     }
 }
 
+static QSurfaceFormat findIdealGLVersion()
+{
+    QSurfaceFormat fmt;
+    fmt.setProfile(QSurfaceFormat::CoreProfile);
+
+    // Advanced: Try 4.3 core (so we get compute shaders for instance)
+    fmt.setVersion(4, 3);
+    QOpenGLContext ctx;
+    ctx.setFormat(fmt);
+    if (ctx.create() && ctx.format().version() >= qMakePair(4, 3)) {
+        qDebug("Requesting OpenGL 4.3 core context succeeded");
+        return ctx.format();
+    }
+
+    // Basic: Stick with 3.3 for now to keep less fortunate, Mesa-based systems happy
+    fmt.setVersion(3, 3);
+    ctx.setFormat(fmt);
+    if (ctx.create() && ctx.format().version() >= qMakePair(3, 3)) {
+        qDebug("Requesting OpenGL 3.3 core context succeeded");
+        return ctx.format();
+    }
+
+    qDebug("Impending doom");
+    return fmt;
+}
+
+static bool isBlackListedES3Driver(QOpenGLContext &ctx) {
+    static bool hasBeenTested = false;
+    static bool result = false;
+    if (!hasBeenTested) {
+        QOffscreenSurface offscreenSurface;
+        offscreenSurface.create();
+        ctx.makeCurrent(&offscreenSurface);
+        QString vendorString = QString::fromLatin1(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+        ctx.doneCurrent();
+        if (vendorString == QStringLiteral("PowerVR Rogue GE8300"))
+            result = true;
+        hasBeenTested = true;
+    }
+    return result;
+}
+
+
+static QSurfaceFormat findIdealGLESVersion()
+{
+    QSurfaceFormat fmt;
+
+    // Advanced: Try 3.1 (so we get compute shaders for instance)
+    fmt.setVersion(3, 1);
+    fmt.setRenderableType(QSurfaceFormat::OpenGLES);
+    QOpenGLContext ctx;
+    ctx.setFormat(fmt);
+
+    // Now, it's important to check the format with the actual version (parsed
+    // back from GL_VERSION) since some implementations, ANGLE for instance,
+    // are broken and succeed the 3.1 context request even though they only
+    // support and return a 3.0 context. This is against the spec since 3.0 is
+    // obviously not backwards compatible with 3.1, but hey...
+    if (ctx.create() && ctx.format().version() >= qMakePair(3, 1) && !isBlackListedES3Driver(ctx)) {
+        qDebug("Requesting OpenGL ES 3.1 context succeeded");
+        return ctx.format();
+    }
+
+    // Basic: OpenGL ES 3.0 is a hard requirement at the moment since we can
+    // only generate 300 es shaders, uniform buffers are mandatory.
+    fmt.setVersion(3, 0);
+    ctx.setFormat(fmt);
+    if (ctx.create() && ctx.format().version() >= qMakePair(3, 0) && !isBlackListedES3Driver(ctx)) {
+        qDebug("Requesting OpenGL ES 3.0 context succeeded");
+        return ctx.format();
+    }
+
+    fmt.setVersion(2, 0);
+    ctx.setFormat(fmt);
+    if (ctx.create()) {
+        qDebug("Requesting OpenGL ES 2.0 context succeeded");
+        return fmt;
+    }
+
+    qDebug("Impending doom");
+    return fmt;
+}
+
+static QSurfaceFormat idealSurfaceFormat()
+{
+    static const QSurfaceFormat f = [] {
+        QSurfaceFormat fmt;
+        if (QOpenGLContext::openGLModuleType() == QOpenGLContext::LibGL) { // works in dynamic gl builds too because there's a qguiapp already
+            fmt = findIdealGLVersion();
+        } else {
+            fmt = findIdealGLESVersion();
+        }
+        fmt.setDepthBufferSize(24);
+        fmt.setStencilBufferSize(8);
+        // Ignore MSAA here as that is a per-layer setting.
+        return fmt;
+    }();
+    return f;
+}
+
 
 QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
     : m_window(window)
@@ -125,14 +225,14 @@ QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
     QOpenGLContext *oldContext = QOpenGLContext::currentContext();
 
     m_openGLContext = new QOpenGLContext();
-    m_openGLContext->setFormat(oldContext->format());
+    m_openGLContext->setFormat(idealSurfaceFormat());
     m_openGLContext->setShareContext(oldContext);
     m_openGLContext->create();
 
     m_openGLContext->makeCurrent(m_window);
 
     if (m_renderContext.isNull())
-        m_renderContext = QDemonRenderContext::createGl(oldContext->format());
+        m_renderContext = QDemonRenderContext::createGl(m_openGLContext->format());
     if (m_sgContext.isNull())
         m_sgContext = new QDemonRenderContextInterface(m_renderContext, QString::fromLatin1("./"));
     m_openGLContext->doneCurrent();
