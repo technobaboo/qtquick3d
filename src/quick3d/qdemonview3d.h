@@ -68,6 +68,7 @@ private:
     QDemonNode *m_sceneRoot = nullptr;
     QDemonNode *m_referencedScene = nullptr;
     mutable SGFramebufferObjectNode *m_node = nullptr;
+    bool m_deferredRendering = false;
 };
 
 QT_END_NAMESPACE

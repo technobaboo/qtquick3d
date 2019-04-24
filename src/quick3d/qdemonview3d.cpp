@@ -150,7 +150,8 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
         n->renderer = createRenderer();
         n->renderer->data = n;
         n->quickFbo = this;
-        connect(window(), SIGNAL(beforeRendering()), n, SLOT(render()));
+        if (m_deferredRendering)
+            connect(window(), SIGNAL(beforeRendering()), n, SLOT(render()));
         connect(window(), SIGNAL(screenChanged(QScreen*)), n, SLOT(handleScreenChange()));
     }
     QSize minFboSize = QQuickItemPrivate::get(this)->sceneGraphContext()->minimumFBOSize();
@@ -161,13 +162,17 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
     desiredFboSize *= n->devicePixelRatio;
 
     n->renderer->synchronize(this, desiredFboSize);
-
+    if (!m_deferredRendering) {
+        n->renderPending = true;
+        n->render();
+    }
 
     n->setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
     n->setFiltering(smooth() ? QSGTexture::Linear : QSGTexture::Nearest);
     n->setRect(0, 0, width(), height());
 
-    n->scheduleRender();
+    if (m_deferredRendering)
+        n->scheduleRender();
 
     return n;
 }
