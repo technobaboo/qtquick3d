@@ -619,8 +619,7 @@ bool QDemonObjectPrivate::isResourceNode() const
     case QDemonObject::Text:
     case QDemonObject::Path:
         return false;
-    case QDemonObject::Presentation:
-    case QDemonObject::Scene:
+    case QDemonObject::SceneEnvironment:
     case QDemonObject::DefaultMaterial:
     case QDemonObject::Image:
     case QDemonObject::Effect:
@@ -646,8 +645,7 @@ bool QDemonObjectPrivate::isSpatialNode() const
     case QDemonObject::Text:
     case QDemonObject::Path:
         return true;
-    case QDemonObject::Presentation:
-    case QDemonObject::Scene:
+    case QDemonObject::SceneEnvironment:
     case QDemonObject::DefaultMaterial:
     case QDemonObject::Image:
     case QDemonObject::Effect:
@@ -669,18 +667,6 @@ void QDemonObjectPrivate::setCulled(bool cull)
     if ((cull && ++extra.value().hideRefCount == 1) || (!cull && --extra.value().hideRefCount == 0))
         dirty(HideReference);
 }
-
-//QDemonRenderContextInterface *QDemonObjectPrivate::sceneGraphContext() const
-//{
-//    Q_ASSERT(sceneRenderer);
-//    return sceneRenderer->m_context.data();
-//}
-
-//QDemonRenderContext *QDemonObjectPrivate::sceneGraphRenderContext() const
-//{
-//    Q_ASSERT(sceneRenderer);
-//    return sceneRenderer->m_context->renderContext().data();
-//}
 
 QList<QDemonObject *> QDemonObjectPrivate::paintOrderChildItems() const
 {

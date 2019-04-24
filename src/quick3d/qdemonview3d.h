@@ -69,6 +69,7 @@ private:
     QDemonNode *m_referencedScene = nullptr;
     mutable SGFramebufferObjectNode *m_node = nullptr;
     bool m_deferredRendering = false;
+    QHash<QObject*, QMetaObject::Connection> m_connections;
 };
 
 QT_END_NAMESPACE

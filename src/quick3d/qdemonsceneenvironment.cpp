@@ -1,41 +1,43 @@
 #include "qdemonsceneenvironment.h"
+#include "qdemonobject_p.h"
+#include "qdemonimage.h"
 
 QT_BEGIN_NAMESPACE
 
-//static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonWindow *window, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
-//    // disconnect previous destruction listern
-//    if (oldO) {
-//        if (window)
-//            QDemonObjectPrivate::get(oldO)->derefWindow();
+static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *manager, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
+    // disconnect previous destruction listern
+    if (oldO) {
+        if (manager)
+            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
 
-//        auto connection = connections.find(oldO);
-//        if (connection != connections.end()) {
-//            QObject::disconnect(connection.value());
-//            connections.erase(connection);
-//        }
-//    }
+        auto connection = connections.find(oldO);
+        if (connection != connections.end()) {
+            QObject::disconnect(connection.value());
+            connections.erase(connection);
+        }
+    }
 
-//    // listen for new map's destruction
-//    if (newO) {
-//        if (window)
-//            QDemonObjectPrivate::get(newO)->refWindow(window);
-//        auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
-//            callFn(nullptr);
-//        });
-//        connections.insert(newO, connection);
-//    }
-//}
+    // listen for new map's destruction
+    if (newO) {
+        if (manager)
+            QDemonObjectPrivate::get(newO)->refSceneRenderer(manager);
+        auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
+            callFn(nullptr);
+        });
+        connections.insert(newO, connection);
+    }
+}
 
-QDemonSceneEnvironment::QDemonSceneEnvironment(QObject *parent)
-    : QObject(parent)
+QDemonSceneEnvironment::QDemonSceneEnvironment(QDemonObject *parent)
+    : QDemonObject(parent)
 {
 
 }
 
 QDemonSceneEnvironment::~QDemonSceneEnvironment()
 {
-//    for (auto connection : m_connections)
-//        disconnect(connection);
+    for (auto connection : m_connections)
+        disconnect(connection);
 }
 
 QDemonSceneEnvironment::QDemonEnvironmentAAModeValues QDemonSceneEnvironment::progressiveAAMode() const
@@ -183,6 +185,11 @@ bool QDemonSceneEnvironment::isDepthPrePassDisabled() const
     return m_isDepthPrePassDisabled;
 }
 
+QDemonObject::Type QDemonSceneEnvironment::type() const
+{
+    return QDemonObject::SceneEnvironment;
+}
+
 void QDemonSceneEnvironment::setProgressiveAAMode(QDemonSceneEnvironment::QDemonEnvironmentAAModeValues progressiveAAMode)
 {
     if (m_progressiveAAMode == progressiveAAMode)
@@ -323,9 +330,9 @@ void QDemonSceneEnvironment::setLightProbe(QDemonImage *lightProbe)
     if (m_lightProbe == lightProbe)
         return;
 
-//    updateProperyListener(lightProbe, m_lightProbe, window(), m_connections, [this](QDemonObject *n) {
-//        setLightProbe(qobject_cast<QDemonImage *>(n));
-//    });
+    updateProperyListener(lightProbe, m_lightProbe, sceneRenderer(), m_connections, [this](QDemonObject *n) {
+        setLightProbe(qobject_cast<QDemonImage *>(n));
+    });
 
     m_lightProbe = lightProbe;
     emit lightProbeChanged(m_lightProbe);
@@ -372,9 +379,9 @@ void QDemonSceneEnvironment::setLightProbe2(QDemonImage *lightProbe2)
     if (m_lightProbe2 == lightProbe2)
         return;
 
-//    updateProperyListener(lightProbe2, m_lightProbe2, window(), m_connections, [this](QDemonObject *n) {
-//        setLightProbe2(qobject_cast<QDemonImage *>(n));
-//    });
+    updateProperyListener(lightProbe2, m_lightProbe2, sceneRenderer(), m_connections, [this](QDemonObject *n) {
+        setLightProbe2(qobject_cast<QDemonImage *>(n));
+    });
 
     m_lightProbe2 = lightProbe2;
     emit lightProbe2Changed(m_lightProbe2);
@@ -423,6 +430,33 @@ void QDemonSceneEnvironment::setIsDepthPrePassDisabled(bool isDepthPrePassDisabl
 
     m_isDepthPrePassDisabled = isDepthPrePassDisabled;
     emit isDepthPrePassDisabledChanged(m_isDepthPrePassDisabled);
+}
+
+QDemonRenderGraphObject *QDemonSceneEnvironment::updateSpatialNode(QDemonRenderGraphObject *node)
+{
+    // Don't do anything, these properties get set by the scene renderer
+    return node;
+}
+
+void QDemonSceneEnvironment::itemChange(QDemonObject::ItemChange change, const QDemonObject::ItemChangeData &value)
+{
+    if (change == QDemonObject::ItemSceneChange)
+        updateSceneManager(value.sceneRenderer);
+}
+
+void QDemonSceneEnvironment::updateSceneManager(QDemonSceneManager *manager)
+{
+    if (manager) {
+        if (m_lightProbe)
+            QDemonObjectPrivate::get(m_lightProbe)->refSceneRenderer(manager);
+        if (m_lightProbe2)
+            QDemonObjectPrivate::get(m_lightProbe2)->refSceneRenderer(manager);
+    } else {
+        if (m_lightProbe)
+            QDemonObjectPrivate::get(m_lightProbe)->derefSceneRenderer();
+        if (m_lightProbe2)
+            QDemonObjectPrivate::get(m_lightProbe2)->derefSceneRenderer();
+    }
 }
 
 void QDemonSceneEnvironment::setTemporalAAEnabled(bool temporalAAEnabled)

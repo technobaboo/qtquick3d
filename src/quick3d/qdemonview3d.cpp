@@ -14,13 +14,37 @@
 
 QT_BEGIN_NAMESPACE
 
+static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *manager, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
+    // disconnect previous destruction listern
+    if (oldO) {
+        if (manager)
+            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
+
+        auto connection = connections.find(oldO);
+        if (connection != connections.end()) {
+            QObject::disconnect(connection.value());
+            connections.erase(connection);
+        }
+    }
+
+    // listen for new map's destruction
+    if (newO) {
+        if (manager)
+            QDemonObjectPrivate::get(newO)->refSceneRenderer(manager);
+        auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
+            callFn(nullptr);
+        });
+        connections.insert(newO, connection);
+    }
+}
+
 QDemonView3D::QDemonView3D(QQuickItem *parent)
     : QQuickItem(parent)
 {
     setFlag(ItemHasContents);
-    m_environment = new QDemonSceneEnvironment(this);
     m_camera = nullptr;
     m_sceneRoot = new QDemonNode();
+    m_environment = new QDemonSceneEnvironment(m_sceneRoot);
     QDemonObjectPrivate::get(m_sceneRoot)->sceneManager = new QDemonSceneManager(m_sceneRoot);
     connect(QDemonObjectPrivate::get(m_sceneRoot)->sceneManager, &QDemonSceneManager::needsUpdate,
             this, &QQuickItem::update);
@@ -28,7 +52,8 @@ QDemonView3D::QDemonView3D(QQuickItem *parent)
 
 QDemonView3D::~QDemonView3D()
 {
-
+    for (auto connection : m_connections)
+        disconnect(connection);
 }
 
 static void ssgn_append(QQmlListProperty<QObject> *property, QObject *obj)
@@ -193,6 +218,8 @@ void QDemonView3D::setEnvironment(QDemonSceneEnvironment *environment)
         return;
 
     m_environment = environment;
+    if (!m_environment->parentItem())
+        m_environment->setParentItem(m_sceneRoot);
     emit environmentChanged(m_environment);
     update();
 }

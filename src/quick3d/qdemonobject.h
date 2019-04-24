@@ -42,8 +42,7 @@ class Q_QUICK3D_EXPORT QDemonObject : public QObject, public QQmlParserStatus
 public:
     enum Type {
         Unknown = 0,
-        Presentation,
-        Scene,
+        SceneEnvironment,
         Node,
         Layer,
         Light,

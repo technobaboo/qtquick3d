@@ -11,7 +11,7 @@
 QT_BEGIN_NAMESPACE
 
 class QDemonImage;
-class Q_QUICK3D_EXPORT QDemonSceneEnvironment : public QObject
+class Q_QUICK3D_EXPORT QDemonSceneEnvironment : public QDemonObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<QDemonEffect> effects READ effectsList)
@@ -76,7 +76,7 @@ public:
     Q_ENUM(QDemonEnvironmentBlendTypes)
 
 
-    explicit QDemonSceneEnvironment(QObject *parent = nullptr);
+    explicit QDemonSceneEnvironment(QDemonObject *parent = nullptr);
     ~QDemonSceneEnvironment() override;
 
     QDemonEnvironmentAAModeValues progressiveAAMode() const;
@@ -114,6 +114,8 @@ public:
 
     bool isDepthTestDisabled() const;
     bool isDepthPrePassDisabled() const;
+
+    QDemonObject::Type type() const override;
 
 public Q_SLOTS:
     void setProgressiveAAMode(QDemonEnvironmentAAModeValues progressiveAAMode);
@@ -185,7 +187,13 @@ Q_SIGNALS:
     void isDepthTestDisabledChanged(bool isDepthTestDisabled);
     void isDepthPrePassDisabledChanged(bool isDepthPrePassDisabled);
 
+protected:
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
+    void itemChange(ItemChange, const ItemChangeData &) override;
+
 private:
+    void updateSceneManager(QDemonSceneManager *manager);
+
     QDemonEnvironmentAAModeValues m_progressiveAAMode = NoAA;
     QDemonEnvironmentAAModeValues m_multisampleAAMode = NoAA;
     bool m_temporalAAEnabled = false;
@@ -221,7 +229,7 @@ private:
     static int qmlEffectsCount(QQmlListProperty<QDemonEffect> *list);
     static void qmlClearEffects(QQmlListProperty<QDemonEffect> *list);
 
-    //    QHash<QObject*, QMetaObject::Connection> m_connections;
+    QHash<QObject*, QMetaObject::Connection> m_connections;
     bool m_isDepthTestDisabled = false;
     bool m_isDepthPrePassDisabled = false;
 };

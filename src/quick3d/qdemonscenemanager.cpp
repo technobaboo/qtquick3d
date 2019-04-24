@@ -87,8 +87,7 @@ void QDemonSceneManager::updateDirtyNode(QDemonObject *object)
         if (spatialNode)
             updateDirtySpatialNode(spatialNode);
     } break;
-    case QDemonObject::Presentation:
-    case QDemonObject::Scene:
+    case QDemonObject::SceneEnvironment:
     case QDemonObject::DefaultMaterial:
     case QDemonObject::Image:
     case QDemonObject::Effect:
