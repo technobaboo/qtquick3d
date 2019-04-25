@@ -23,6 +23,7 @@ SGFramebufferObjectNode::SGFramebufferObjectNode()
     , devicePixelRatio(1)
 {
     qsgnode_set_description(this, QStringLiteral("fbonode"));
+    setFlag(QSGNode::UsePreprocess, true);
 }
 
 SGFramebufferObjectNode::~SGFramebufferObjectNode()
@@ -34,12 +35,17 @@ SGFramebufferObjectNode::~SGFramebufferObjectNode()
 void SGFramebufferObjectNode::scheduleRender()
 {
     renderPending = true;
-    window->update();
+    markDirty(DirtyMaterial);
 }
 
 QSGTexture *SGFramebufferObjectNode::texture() const
 {
     return QSGSimpleTextureNode::texture();
+}
+
+void SGFramebufferObjectNode::preprocess()
+{
+    render();
 }
 
 //void SGFramebufferObjectNode::resetOpenGLState() {

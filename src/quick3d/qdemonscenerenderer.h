@@ -74,6 +74,8 @@ public:
 
     QSGTexture *texture() const override;
 
+    void preprocess() override;
+
 public Q_SLOTS:
     void render();
 
@@ -92,6 +94,8 @@ public:
 private:
     void resetOpenGLState();
     QOpenGLVertexArrayObjectHelper *m_vaoHelper = nullptr;
+
+
 };
 
 QT_END_NAMESPACE
