@@ -360,6 +360,9 @@ typedef QSet<QString> TPathSet;
 typedef QHash<dynamic::QDemonDynamicShaderMapKey, TShaderAndFlags> TShaderMap;
 
 static const char *includeSearch = "#include \"";
+static const QString copyrightHeaderStart = QStringLiteral("/****************************************************************************");
+static const QString copyrightHeaderEnd = QStringLiteral("****************************************************************************/");
+
 
 struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 {
@@ -666,10 +669,18 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             int theActualBegin = thePos + strlen(includeSearch);
             QString theInclude = theReadBuffer.mid(theActualBegin, theEndQuote - theActualBegin);
             // If we haven't included the file yet this round
-            QByteArray theHeader = doLoadShader(theInclude);
-            //            quint32 theLen = (quint32)strlen(theHeader);
-            //            theReadBuffer = theReadBuffer.replace(theReadBuffer.begin() + thePos, theReadBuffer.begin() + theEndQuote + 1, theHeader, theLen);
-            theReadBuffer = theReadBuffer.replace(thePos, (theEndQuote + 1) - thePos, theHeader);
+            QString theHeader = QString::fromUtf8(doLoadShader(theInclude));
+            // Strip copywrite headers from include if present
+            if (theHeader.startsWith(copyrightHeaderStart)) {
+                int clipPos = theHeader.indexOf(copyrightHeaderEnd) ;
+                if (clipPos >= 0)
+                    theHeader.remove(0, clipPos + copyrightHeaderEnd.count());
+            }
+            // Write insert comment for begin source
+            theHeader.prepend(QStringLiteral("\n// begin \"") + theInclude + QStringLiteral("\"\n"));
+            // Write insert comment for end source
+            theHeader.append(QStringLiteral("\n// end \"" ) + theInclude + QStringLiteral("\"\n"));
+            theReadBuffer = theReadBuffer.replace(thePos, (theEndQuote + 1) - thePos, theHeader.toUtf8());
         }
     }
 
@@ -677,10 +688,6 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     {
         auto theInsert = m_expandedFiles.find(inPathToEffect);
         const bool found = (theInsert != m_expandedFiles.end());
-        //        if (found)
-        //            *theInsert = QByteArray();
-        //        else
-        //            theInsert = m_expandedFiles.insert(inPathToEffect, QByteArray());
 
         QByteArray theReadBuffer;
         if (!found) {
