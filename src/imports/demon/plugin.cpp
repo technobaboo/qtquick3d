@@ -89,13 +89,11 @@ public:
         qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DemonDefaultMaterial");
         qmlRegisterType<QDemonEffect>(uri, 1, 0, "DemonEffect");
         qmlRegisterType<QDemonImage>(uri, 1, 0, "DemonImage");
-        //qmlRegisterType<QDemonLayer>(uri, 1, 0, "DemonLayer");
         qmlRegisterType<QDemonLight>(uri, 1, 0, "DemonLight");
         qmlRegisterUncreatableType<QDemonMaterial>(uri, 1, 0, "DemonMaterial", QLatin1String("Material is Abstract"));
         qmlRegisterType<QDemonModel>(uri, 1, 0, "DemonModel");
         qmlRegisterType<QDemonNode>(uri, 1, 0, "DemonNode");
         qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "DemonObject", QLatin1String("Object is Abtract"));
-        //qmlRegisterType<QDemonWindow>(uri, 1, 0, "DemonWindow");
         qmlRegisterType<QDemonView3D>(uri, 1, 0, "DemonView3D");
         qmlRegisterType<QDemonSceneEnvironment>(uri, 1, 0, "DemonSceneEnvironment");
 

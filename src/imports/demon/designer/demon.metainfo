@@ -1,0 +1,110 @@
+MetaInfo {
+    Type {
+        name: "QtDemon.DemonCamera"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "Camera"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+    Type {
+        name: "QtDemon.DemonCustomMaterial"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "Custom Material"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+    Type {
+        name: "QtDemon.DemonDefaultMaterial"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "Default Material"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+    Type {
+        name: "QtDemon.DemonImage"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "Image"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+    Type {
+        name: "QtDemon.DemonLight"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "Light"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+    Type {
+        name: "QtDemon.DemonModel"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "Model"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+    Type {
+        name: "QtDemon.DemonNode"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "Node"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+    Type {
+        name: "QtDemon.DemonSceneEnvironment"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "Scene Environment"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+    Type {
+        name: "QtDemon.DemonView3d"
+        icon: "images/dummy16.png"
+
+        ItemLibraryEntry {
+            name: "View3D"
+            category: "Qt Demon"
+            libraryIcon: "images/dummy.png"
+            version: "1.0"
+            requiredImport: "QtDemon"
+        }
+    }
+}

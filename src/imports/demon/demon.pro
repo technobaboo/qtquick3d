@@ -3,10 +3,12 @@ TARGET = qdemonplugin
 TARGETPATH = QtDemon
 IMPORT_VERSION = 1.$$QT_MINOR_VERSION
 
-QT += qml-private quick quick3d
+QT += qml-private quick-private quick3d
 
 OTHER_FILES += \
     qmldir
+
+!static: qtConfig(quick-designer): include(designer/designer.pri)
 
 load(qml_plugin)
 
