@@ -40,7 +40,7 @@ Section {
         }
         SecondColumnLayout {
             ComboBox {
-                scope: "DemonNode."
+                scope: "DemonNode"
                 model: ["LeftHanded", "RightHanded"]
                 backendValue: backendValues.orientation
                 Layout.fillWidth: true
@@ -144,7 +144,7 @@ Section {
         SecondColumnLayout {
             ComboBox {
                 Layout.fillWidth: true
-                scope: "DemonNode."
+                scope: "DemonNode"
                 model: ["XYZ", "YZX", "ZXY", "XZY", "YXZ", "ZYX", "XYZr", "YZXr", "ZXYr", "XZYr", "YXZr", "ZYXr"]
                 backendValue: backendValues.rotationorder
             }
