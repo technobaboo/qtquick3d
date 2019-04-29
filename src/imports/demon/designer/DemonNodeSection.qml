@@ -4,88 +4,239 @@ import QtQuick.Layouts 1.12
 
 Section {
     caption: qsTr("Node")
+
     SectionLayout {
+
         Label {
-            text: qsTr("Position X")
-            tooltip: qsTr("X Position Translation")
+            text: qsTr("Opacity")
+            tooltip: qsTr("Set local opacity on node")
+        }
+
+        // ### should be a slider
+        SpinBox {
+            maximumValue: 1.0
+            minimumValue: 0.0
+            decimals: 2
+            backendValue: backendValues.opacity
+            Layout.fillWidth: true
+        }
+
+        Label {
+            text: qsTr("is Visible")
+            tooltip: qsTr("Set local visiblity of the item")
         }
         SecondColumnLayout {
-            SpinBox {
-                maximumValue: 9999999
-                minimumValue: -9999999
-                decimals: 5
-                backendValue: backendValues.x
+            // ### should be a slider
+            CheckBox {
+                text: backendValues.visible.valueToString
+                backendValue: backendValues.visible
                 Layout.fillWidth: true
             }
         }
 
         Label {
-            text: qsTr("Position Y")
-            tooltip: qsTr("Y Position Translation")
+            text: qsTr("Orientation")
+            tooltip: qsTr("The handedness of the transformation")
         }
         SecondColumnLayout {
-            SpinBox {
-                maximumValue: 9999999
-                minimumValue: -9999999
-                decimals: 5
-                backendValue: backendValues.y
+            ComboBox {
+                scope: "DemonNode."
+                model: ["LeftHanded", "RightHanded"]
+                backendValue: backendValues.orientation
                 Layout.fillWidth: true
             }
         }
 
         Label {
-            text: qsTr("Position Z")
-            tooltip: qsTr("Z Position Translation")
+            text: qsTr("Translation")
+            tooltip: qsTr("Position Translation")
         }
         SecondColumnLayout {
-            SpinBox {
-                maximumValue: 9999999
-                minimumValue: -9999999
-                decimals: 5
-                backendValue: backendValues.z
-                Layout.fillWidth: true
+            ColumnLayout {
+                RowLayout {
+                    Label {
+                        text: qsTr("X")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.x
+                        Layout.fillWidth: true
+                    }
+                }
+                RowLayout {
+                    Label {
+                        text: qsTr("Y")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.y
+                        Layout.fillWidth: true
+                    }
+                }
+                RowLayout {
+                    Label {
+                        text: qsTr("Z")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.z
+                        Layout.fillWidth: true
+                    }
+                }
             }
         }
 
         Label {
-            text: qsTr("Rotation X")
-            tooltip: qsTr("X Rotation")
+            text: qsTr("Rotation")
+            tooltip: qsTr("Rotation in degrees")
         }
         SecondColumnLayout {
-            SpinBox {
-                maximumValue: 9999999
-                minimumValue: -9999999
-                decimals: 5
-                backendValue: backendValues.rotation_x
-                Layout.fillWidth: true
+            ColumnLayout {
+                RowLayout {
+                    Label {
+                        text: qsTr("X")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.rotation_x
+                        Layout.fillWidth: true
+                    }
+                }
+                RowLayout {
+                    Label {
+                        text: qsTr("Y")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.rotation_y
+                        Layout.fillWidth: true
+                    }
+                }
+                RowLayout {
+                    Label {
+                        text: qsTr("Z")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.rotation_z
+                        Layout.fillWidth: true
+                    }
+                }
             }
         }
 
         Label {
-            text: qsTr("Rotation Y")
-            tooltip: qsTr("Y Rotation")
+            text: qsTr("Rotation Order")
+            tooltip: qsTr("Order that rotation operations are performed")
         }
         SecondColumnLayout {
-            SpinBox {
-                maximumValue: 9999999
-                minimumValue: -9999999
-                decimals: 5
-                backendValue: backendValues.rotation_y
+            ComboBox {
                 Layout.fillWidth: true
+                scope: "DemonNode."
+                model: ["XYZ", "YZX", "ZXY", "XZY", "YXZ", "ZYX", "XYZr", "YZXr", "ZXYr", "XZYr", "YXZr", "ZYXr"]
+                backendValue: backendValues.rotationorder
             }
         }
 
         Label {
-            text: qsTr("Rotation Z")
-            tooltip: qsTr("Z Rotation")
+            text: qsTr("Scale")
+            tooltip: qsTr("Scale")
+        }
+
+        SecondColumnLayout {
+            ColumnLayout {
+                RowLayout {
+                    Label {
+                        text: qsTr("X")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.scale_x
+                        Layout.fillWidth: true
+                    }
+                }
+                RowLayout {
+                    Label {
+                        text: qsTr("Y")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.scale_y
+                        Layout.fillWidth: true
+                    }
+                }
+                RowLayout {
+                    Label {
+                        text: qsTr("Z")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.scale_z
+                        Layout.fillWidth: true
+                    }
+                }
+            }
+        }
+
+        Label {
+            text: qsTr("Pivot")
         }
         SecondColumnLayout {
-            SpinBox {
-                maximumValue: 9999999
-                minimumValue: -9999999
-                decimals: 5
-                backendValue: backendValues.rotation_z
-                Layout.fillWidth: true
+            ColumnLayout {
+                RowLayout {
+                    Label {
+                        text: qsTr("X")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.pivot_x
+                        Layout.fillWidth: true
+                    }
+                }
+                RowLayout {
+                    Label {
+                        text: qsTr("Y")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.pivot_y
+                        Layout.fillWidth: true
+                    }
+                }
+                RowLayout {
+                    Label {
+                        text: qsTr("Z")
+                    }
+                    SpinBox {
+                        maximumValue: 9999999
+                        minimumValue: -9999999
+                        decimals: 5
+                        backendValue: backendValues.pivot_z
+                        Layout.fillWidth: true
+                    }
+                }
             }
         }
     }
