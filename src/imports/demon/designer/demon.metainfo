@@ -3,17 +3,30 @@ MetaInfo {
         name: "QtDemon.DemonCamera"
         icon: "images/dummy16.png"
 
+        Hints {
+            visibleInNavigator: true
+            canBeDroppedInNavigator: true
+            canBeDroppedInFormEditor: false
+        }
+
         ItemLibraryEntry {
             name: "Camera"
             category: "Qt Demon"
             libraryIcon: "images/dummy.png"
             version: "1.0"
             requiredImport: "QtDemon"
+            Property { name: "z"; type: "int"; value: -500; }
         }
     }
     Type {
         name: "QtDemon.DemonCustomMaterial"
         icon: "images/dummy16.png"
+
+        Hints {
+            visibleInNavigator: true
+            canBeDroppedInNavigator: true
+            canBeDroppedInFormEditor: false
+        }
 
         ItemLibraryEntry {
             name: "Custom Material"
@@ -27,17 +40,30 @@ MetaInfo {
         name: "QtDemon.DemonDefaultMaterial"
         icon: "images/dummy16.png"
 
+        Hints {
+            visibleInNavigator: true
+            canBeDroppedInNavigator: true
+            canBeDroppedInFormEditor: false
+        }
+
         ItemLibraryEntry {
             name: "Default Material"
             category: "Qt Demon"
             libraryIcon: "images/dummy.png"
             version: "1.0"
             requiredImport: "QtDemon"
+            Property { name: "diffuseColor"; type: "color"; value: "#green"; }
         }
     }
     Type {
         name: "QtDemon.DemonImage"
         icon: "images/dummy16.png"
+
+        Hints {
+            visibleInNavigator: true
+            canBeDroppedInNavigator: true
+            canBeDroppedInFormEditor: false
+        }
 
         ItemLibraryEntry {
             name: "Image"
@@ -51,29 +77,49 @@ MetaInfo {
         name: "QtDemon.DemonLight"
         icon: "images/dummy16.png"
 
+        Hints {
+            visibleInNavigator: true
+            canBeDroppedInNavigator: true
+            canBeDroppedInFormEditor: false
+        }
+
         ItemLibraryEntry {
             name: "Light"
             category: "Qt Demon"
             libraryIcon: "images/dummy.png"
             version: "1.0"
             requiredImport: "QtDemon"
+            Property { name: "ambientColor"; type: "color"; value: "#060606"; }
         }
     }
     Type {
         name: "QtDemon.DemonModel"
         icon: "images/dummy16.png"
 
+        Hints {
+            visibleInNavigator: true
+            canBeDroppedInNavigator: true
+            canBeDroppedInFormEditor: false
+        }
+
         ItemLibraryEntry {
-            name: "Model"
+            name: "Cube Model"
             category: "Qt Demon"
             libraryIcon: "images/dummy.png"
             version: "1.0"
             requiredImport: "QtDemon"
+            Property { name: "source"; type: "string"; value: "#Cube"; }
         }
     }
     Type {
         name: "QtDemon.DemonNode"
         icon: "images/dummy16.png"
+
+        Hints {
+            visibleInNavigator: true
+            canBeDroppedInNavigator: true
+            canBeDroppedInFormEditor: false
+        }
 
         ItemLibraryEntry {
             name: "Node"
@@ -87,6 +133,12 @@ MetaInfo {
         name: "QtDemon.DemonSceneEnvironment"
         icon: "images/dummy16.png"
 
+        Hints {
+            visibleInNavigator: true
+            canBeDroppedInNavigator: true
+            canBeDroppedInFormEditor: false
+        }
+
         ItemLibraryEntry {
             name: "Scene Environment"
             category: "Qt Demon"
@@ -96,7 +148,7 @@ MetaInfo {
         }
     }
     Type {
-        name: "QtDemon.DemonView3d"
+        name: "QtDemon.DemonView3D"
         icon: "images/dummy16.png"
 
         ItemLibraryEntry {
@@ -105,6 +157,8 @@ MetaInfo {
             libraryIcon: "images/dummy.png"
             version: "1.0"
             requiredImport: "QtDemon"
+            Property { name: "width"; type: "int"; value: 200; }
+            Property { name: "height"; type: "int"; value: 200; }
         }
     }
 }
