@@ -6,7 +6,7 @@ Section {
     caption: qsTr("Node")
     SectionLayout {
         Label {
-            text: qsTr("X")
+            text: qsTr("Position X")
             tooltip: qsTr("X Position Translation")
         }
         SecondColumnLayout {
@@ -20,7 +20,7 @@ Section {
         }
 
         Label {
-            text: qsTr("Y")
+            text: qsTr("Position Y")
             tooltip: qsTr("Y Position Translation")
         }
         SecondColumnLayout {
@@ -34,7 +34,7 @@ Section {
         }
 
         Label {
-            text: qsTr("Z")
+            text: qsTr("Position Z")
             tooltip: qsTr("Z Position Translation")
         }
         SecondColumnLayout {
@@ -43,6 +43,48 @@ Section {
                 minimumValue: -9999999
                 decimals: 5
                 backendValue: backendValues.z
+                Layout.fillWidth: true
+            }
+        }
+
+        Label {
+            text: qsTr("Rotation X")
+            tooltip: qsTr("X Rotation")
+        }
+        SecondColumnLayout {
+            SpinBox {
+                maximumValue: 9999999
+                minimumValue: -9999999
+                decimals: 5
+                backendValue: backendValues.rotation_x
+                Layout.fillWidth: true
+            }
+        }
+
+        Label {
+            text: qsTr("Rotation Y")
+            tooltip: qsTr("Y Rotation")
+        }
+        SecondColumnLayout {
+            SpinBox {
+                maximumValue: 9999999
+                minimumValue: -9999999
+                decimals: 5
+                backendValue: backendValues.rotation_y
+                Layout.fillWidth: true
+            }
+        }
+
+        Label {
+            text: qsTr("Rotation Z")
+            tooltip: qsTr("Z Rotation")
+        }
+        SecondColumnLayout {
+            SpinBox {
+                maximumValue: 9999999
+                minimumValue: -9999999
+                decimals: 5
+                backendValue: backendValues.rotation_z
                 Layout.fillWidth: true
             }
         }
