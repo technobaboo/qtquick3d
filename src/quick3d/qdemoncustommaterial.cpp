@@ -447,7 +447,7 @@ QDemonCustomMaterialRenderPass *QDemonCustomMaterial::qmlPassAt(QQmlListProperty
 int QDemonCustomMaterial::qmlPassCount(QQmlListProperty<QDemonCustomMaterialRenderPass> *list)
 {
     QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
-    return that->m_textures.count();
+    return that->m_passes.count();
 }
 
 void QDemonCustomMaterialRenderPass::qmlAppendCommand(QQmlListProperty<QDemonCustomMaterialRenderCommand> *list, QDemonCustomMaterialRenderCommand *command)
