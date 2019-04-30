@@ -12,8 +12,9 @@ Section {
             tooltip: qsTr("Set the source of the mesh data file")
         }
         SecondColumnLayout {
-            LineEdit {
+            UrlChooser {
                 backendValue: backendValues.source
+                filter: "*.mesh"
             }
         }
 
