@@ -8,7 +8,7 @@ Section {
     SectionLayout {
         Label {
             text: qsTr("Clip Near")
-            tooltip: qsTr("Distance before camera frustum that will be clipped")
+            tooltip: qsTr("Near distance at which objects disappear")
         }
         SecondColumnLayout {
             SpinBox {
@@ -22,7 +22,7 @@ Section {
 
         Label {
             text: qsTr("Clip Far")
-            tooltip: qsTr("Distance from camera frustum that will be clipped.")
+            tooltip: qsTr("Far distance at which objects disappear")
         }
         SecondColumnLayout {
             SpinBox {
@@ -36,7 +36,7 @@ Section {
 
         Label {
             text: qsTr("Field of View")
-            tooltip: qsTr("Angle of view of the camera")
+            tooltip: qsTr("Viewing angle of the camera (how much it can see)")
         }
         SecondColumnLayout {
             SpinBox {
@@ -46,6 +46,28 @@ Section {
                 backendValue: backendValues.fieldOfView
                 Layout.fillWidth: true
             }
+        }
+
+        Label {
+            text: "FOV Horizontal"
+            tooltip: qsTr("Field of view angle orientation")
+        }
+        SecondColumnLayout {
+            CheckBox {
+                text: backendValues.isFieldOFViewHorizontal.valueToString
+                backendValue: backendValues.isFieldOFViewHorizontal
+                Layout.fillWidth: true
+            }
+        }
+
+        Label {
+            text: qsTr("Projection Mode")
+        }
+        ComboBox {
+            scope: "DemonCamera"
+            model: ["Perspective", "Orthographic"]
+            backendValue: backendValues.projectionMode
+            Layout.fillWidth: true
         }
     }
 }
