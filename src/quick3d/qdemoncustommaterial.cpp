@@ -344,10 +344,8 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         }
 
         for (const auto &pass : qAsConst(m_passes)) {
-            QDemonRenderCustomMaterial::Pass demonPass;
             for (const auto &command : pass->m_commands)
                 customMaterial->commands.push_back(command->getCommand());
-            customMaterial->passes.push_back(demonPass);
         }
 
         customMaterial->commands.push_back(new dynamic::QDemonRender(false));
