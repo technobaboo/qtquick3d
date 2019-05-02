@@ -49,7 +49,6 @@ private:
     QSize m_surfaceSize;
     void *data = nullptr;
     bool m_layerSizeIsDirty = true;
-    QOpenGLContext *m_openGLContext = nullptr;
     QWindow *m_window = nullptr;
     FramebufferObject *m_fbo = nullptr;
 

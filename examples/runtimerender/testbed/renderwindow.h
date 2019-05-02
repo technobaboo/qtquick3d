@@ -5,8 +5,8 @@
 #include <QtCore/QElapsedTimer>
 #include <QtGui/QOpenGLContext>
 #include <QtDemon/qtdemonglobal.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
-class QDemonRenderContextInterface;
 class QDemonRenderContext;
 class QDemonRenderLayer;
 struct QDemonRenderPresentation;
@@ -43,7 +43,7 @@ private:
     bool m_isIntialized = false;
     QOpenGLContext *m_glContext;
     QDemonRenderLayer *m_layer;
-    QDemonRef<QDemonRenderContextInterface> m_context;
+    QDemonRenderContextInterface::QDemonRenderContextInterfacePtr m_context;
     QDemonRef<QDemonRenderContext> m_renderContext;
     QDemonRenderModel *m_cube;
 

@@ -48,52 +48,52 @@ void SGFramebufferObjectNode::preprocess()
     render();
 }
 
-//void SGFramebufferObjectNode::resetOpenGLState() {
-//    QOpenGLContext *ctx = QOpenGLContext::currentContext();
-//    QOpenGLFunctions *gl = ctx->functions();
+void SGFramebufferObjectNode::resetOpenGLState() {
+    QOpenGLContext *ctx = QOpenGLContext::currentContext();
+    QOpenGLFunctions *gl = ctx->functions();
 
-//    if (!m_vaoHelper)
-//        m_vaoHelper = new QOpenGLVertexArrayObjectHelper(ctx);
-//    if (m_vaoHelper->isValid())
-//        m_vaoHelper->glBindVertexArray(0);
+    if (!m_vaoHelper)
+        m_vaoHelper = new QOpenGLVertexArrayObjectHelper(ctx);
+    if (m_vaoHelper->isValid())
+        m_vaoHelper->glBindVertexArray(0);
 
-//    gl->glBindBuffer(GL_ARRAY_BUFFER, 0);
-//    gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    gl->glBindBuffer(GL_ARRAY_BUFFER, 0);
+    gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-//    if (ctx->isOpenGLES() || (gl->openGLFeatures() & QOpenGLFunctions::FixedFunctionPipeline)) {
-//        int maxAttribs;
-//        gl->glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
-//        for (int i=0; i<maxAttribs; ++i) {
-//            gl->glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
-//            gl->glDisableVertexAttribArray(i);
-//        }
-//    }
+    if (ctx->isOpenGLES() || (gl->openGLFeatures() & QOpenGLFunctions::FixedFunctionPipeline)) {
+        int maxAttribs;
+        gl->glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
+        for (int i=0; i<maxAttribs; ++i) {
+            gl->glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+            gl->glDisableVertexAttribArray(i);
+        }
+    }
 
-//    gl->glActiveTexture(GL_TEXTURE0);
-//    gl->glBindTexture(GL_TEXTURE_2D, 0);
+    gl->glActiveTexture(GL_TEXTURE0);
+    gl->glBindTexture(GL_TEXTURE_2D, 0);
 
-//    gl->glDisable(GL_DEPTH_TEST);
-//    gl->glDisable(GL_STENCIL_TEST);
-//    gl->glDisable(GL_SCISSOR_TEST);
+    gl->glDisable(GL_DEPTH_TEST);
+    gl->glDisable(GL_STENCIL_TEST);
+    gl->glDisable(GL_SCISSOR_TEST);
 
-//    gl->glColorMask(true, true, true, true);
-//    gl->glClearColor(0, 0, 0, 0);
+    gl->glColorMask(true, true, true, true);
+    gl->glClearColor(0, 0, 0, 0);
 
-//    gl->glDepthMask(true);
-//    gl->glDepthFunc(GL_LESS);
-//    gl->glClearDepthf(1);
+    gl->glDepthMask(true);
+    gl->glDepthFunc(GL_LESS);
+    gl->glClearDepthf(1);
 
-//    gl->glStencilMask(0xff);
-//    gl->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-//    gl->glStencilFunc(GL_ALWAYS, 0, 0xff);
+    gl->glStencilMask(0xff);
+    gl->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    gl->glStencilFunc(GL_ALWAYS, 0, 0xff);
 
-//    gl->glDisable(GL_BLEND);
-//    gl->glBlendFunc(GL_ONE, GL_ZERO);
+    gl->glDisable(GL_BLEND);
+    gl->glBlendFunc(GL_ONE, GL_ZERO);
 
-//    gl->glUseProgram(0);
+    gl->glUseProgram(0);
 
-//    QOpenGLFramebufferObject::bindDefault();
-//}
+    QOpenGLFramebufferObject::bindDefault();
+}
 
 void SGFramebufferObjectNode::render()
 {
@@ -101,7 +101,7 @@ void SGFramebufferObjectNode::render()
         renderPending = false;
         GLuint textureId = renderer->render();
 
-        //resetOpenGLState();
+        resetOpenGLState();
 
         if (texture() && (texture()->textureId() != textureId || texture()->textureSize() != renderer->surfaceSize())) {
             delete texture();
@@ -124,130 +124,128 @@ void SGFramebufferObjectNode::handleScreenChange()
     }
 }
 
-static QSurfaceFormat findIdealGLVersion()
-{
-    QSurfaceFormat fmt;
-    fmt.setProfile(QSurfaceFormat::CoreProfile);
+//static QSurfaceFormat findIdealGLVersion()
+//{
+//    QSurfaceFormat fmt;
+//    fmt.setProfile(QSurfaceFormat::CoreProfile);
 
-    // Advanced: Try 4.3 core (so we get compute shaders for instance)
-    fmt.setVersion(4, 3);
-    QOpenGLContext ctx;
-    ctx.setFormat(fmt);
-    if (ctx.create() && ctx.format().version() >= qMakePair(4, 3)) {
-        qDebug("Requesting OpenGL 4.3 core context succeeded");
-        return ctx.format();
-    }
+//    // Advanced: Try 4.3 core (so we get compute shaders for instance)
+//    fmt.setVersion(4, 3);
+//    QOpenGLContext ctx;
+//    ctx.setFormat(fmt);
+//    if (ctx.create() && ctx.format().version() >= qMakePair(4, 3)) {
+//        qDebug("Requesting OpenGL 4.3 core context succeeded");
+//        return ctx.format();
+//    }
 
-    // Basic: Stick with 3.3 for now to keep less fortunate, Mesa-based systems happy
-    fmt.setVersion(3, 3);
-    ctx.setFormat(fmt);
-    if (ctx.create() && ctx.format().version() >= qMakePair(3, 3)) {
-        qDebug("Requesting OpenGL 3.3 core context succeeded");
-        return ctx.format();
-    }
+//    // Basic: Stick with 3.3 for now to keep less fortunate, Mesa-based systems happy
+//    fmt.setVersion(3, 3);
+//    ctx.setFormat(fmt);
+//    if (ctx.create() && ctx.format().version() >= qMakePair(3, 3)) {
+//        qDebug("Requesting OpenGL 3.3 core context succeeded");
+//        return ctx.format();
+//    }
 
-    qDebug("Impending doom");
-    return fmt;
-}
+//    qDebug("Impending doom");
+//    return fmt;
+//}
 
-static bool isBlackListedES3Driver(QOpenGLContext &ctx) {
-    static bool hasBeenTested = false;
-    static bool result = false;
-    if (!hasBeenTested) {
-        QOffscreenSurface offscreenSurface;
-        offscreenSurface.create();
-        ctx.makeCurrent(&offscreenSurface);
-        QString vendorString = QString::fromLatin1(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
-        ctx.doneCurrent();
-        if (vendorString == QStringLiteral("PowerVR Rogue GE8300"))
-            result = true;
-        hasBeenTested = true;
-    }
-    return result;
-}
+//static bool isBlackListedES3Driver(QOpenGLContext &ctx) {
+//    static bool hasBeenTested = false;
+//    static bool result = false;
+//    if (!hasBeenTested) {
+//        QOffscreenSurface offscreenSurface;
+//        offscreenSurface.create();
+//        ctx.makeCurrent(&offscreenSurface);
+//        QString vendorString = QString::fromLatin1(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+//        ctx.doneCurrent();
+//        if (vendorString == QStringLiteral("PowerVR Rogue GE8300"))
+//            result = true;
+//        hasBeenTested = true;
+//    }
+//    return result;
+//}
 
 
-static QSurfaceFormat findIdealGLESVersion()
-{
-    QSurfaceFormat fmt;
+//static QSurfaceFormat findIdealGLESVersion()
+//{
+//    QSurfaceFormat fmt;
 
-    // Advanced: Try 3.1 (so we get compute shaders for instance)
-    fmt.setVersion(3, 1);
-    fmt.setRenderableType(QSurfaceFormat::OpenGLES);
-    QOpenGLContext ctx;
-    ctx.setFormat(fmt);
+//    // Advanced: Try 3.1 (so we get compute shaders for instance)
+//    fmt.setVersion(3, 1);
+//    fmt.setRenderableType(QSurfaceFormat::OpenGLES);
+//    QOpenGLContext ctx;
+//    ctx.setFormat(fmt);
 
-    // Now, it's important to check the format with the actual version (parsed
-    // back from GL_VERSION) since some implementations, ANGLE for instance,
-    // are broken and succeed the 3.1 context request even though they only
-    // support and return a 3.0 context. This is against the spec since 3.0 is
-    // obviously not backwards compatible with 3.1, but hey...
-    if (ctx.create() && ctx.format().version() >= qMakePair(3, 1) && !isBlackListedES3Driver(ctx)) {
-        qDebug("Requesting OpenGL ES 3.1 context succeeded");
-        return ctx.format();
-    }
+//    // Now, it's important to check the format with the actual version (parsed
+//    // back from GL_VERSION) since some implementations, ANGLE for instance,
+//    // are broken and succeed the 3.1 context request even though they only
+//    // support and return a 3.0 context. This is against the spec since 3.0 is
+//    // obviously not backwards compatible with 3.1, but hey...
+//    if (ctx.create() && ctx.format().version() >= qMakePair(3, 1) && !isBlackListedES3Driver(ctx)) {
+//        qDebug("Requesting OpenGL ES 3.1 context succeeded");
+//        return ctx.format();
+//    }
 
-    // Basic: OpenGL ES 3.0 is a hard requirement at the moment since we can
-    // only generate 300 es shaders, uniform buffers are mandatory.
-    fmt.setVersion(3, 0);
-    ctx.setFormat(fmt);
-    if (ctx.create() && ctx.format().version() >= qMakePair(3, 0) && !isBlackListedES3Driver(ctx)) {
-        qDebug("Requesting OpenGL ES 3.0 context succeeded");
-        return ctx.format();
-    }
+//    // Basic: OpenGL ES 3.0 is a hard requirement at the moment since we can
+//    // only generate 300 es shaders, uniform buffers are mandatory.
+//    fmt.setVersion(3, 0);
+//    ctx.setFormat(fmt);
+//    if (ctx.create() && ctx.format().version() >= qMakePair(3, 0) && !isBlackListedES3Driver(ctx)) {
+//        qDebug("Requesting OpenGL ES 3.0 context succeeded");
+//        return ctx.format();
+//    }
 
-    fmt.setVersion(2, 0);
-    ctx.setFormat(fmt);
-    if (ctx.create()) {
-        qDebug("Requesting OpenGL ES 2.0 context succeeded");
-        return fmt;
-    }
+//    fmt.setVersion(2, 0);
+//    ctx.setFormat(fmt);
+//    if (ctx.create()) {
+//        qDebug("Requesting OpenGL ES 2.0 context succeeded");
+//        return fmt;
+//    }
 
-    qDebug("Impending doom");
-    return fmt;
-}
+//    qDebug("Impending doom");
+//    return fmt;
+//}
 
-static QSurfaceFormat idealSurfaceFormat()
-{
-    static const QSurfaceFormat f = [] {
-        QSurfaceFormat fmt;
-        if (QOpenGLContext::openGLModuleType() == QOpenGLContext::LibGL) { // works in dynamic gl builds too because there's a qguiapp already
-            fmt = findIdealGLVersion();
-        } else {
-            fmt = findIdealGLESVersion();
-        }
-        fmt.setDepthBufferSize(24);
-        fmt.setStencilBufferSize(8);
-        // Ignore MSAA here as that is a per-layer setting.
-        return fmt;
-    }();
-    return f;
-}
+//static QSurfaceFormat idealSurfaceFormat()
+//{
+//    static const QSurfaceFormat f = [] {
+//        QSurfaceFormat fmt;
+//        if (QOpenGLContext::openGLModuleType() == QOpenGLContext::LibGL) { // works in dynamic gl builds too because there's a qguiapp already
+//            fmt = findIdealGLVersion();
+//        } else {
+//            fmt = findIdealGLESVersion();
+//        }
+//        fmt.setDepthBufferSize(24);
+//        fmt.setStencilBufferSize(8);
+//        // Ignore MSAA here as that is a per-layer setting.
+//        return fmt;
+//    }();
+//    return f;
+//}
 
 
 QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
     : m_window(window)
 {
-    QOpenGLContext *oldContext = QOpenGLContext::currentContext();
+    QOpenGLContext *openGLContext = QOpenGLContext::currentContext();
 
-    m_openGLContext = new QOpenGLContext();
-    m_openGLContext->setFormat(idealSurfaceFormat());
-    m_openGLContext->setShareContext(oldContext);
-    m_openGLContext->create();
+    // There is only one Render context per window, so check if one exists for this window already
+    auto renderContextInterface = QDemonRenderContextInterface::getRenderContextInterface(quintptr(window));
+    if (!renderContextInterface.isNull()) {
+        m_sgContext = renderContextInterface;
+        m_renderContext = renderContextInterface->renderContext();
+    }
 
-    m_openGLContext->makeCurrent(m_window);
-
+    // If there was no render context, then set it up for this window
     if (m_renderContext.isNull())
-        m_renderContext = QDemonRenderContext::createGl(m_openGLContext->format());
+        m_renderContext = QDemonRenderContext::createGl(openGLContext->format());
     if (m_sgContext.isNull())
         m_sgContext = QDemonRenderContextInterface::getRenderContextInterface(m_renderContext, QString::fromLatin1("./"), quintptr(window));
-    m_openGLContext->doneCurrent();
-    oldContext->makeCurrent(window);
 }
 
 QDemonSceneRenderer::~QDemonSceneRenderer()
 {
-    delete m_openGLContext;
 }
 
 GLuint QDemonSceneRenderer::render()
@@ -255,9 +253,6 @@ GLuint QDemonSceneRenderer::render()
     if (!m_layer)
         return 0;
 
-    QOpenGLContext *oldContext = QOpenGLContext::currentContext();
-
-    m_openGLContext->makeCurrent(m_window);
     m_sgContext->beginFrame();
     m_renderContext->setRenderTarget(m_fbo->fbo);
     m_sgContext->renderList()->setViewport(QRect(0, 0, m_surfaceSize.width(), m_surfaceSize.height()));
@@ -267,10 +262,7 @@ GLuint QDemonSceneRenderer::render()
     m_sgContext->runRenderTasks();
     m_sgContext->renderer()->renderLayer(*m_layer, m_surfaceSize, true, QVector3D(0, 0, 0), false);
     m_sgContext->endFrame();
-    m_openGLContext->doneCurrent();
-    oldContext->makeCurrent(m_window);
 
-    //if (!result.texture.isNull())
     return HandleToID_cast(GLuint, size_t, m_fbo->color0->handle());
 }
 
@@ -326,17 +318,11 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size)
     }
 
     if (!m_fbo || m_layerSizeIsDirty) {
-        QOpenGLContext *oldContext = QOpenGLContext::currentContext();
-
-        m_openGLContext->makeCurrent(m_window);
-
         if (m_fbo)
             delete m_fbo;
 
         m_fbo = new FramebufferObject(m_surfaceSize, m_renderContext);
         m_layerSizeIsDirty = false;
-        m_openGLContext->doneCurrent();
-        oldContext->makeCurrent(m_window);
     }
 
 }

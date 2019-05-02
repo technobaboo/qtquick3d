@@ -490,7 +490,7 @@ void QDemonRenderContext::readPixels(QRect inRect, QDemonRenderReadPixelFormat i
 
 void QDemonRenderContext::setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
 {
-//    if (inBuffer != m_hardwarePropertyContext.m_frameBuffer)
+    if (inBuffer != m_hardwarePropertyContext.m_frameBuffer)
         doSetRenderTarget(inBuffer);
 }
 

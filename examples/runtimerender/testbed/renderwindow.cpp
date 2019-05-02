@@ -1,5 +1,4 @@
 #include "renderwindow.h"
-#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
@@ -108,7 +107,7 @@ static QSurfaceFormat idealSurfaceFormat()
 void RenderWindow::initialize()
 {
     m_renderContext = QDemonRenderContext::createGl(idealSurfaceFormat());
-    m_context = new QDemonRenderContextInterface(m_renderContext, "./");
+    m_context = QDemonRenderContextInterface::getRenderContextInterface(m_renderContext, "./", quintptr(this));
     m_context->setSceneColor(QVector4D(1.0, 0.0, 0.0, 1.0));
 
     buildTestScene();
