@@ -2,13 +2,6 @@ import QtQuick 2.12
 import QtDemon 1.0
 
 DemonCustomMaterial {
-
-    //    <Property formalName="Glass Bump map" name="glass_bump" description="Additional bump map for surface" type="Texture" clamp="repeat" category="Material"/>
-    //    <Property formalName="Gradient1D Map" description="Gradient texture of the material" hidden="True" name="randomGradient1D" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="gradient" default="./maps/materials/randomGradient1D.jpg"/>
-    //    <Property formalName="Gradient2D Map" description="Gradient texture of the material" hidden="True" name="randomGradient2D" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="gradient" default="./maps/materials/randomGradient2D.jpg"/>
-    //    <Property formalName="Gradient3D Map" description="Gradient texture of the material" hidden="True" name="randomGradient3D" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="gradient" default="./maps/materials/randomGradient3D.jpg"/>
-    //    <Property formalName="Gradient4D Map" description="Gradient texture of the material" hidden="True" name="randomGradient4D" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="gradient" default="./maps/materials/randomGradient4D.jpg"/>
-
     // These properties names need to match the ones in the shader code!
     property real roughness: 1.0
     property real blur_size: 8.0
@@ -38,6 +31,16 @@ DemonCustomMaterial {
         layers: 1
     }
 
+    property DemonCustomMaterialTexture glass_bump: DemonCustomMaterialTexture {
+        type: DemonCustomMaterialTexture.Environment
+        name: "glass_bump"
+        enabled: true
+        image: DemonImage {
+            id: glassBumpMap
+            source: "maps/spherical_checker.png"
+        }
+    }
+
     property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Environment
             name: "uEnvironmentTexture"
@@ -57,9 +60,9 @@ DemonCustomMaterial {
             }
     }
     property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Gradient
+            type: DemonCustomMaterialTexture.Unknown; //Gradient
             name: "randomGradient1D"
-            // hidden = true
+            hidden: true
             image: DemonImage {
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
@@ -67,9 +70,9 @@ DemonCustomMaterial {
             }
     }
     property DemonCustomMaterialTexture randomGradient2D: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Gradient
+            type: DemonCustomMaterialTexture.Unknown; //Gradient
             name: "randomGradient2D"
-            // hidden = true
+            hidden: true
             image: DemonImage {
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
@@ -97,60 +100,123 @@ DemonCustomMaterial {
         }
     }
 
-    shaders: [ DemonCustomMaterialShader {
-            stage: DemonCustomMaterialShader.Fragment
-            shader: "frostedThinGlass.frag"
-        }, DemonCustomMaterialShader {
-            stage: DemonCustomMaterialShader.Fragment
-            shader: "frostedThinGlassPreBlur.frag"
-        }, DemonCustomMaterialShader {
-            stage: DemonCustomMaterialShader.Fragment
-            shader: "frostedThinGlassBlurX.frag"
-        }, DemonCustomMaterialShader {
-            stage: DemonCustomMaterialShader.Fragment
-            shader: "frostedThinGlassBlurY.frag"
-        }
-    ]
+    DemonCustomMaterialShader {
+        id: mainShader
+        stage: DemonCustomMaterialShader.Fragment
+        shader: "frostedThinGlass.frag"
+    }
+    DemonCustomMaterialShader {
+        id: noopShader
+        stage: DemonCustomMaterialShader.Fragment
+        shader: "frostedThinGlassNoop.frag"
+    }
+    DemonCustomMaterialShader {
+        id: preBlurShader
+        stage: DemonCustomMaterialShader.Fragment
+        shader: "frostedThinGlassPreBlur.frag"
+    }
+    DemonCustomMaterialShader {
+        id: blurXShader
+        stage: DemonCustomMaterialShader.Fragment
+        shader: "frostedThinGlassBlurX.frag"
+    }
+    DemonCustomMaterialShader {
+        id: blurYShader
+        stage: DemonCustomMaterialShader.Fragment
+        shader: "frostedThinGlassBlurY.frag"
+    }
+
+    DemonCustomMaterialBuffer {
+        id: frameBuffer
+        name: "frameBuffer"
+        format: DemonCustomMaterialBuffer.Unknown
+        magOp: DemonCustomMaterialBuffer.Linear
+        coordOp: DemonCustomMaterialBuffer.ClampToEdge
+        sizeMultiplier: 1.0
+        bufferFlags: DemonCustomMaterialBuffer.None // aka frame
+    }
+
+    DemonCustomMaterialBuffer {
+        id: dummyBuffer
+        name: "dummyBuffer"
+        format: DemonCustomMaterialBuffer.RGBA8
+        magOp: DemonCustomMaterialBuffer.Linear
+        coordOp: DemonCustomMaterialBuffer.ClampToEdge
+        sizeMultiplier: 1.0
+        bufferFlags: DemonCustomMaterialBuffer.None // aka frame
+    }
+
+    DemonCustomMaterialBuffer {
+        id: tempBuffer
+        name: "tempBuffer"
+        format: DemonCustomMaterialBuffer.RGBA16F
+        magOp: DemonCustomMaterialBuffer.Linear
+        coordOp: DemonCustomMaterialBuffer.ClampToEdge
+        sizeMultiplier: 0.5
+        bufferFlags: DemonCustomMaterialBuffer.None // aka frame
+    }
+
+    DemonCustomMaterialBuffer {
+        id: blurYBuffer
+        name: "tempBlurY"
+        format: DemonCustomMaterialBuffer.RGBA16F
+        magOp: DemonCustomMaterialBuffer.Linear
+        coordOp: DemonCustomMaterialBuffer.ClampToEdge
+        sizeMultiplier: 0.5
+        bufferFlags: DemonCustomMaterialBuffer.None // aka frame
+    }
+
+    DemonCustomMaterialBuffer {
+        id: blurXBuffer
+        name: "tempBlurX"
+        format: DemonCustomMaterialBuffer.RGBA16F
+        magOp: DemonCustomMaterialBuffer.Linear
+        coordOp: DemonCustomMaterialBuffer.ClampToEdge
+        sizeMultiplier: 0.5
+        bufferFlags: DemonCustomMaterialBuffer.None // aka frame
+    }
 
     passes: [ DemonCustomMaterialPass {
-            // NOOP
-            // output => dummy_buffer
+            shader: noopShader
+            output: frameBuffer
+        }, DemonCustomMaterialPass {
+            shader: noopShader
+            output: dummyBuffer
             commands: [ DemonCustomMaterialBufferBlit {
-                    destination: "frame_buffer"
+                    destination: frameBuffer
                 }
             ]
         }, DemonCustomMaterialPass {
-            // PREBLUR
-            // output => temp_buffer
+            shader: preBlurShader
+            output: tempBuffer
             commands: [ DemonCustomMaterialBufferInput {
-                    bufferName: "frame_buffer"
+                    buffer: frameBuffer
                     param: "OriginBuffer"
                 }
             ]
         }, DemonCustomMaterialPass {
-            // BLURX
-            // output => temp_blurX
+            shader: blurXShader
+            output: blurXBuffer
             commands: [ DemonCustomMaterialBufferInput {
-                    bufferName: "temp_buffer"
+                    buffer: tempBuffer
                     param: "BlurBuffer"
                 }
             ]
         }, DemonCustomMaterialPass {
-            // BLURY
-            // output => temp_blurY
+            shader: blurYShader
+            output: blurYBuffer
             commands: [ DemonCustomMaterialBufferInput {
-                    bufferName: "temp_blurX"
+                    buffer: blurXBuffer
                     param: "BlurBuffer"
                 }, DemonCustomMaterialBufferInput {
-                    bufferName: "temp_buffer"
+                    buffer: tempBuffer
                     param: "OriginBuffer"
                 }
             ]
         }, DemonCustomMaterialPass {
-            // MAIN
-            // output => dummy_buffer
+            shader: mainShader
             commands: [DemonCustomMaterialBufferInput {
-                    bufferName: "temp_blurY"
+                    buffer: blurYBuffer
                     param: "refractiveTexture"
                 }, DemonCustomMaterialBlending {
                     srcBlending: DemonCustomMaterialBlending.SrcAlpha

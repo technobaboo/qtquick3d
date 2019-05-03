@@ -15,9 +15,9 @@ void main()
 
     float wtSum = 0.0;
     vec4 totSum = vec4(0.0);
-    for (int ix = -1; ix &lt;= 1; ++ix)
+    for (int ix = -1; ix <= 1; ++ix)
     {
-       for (int iy = -1; iy &lt;= 1; ++iy)
+       for (int iy = -1; iy <= 1; ++iy)
        {
         float wt = float(ix*ix + iy*iy) * 4.0;
         wt = exp2( -wt );

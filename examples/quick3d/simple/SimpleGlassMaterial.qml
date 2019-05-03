@@ -40,17 +40,21 @@ DemonCustomMaterial {
             }
     }
 
-    shaders: DemonCustomMaterialShader {
+    DemonCustomMaterialShader {
+        id: simpleGlassFragShader
         stage: DemonCustomMaterialShader.Fragment
         shader: "simpleGlass.frag"
     }
 
     passes: [ DemonCustomMaterialPass {
+            shader: simpleGlassFragShader
             commands: [ DemonCustomMaterialBlending {
                     srcBlending: DemonCustomMaterialBlending.SrcAlpha
                     destBlending: DemonCustomMaterialBlending.OneMinusSrcAlpha
                 }, DemonCustomMaterialRenderState {
                     renderState: DemonCustomMaterialRenderState.CullFace
-                }]
-        }]
+                }
+            ]
+        }
+    ]
 }

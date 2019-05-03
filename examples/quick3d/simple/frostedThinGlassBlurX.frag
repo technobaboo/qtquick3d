@@ -17,7 +17,7 @@ void main()
     int smpCount = int(ceil( sigma ));
     vec4 value = texture(BlurBuffer, texCoord0.xy);
     float wtsum = 1.0;
-    for (int i = 1; i &lt;= smpCount; ++i)
+    for (int i = 1; i <= smpCount; ++i)
     {
         // Base 2 Gaussian blur
         float wt = float(i) / (sigma * 0.5);

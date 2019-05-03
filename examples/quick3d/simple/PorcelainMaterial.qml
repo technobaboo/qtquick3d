@@ -39,8 +39,14 @@ DemonCustomMaterial {
             }
     }
 
-    shaders: DemonCustomMaterialShader {
+    DemonCustomMaterialShader {
+        id: porcelainFragShader
         stage: DemonCustomMaterialShader.Fragment
         shader: "porcelain.frag"
     }
+
+    passes: [ DemonCustomMaterialPass {
+            shader: porcelainFragShader
+        }
+    ]
 }

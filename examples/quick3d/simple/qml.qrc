@@ -18,5 +18,6 @@
         <file>frostedThinGlassPreBlur.frag</file>
         <file>frostedThinGlassBlurX.frag</file>
         <file>frostedThinGlassBlurY.frag</file>
+        <file>frostedThinGlassNoop.frag</file>
     </qresource>
 </RCC>

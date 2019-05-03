@@ -18,7 +18,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             enabled: uEnvironmentMappingEnabled
             type: DemonCustomMaterialTexture.Environment
-            name: "uEnvironmentTexture"
             image: DemonImage {
                 id: envImage
                 source: "maps/spherical_checker.png"
@@ -27,15 +26,20 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
             enabled: uShadowMappingEnabled
             type: DemonCustomMaterialTexture.LightmapShadow
-            name: "uBakedShadowTexture"
             image: DemonImage {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
     }
 
-    shaders: DemonCustomMaterialShader {
+    DemonCustomMaterialShader {
+        id: copperFragShader
         stage: DemonCustomMaterialShader.Fragment
         shader: "copper.frag"
     }
+
+    passes: [ DemonCustomMaterialPass {
+            shader: copperFragShader
+        }
+    ]
 }

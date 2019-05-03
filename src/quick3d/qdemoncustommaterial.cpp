@@ -78,24 +78,9 @@ bool QDemonCustomMaterial::hasVolumetricDF() const
     return m_hasVolumetricDF;
 }
 
-QString QDemonCustomMaterial::source() const
-{
-    return m_source;
-}
-
 QDemonCustomMaterialShaderInfo *QDemonCustomMaterial::shaderInfo() const
 {
     return m_shaderInfo;
-}
-
-QQmlListProperty<QDemonCustomMaterialShader> QDemonCustomMaterial::shaders()
-{
-    return QQmlListProperty<QDemonCustomMaterialShader>(this,
-                                                        nullptr,
-                                                        QDemonCustomMaterial::qmlAppendShader,
-                                                        QDemonCustomMaterial::qmlShaderCount,
-                                                        QDemonCustomMaterial::qmlShaderAt,
-                                                        nullptr);
 }
 
 QQmlListProperty<QDemonCustomMaterialRenderPass> QDemonCustomMaterial::passes()
@@ -215,12 +200,56 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         return shader;
     };
 
+    static const auto mergeShaderCode = [](const QByteArray &shared, const QByteArray &vertex, const QByteArray &geometry, const QByteArray &fragment) {
+        QByteArray shaderCode;
+            // Shared
+            if (!shared.isEmpty())
+                shaderCode.append(shared);
+
+            // Vetex
+            shaderCode.append(QByteArrayLiteral("\n#ifdef VERTEX_SHADER\n"));
+            if (!vertex.isEmpty())
+                shaderCode.append(vertex);
+            else
+                shaderCode.append(QByteArrayLiteral("void vert(){}"));
+            shaderCode.append(QByteArrayLiteral("\n#endif\n"));
+
+            // Geometry
+            if (!geometry.isEmpty()) {
+                shaderCode.append(QByteArrayLiteral("\n#ifdef USER_GEOMETRY_SHADER\n"));
+                shaderCode.append(geometry);
+                shaderCode.append(QByteArrayLiteral("\n#endif\n"));
+            }
+
+            // Fragment
+            shaderCode.append(QByteArrayLiteral("\n#ifdef FRAGMENT_SHADER\n"));
+            if (!fragment.isEmpty())
+                shaderCode.append(fragment);
+            else
+                shaderCode.append(QByteArrayLiteral("void frag(){}"));
+            shaderCode.append(QByteArrayLiteral("\n#endif\n"));
+
+            return shaderCode;
+    };
+
 
     // Sanity check(s)
     if (!m_shaderInfo->isValid()) {
         qWarning("ShaderInfo is not valid!");
         return node;
     }
+
+    // Find the parent view
+    QObject *p = this;
+    QDemonView3D *view = nullptr;
+    while (p != nullptr && view == nullptr) {
+        p = p->parent();
+        if ((view = qobject_cast<QDemonView3D *>(p)))
+            break;
+    }
+
+    Q_ASSERT(view);
+    QDemonRenderContextInterface::QDemonRenderContextInterfacePtr renderContext = QDemonRenderContextInterface::getRenderContextInterface(quintptr(view->window()));
 
     if (node)
         QDemonMaterial::updateSpatialNode(node);
@@ -290,7 +319,7 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         for (const auto &userProperty : qAsConst(userProperties)) {
             QDemonRenderCustomMaterial::TextureProperty textureData;
             QDemonCustomMaterialTexture *texture = userProperty.read(this).value<QDemonCustomMaterialTexture *>();
-            const QByteArray &name = texture->name;
+            const QByteArray &name = userProperty.name();
             if (name.isEmpty()) // Warnings here will just drown in the shader error messages
                 continue;
             QDemonImage *image = texture->image(); //
@@ -307,77 +336,56 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
             customMaterial->textureProperties.push_back(textureData);
         }
 
-        // Shaders
-        QByteArray shaderCode = shaderInfo.shaderPrefix;
-        QByteArray shared, vertex, geometry, fragment;
-        for (const auto &shader : qAsConst(m_shaders)) {
-            const QByteArray code = resolveShader(shader->shader);
-            switch (shader->stage) {
-            case QDemonCustomMaterialShader::Stage::Shared:
-                if (!code.isEmpty())
-                    shared.append(code);
-                break;
-            case QDemonCustomMaterialShader::Stage::Geometry:
-                if (!code.isEmpty()) {
-                    geometry.append(QByteArrayLiteral("\n#ifdef USER_GEOMETRY_SHADER\n"));
-                    geometry.append(code);
-                    geometry.append(QByteArrayLiteral("\n#endif\n"));
-                    // TODO: Set m_HasGeomShader to true
+        QByteArray &shared = shaderInfo.shaderPrefix;
+        QByteArray vertex, geometry, fragment, shaderCode;
+        if (!m_passes.isEmpty()) {
+            for (const auto &pass : qAsConst(m_passes)) {
+                QDemonCustomMaterialShader *shader = pass->shader;
+                if (!shader) {
+                    qWarning("Pass with no shader attatched!");
+                    continue;
                 }
-                break;
-            case QDemonCustomMaterialShader::Stage::Vertex:
-                vertex.append(QByteArrayLiteral("\n#ifdef VERTEX_SHADER\n"));
-                if (code.isEmpty())
-                    vertex.append(QByteArrayLiteral("void vert(){}"));
-                else
-                    vertex.append(code);
-                vertex.append(QByteArrayLiteral("\n#endif\n"));
-                break;
-            case QDemonCustomMaterialShader::Stage::Fragment:
-                fragment.append(QByteArrayLiteral("\n#ifdef FRAGMENT_SHADER\n"));
-                if (code.isEmpty())
-                    fragment.append(QByteArrayLiteral("void frag(){}"));
-                else
-                    fragment.append(code);
-                fragment.append(QByteArrayLiteral("\n#endif\n"));
-                break;
+
+                if (shader->stage != QDemonCustomMaterialShader::Stage::Fragment) {
+                    qWarning("Only fragment shaders supported in passes");
+                    continue;
+                }
+
+                // Build up shader code
+                const QByteArray &shaderName = shader->shader;
+                Q_ASSERT(!shaderName.isEmpty());
+
+                const QByteArray fragment = resolveShader(shader->shader);
+                shaderCode = mergeShaderCode(shared, vertex, geometry, fragment);
+
+                // Bind shader
+                customMaterial->commands.push_back(new dynamic::QDemonBindShader(shaderName));
+                customMaterial->commands.push_back(new dynamic::QDemonApplyInstanceValue());
+
+                // Buffers
+                QDemonCustomMaterialBuffer *outputBuffer = pass->outputBuffer;
+                if (outputBuffer) {
+                    const QByteArray &outBufferName = outputBuffer->name;
+                    Q_ASSERT(!outBufferName.isEmpty());
+                    // Allocate buffer command
+                    customMaterial->commands.push_back(outputBuffer->getCommand());
+                    // bind buffer
+                    customMaterial->commands.push_back(new dynamic::QDemonBindBuffer(outBufferName, true));
+                } else {
+                    customMaterial->commands.push_back(new dynamic::QDemonBindTarget(QDemonRenderTextureFormat::RGBA8));
+                }
+
+                // Other commands (BufferInput, Blending ... )
+                const auto &extraCommands = pass->m_commands;
+                for (const auto &command : extraCommands)
+                    customMaterial->commands.push_back(command->getCommand());
+
+                // ... and finaly the render command (TODO: indirect/or not?)
+                customMaterial->commands.push_back(new dynamic::QDemonRender(false));
+
+                renderContext->customMaterialSystem()->setMaterialClassShader(shaderName, shaderInfo.type, shaderInfo.version, shaderCode, false, false);
             }
         }
-
-        if (!shared.isEmpty())
-            shaderCode.append(shared);
-        if (!vertex.isEmpty())
-            shaderCode.append(vertex);
-        if (!geometry.isEmpty())
-            shaderCode.append(geometry);
-        if (!fragment.isEmpty())
-            shaderCode.append(fragment);
-
-        if (!m_shaders.isEmpty()) {
-            // Find the parent view
-            QObject *p = this;
-            QDemonView3D *view = nullptr;
-            while (p != nullptr && view == nullptr) {
-                p = p->parent();
-                if ((view = qobject_cast<QDemonView3D *>(p)))
-                    break;
-            }
-
-            Q_ASSERT(view);
-
-            customMaterial->commands.push_back(new dynamic::QDemonBindShader(metaObject()->className()));
-            customMaterial->commands.push_back(new dynamic::QDemonApplyInstanceValue());
-
-            QDemonRenderContextInterface::QDemonRenderContextInterfacePtr renderContext = QDemonRenderContextInterface::getRenderContextInterface(quintptr(view->window()));
-            renderContext->customMaterialSystem()->setMaterialClassShader(QString::fromLatin1(customMaterial->className), shaderInfo.type, shaderInfo.version, shaderCode, false, false);
-        }
-
-        for (const auto &pass : qAsConst(m_passes)) {
-            for (const auto &command : pass->m_commands)
-                customMaterial->commands.push_back(command->getCommand());
-        }
-
-        customMaterial->commands.push_back(new dynamic::QDemonRender(false));
     }
 
     if (m_dirtyAttributes & Dirty::PropertyDirty) {
@@ -406,27 +414,6 @@ void QDemonCustomMaterial::onTextureDirty(QDemonCustomMaterialTexture *texture)
     Q_UNUSED(texture)
     markDirty(Dirty::TextureDirty);
     update();
-}
-
-void QDemonCustomMaterial::qmlAppendShader(QQmlListProperty<QDemonCustomMaterialShader> *list, QDemonCustomMaterialShader *shader)
-{
-    if (!shader)
-        return;
-
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
-    that->m_shaders.push_back(shader);
-}
-
-QDemonCustomMaterialShader *QDemonCustomMaterial::qmlShaderAt(QQmlListProperty<QDemonCustomMaterialShader> *list, int index)
-{
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
-    return that->m_shaders.at(index);
-}
-
-int QDemonCustomMaterial::qmlShaderCount(QQmlListProperty<QDemonCustomMaterialShader> *list)
-{
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
-    return that->m_shaders.size();
 }
 
 void QDemonCustomMaterial::qmlAppendPass(QQmlListProperty<QDemonCustomMaterialRenderPass> *list, QDemonCustomMaterialRenderPass *pass)

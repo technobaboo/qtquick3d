@@ -10,6 +10,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDemonCustomMaterialShader;
 
 class Q_QUICK3D_EXPORT QDemonCustomMaterialTexture : public QObject
 {
@@ -18,6 +19,7 @@ class Q_QUICK3D_EXPORT QDemonCustomMaterialTexture : public QObject
     Q_PROPERTY(QByteArray name MEMBER name)
     Q_PROPERTY(TextureType type MEMBER type)
     Q_PROPERTY(bool enabled MEMBER enabled)
+    Q_PROPERTY(bool hidden MEMBER hidden)
 
 public:
     enum class TextureType
@@ -39,12 +41,32 @@ public:
     };
     Q_ENUM(TextureType)
 
+    enum UsageType {
+        Diffuse,
+        Specular,
+        Roughness,
+        Bump,
+        Environment,
+        Shadow,
+        Displacement,
+        Emissive,
+        EmissiveMask,
+        Anisotropy,
+        Gradient,
+        Storage,
+        Brush,
+        Cutout,
+        Transmission
+    };
+    Q_ENUM(UsageType)
+
     QDemonCustomMaterialTexture() = default;
     virtual ~QDemonCustomMaterialTexture() = default;
     QDemonImage *m_image = nullptr;
     QByteArray name;
     TextureType type;
     bool enabled = true;
+    bool hidden = false;
     QDemonImage *image() const
     {
         return m_image;
@@ -56,6 +78,14 @@ public Q_SLOTS:
         if (m_image == image)
             return;
 
+        QObject *p = parent();
+        while (p != nullptr) {
+            if (QDemonMaterial *mat = qobject_cast<QDemonMaterial *>(p)) {
+                mat->setDynamicTextureMap(image);
+                break;
+            }
+        }
+
         m_image = image;
         Q_EMIT textureDirty(this);
     }
@@ -65,6 +95,116 @@ Q_SIGNALS:
 };
 
 Q_DECLARE_OPAQUE_POINTER(QDemonCustomMaterialTexture)
+
+class Q_QUICK3D_EXPORT QDemonCustomMaterialBuffer : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(TextureFormat format READ format WRITE setFormat)
+    Q_PROPERTY(MagnifyingOp magOp READ filterOp WRITE setFilterOp)
+    Q_PROPERTY(TextureCoordOp coordOp READ texCoordOp WRITE setTexCoordOp)
+    Q_PROPERTY(float sizeMultiplier MEMBER sizeMultiplier)
+    Q_PROPERTY(AllocateBufferFlagValues bufferFlags READ bufferFlags WRITE setBufferFlags)
+    Q_PROPERTY(QByteArray name MEMBER name)
+public:
+    QDemonCustomMaterialBuffer() = default;
+    ~QDemonCustomMaterialBuffer() override = default;
+
+    enum class Type
+    {
+        FrameBuffer,
+        UserDefined
+    };
+    Q_ENUM(Type)
+
+    enum class MagnifyingOp
+    {
+        Unknown = 0,
+        Nearest,
+        Linear
+    };
+    Q_ENUM(MagnifyingOp)
+
+    enum class TextureCoordOp
+    {
+
+        Unknown = 0,
+        ClampToEdge,
+        MirroredRepeat,
+        Repeat
+    };
+    Q_ENUM(TextureCoordOp)
+
+    enum class AllocateBufferFlagValues
+    {
+        None = 0,
+        SceneLifetime = 1,
+    };
+    Q_ENUM(AllocateBufferFlagValues)
+
+    enum class TextureType {
+        Ubyte,
+        Ushort,
+        FP16,
+        FP32
+    };
+
+    enum class TextureFormat {
+        Unknown = 0,
+        R8,
+        R16,
+        R16F,
+        R32I,
+        R32UI,
+        R32F,
+        RG8,
+        RGBA8,
+        RGB8,
+        SRGB8,
+        SRGB8A8,
+        RGB565,
+        RGBA5551,
+        Alpha8,
+        Luminance8,
+        Luminance16,
+        LuminanceAlpha8,
+        RGBA16F,
+        RG16F,
+        RG32F,
+        RGB32F,
+        RGBA32F,
+        R11G11B10,
+        RGB9E5,
+        RGBA_DXT1,
+        RGB_DXT1,
+        RGBA_DXT3,
+        RGBA_DXT5,
+        Depth16,
+        Depth24,
+        Depth32,
+        Depth24Stencil8
+    };
+    Q_ENUM(TextureFormat)
+
+    dynamic::QDemonAllocateBuffer command {};
+    MagnifyingOp filterOp() const { return MagnifyingOp(command.m_filterOp); }
+    void setFilterOp(MagnifyingOp magOp) { command.m_filterOp = QDemonRenderTextureMagnifyingOp(magOp); }
+
+    TextureCoordOp texCoordOp() const { return TextureCoordOp(command.m_texCoordOp); }
+    void setTexCoordOp(TextureCoordOp texCoordOp) { command.m_texCoordOp = QDemonRenderTextureCoordOp(texCoordOp); }
+    float &sizeMultiplier = command.m_sizeMultiplier;
+    dynamic::QDemonCommand *getCommand() { return &command; }
+
+    TextureFormat format() const { return TextureFormat(command.m_format.format); }
+    void setFormat(TextureFormat format)
+    {
+        command.m_format = QDemonRenderTextureFormat::Format(format);
+    }
+
+    AllocateBufferFlagValues bufferFlags() const { return AllocateBufferFlagValues(int(command.m_bufferFlags)); }
+    void setBufferFlags(AllocateBufferFlagValues flag) { command.m_bufferFlags = quint32(flag);}
+
+    QByteArray &name = command.m_name;
+};
 
 class Q_QUICK3D_EXPORT QDemonCustomMaterialRenderCommand : public QObject
 {
@@ -78,6 +218,7 @@ public:
 class Q_QUICK3D_EXPORT QDemonCustomMaterialBufferInput : public QDemonCustomMaterialRenderCommand
 {
     Q_OBJECT
+    Q_PROPERTY(QDemonCustomMaterialBuffer *buffer READ buffer WRITE setBuffer)
     Q_PROPERTY(QByteArray bufferName MEMBER bufferName)
     Q_PROPERTY(QByteArray param MEMBER param)
 public:
@@ -87,20 +228,62 @@ public:
     QByteArray &bufferName = command.m_bufferName;
     QByteArray &param = command.m_paramName;
     dynamic::QDemonCommand *getCommand() override { return &command; }
+
+    QDemonCustomMaterialBuffer *buffer() const { return m_buffer; }
+    void setBuffer(QDemonCustomMaterialBuffer *buffer) {
+        if (m_buffer == buffer)
+            return;
+
+        if (buffer) {
+            Q_ASSERT(!buffer->name.isEmpty());
+            command.m_bufferName = buffer->name;
+        }
+        m_buffer = buffer;
+    }
+
+    QDemonCustomMaterialBuffer *m_buffer = nullptr;
+
 };
 
 class Q_QUICK3D_EXPORT QDemonCustomMaterialBufferBlit : public QDemonCustomMaterialRenderCommand
 {
     Q_OBJECT
-    Q_PROPERTY(QByteArray source MEMBER source)
-    Q_PROPERTY(QByteArray destination MEMBER destination)
+    Q_PROPERTY(QDemonCustomMaterialBuffer *source READ source WRITE setSource)
+    Q_PROPERTY(QDemonCustomMaterialBuffer *destination READ destination WRITE setDestination)
 public:
     QDemonCustomMaterialBufferBlit() = default;
     ~QDemonCustomMaterialBufferBlit() override = default;
     dynamic::QDemonApplyBlitFramebuffer command { QByteArray(), QByteArray() };
-    QByteArray &source = command.m_sourceBufferName;
-    QByteArray &destination = command.m_destBufferName;
     dynamic::QDemonCommand *getCommand() override { return &command; }
+
+    QDemonCustomMaterialBuffer *source() const { return m_source; }
+    void setSource(QDemonCustomMaterialBuffer *src)
+    {
+        if (src == m_source)
+            return;
+
+        if (src) {
+            Q_ASSERT(!src->name.isEmpty());
+            command.m_sourceBufferName = src->name;
+        }
+        m_source = src;
+    }
+
+    QDemonCustomMaterialBuffer *destination() const { return m_destination; }
+    void setDestination(QDemonCustomMaterialBuffer *dest)
+    {
+        if (dest == m_destination)
+            return;
+
+        if (dest) {
+            Q_ASSERT(!dest->name.isEmpty());
+            command.m_destBufferName = dest->name;
+        }
+        m_destination = dest;
+    }
+
+    QDemonCustomMaterialBuffer *m_source = nullptr;
+    QDemonCustomMaterialBuffer *m_destination = nullptr;
 };
 
 class Q_QUICK3D_EXPORT QDemonCustomMaterialBlending : public QDemonCustomMaterialRenderCommand
@@ -217,6 +400,8 @@ class Q_QUICK3D_EXPORT QDemonCustomMaterialRenderPass : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<QDemonCustomMaterialRenderCommand> commands READ commands)
+    Q_PROPERTY(QDemonCustomMaterialBuffer *output MEMBER outputBuffer)
+    Q_PROPERTY(QDemonCustomMaterialShader *shader MEMBER shader)
 public:
     QDemonCustomMaterialRenderPass() = default;
     ~QDemonCustomMaterialRenderPass() override = default;
@@ -227,6 +412,8 @@ public:
 
     QQmlListProperty<QDemonCustomMaterialRenderCommand> commands();
     QVector<QDemonCustomMaterialRenderCommand *> m_commands;
+    QDemonCustomMaterialBuffer *outputBuffer = nullptr;
+    QDemonCustomMaterialShader *shader = nullptr;
 };
 
 class Q_QUICK3D_EXPORT QDemonCustomMaterialShaderInfo : public QObject
@@ -287,16 +474,13 @@ public:
 class Q_QUICK3D_EXPORT QDemonCustomMaterial : public QDemonMaterial
 {
     Q_OBJECT
-    Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged) // NOT NEEDED
     Q_PROPERTY(bool hasTransparency READ hasTransparency WRITE setHasTransparency NOTIFY hasTransparencyChanged)
     Q_PROPERTY(bool hasRefraction READ hasRefraction WRITE setHasRefraction NOTIFY hasRefractionChanged)
     Q_PROPERTY(bool hasVolumetricDF READ hasVolumetricDF WRITE setHasVolumetricDF NOTIFY hasVolumetricDFChanged)
     Q_PROPERTY(bool alwaysDirty READ alwaysDirty WRITE setAlwaysDirty NOTIFY alwaysDirtyChanged)
 
     Q_PROPERTY(QDemonCustomMaterialShaderInfo *shaderInfo READ shaderInfo WRITE setShaderInfo)
-    Q_PROPERTY(QQmlListProperty<QDemonCustomMaterialShader> shaders READ shaders)
     Q_PROPERTY(QQmlListProperty<QDemonCustomMaterialRenderPass> passes READ passes)
-
 
 public:
     QDemonCustomMaterial();
@@ -308,11 +492,8 @@ public:
     bool hasRefraction() const;
     bool hasVolumetricDF() const;
 
-    QString source() const;
 
     QDemonCustomMaterialShaderInfo *shaderInfo() const;
-
-    QQmlListProperty<QDemonCustomMaterialShader> shaders();
     QQmlListProperty<QDemonCustomMaterialRenderPass> passes();
 
     bool alwaysDirty() const;
@@ -349,11 +530,6 @@ private:
         PropertyDirty = 0x2
     };
 
-    // Shader
-    static void qmlAppendShader(QQmlListProperty<QDemonCustomMaterialShader> *list, QDemonCustomMaterialShader *shader);
-    static QDemonCustomMaterialShader *qmlShaderAt(QQmlListProperty<QDemonCustomMaterialShader> *list, int index);
-    static int qmlShaderCount(QQmlListProperty<QDemonCustomMaterialShader> *list);
-
     // Passes
     static void qmlAppendPass(QQmlListProperty<QDemonCustomMaterialRenderPass> *list, QDemonCustomMaterialRenderPass *pass);
     static QDemonCustomMaterialRenderPass *qmlPassAt(QQmlListProperty<QDemonCustomMaterialRenderPass> *list, int index);
@@ -373,7 +549,6 @@ private:
     bool m_hasVolumetricDF = false;
     QString m_source;
     QDemonCustomMaterialShaderInfo *m_shaderInfo;
-    QVector<QDemonCustomMaterialShader *> m_shaders;
     QVector<QDemonCustomMaterialRenderPass *> m_passes;
     bool m_alwaysDirty = false;
 };

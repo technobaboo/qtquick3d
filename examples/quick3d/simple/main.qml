@@ -6,7 +6,6 @@ Window {
     id: window
     width: 1280
     height: 720
-    color: "green"
     visible: true
 
     DemonView3D {
@@ -27,6 +26,8 @@ Window {
 
         environment: DemonSceneEnvironment {
             probeBrightness: 1000
+            clearColor: "green"
+            backgroundMode: DemonSceneEnvironment.Color
             lightProbe: DemonImage {
                 source: ":/maps/OpenfootageNET_garage-1024.hdr"
             }
@@ -100,13 +101,13 @@ Window {
             z: 100
         }
 
-
         TexturedCube {
-            x: -300
+            z: -300
         }
 
         CopperCube {
             id: copperCube
+            position: Qt.vector3d(300, 0, 0)
             SequentialAnimation on metalColor {
                 loops: Animation.Infinite
                 PropertyAnimation { duration: 2000; to: Qt.vector3d(0.805, 0.0, 0.305) }
@@ -115,10 +116,17 @@ Window {
         }
 
         DemonModel {
-            position: Qt.vector3d(300, 0, 0)
+            position: Qt.vector3d(0, 0, 0)
             source: "#Cube"
-            materials: [ PorcelainMaterial {
-                    id: texturedCubeMaterial
+            materials: [ SimpleGlassMaterial {
+                }
+            ]
+        }
+
+        DemonModel {
+            position: Qt.vector3d(-300, 0, 0)
+            source: "#Cube"
+            materials: [ FrostedThinGlassMaterial {
                 }
             ]
         }

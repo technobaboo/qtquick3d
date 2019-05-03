@@ -63,7 +63,7 @@ Q_SIGNALS:
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
     void itemChange(ItemChange, const ItemChangeData &) override;
-
+public:
     void setDynamicTextureMap(QDemonImage *textureMap);
 private:
     void updateSceneRenderer(QDemonSceneManager *sceneRenderer);

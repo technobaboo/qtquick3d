@@ -801,6 +801,7 @@ void QDemonMaterialSystem::setTexture(const QDemonRef<QDemonRenderShaderProgram>
         textureEntries.push_back(QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>>(inPropName, theNewEntry));
         theTextureEntry = theNewEntry;
     }
+    // TODO: Already set?
     theTextureEntry->set(inPropDec);
 }
 
@@ -1187,7 +1188,7 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonMaterialSystem::bindBuffer(const QDemon
 
     if (theBuffer == nullptr) {
         qCCritical(INVALID_OPERATION,
-                   "Effect %s: Failed to find buffer %s for bind",
+                   "Material %s: Failed to find buffer %s for bind",
                    qPrintable(inMaterial.className),
                    qPrintable(inCommand.m_bufferName));
         Q_ASSERT(false);

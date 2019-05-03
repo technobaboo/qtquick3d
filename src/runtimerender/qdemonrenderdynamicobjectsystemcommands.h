@@ -90,14 +90,14 @@ struct QDemonAllocateBufferFlags : public QFlags<AllocateBufferFlagValues>
 
 struct QDemonAllocateBuffer : public QDemonCommand
 {
-    QString m_name;
+    QByteArray m_name;
     QDemonRenderTextureFormat m_format = QDemonRenderTextureFormat::RGBA8;
     QDemonRenderTextureMagnifyingOp m_filterOp = QDemonRenderTextureMagnifyingOp::Linear;
     QDemonRenderTextureCoordOp m_texCoordOp = QDemonRenderTextureCoordOp::ClampToEdge;
     float m_sizeMultiplier = 1.0f;
     QDemonAllocateBufferFlags m_bufferFlags;
     QDemonAllocateBuffer() : QDemonCommand(CommandType::AllocateBuffer) {}
-    QDemonAllocateBuffer(QString inName,
+    QDemonAllocateBuffer(const QByteArray &inName,
                          QDemonRenderTextureFormat inFormat,
                          QDemonRenderTextureMagnifyingOp inFilterOp,
                          QDemonRenderTextureCoordOp inCoordOp,
@@ -129,7 +129,7 @@ struct QDemonAllocateImage : public QDemonAllocateBuffer
     QDemonRenderImageAccessType m_access = QDemonRenderImageAccessType::ReadWrite;
 
     QDemonAllocateImage() : QDemonAllocateBuffer() { m_type = CommandType::AllocateImage; }
-    QDemonAllocateImage(QString inName,
+    QDemonAllocateImage(QByteArray &inName,
                         QDemonRenderTextureFormat inFormat,
                         QDemonRenderTextureMagnifyingOp inFilterOp,
                         QDemonRenderTextureCoordOp inCoordOp,

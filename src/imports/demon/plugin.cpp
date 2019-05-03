@@ -94,6 +94,7 @@ public:
         qmlRegisterType<QDemonCustomMaterialBufferInput>(uri, 1, 0, "DemonCustomMaterialBufferInput");
         qmlRegisterType<QDemonCustomMaterialBufferBlit>(uri, 1, 0, "DemonCustomMaterialBufferBlit");
         qmlRegisterType<QDemonCustomMaterialBlending>(uri, 1, 0, "DemonCustomMaterialBlending");
+        qmlRegisterType<QDemonCustomMaterialBuffer>(uri, 1, 0, "DemonCustomMaterialBuffer");
         qmlRegisterType<QDemonCustomMaterialRenderState>(uri, 1, 0, "DemonCustomMaterialRenderState");
         qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DemonDefaultMaterial");
         qmlRegisterType<QDemonEffect>(uri, 1, 0, "DemonEffect");

@@ -3,5 +3,9 @@
         <file>maps/shadow.png</file>
         <file>maps/spherical_checker.png</file>
         <file>maps/OpenfootageNET_garage-1024.hdr</file>
+        <file>maps/randomGradient1D.png</file>
+        <file>maps/randomGradient2D.png</file>
+        <file>maps/randomGradient3D.png</file>
+        <file>maps/randomGradient4D.png</file>
     </qresource>
 </RCC>
