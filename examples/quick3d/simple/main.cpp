@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 
 #include <QtGui>
+#include <QtQuick3d/QDemonView3D>
 
 int main(int argc, char *argv[])
 {
@@ -9,12 +10,7 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-#ifdef Q_OS_LINUX
-    // We need this for renderdoc
-    QSurfaceFormat df = QSurfaceFormat::defaultFormat();
-    df.setVersion(3, 3);
-    QSurfaceFormat::setDefaultFormat(df);
-#endif
+    QSurfaceFormat::setDefaultFormat(QDemonView3D::idealSurfaceFormat());
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

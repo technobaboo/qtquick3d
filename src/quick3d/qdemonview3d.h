@@ -43,6 +43,8 @@ public:
     QSGTextureProvider *textureProvider() const override;
     void releaseResources() override;
 
+    static QSurfaceFormat idealSurfaceFormat();
+
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;
