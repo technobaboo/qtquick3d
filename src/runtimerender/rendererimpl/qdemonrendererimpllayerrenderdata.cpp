@@ -1657,13 +1657,13 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                                       QVector4D(layer.clearColor, 1.0f));
             theContext->clear(QDemonRenderClearValues::Color);
         } else {
-            // ### will need to address this later because when not rendering to an FBO
-            // we would clear anything in the window target which is not what we want
-            QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
-                                                                      &QDemonRenderContext::clearColor,
-                                                                      &QDemonRenderContext::setClearColor,
-                                                                      QVector4D(0.0, 0.0, 0.0, 0.0f));
-            theContext->clear(QDemonRenderClearValues::Color);
+            if (thePrepResult.flags.requiresTransparentClear()) {
+                QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
+                                                                          &QDemonRenderContext::clearColor,
+                                                                          &QDemonRenderContext::setClearColor,
+                                                                          QVector4D(0.0, 0.0, 0.0, 0.0f));
+                theContext->clear(QDemonRenderClearValues::Color);
+            }
         }
         renderToViewport();
     } else {

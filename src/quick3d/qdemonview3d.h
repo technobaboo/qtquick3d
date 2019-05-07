@@ -17,6 +17,8 @@ class QDemonNode;
 class QDemonSceneRenderer;
 
 class SGFramebufferObjectNode;
+class QDemonSGRenderNode;
+class QDemonSGDirectRenderer;
 
 class Q_QUICK3D_EXPORT QDemonView3D : public QQuickItem
 {
@@ -25,8 +27,17 @@ class Q_QUICK3D_EXPORT QDemonView3D : public QQuickItem
     Q_PROPERTY(QDemonCamera *camera READ camera WRITE setCamera NOTIFY cameraChanged)
     Q_PROPERTY(QDemonSceneEnvironment *environment READ environment WRITE setEnvironment NOTIFY environmentChanged)
     Q_PROPERTY(QDemonNode* scene READ scene WRITE setScene NOTIFY sceneChanged)
+    Q_PROPERTY(QDemonView3DRenderMode renderMode READ renderMode WRITE setRenderMode NOTIFY renderModeChanged)
     Q_CLASSINFO("DefaultProperty", "data")
 public:
+    enum QDemonView3DRenderMode {
+        Texture,
+        Underlay,
+        Overlay,
+        RenderNode
+    };
+    Q_ENUM(QDemonView3DRenderMode)
+
     explicit QDemonView3D(QQuickItem *parent = nullptr);
     ~QDemonView3D() override;
 
@@ -36,6 +47,7 @@ public:
     QDemonSceneEnvironment *environment() const;
     QDemonNode *scene() const;
     QDemonNode *referencedScene() const;
+    QDemonView3DRenderMode renderMode() const;
 
     QDemonSceneRenderer *createRenderer() const;
 
@@ -53,6 +65,7 @@ public Q_SLOTS:
     void setCamera(QDemonCamera *camera);
     void setEnvironment(QDemonSceneEnvironment * environment);
     void setScene(QDemonNode *sceneRoot);
+    void setRenderMode(QDemonView3DRenderMode renderMode);
 
 private Q_SLOTS:
     void invalidateSceneGraph();
@@ -61,6 +74,7 @@ Q_SIGNALS:
     void cameraChanged(QDemonCamera *camera);
     void environmentChanged(QDemonSceneEnvironment * environment);
     void sceneChanged(QDemonNode *sceneRoot);
+    void renderModeChanged(QDemonView3DRenderMode renderMode);
 
 private:
     Q_DISABLE_COPY(QDemonView3D)
@@ -70,6 +84,11 @@ private:
     QDemonNode *m_sceneRoot = nullptr;
     QDemonNode *m_referencedScene = nullptr;
     mutable SGFramebufferObjectNode *m_node = nullptr;
+    mutable QDemonSGRenderNode *m_renderNode = nullptr;
+    mutable QDemonSGDirectRenderer *m_directRenderer = nullptr;
+    bool m_renderModeDirty = false;
+    QDemonView3DRenderMode m_renderMode = Texture;
+
     QHash<QObject*, QMetaObject::Connection> m_connections;
 };
 

@@ -8,16 +8,27 @@ Window {
     width: 640
     height: 640
     visible: true
+    color: "black"
+
+    Image {
+        source: "qt_logo.png"
+        x: 50
+        SequentialAnimation on y {
+            loops: Animation.Infinite
+            PropertyAnimation { duration: 3000; to: 400; from: 50 }
+        }
+    }
 
     DemonView3D {
         id: layer1
         anchors.fill: parent
+        anchors.margins: 50
         camera: camera
+        renderMode: DemonView3D.Overlay
 
         environment: DemonSceneEnvironment {
             probeBrightness: 1000
-            clearColor: "black"
-            backgroundMode: DemonSceneEnvironment.Color
+            backgroundMode: DemonSceneEnvironment.Transparent
             lightProbe: DemonImage {
                 source: "maps/OpenfootageNET_garage-1024.hdr"
             }
@@ -44,12 +55,5 @@ Window {
          }
     }
 
-    Image {
-        source: "qt_logo.png"
-        x: 50
-        SequentialAnimation on y {
-            loops: Animation.Infinite
-            PropertyAnimation { duration: 3000; to: 400; from: 50 }
-        }
-    }
+
 }

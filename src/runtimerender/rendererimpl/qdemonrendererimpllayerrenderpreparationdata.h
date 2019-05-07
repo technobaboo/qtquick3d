@@ -73,7 +73,10 @@ enum class QDemonLayerRenderPreparationResultFlag
     RequiresShadowMapPass = 1 << 6,
 
     // Currently we use a stencil-cover algorithm to render bezier curves.
-    RequiresStencilBuffer = 1 << 7
+    RequiresStencilBuffer = 1 << 7,
+
+    // This is the case when direct rendering, and need to clear an FBO, but not a Window
+    RequiresTransparentClear = 1 << 8
 };
 
 struct QDemonLayerRenderPreparationResultFlags : public QFlags<QDemonLayerRenderPreparationResultFlag>
@@ -140,6 +143,17 @@ struct QDemonLayerRenderPreparationResultFlags : public QFlags<QDemonLayerRender
     {
         setFlag(QDemonLayerRenderPreparationResultFlag::RequiresStencilBuffer, inValue);
     }
+
+    bool requiresTransparentClear() const
+    {
+        return this->operator&(QDemonLayerRenderPreparationResultFlag::RequiresTransparentClear);
+    }
+
+    void setRequiresTransparentClear(bool inValue)
+    {
+        setFlag(QDemonLayerRenderPreparationResultFlag::RequiresTransparentClear, inValue);
+    }
+
 };
 
 struct QDemonLayerRenderPreparationResult : public QDemonLayerRenderHelper

@@ -5,6 +5,7 @@
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 #include <qsgtextureprovider.h>
+#include <qsgrendernode.h>
 #include <QSGSimpleTextureNode>
 
 #include <QtQuick3d/qdemonview3d.h>
@@ -33,7 +34,8 @@ public:
     ~QDemonSceneRenderer();
 protected:
     GLuint render();
-    void synchronize(QDemonView3D *item, const QSize &size);
+    void render(const QRect &viewport, bool clearFirst = false);
+    void synchronize(QDemonView3D *item, const QSize &size, bool useFBO = true);
     void update();
     void invalidateFramebufferObject();
     QSize surfaceSize() const { return m_surfaceSize; }
@@ -56,6 +58,8 @@ private:
     QDemonRenderNode *m_referencedRootNode = nullptr;
 
     friend class SGFramebufferObjectNode;
+    friend class QDemonSGRenderNode;
+    friend class QDemonSGDirectRenderer;
     friend class QDemonView3D;
 };
 
@@ -89,12 +93,45 @@ public:
     bool invalidatePending;
 
     qreal devicePixelRatio;
+};
+
+class QDemonSGRenderNode : public QSGRenderNode
+{
+public:
+
+    StateFlags changedStates() const override;
+    void render(const RenderState *state) override;
+    void releaseResources() override;
+    RenderingFlags flags() const override;
+public:
+    QQuickWindow *window = nullptr;
+    QDemonSceneRenderer *renderer = nullptr;
+};
+
+class QDemonSGDirectRenderer : public QObject
+{
+    Q_OBJECT
+public:
+    enum QDemonSGDirectRendererMode {
+        Underlay,
+        Overlay
+    };
+    QDemonSGDirectRenderer(QDemonSceneRenderer *renderer, QQuickWindow *window, QDemonSGDirectRendererMode mode = Underlay);
+    ~QDemonSGDirectRenderer();
+
+    QDemonSceneRenderer *renderer() { return m_renderer; }
+    void setViewport(const QRectF &viewport);
+
+    void requestRender();
+
+private Q_SLOTS:
+    void render();
 
 private:
-    void resetOpenGLState();
-    QOpenGLVertexArrayObjectHelper *m_vaoHelper = nullptr;
-
-
+    QDemonSceneRenderer *m_renderer = nullptr;
+    QQuickWindow *m_window = nullptr;
+    QDemonSGDirectRendererMode m_mode;
+    QRectF m_viewport;
 };
 
 QT_END_NAMESPACE

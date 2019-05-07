@@ -24,8 +24,6 @@ Window {
             }
         }
 
-
-
         DemonCamera {
             id: camera2
             z: -600
@@ -109,7 +107,7 @@ Window {
         anchors.right: parent.right
         width: parent.width * 0.5
         height: parent.height * 0.5
-        color: "grey"
+        color: "transparent"
         border.color: "black"
 
         Label {
@@ -128,6 +126,12 @@ Window {
             anchors.bottom: parent.bottom;
             camera: camera1
             scene: standAloneScene
+            renderMode: DemonView3D.Underlay
+
+            environment: DemonSceneEnvironment {
+                clearColor: "grey"
+                backgroundMode: DemonSceneEnvironment.Color
+            }
         }
 
         Row {

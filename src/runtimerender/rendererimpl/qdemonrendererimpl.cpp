@@ -235,6 +235,8 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
         QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (Q_LIKELY(theRenderData)) {
+            // Make sure that we don't clear the window, when requested not to.
+            theRenderData->layerPrepResult->flags.setRequiresTransparentClear(clear);
             if (theRenderData->layerPrepResult->isLayerVisible())
                 theRenderData->runnableRenderToViewport(theFB);
         } else {

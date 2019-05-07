@@ -120,6 +120,11 @@ QDemonNode *QDemonView3D::referencedScene() const
     return m_referencedScene;
 }
 
+QDemonView3D::QDemonView3DRenderMode QDemonView3D::renderMode() const
+{
+    return m_renderMode;
+}
+
 QDemonSceneRenderer *QDemonView3D::createRenderer() const
 {
     return new QDemonSceneRenderer(this->window());
@@ -127,7 +132,11 @@ QDemonSceneRenderer *QDemonView3D::createRenderer() const
 
 bool QDemonView3D::isTextureProvider() const
 {
-    return true;
+    // We can only be a texture provider if we are rendering to a texture first
+    if (m_renderMode == QDemonView3D::Texture)
+        return true;
+
+    return false;
 }
 
 QSGTextureProvider *QDemonView3D::textureProvider() const
@@ -137,6 +146,10 @@ QSGTextureProvider *QDemonView3D::textureProvider() const
     // than the fbo texture.
     if (QQuickItem::isTextureProvider())
         return QQuickItem::textureProvider();
+
+    // We can only be a texture provider if we are rendering to a texture first
+    if (m_renderMode != QDemonView3D::Texture)
+        return nullptr;
 
     QQuickWindow *w = window();
     if (!w || !w->openglContext() || QThread::currentThread() != w->openglContext()->thread()) {
@@ -163,37 +176,94 @@ void QDemonView3D::geometryChanged(const QRectF &newGeometry, const QRectF &oldG
 
 QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *)
 {
-    SGFramebufferObjectNode *n = static_cast<SGFramebufferObjectNode *>(node);
-
-    if (!n) {
-        if (!m_node)
-            m_node = new SGFramebufferObjectNode;
-        n = m_node;
+    // When changing render modes
+    if (m_renderModeDirty) {
+        if (node) {
+            delete node;
+            node = nullptr;
+        }
+        if (m_directRenderer) {
+            delete m_directRenderer;
+            m_directRenderer = nullptr;
+        }
     }
 
-    if (!n->renderer) {
-        n->window = window();
-        n->renderer = createRenderer();
-        n->renderer->data = n;
-        n->quickFbo = this;
-        connect(window(), SIGNAL(screenChanged(QScreen*)), n, SLOT(handleScreenChange()));
+
+    m_renderModeDirty = false;
+
+    if (m_renderMode == Texture) {
+        SGFramebufferObjectNode *n = static_cast<SGFramebufferObjectNode *>(node);
+
+        if (!n) {
+            if (!m_node)
+                m_node = new SGFramebufferObjectNode;
+            n = m_node;
+        }
+
+        if (!n->renderer) {
+            n->window = window();
+            n->renderer = createRenderer();
+            n->renderer->data = n;
+            n->quickFbo = this;
+            connect(window(), SIGNAL(screenChanged(QScreen*)), n, SLOT(handleScreenChange()));
+        }
+        QSize minFboSize = QQuickItemPrivate::get(this)->sceneGraphContext()->minimumFBOSize();
+        QSize desiredFboSize(qMax<int>(minFboSize.width(), width()),
+                             qMax<int>(minFboSize.height(), height()));
+
+        n->devicePixelRatio = window()->effectiveDevicePixelRatio();
+        desiredFboSize *= n->devicePixelRatio;
+
+        n->renderer->synchronize(this, desiredFboSize);
+
+        n->setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
+        n->setFiltering(smooth() ? QSGTexture::Linear : QSGTexture::Nearest);
+        n->setRect(0, 0, width(), height());
+
+        n->scheduleRender();
+
+        return n;
+    } else if (m_renderMode == Underlay) {
+        if (!m_directRenderer)
+            m_directRenderer = new QDemonSGDirectRenderer(createRenderer(), window(), QDemonSGDirectRenderer::Underlay);
+        const QSizeF targetSize = window()->effectiveDevicePixelRatio() * QSizeF(width(), height());
+        m_directRenderer->renderer()->synchronize(this, targetSize.toSize(), false);
+        m_directRenderer->setViewport(QRectF(window()->effectiveDevicePixelRatio() * mapToScene(QPointF(0, 0)), targetSize));
+        m_directRenderer->requestRender();
+        if (window()->clearBeforeRendering())
+            window()->setClearBeforeRendering(false);
+        window()->update();
+        return node; // node should be nullptr
+    } else if (m_renderMode == Overlay) {
+        if (!m_directRenderer)
+            m_directRenderer = new QDemonSGDirectRenderer(createRenderer(), window(), QDemonSGDirectRenderer::Overlay);
+        const QSizeF targetSize = window()->effectiveDevicePixelRatio() * QSizeF(width(), height());
+        m_directRenderer->renderer()->synchronize(this, targetSize.toSize(), false);
+        m_directRenderer->setViewport(QRectF(window()->effectiveDevicePixelRatio() * mapToScene(QPointF(0, 0)), targetSize));
+        m_directRenderer->requestRender();
+        return node; // node should be nullptr
+    } else {
+        // Render Node
+        QDemonSGRenderNode *n = static_cast<QDemonSGRenderNode *>(node);
+        if (!n) {
+            if (!m_renderNode)
+                m_renderNode = new QDemonSGRenderNode();
+            n = m_renderNode;
+        }
+
+        if (!n->renderer) {
+            n->window = window();
+            n->renderer = createRenderer();
+            n->renderer->data = n;
+        }
+
+        const QSize targetSize = window()->effectiveDevicePixelRatio() * QSize(width(), height());
+
+        n->renderer->synchronize(this, targetSize, false);
+        n->markDirty(QSGNode::DirtyMaterial);
+
+        return n;
     }
-    QSize minFboSize = QQuickItemPrivate::get(this)->sceneGraphContext()->minimumFBOSize();
-    QSize desiredFboSize(qMax<int>(minFboSize.width(), width()),
-                         qMax<int>(minFboSize.height(), height()));
-
-    n->devicePixelRatio = window()->effectiveDevicePixelRatio();
-    desiredFboSize *= n->devicePixelRatio;
-
-    n->renderer->synchronize(this, desiredFboSize);
-
-    n->setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
-    n->setFiltering(smooth() ? QSGTexture::Linear : QSGTexture::Nearest);
-    n->setRect(0, 0, width(), height());
-
-    n->scheduleRender();
-
-    return n;
 }
 
 void QDemonView3D::setCamera(QDemonCamera *camera)
@@ -237,6 +307,17 @@ void QDemonView3D::setScene(QDemonNode *sceneRoot)
         connect(QDemonObjectPrivate::get(m_referencedScene)->sceneManager, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
     }
 
+}
+
+void QDemonView3D::setRenderMode(QDemonView3D::QDemonView3DRenderMode renderMode)
+{
+    if (m_renderMode == renderMode)
+        return;
+
+    m_renderMode = renderMode;
+    m_renderModeDirty = true;
+    emit renderModeChanged(m_renderMode);
+    update();
 }
 
 static QSurfaceFormat findIdealGLVersion()

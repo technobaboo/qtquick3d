@@ -78,77 +78,81 @@ QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationVie
     , m_scaleMode(inScaleMode)
     , m_scaleFactor(inScaleFactor)
 {
-    {
-        float left = m_layer->m_left;
-        float right = m_layer->m_right;
-        float width = m_layer->m_width;
+    // The following code is used to get the correct viewport for the layer compositor.
+    // We dont actually use this code anymore, so for now it is just disabled until
+    // we figure out whether we want to use this code.
+//    {
+//        float left = m_layer->m_left;
+//        float right = m_layer->m_right;
+//        float width = m_layer->m_width;
 
-        if (m_scaleMode == ScaleModes::FitSelected) {
-            if (m_layer->leftUnits == QDemonRenderLayer::UnitType::Pixels)
-                left *= m_scaleFactor.x();
+//        if (m_scaleMode == ScaleModes::FitSelected) {
+//            if (m_layer->leftUnits == QDemonRenderLayer::UnitType::Pixels)
+//                left *= m_scaleFactor.x();
 
-            if (m_layer->rightUnits == QDemonRenderLayer::UnitType::Pixels)
-                right *= m_scaleFactor.x();
+//            if (m_layer->rightUnits == QDemonRenderLayer::UnitType::Pixels)
+//                right *= m_scaleFactor.x();
 
-            if (m_layer->widthUnits == QDemonRenderLayer::UnitType::Pixels)
-                width *= m_scaleFactor.x();
-        }
+//            if (m_layer->widthUnits == QDemonRenderLayer::UnitType::Pixels)
+//                width *= m_scaleFactor.x();
+//        }
 
-        float horzMin = getMinValue(inPresentationViewport.x(), inPresentationViewport.width(), left, m_layer->leftUnits);
-        float horzWidth = getValueLen(inPresentationViewport.width(), width, m_layer->widthUnits);
-        float horzMax = getMaxValue(inPresentationViewport.x(), inPresentationViewport.width(), right, m_layer->rightUnits);
+//        float horzMin = getMinValue(inPresentationViewport.x(), inPresentationViewport.width(), left, m_layer->leftUnits);
+//        float horzWidth = getValueLen(inPresentationViewport.width(), width, m_layer->widthUnits);
+//        float horzMax = getMaxValue(inPresentationViewport.x(), inPresentationViewport.width(), right, m_layer->rightUnits);
 
-        switch (inLayer.horizontalFieldValues) {
-        case QDemonRenderLayer::HorizontalField::LeftWidth:
-            m_viewport.setX(horzMin);
-            m_viewport.setWidth(horzWidth);
-            break;
-        case QDemonRenderLayer::HorizontalField::LeftRight:
-            m_viewport.setX(horzMin);
-            m_viewport.setWidth(horzMax - horzMin);
-            break;
-        case QDemonRenderLayer::HorizontalField::WidthRight:
-            m_viewport.setWidth(horzWidth);
-            m_viewport.setX(horzMax - horzWidth);
-            break;
-        }
-    }
-    {
-        float top = m_layer->m_top;
-        float bottom = m_layer->m_bottom;
-        float height = m_layer->m_height;
+//        switch (inLayer.horizontalFieldValues) {
+//        case QDemonRenderLayer::HorizontalField::LeftWidth:
+//            m_viewport.setX(horzMin);
+//            m_viewport.setWidth(horzWidth);
+//            break;
+//        case QDemonRenderLayer::HorizontalField::LeftRight:
+//            m_viewport.setX(horzMin);
+//            m_viewport.setWidth(horzMax - horzMin);
+//            break;
+//        case QDemonRenderLayer::HorizontalField::WidthRight:
+//            m_viewport.setWidth(horzWidth);
+//            m_viewport.setX(horzMax - horzWidth);
+//            break;
+//        }
+//    }
+//    {
+//        float top = m_layer->m_top;
+//        float bottom = m_layer->m_bottom;
+//        float height = m_layer->m_height;
 
-        if (m_scaleMode == ScaleModes::FitSelected) {
+//        if (m_scaleMode == ScaleModes::FitSelected) {
 
-            if (m_layer->topUnits == QDemonRenderLayer::UnitType::Pixels)
-                top *= m_scaleFactor.y();
+//            if (m_layer->topUnits == QDemonRenderLayer::UnitType::Pixels)
+//                top *= m_scaleFactor.y();
 
-            if (m_layer->bottomUnits == QDemonRenderLayer::UnitType::Pixels)
-                bottom *= m_scaleFactor.y();
+//            if (m_layer->bottomUnits == QDemonRenderLayer::UnitType::Pixels)
+//                bottom *= m_scaleFactor.y();
 
-            if (m_layer->heightUnits == QDemonRenderLayer::UnitType::Pixels)
-                height *= m_scaleFactor.y();
-        }
+//            if (m_layer->heightUnits == QDemonRenderLayer::UnitType::Pixels)
+//                height *= m_scaleFactor.y();
+//        }
 
-        float vertMin = getMinValue(inPresentationViewport.y(), inPresentationViewport.height(), bottom, m_layer->bottomUnits);
-        float vertWidth = getValueLen(inPresentationViewport.height(), height, m_layer->heightUnits);
-        float vertMax = getMaxValue(inPresentationViewport.y(), inPresentationViewport.height(), top, m_layer->topUnits);
+//        float vertMin = getMinValue(inPresentationViewport.y(), inPresentationViewport.height(), bottom, m_layer->bottomUnits);
+//        float vertWidth = getValueLen(inPresentationViewport.height(), height, m_layer->heightUnits);
+//        float vertMax = getMaxValue(inPresentationViewport.y(), inPresentationViewport.height(), top, m_layer->topUnits);
 
-        switch (inLayer.verticalFieldValues) {
-        case QDemonRenderLayer::VerticalField::HeightBottom:
-            m_viewport.setY(vertMin);
-            m_viewport.setHeight(vertWidth);
-            break;
-        case QDemonRenderLayer::VerticalField::TopBottom:
-            m_viewport.setY(vertMin);
-            m_viewport.setHeight(vertMax - vertMin);
-            break;
-        case QDemonRenderLayer::VerticalField::TopHeight:
-            m_viewport.setHeight(vertWidth);
-            m_viewport.setY(vertMax - vertWidth);
-            break;
-        }
-    }
+//        switch (inLayer.verticalFieldValues) {
+//        case QDemonRenderLayer::VerticalField::HeightBottom:
+//            m_viewport.setY(vertMin);
+//            m_viewport.setHeight(vertWidth);
+//            break;
+//        case QDemonRenderLayer::VerticalField::TopBottom:
+//            m_viewport.setY(vertMin);
+//            m_viewport.setHeight(vertMax - vertMin);
+//            break;
+//        case QDemonRenderLayer::VerticalField::TopHeight:
+//            m_viewport.setHeight(vertWidth);
+//            m_viewport.setY(vertMax - vertWidth);
+//            break;
+//        }
+//    }
+    m_viewport = m_presentationViewport;
 
     m_viewport.setWidth(qMax<qreal>(1.0f, m_viewport.width()));
     m_viewport.setHeight(qMax<qreal>(1.0f, m_viewport.height()));

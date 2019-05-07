@@ -48,60 +48,13 @@ void SGFramebufferObjectNode::preprocess()
     render();
 }
 
-void SGFramebufferObjectNode::resetOpenGLState() {
-    QOpenGLContext *ctx = QOpenGLContext::currentContext();
-    QOpenGLFunctions *gl = ctx->functions();
-
-    if (!m_vaoHelper)
-        m_vaoHelper = new QOpenGLVertexArrayObjectHelper(ctx);
-    if (m_vaoHelper->isValid())
-        m_vaoHelper->glBindVertexArray(0);
-
-    gl->glBindBuffer(GL_ARRAY_BUFFER, 0);
-    gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    if (ctx->isOpenGLES() || (gl->openGLFeatures() & QOpenGLFunctions::FixedFunctionPipeline)) {
-        int maxAttribs;
-        gl->glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
-        for (int i=0; i<maxAttribs; ++i) {
-            gl->glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
-            gl->glDisableVertexAttribArray(i);
-        }
-    }
-
-    gl->glActiveTexture(GL_TEXTURE0);
-    gl->glBindTexture(GL_TEXTURE_2D, 0);
-
-    gl->glDisable(GL_DEPTH_TEST);
-    gl->glDisable(GL_STENCIL_TEST);
-    gl->glDisable(GL_SCISSOR_TEST);
-
-    gl->glColorMask(true, true, true, true);
-    gl->glClearColor(0, 0, 0, 0);
-
-    gl->glDepthMask(true);
-    gl->glDepthFunc(GL_LESS);
-    gl->glClearDepthf(1);
-
-    gl->glStencilMask(0xff);
-    gl->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    gl->glStencilFunc(GL_ALWAYS, 0, 0xff);
-
-    gl->glDisable(GL_BLEND);
-    gl->glBlendFunc(GL_ONE, GL_ZERO);
-
-    gl->glUseProgram(0);
-
-    QOpenGLFramebufferObject::bindDefault();
-}
-
 void SGFramebufferObjectNode::render()
 {
     if (renderPending) {
         renderPending = false;
         GLuint textureId = renderer->render();
 
-        resetOpenGLState();
+        window->resetOpenGLState();
 
         if (texture() && (GLuint(texture()->textureId()) != textureId || texture()->textureSize() != renderer->surfaceSize())) {
             delete texture();
@@ -166,7 +119,29 @@ GLuint QDemonSceneRenderer::render()
     return HandleToID_cast(GLuint, size_t, m_fbo->color0->handle());
 }
 
-void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size)
+void QDemonSceneRenderer::render(const QRect &viewport, bool clearFirst)
+{
+    if (!m_layer)
+        return;
+
+    m_sgContext->beginFrame();
+
+    // set render target to be current window (default)
+    m_renderContext->setRenderTarget(nullptr);
+
+    // set viewport
+    m_sgContext->renderList()->setViewport(viewport);
+    m_sgContext->renderList()->setScissorRect(viewport);
+    m_sgContext->setWindowDimensions(m_surfaceSize);
+
+    m_sgContext->renderer()->prepareLayerForRender(*m_layer, m_surfaceSize, false, nullptr, true);
+    m_sgContext->runRenderTasks();
+    m_sgContext->renderer()->renderLayer(*m_layer, m_surfaceSize, clearFirst, QVector3D(0, 0, 0), false);
+    m_sgContext->endFrame();
+
+}
+
+void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size, bool useFBO)
 {
     if (!item)
         return;
@@ -217,12 +192,14 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size)
         m_referencedRootNode = referencedRootNode;
     }
 
-    if (!m_fbo || m_layerSizeIsDirty) {
-        if (m_fbo)
-            delete m_fbo;
+    if (useFBO) {
+        if (!m_fbo || m_layerSizeIsDirty) {
+            if (m_fbo)
+                delete m_fbo;
 
-        m_fbo = new FramebufferObject(m_surfaceSize, m_renderContext);
-        m_layerSizeIsDirty = false;
+            m_fbo = new FramebufferObject(m_surfaceSize, m_renderContext);
+            m_layerSizeIsDirty = false;
+        }
     }
 
 }
@@ -342,6 +319,74 @@ QDemonSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, QDemon
 QDemonSceneRenderer::FramebufferObject::~FramebufferObject()
 {
 
+}
+
+QSGRenderNode::StateFlags QDemonSGRenderNode::changedStates() const
+{
+    return BlendState | StencilState | DepthState | ScissorState | ColorState | CullState | ViewportState | RenderTargetState;
+}
+
+void QDemonSGRenderNode::render(const QSGRenderNode::RenderState *state)
+{
+    // calculate viewport
+    QRect viewport = matrix()->mapRect(QRect(QPoint(0, 0), renderer->surfaceSize()));
+
+    // render
+    renderer->render(viewport);
+    markDirty(QSGNode::DirtyMaterial);
+}
+
+void QDemonSGRenderNode::releaseResources()
+{
+}
+
+QSGRenderNode::RenderingFlags QDemonSGRenderNode::flags() const
+{
+    return QSGRenderNode::RenderingFlags();
+}
+
+QDemonSGDirectRenderer::QDemonSGDirectRenderer(QDemonSceneRenderer *renderer, QQuickWindow *window, QDemonSGDirectRenderer::QDemonSGDirectRendererMode mode)
+    : m_renderer(renderer)
+    , m_window(window)
+    , m_mode(mode)
+{
+    if (mode == Underlay)
+        connect(window, &QQuickWindow::beforeRendering, this, &QDemonSGDirectRenderer::render, Qt::DirectConnection);
+    else
+        connect(window, &QQuickWindow::afterRendering, this, &QDemonSGDirectRenderer::render, Qt::DirectConnection);
+}
+
+QDemonSGDirectRenderer::~QDemonSGDirectRenderer()
+{
+    delete m_renderer;
+}
+
+void QDemonSGDirectRenderer::setViewport(const QRectF &viewport)
+{
+    m_viewport = viewport;
+}
+
+void QDemonSGDirectRenderer::requestRender()
+{
+    m_window->update();
+}
+
+namespace {
+QRect convertQtRectToGLViewport(const QRectF &rect, const QSize surfaceSize) {
+    //
+    const int x = int(rect.x());
+    const int y = surfaceSize.height() - (int(rect.y()) + int(rect.height()));
+    const int width = int(rect.width());
+    const int height = int(rect.height());
+    return QRect(x, y, width, height);
+}
+}
+
+void QDemonSGDirectRenderer::render()
+{
+    const QRect glViewport = convertQtRectToGLViewport(m_viewport, m_window->size() * m_window->devicePixelRatio());
+    m_renderer->render(glViewport, false);
+    m_window->resetOpenGLState();
 }
 
 QT_END_NAMESPACE
