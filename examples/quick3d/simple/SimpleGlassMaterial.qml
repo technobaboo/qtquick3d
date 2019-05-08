@@ -21,8 +21,7 @@ DemonCustomMaterial {
         layers: 1
     }
 
-    textures: [ DemonCustomMaterialTexture {
-            id: uEnvironmentTexture
+    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Environment
             name: "uEnvironmentTexture"
             enabled: uEnvironmentMappingEnabled
@@ -30,8 +29,8 @@ DemonCustomMaterial {
                 id: envImage
                 source: "maps/spherical_checker.png"
             }
-    }, DemonCustomMaterialTexture {
-            id: uBakedShadowTexture
+    }
+    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.LightmapShadow
             name: "uBakedShadowTexture"
             enabled: uShadowMappingEnabled
@@ -39,7 +38,7 @@ DemonCustomMaterial {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
-    } ]
+    }
 
     shaders: DemonCustomMaterialShader {
         stage: DemonCustomMaterialShader.Fragment

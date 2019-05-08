@@ -38,8 +38,7 @@ DemonCustomMaterial {
         layers: 1
     }
 
-    textures: [ DemonCustomMaterialTexture {
-            id: uEnvironmentTexture
+    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Environment
             name: "uEnvironmentTexture"
             enabled: uEnvironmentMappingEnabled
@@ -47,8 +46,8 @@ DemonCustomMaterial {
                 id: envImage
                 source: "maps/spherical_checker.png"
             }
-        }, DemonCustomMaterialTexture {
-            id: uBakedShadowTexture
+    }
+    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.LightmapShadow
             name: "uBakedShadowTexture"
             enabled: uShadowMappingEnabled
@@ -56,8 +55,8 @@ DemonCustomMaterial {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
-        }, DemonCustomMaterialTexture {
-            id: randomGradient1D
+    }
+    property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Gradient
             name: "randomGradient1D"
             // hidden = true
@@ -66,8 +65,8 @@ DemonCustomMaterial {
                 tilingmodevert: DemonImage.Repeat
                 source: "maps/randomGradient1D.png"
             }
-        }, DemonCustomMaterialTexture {
-            id: randomGradient2D
+    }
+    property DemonCustomMaterialTexture randomGradient2D: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Gradient
             name: "randomGradient2D"
             // hidden = true
@@ -76,27 +75,27 @@ DemonCustomMaterial {
                 tilingmodevert: DemonImage.Repeat
                 source: "maps/randomGradient2D.png"
             }
-        }, DemonCustomMaterialTexture {
-            id: randomGradient3D
-            type: DemonCustomMaterialTexture.Gradient
-            name: "randomGradient3D"
-            // hidden = true
-            image: DemonImage {
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
-                source: "maps/randomGradient3D.png"
-            }
-        }, DemonCustomMaterialTexture {
-            id: randomGradient4D
-            type: DemonCustomMaterialTexture.Gradient
-            name: "randomGradient4D"
-            // hidden = true
-            image: DemonImage {
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
-                source: "maps/randomGradient4D.png"
-            }
-        } ]
+    }
+    property DemonCustomMaterialTexture randomGradient3D: DemonCustomMaterialTexture {
+        type: DemonCustomMaterialTexture.Gradient
+        name: "randomGradient3D"
+        // hidden = true
+        image: DemonImage {
+            tilingmodehorz: DemonImage.Repeat
+            tilingmodevert: DemonImage.Repeat
+            source: "maps/randomGradient3D.png"
+        }
+    }
+    property DemonCustomMaterialTexture randomGradient4D: DemonCustomMaterialTexture {
+        type: DemonCustomMaterialTexture.Gradient
+        name: "randomGradient4D"
+        // hidden = true
+        image: DemonImage {
+            tilingmodehorz: DemonImage.Repeat
+            tilingmodevert: DemonImage.Repeat
+            source: "maps/randomGradient4D.png"
+        }
+    }
 
     shaders: [ DemonCustomMaterialShader {
             stage: DemonCustomMaterialShader.Fragment

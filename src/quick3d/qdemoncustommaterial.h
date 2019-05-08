@@ -41,7 +41,7 @@ public:
 
     QDemonCustomMaterialTexture() = default;
     virtual ~QDemonCustomMaterialTexture() = default;
-    QDemonImage *m_image;
+    QDemonImage *m_image = nullptr;
     QByteArray name;
     TextureType type;
     bool enabled = true;
@@ -63,6 +63,8 @@ public Q_SLOTS:
 Q_SIGNALS:
     void textureDirty(QDemonCustomMaterialTexture * texture);
 };
+
+Q_DECLARE_OPAQUE_POINTER(QDemonCustomMaterialTexture)
 
 class Q_QUICK3D_EXPORT QDemonCustomMaterialRenderCommand : public QObject
 {
@@ -293,7 +295,6 @@ class Q_QUICK3D_EXPORT QDemonCustomMaterial : public QDemonMaterial
 
     Q_PROPERTY(QDemonCustomMaterialShaderInfo *shaderInfo READ shaderInfo WRITE setShaderInfo)
     Q_PROPERTY(QQmlListProperty<QDemonCustomMaterialShader> shaders READ shaders)
-    Q_PROPERTY(QQmlListProperty<QDemonCustomMaterialTexture> textures READ textures)
     Q_PROPERTY(QQmlListProperty<QDemonCustomMaterialRenderPass> passes READ passes)
 
 
@@ -312,7 +313,6 @@ public:
     QDemonCustomMaterialShaderInfo *shaderInfo() const;
 
     QQmlListProperty<QDemonCustomMaterialShader> shaders();
-    QQmlListProperty<QDemonCustomMaterialTexture> textures();
     QQmlListProperty<QDemonCustomMaterialRenderPass> passes();
 
     bool alwaysDirty() const;
@@ -354,11 +354,6 @@ private:
     static QDemonCustomMaterialShader *qmlShaderAt(QQmlListProperty<QDemonCustomMaterialShader> *list, int index);
     static int qmlShaderCount(QQmlListProperty<QDemonCustomMaterialShader> *list);
 
-    // Texture
-    static void qmlAppendTexture(QQmlListProperty<QDemonCustomMaterialTexture> *textures, QDemonCustomMaterialTexture *texture);
-    static QDemonCustomMaterialTexture *qmlTextureAt(QQmlListProperty<QDemonCustomMaterialTexture> *list, int index);
-    static int qmlTextureCount(QQmlListProperty<QDemonCustomMaterialTexture> *list);
-
     // Passes
     static void qmlAppendPass(QQmlListProperty<QDemonCustomMaterialRenderPass> *list, QDemonCustomMaterialRenderPass *pass);
     static QDemonCustomMaterialRenderPass *qmlPassAt(QQmlListProperty<QDemonCustomMaterialRenderPass> *list, int index);
@@ -379,7 +374,6 @@ private:
     QString m_source;
     QDemonCustomMaterialShaderInfo *m_shaderInfo;
     QVector<QDemonCustomMaterialShader *> m_shaders;
-    QVector<QDemonCustomMaterialTexture *> m_textures;
     QVector<QDemonCustomMaterialRenderPass *> m_passes;
     bool m_alwaysDirty = false;
 };

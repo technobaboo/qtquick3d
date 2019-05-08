@@ -7,6 +7,53 @@
 
 QT_BEGIN_NAMESPACE
 
+template <QVariant::Type>
+struct ShaderType
+{
+};
+
+template<>
+struct ShaderType<QVariant::Double>
+{
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Float; };
+    static constexpr const char *name() { return "float"; }
+};
+
+template<>
+struct ShaderType<QVariant::Bool>
+{
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Boolean; };
+    static constexpr const char *name() { return "bool"; }
+};
+
+template<>
+struct ShaderType<QVariant::Int>
+{
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Integer; };
+    static constexpr const char *name() { return "int"; }
+};
+
+template<>
+struct ShaderType<QVariant::Vector2D>
+{
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec2; };
+    static constexpr const char *name() { return "vec2"; }
+};
+
+template<>
+struct ShaderType<QVariant::Vector3D>
+{
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec3; };
+    static constexpr const char *name() { return "vec3"; }
+};
+
+template<>
+struct ShaderType<QVariant::Vector4D>
+{
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec4; };
+    static constexpr const char *name() { return "vec4"; }
+};
+
 QDemonCustomMaterial::QDemonCustomMaterial() {}
 
 QDemonCustomMaterial::~QDemonCustomMaterial() {}
@@ -49,16 +96,6 @@ QQmlListProperty<QDemonCustomMaterialShader> QDemonCustomMaterial::shaders()
                                                         QDemonCustomMaterial::qmlShaderCount,
                                                         QDemonCustomMaterial::qmlShaderAt,
                                                         nullptr);
-}
-
-QQmlListProperty<QDemonCustomMaterialTexture> QDemonCustomMaterial::textures()
-{
-    return QQmlListProperty<QDemonCustomMaterialTexture>(this,
-                                                         nullptr,
-                                                         QDemonCustomMaterial::qmlAppendTexture,
-                                                         QDemonCustomMaterial::qmlTextureCount,
-                                                         QDemonCustomMaterial::qmlTextureAt,
-                                                         nullptr);
 }
 
 QQmlListProperty<QDemonCustomMaterialRenderPass> QDemonCustomMaterial::passes()
@@ -146,8 +183,8 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         shaderPrefix.append("false )\n");
     };
 
-    static const auto appendShaderUniform = [](const QString &type, const QByteArray &name, QByteArray *shaderPrefix, const QString &value = QString()) {
-        shaderPrefix->append(QStringLiteral("uniform %1 %2 %3;\n").arg(type).arg(QString::fromLatin1(name)).arg(value.isEmpty() ? QString() : QString("= %1").arg(value)).toLatin1());
+    static const auto appendShaderUniform = [](const QByteArray &type, const QByteArray &name, QByteArray *shaderPrefix, const QString &value = QString()) {
+        shaderPrefix->append(QStringLiteral("uniform %1 %2 %3;\n").arg(QString::fromLatin1(type)).arg(QString::fromLatin1(name)).arg(value.isEmpty() ? QString() : QString("= %1").arg(value)).toLatin1());
     };
 
     static const auto resolveShader = [](const QByteArray &shader) -> QByteArray {
@@ -213,6 +250,7 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         // Properties
         const int propCount = metaObject()->propertyCount();
         const int propOffset = metaObject()->propertyOffset();
+        QVector<QMetaProperty> userProperties;
         for (int i = propOffset; i != propCount; ++i) {
             const auto property = metaObject()->property(i);
             if (Q_UNLIKELY(!property.isValid()))
@@ -222,45 +260,36 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
             if (property.hasNotifySignal() && propertyDirtyMethod.isValid())
                 connect(this, property.notifySignal(), this, propertyDirtyMethod);
 
-            const QVariant value = property.read(this);
-            if (Q_UNLIKELY(!value.isValid()))
-                continue;
-
-            QDemonRenderCustomMaterial::Property demonProp;
-            demonProp.name = property.name();
-            demonProp.value = value;
-            demonProp.pid = i;
-            QString type;
-            // TODO: Only types for copper are vec3, bool and float
-            if (value.type() == QVariant::Double) {
-                type = QStringLiteral("float");
-                demonProp.shaderDataType = QDemonRenderShaderDataType::Float;
-            } else if (value.type() == QVariant::Bool) {
-                type = QStringLiteral("bool");
-                demonProp.shaderDataType = QDemonRenderShaderDataType::Boolean;
-            } else if (value.type() == QVariant::Vector2D) {
-                type = QStringLiteral("vec2");
-                demonProp.shaderDataType = QDemonRenderShaderDataType::Vec2;
-            } else if (value.type() == QVariant::Vector3D) {
-                type = QStringLiteral("vec3");
-                demonProp.shaderDataType = QDemonRenderShaderDataType::Vec3;
-            } else if (value.type() == QVariant::Vector4D) {
-                type = QStringLiteral("vec4");
-                demonProp.shaderDataType = QDemonRenderShaderDataType::Vec4;
-            } else if (value.type() == QVariant::Int) {
-                type = QStringLiteral("int");
-                demonProp.shaderDataType = QDemonRenderShaderDataType::Integer;
+            if (property.type() == QVariant::Double) {
+                appendShaderUniform(ShaderType<QVariant::Double>::name(), property.name(), &shaderInfo.shaderPrefix);
+                customMaterial->properties.push_back({ property.name(), property.read(this), ShaderType<QVariant::Double>::type(), i});
+            } else if (property.type() == QVariant::Bool) {
+                appendShaderUniform(ShaderType<QVariant::Bool>::name(), property.name(), &shaderInfo.shaderPrefix);
+                customMaterial->properties.push_back({ property.name(), property.read(this), ShaderType<QVariant::Bool>::type(), i});
+            } else if (property.type() == QVariant::Vector2D) {
+                appendShaderUniform(ShaderType<QVariant::Vector2D>::name(), property.name(), &shaderInfo.shaderPrefix);
+                customMaterial->properties.push_back({ property.name(), property.read(this), ShaderType<QVariant::Vector2D>::type(), i});
+            } else if (property.type() == QVariant::Vector3D) {
+                appendShaderUniform(ShaderType<QVariant::Vector3D>::name(), property.name(), &shaderInfo.shaderPrefix);
+                customMaterial->properties.push_back({ property.name(), property.read(this), ShaderType<QVariant::Vector3D>::type(), i});
+            } else if (property.type() == QVariant::Vector4D) {
+                appendShaderUniform(ShaderType<QVariant::Vector4D>::name(), property.name(), &shaderInfo.shaderPrefix);
+                customMaterial->properties.push_back({ property.name(), property.read(this), ShaderType<QVariant::Vector4D>::type(), i});
+            } else if (property.type() == QVariant::Int) {
+                appendShaderUniform(ShaderType<QVariant::Int>::name(), property.name(), &shaderInfo.shaderPrefix);
+                customMaterial->properties.push_back({ property.name(), property.read(this), ShaderType<QVariant::Int>::type(), i});
+            } else if (property.type() == QVariant::UserType) {
+                if (property.userType() == qMetaTypeId<QDemonCustomMaterialTexture *>())
+                    userProperties.push_back(property);
             } else {
                 Q_ASSERT(0);
             }
-
-            appendShaderUniform(type, demonProp.name, &shaderInfo.shaderPrefix);
-            customMaterial->properties.push_back(demonProp);
         }
 
         // Textures
-        for (const auto &texture : qAsConst(m_textures)) {
+        for (const auto &userProperty : qAsConst(userProperties)) {
             QDemonRenderCustomMaterial::TextureProperty textureData;
+            QDemonCustomMaterialTexture *texture = userProperty.read(this).value<QDemonCustomMaterialTexture *>();
             const QByteArray &name = texture->name;
             if (name.isEmpty()) // Warnings here will just drown in the shader error messages
                 continue;
@@ -361,7 +390,6 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
 
     if (m_dirtyAttributes & Dirty::TextureDirty) {
         // TODO:
-        for (const auto &texture : qAsConst(m_textures));
     }
 
     return customMaterial;
@@ -399,34 +427,6 @@ int QDemonCustomMaterial::qmlShaderCount(QQmlListProperty<QDemonCustomMaterialSh
 {
     QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
     return that->m_shaders.size();
-}
-
-void QDemonCustomMaterial::qmlAppendTexture(QQmlListProperty<QDemonCustomMaterialTexture> *textures, QDemonCustomMaterialTexture *texture)
-{
-    if (!texture)
-        return;
-
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(textures->object);
-    if (texture->type == QDemonCustomMaterialTexture::TextureType::Displace)
-        that->setDisplacementMap(texture->image());
-    else if (texture->type == QDemonCustomMaterialTexture::TextureType::Emissive2)
-        that->setEmissiveMap2(texture->image());
-    else
-        that->setDynamicTextureMap(texture->image());
-    that->m_textures.push_back(texture);
-    that->markDirty(Dirty::TextureDirty);
-}
-
-QDemonCustomMaterialTexture *QDemonCustomMaterial::qmlTextureAt(QQmlListProperty<QDemonCustomMaterialTexture> *list, int index)
-{
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
-    return that->m_textures.at(index);
-}
-
-int QDemonCustomMaterial::qmlTextureCount(QQmlListProperty<QDemonCustomMaterialTexture> *list)
-{
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
-    return that->m_textures.size();
 }
 
 void QDemonCustomMaterial::qmlAppendPass(QQmlListProperty<QDemonCustomMaterialRenderPass> *list, QDemonCustomMaterialRenderPass *pass)

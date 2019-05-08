@@ -117,7 +117,7 @@ Window {
         DemonModel {
             position: Qt.vector3d(300, 0, 0)
             source: "#Cube"
-            materials: [ SimpleGlassMaterial {
+            materials: [ PorcelainMaterial {
                     id: texturedCubeMaterial
                 }
             ]
