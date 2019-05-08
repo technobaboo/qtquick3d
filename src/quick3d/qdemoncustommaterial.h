@@ -373,9 +373,9 @@ private:
     }
 
     quint32 m_dirtyAttributes = 0xffffffff;
-    bool m_hasTransparency;
-    bool m_hasRefraction;
-    bool m_hasVolumetricDF;
+    bool m_hasTransparency = false;
+    bool m_hasRefraction = false;
+    bool m_hasVolumetricDF = false;
     QString m_source;
     QDemonCustomMaterialShaderInfo *m_shaderInfo;
     QVector<QDemonCustomMaterialShader *> m_shaders;
