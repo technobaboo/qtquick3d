@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Window 2.11
 import QtDemon 1.0
+import QtDemonMaterialLibrary 1.0
 
 Window {
     id: window
@@ -118,7 +119,7 @@ Window {
         DemonModel {
             position: Qt.vector3d(0, 0, 0)
             source: "#Cube"
-            materials: [ SimpleGlassMaterial {
+            materials: [ GlassMaterial {
                 }
             ]
         }
@@ -126,7 +127,7 @@ Window {
         DemonModel {
             position: Qt.vector3d(-300, 0, 0)
             source: "#Cube"
-            materials: [ FrostedThinGlassMaterial {
+            materials: [ FrostedGlassMaterial {
                 }
             ]
         }

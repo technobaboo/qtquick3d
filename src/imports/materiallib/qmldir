@@ -1,0 +1,10 @@
+module QtDemonMaterialLibrary
+plugin qtdemonmaterialplugin
+classname QtDemonMaterialPlugin
+CopperMaterial 1.0 CopperMaterial.qml
+PorcelainMaterial 1.0 PorcelainMaterial.qml
+GlassMaterial 1.0 GlassMaterial.qml
+FrostedGlassMaterial 1.0 FrostedGlassMaterial.qml
+designersupported
+depends QtDemon 1.0
+depends QtQuick.Window 2.1

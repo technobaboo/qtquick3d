@@ -43,7 +43,7 @@ DemonCustomMaterial {
     DemonCustomMaterialShader {
         id: simpleGlassFragShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "simpleGlass.frag"
+        shader: "shaders/simpleGlass.frag"
     }
 
     passes: [ DemonCustomMaterialPass {

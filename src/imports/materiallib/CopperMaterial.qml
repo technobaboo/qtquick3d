@@ -35,7 +35,7 @@ DemonCustomMaterial {
     DemonCustomMaterialShader {
         id: copperFragShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "copper.frag"
+        shader: "shaders/copper.frag"
     }
 
     passes: [ DemonCustomMaterialPass {

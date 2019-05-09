@@ -103,27 +103,27 @@ DemonCustomMaterial {
     DemonCustomMaterialShader {
         id: mainShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "frostedThinGlass.frag"
+        shader: "shaders/frostedThinGlass.frag"
     }
     DemonCustomMaterialShader {
         id: noopShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "frostedThinGlassNoop.frag"
+        shader: "shaders/frostedThinGlassNoop.frag"
     }
     DemonCustomMaterialShader {
         id: preBlurShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "frostedThinGlassPreBlur.frag"
+        shader: "shaders/frostedThinGlassPreBlur.frag"
     }
     DemonCustomMaterialShader {
         id: blurXShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "frostedThinGlassBlurX.frag"
+        shader: "shaders/frostedThinGlassBlurX.frag"
     }
     DemonCustomMaterialShader {
         id: blurYShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "frostedThinGlassBlurY.frag"
+        shader: "shaders/frostedThinGlassBlurY.frag"
     }
 
     DemonCustomMaterialBuffer {
