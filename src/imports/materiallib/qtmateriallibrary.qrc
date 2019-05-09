@@ -12,7 +12,43 @@
         <file>maps/randomGradient2D.png</file>
         <file>maps/randomGradient3D.png</file>
         <file>maps/randomGradient4D.png</file>
-        <file>maps/shadow.png</file>
-        <file>maps/spherical_checker.png</file>
+        <file>maps/art_paper_normal.jpg</file>
+        <file>maps/art_paper_trans.jpg</file>
+        <file>maps/asphalt.jpg</file>
+        <file>maps/asphalt_bump.jpg</file>
+        <file>maps/bamboo_natural.jpg</file>
+        <file>maps/bamboo_natural_bump.jpg</file>
+        <file>maps/bamboo_natural_spec.jpg</file>
+        <file>maps/brushed_a.jpg</file>
+        <file>maps/brushed_full_contrast.jpg</file>
+        <file>maps/carbon_fiber.jpg</file>
+        <file>maps/carbon_fiber_aniso.jpg</file>
+        <file>maps/carbon_fiber_bump.jpg</file>
+        <file>maps/carbon_fiber_spec.jpg</file>
+        <file>maps/concentric_milled_steel.jpg</file>
+        <file>maps/concentric_milled_steel_aniso.jpg</file>
+        <file>maps/concrete_plain.jpg</file>
+        <file>maps/concrete_plain_bump.jpg</file>
+        <file>maps/cyclone_mesh_fencing.jpg</file>
+        <file>maps/cyclone_mesh_fencing_normal.jpg</file>
+        <file>maps/emissive.jpg</file>
+        <file>maps/emissive_mask.jpg</file>
+        <file>maps/grunge_b.jpg</file>
+        <file>maps/grunge_d.jpg</file>
+        <file>maps/metal_mesh.jpg</file>
+        <file>maps/metal_mesh_bump.jpg</file>
+        <file>maps/metal_mesh_spec.jpg</file>
+        <file>maps/paper_diffuse.jpg</file>
+        <file>maps/paper_trans.jpg</file>
+        <file>maps/powdercoat_bump_01.jpg</file>
+        <file>maps/shadow.jpg</file>
+        <file>maps/smooth_black_leather.jpg</file>
+        <file>maps/smooth_black_leather_bump.jpg</file>
+        <file>maps/smooth_black_leather_spec.jpg</file>
+        <file>maps/spherical_checker.jpg</file>
+        <file>maps/studded_rubber_bump.jpg</file>
+        <file>maps/walnut.jpg</file>
+        <file>maps/walnut_bump.jpg</file>
+        <file>maps/walnut_spec.jpg</file>
     </qresource>
 </RCC>

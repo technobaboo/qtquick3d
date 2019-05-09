@@ -37,7 +37,7 @@ DemonCustomMaterial {
         enabled: true
         image: DemonImage {
             id: glassBumpMap
-            source: "maps/spherical_checker.png"
+            source: "maps/spherical_checker.jpg"
         }
     }
 
@@ -47,7 +47,7 @@ DemonCustomMaterial {
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
-                source: "maps/spherical_checker.png"
+                source: "maps/spherical_checker.jpg"
             }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -56,7 +56,7 @@ DemonCustomMaterial {
             enabled: uShadowMappingEnabled
             image: DemonImage {
                 id: shadowImage
-                source: "maps/shadow.png"
+                source: "maps/shadow.jpg"
             }
     }
     property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {
