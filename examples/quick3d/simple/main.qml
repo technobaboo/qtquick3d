@@ -125,6 +125,22 @@ Window {
         }
 
         DemonModel {
+            position: Qt.vector3d(0, 300, 0)
+            source: "#Cube"
+            materials: [ AluminumMaterial {
+                }
+            ]
+        }
+
+        DemonModel {
+            position: Qt.vector3d(0, -300, 0)
+            source: "#Cube"
+            materials: [ MeshFenceMaterial {
+                }
+            ]
+        }
+
+        DemonModel {
             position: Qt.vector3d(-300, 0, 0)
             source: "#Cube"
             materials: [ FrostedGlassMaterial {

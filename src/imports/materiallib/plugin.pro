@@ -6,6 +6,7 @@ IMPORT_VERSION = 1.0
 QML_FILES = \
             AluminumMaterial.qml \
             CopperMaterial.qml \
+            MeshFenceMaterial.qml \
             PorcelainMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml
@@ -19,6 +20,7 @@ SOURCES += \
     plugin.cpp
 
 DISTFILES += \
-    qmldir
+    qmldir \
+    MeshFenceMaterial.qml
 
 load(qml_plugin)
