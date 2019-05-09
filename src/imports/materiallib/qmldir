@@ -1,6 +1,7 @@
 module QtDemonMaterialLibrary
 plugin qtdemonmaterialplugin
 classname QtDemonMaterialPlugin
+AluminumMaterial 1.0 AluminumMaterial.qml
 CopperMaterial 1.0 CopperMaterial.qml
 PorcelainMaterial 1.0 PorcelainMaterial.qml
 GlassMaterial 1.0 GlassMaterial.qml

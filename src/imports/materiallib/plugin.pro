@@ -4,6 +4,7 @@ TARGETPATH = QtDemonMaterialLibrary
 QT += quick qml
 IMPORT_VERSION = 1.0
 QML_FILES = \
+            AluminumMaterial.qml \
             CopperMaterial.qml \
             PorcelainMaterial.qml \
             GlassMaterial.qml \

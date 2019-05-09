@@ -50,5 +50,6 @@
         <file>maps/walnut.jpg</file>
         <file>maps/walnut_bump.jpg</file>
         <file>maps/walnut_spec.jpg</file>
+        <file>shaders/aluminum.frag</file>
     </qresource>
 </RCC>
