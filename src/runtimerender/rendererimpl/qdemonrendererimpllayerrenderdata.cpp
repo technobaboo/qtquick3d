@@ -1657,7 +1657,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
             QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
                                                                       &QDemonRenderContext::clearColor,
                                                                       &QDemonRenderContext::setClearColor,
-                                                                      QVector4D(layer.clearColor, 0.0f));
+                                                                      QVector4D(layer.clearColor, 1.0f));
             theContext->clear(QDemonRenderClearValues::Color);
         } else {
             // ### will need to address this later because when not rendering to an FBO
