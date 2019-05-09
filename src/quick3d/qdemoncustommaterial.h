@@ -41,24 +41,24 @@ public:
     };
     Q_ENUM(TextureType)
 
-    enum UsageType {
-        Diffuse,
-        Specular,
-        Roughness,
-        Bump,
-        Environment,
-        Shadow,
-        Displacement,
-        Emissive,
-        EmissiveMask,
-        Anisotropy,
-        Gradient,
-        Storage,
-        Brush,
-        Cutout,
-        Transmission
-    };
-    Q_ENUM(UsageType)
+//    enum UsageType {
+//        Diffuse,
+//        Specular,
+//        Roughness,
+//        Bump,
+//        Environment,
+//        Shadow,
+//        Displacement,
+//        Emissive,
+//        EmissiveMask,
+//        Anisotropy,
+//        Gradient,
+//        Storage,
+//        Brush,
+//        Cutout,
+//        Transmission
+//    };
+//    Q_ENUM(UsageType)
 
     QDemonCustomMaterialTexture() = default;
     virtual ~QDemonCustomMaterialTexture() = default;
