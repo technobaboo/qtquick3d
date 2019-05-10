@@ -6,6 +6,7 @@ IMPORT_VERSION = 1.0
 QML_FILES = \
             AluminumAnisotropicMaterial.qml \
             AluminumBrushedMaterial.qml \
+            AluminumEmissiveMaterial.qml \
             AluminumMaterial.qml \
             AluminumAnodizedEmissiveMaterial.qml \
             AluminumAnodizedMaterial.qml \
