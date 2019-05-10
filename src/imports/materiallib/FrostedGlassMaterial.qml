@@ -80,7 +80,7 @@ DemonCustomMaterial {
             }
     }
     property DemonCustomMaterialTexture randomGradient3D: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Gradient
+        type: DemonCustomMaterialTexture.Unknown; //Gradient
         name: "randomGradient3D"
         // hidden = true
         image: DemonImage {
@@ -90,7 +90,7 @@ DemonCustomMaterial {
         }
     }
     property DemonCustomMaterialTexture randomGradient4D: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Gradient
+        type: DemonCustomMaterialTexture.Unknown; //Gradient
         name: "randomGradient4D"
         // hidden = true
         image: DemonImage {
