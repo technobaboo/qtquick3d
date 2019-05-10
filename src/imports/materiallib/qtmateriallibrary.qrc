@@ -63,5 +63,6 @@
         <file>shaders/asphalt.frag</file>
         <file>shaders/bambooNaturalMatteEmissive.frag</file>
         <file>shaders/bambooNaturalMatte.frag</file>
+        <file>shaders/paperOffice.frag</file>
     </qresource>
 </RCC>

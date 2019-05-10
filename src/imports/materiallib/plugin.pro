@@ -18,6 +18,7 @@ QML_FILES = \
             MeshFenceMaterial.qml \
             MetalFenceFineMaterial.qml \
             PaperArtisticMaterial.qml \
+            PaperOfficeMaterial.qml \
             PorcelainMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml
