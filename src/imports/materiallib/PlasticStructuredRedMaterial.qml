@@ -36,28 +36,6 @@ DemonCustomMaterial {
                 source: "maps/shadow.jpg"
             }
     }
-    property DemonCustomMaterialTexture emissive_texture: DemonCustomMaterialTexture {
-            id: emissiveTexture
-            type: DemonCustomMaterialTexture.Emissive
-            enabled: true
-            image: DemonImage {
-                id: emissiveImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
-                source: "maps/emissive.jpg"
-            }
-    }
-    property DemonCustomMaterialTexture emissive_mask_texture: DemonCustomMaterialTexture {
-            id: emissiveMaskTexture
-            type: DemonCustomMaterialTexture.Unknown
-            enabled: true
-            image: DemonImage {
-                id: emissiveMaskImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
-                source: "maps/emissive_mask.jpg"
-            }
-    }
     property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Unknown; //Gradient
             hidden: true
@@ -96,13 +74,13 @@ DemonCustomMaterial {
     }
 
     DemonCustomMaterialShader {
-        id: plasticStructuredRedEmissiveFragShader
+        id: plasticStructuredRedFragShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "shaders/plasticStructuredRedEmissive.frag"
+        shader: "shaders/plasticStructuredRed.frag"
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: plasticStructuredRedEmissiveFragShader
+            shader: plasticStructuredRedFragShader
         }
     ]
 }

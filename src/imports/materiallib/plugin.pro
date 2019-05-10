@@ -26,6 +26,7 @@ QML_FILES = \
             MetalFenceFineMaterial.qml \
             PaperArtisticMaterial.qml \
             PaperOfficeMaterial.qml \
+            PlasticStructuredRedMaterial.qml \
             PlasticStructuredRedEmissiveMaterial.qml \
             PorcelainMaterial.qml \
             GlassMaterial.qml \
