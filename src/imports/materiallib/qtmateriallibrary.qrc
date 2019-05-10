@@ -73,6 +73,7 @@
         <file>shaders/concrete.frag</file>
         <file>shaders/plasticStructuredRed.frag</file>
         <file>shaders/plasticStructuredRedEmissive.frag</file>
+        <file>shaders/powderCoat.frag</file>
         <file>shaders/leatherSmoothedBlack.frag</file>
     </qresource>
 </RCC>

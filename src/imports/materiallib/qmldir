@@ -29,6 +29,7 @@ PaperOfficeMaterial 1.0 PaperOfficeMaterial.qml
 WalnutMatteMaterial 1.0 WalnutMatteMaterial.qml
 PlasticStructuredRedMaterial 1.0 PlasticStructuredRedMaterial.qml
 PlasticStructuredRedEmissiveMaterial 1.0 PlasticStructuredRedEmissiveMaterial.qml
+PowderCoatMaterial 1.0 PowderCoatMaterial.qml
 designersupported
 depends QtDemon 1.0
 depends QtQuick.Window 2.1

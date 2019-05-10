@@ -29,6 +29,7 @@ QML_FILES = \
             PlasticStructuredRedMaterial.qml \
             PlasticStructuredRedEmissiveMaterial.qml \
             PorcelainMaterial.qml \
+            PowderCoatMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml \
             WalnutMatteMaterial.qml
