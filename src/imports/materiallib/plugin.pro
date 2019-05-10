@@ -6,6 +6,7 @@ IMPORT_VERSION = 1.0
 QML_FILES = \
             AluminumMaterial.qml \
             AluminumAnodizedEmissiveMaterial.qml \
+            AluminumAnodizedMaterial.qml \
             CopperMaterial.qml \
             MeshFenceMaterial.qml \
             PorcelainMaterial.qml \

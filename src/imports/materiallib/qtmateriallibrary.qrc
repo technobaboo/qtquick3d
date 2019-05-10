@@ -53,5 +53,6 @@
         <file>maps/walnut_spec.jpg</file>
         <file>shaders/aluminum.frag</file>
         <file>shaders/aluminumAnodizedEmissive.frag</file>
+        <file>shaders/aluminumAnodized.frag</file>
     </qresource>
 </RCC>
