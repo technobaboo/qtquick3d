@@ -2,6 +2,7 @@
 #define QDEMONSCENEMANAGER_P_H
 
 #include <QtCore/QObject>
+#include <QtCore/QSet>
 
 #include <QtQuick3d/private/qtquick3dglobal_p.h>
 
