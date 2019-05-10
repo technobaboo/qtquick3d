@@ -13,6 +13,8 @@ QML_FILES = \
 
 # !static: CONFIG += qmlcache
 
+OTHER_FILES += $$QML_FILES
+
 RESOURCES += \
     qtmateriallibrary.qrc
 
@@ -20,7 +22,6 @@ SOURCES += \
     plugin.cpp
 
 DISTFILES += \
-    qmldir \
-    MeshFenceMaterial.qml
+    qmldir
 
 load(qml_plugin)
