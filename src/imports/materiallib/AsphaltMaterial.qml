@@ -2,21 +2,20 @@ import QtQuick 2.12
 import QtDemon 1.0
 
 DemonCustomMaterial {
-    property real reflection_map_offset: 0.5
-    property real reflection_map_scale: 0.3
-    property real roughness_map_offset: 0.16
-    property real roughness_map_scale: 0.4
-    property real bump_amount: 0.5
+
     property bool uEnvironmentMappingEnabled: true
     property bool uShadowMappingEnabled: false
-    property vector3d tiling: Qt.vector3d(1, 1, 1)
-    property vector3d metal_color: Qt.vector3d(0.95, 0.95, 0.95)
+    property real material_ior: 2.0
+    property real roughness: 0.25
+    property vector2d texture_tiling: Qt.vector2d(4, 4)
+    property real bump_amount: 7.0
+
 
     shaderInfo: DemonCustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Glossy
-        layers: 1
+        shaderKey: DemonCustomMaterialShaderInfo.Glossy | DemonCustomMaterialShaderInfo.Diffuse
+        layers: 2
     }
 
     property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
@@ -42,28 +41,19 @@ DemonCustomMaterial {
                 source: "maps/shadow.jpg"
             }
     }
-    property DemonCustomMaterialTexture reflection_texture: DemonCustomMaterialTexture {
+
+    property DemonCustomMaterialTexture reflect_texture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Specular
             enabled: true
-            name: "reflection_texture"
+            name: "reflect_texture"
             image: DemonImage {
                 id: reflectionTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/grunge_b.jpg"
+                source: "maps/asphalt_bump.jpg"
             }
     }
-    property DemonCustomMaterialTexture roughness_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Unknown
-            enabled: true
-            name: "roughness_texture"
-            image: DemonImage {
-                id: roughnessTexture
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
-                source: "maps/grunge_d.jpg"
-            }
-    }
+
     property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Bump
             enabled: true
@@ -72,19 +62,31 @@ DemonCustomMaterial {
                 id: bumpTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/grunge_d.jpg"
+                source: "maps/asphalt_bump.jpg"
+            }
+    }
+
+    property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
+            type: DemonCustomMaterialTexture.Diffuse
+            enabled: true
+            name: "diffuse_texture"
+            image: DemonImage {
+                id: diffuseTexture
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
+                source: "maps/asphalt.jpg"
             }
     }
 
     DemonCustomMaterialShader {
-        id: aluminumFragShader
+        id: asphaltFragShader
         stage: DemonCustomMaterialShader.Fragment
-        shader: "shaders/aluminum.frag"
+        shader: "shaders/asphalt.frag"
     }
 
     passes: [
         DemonCustomMaterialPass {
-            shader: aluminumFragShader
+            shader: asphaltFragShader
         }
     ]
 }

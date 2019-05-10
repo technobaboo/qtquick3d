@@ -42,6 +42,8 @@ DemonCustomMaterial {
             name: "uBakedShadowTexture"
             image: DemonImage {
                 id: shadowImage
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/shadow.jpg"
             }
     }
@@ -52,6 +54,8 @@ DemonCustomMaterial {
             name: "reflection_texture"
             image: DemonImage {
                 id: reflectionTexture
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/concentric_milled_steel.jpg"
             }
     }
@@ -62,6 +66,8 @@ DemonCustomMaterial {
             name: "aniso_rot_texture"
             image: DemonImage {
                 id: anisoTexture
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/concentric_milled_steel_aniso.jpg"
             }
     }
@@ -72,6 +78,8 @@ DemonCustomMaterial {
             name: "bump_texture"
             image: DemonImage {
                 id: bumpTexture
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/concentric_milled_steel.jpg"
             }
     }

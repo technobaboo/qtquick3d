@@ -60,5 +60,6 @@
         <file>shaders/aluminumEmissive.frag</file>
         <file>shaders/aluminumTexturedAnisotropic.frag</file>
         <file>shaders/paperArtistic.frag</file>
+        <file>shaders/asphalt.frag</file>
     </qresource>
 </RCC>

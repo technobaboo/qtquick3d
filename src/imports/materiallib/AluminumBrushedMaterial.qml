@@ -40,6 +40,8 @@ DemonCustomMaterial {
             name: "uBakedShadowTexture"
             image: DemonImage {
                 id: shadowImage
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/shadow.jpg"
             }
     }
@@ -50,6 +52,8 @@ DemonCustomMaterial {
             name: "brush_texture"
             image: DemonImage {
                 id: brushTexture
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/brushed_full_contrast.jpg"
             }
     }
@@ -60,6 +64,8 @@ DemonCustomMaterial {
             name: "roughness_texture_u"
             image: DemonImage {
                 id: roughnessUTexture
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/brushed_full_contrast.jpg"
             }
     }
@@ -70,6 +76,8 @@ DemonCustomMaterial {
             name: "roughness_texture_v"
             image: DemonImage {
                 id: roughnessVTexture
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/brushed_full_contrast.jpg"
             }
     }
@@ -81,6 +89,8 @@ DemonCustomMaterial {
             name: "bump_texture"
             image: DemonImage {
                 id: bumpTexture
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/brushed_a.jpg"
             }
     }

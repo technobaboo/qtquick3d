@@ -62,6 +62,8 @@ DemonCustomMaterial {
             name: "uBakedShadowTexture"
             image: DemonImage {
                 id: shadowImage
+                tilingmodehorz: DemonImage.Repeat
+                tilingmodevert: DemonImage.Repeat
                 source: "maps/shadow.jpg"
             }
     }
