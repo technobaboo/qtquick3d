@@ -17,6 +17,7 @@ QML_FILES = \
             CarbonFiberEmissiveMaterial.qml \
             CarbonFiberMaterial.qml \
             CarPaintBlueStandardMaterial.qml \
+            CarPaintColorPeel2LayerMaterial.qml \
             CopperMaterial.qml \
             MeshFenceMaterial.qml \
             MetalFenceFineMaterial.qml \

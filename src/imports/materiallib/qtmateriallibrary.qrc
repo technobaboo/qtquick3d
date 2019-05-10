@@ -67,5 +67,6 @@
         <file>shaders/carbonFiberEmissive.frag</file>
         <file>shaders/carbonFiber.frag</file>
         <file>shaders/carPaintBlueStandard.frag</file>
+        <file>shaders/carPaintColorPeel2Layer.frag</file>
     </qresource>
 </RCC>
