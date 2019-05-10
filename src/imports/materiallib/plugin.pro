@@ -25,7 +25,8 @@ QML_FILES = \
             PaperOfficeMaterial.qml \
             PorcelainMaterial.qml \
             GlassMaterial.qml \
-            FrostedGlassMaterial.qml
+            FrostedGlassMaterial.qml \
+            WalnutMatteMaterial.qml
 
 # !static: CONFIG += qmlcache
 

@@ -68,5 +68,6 @@
         <file>shaders/carbonFiber.frag</file>
         <file>shaders/carPaintBlueStandard.frag</file>
         <file>shaders/carPaintColorPeel2Layer.frag</file>
+        <file>shaders/walnutMatte.frag</file>
     </qresource>
 </RCC>

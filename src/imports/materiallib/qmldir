@@ -23,6 +23,7 @@ MeshFenceMaterial 1.0 MeshFenceMaterial.qml
 MetalFenceFineMaterial 1.0 MetalFenceFineMaterial.qml
 PaperArtisticMaterial 1.0 PaperArtisticMaterial.qml
 PaperOfficeMaterial 1.0 PaperOfficeMaterial.qml
+WalnutMatteMaterial 1.0 WalnutMatteMaterial.qml
 designersupported
 depends QtDemon 1.0
 depends QtQuick.Window 2.1
