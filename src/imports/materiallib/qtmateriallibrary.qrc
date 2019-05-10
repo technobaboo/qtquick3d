@@ -71,5 +71,6 @@
         <file>shaders/walnutMatte.frag</file>
         <file>shaders/carPaintYellowStandard.frag</file>
         <file>shaders/concrete.frag</file>
+        <file>shaders/plasticStructuredRedEmissive.frag</file>
     </qresource>
 </RCC>
