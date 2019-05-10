@@ -49,13 +49,13 @@ DemonCustomMaterial {
         }
     }
     property DemonCustomMaterialTexture transmission_texture: DemonCustomMaterialTexture {
-        // <Property formalName="Transmission Map" name="transmission_texture" description="Transmission texture of the material" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="transmission" default="./maps/materials/art_paper_trans.png" category="Textures"/>
+        // <Property formalName="Transmission Map" name="transmission_texture" description="Transmission texture of the material" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="transmission" default="./maps/materials/paper_trans.png" category="Textures"/>
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/art_paper_trans.jpg"
+            source: "maps/paper_trans.jpg"
         }
     }
 
