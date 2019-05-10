@@ -47,7 +47,7 @@ DemonCustomMaterial {
 
     property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
         //    <Property formalName="Bump Map" name="bump_texture" description="Bump texture of the material" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="bump" default="./maps/materials/cyclone_mesh_fencing_normal.png" category="Material"/>
-        type: DemonCustomMaterial.Bump
+        type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
