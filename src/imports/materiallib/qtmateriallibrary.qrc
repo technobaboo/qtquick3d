@@ -72,5 +72,6 @@
         <file>shaders/carPaintYellowStandard.frag</file>
         <file>shaders/concrete.frag</file>
         <file>shaders/plasticStructuredRedEmissive.frag</file>
+        <file>shaders/leatherSmoothedBlack.frag</file>
     </qresource>
 </RCC>

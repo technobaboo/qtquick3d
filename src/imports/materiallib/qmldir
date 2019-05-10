@@ -18,6 +18,7 @@ CarPaintColorPeel2LayerMaterial 1.0 CarPaintColorPeel2LayerMaterial.qml
 CarPaintYellowStandardMaterial 1.0 CarPaintYellowStandardMaterial.qml
 ConcreteMaterial 1.0 ConcreteMaterial.qml
 CopperMaterial 1.0 CopperMaterial.qml
+LeatherSmoothedBlackMaterial 1.0 LeatherSmoothedBlackMaterial.qml
 PorcelainMaterial 1.0 PorcelainMaterial.qml
 GlassMaterial 1.0 GlassMaterial.qml
 FrostedGlassMaterial 1.0 FrostedGlassMaterial.qml
