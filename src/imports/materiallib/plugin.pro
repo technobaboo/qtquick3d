@@ -5,6 +5,7 @@ QT += quick qml
 IMPORT_VERSION = 1.0
 QML_FILES = \
             AluminumAnisotropicMaterial.qml \
+            AluminumBrushedMaterial.qml \
             AluminumMaterial.qml \
             AluminumAnodizedEmissiveMaterial.qml \
             AluminumAnodizedMaterial.qml \
