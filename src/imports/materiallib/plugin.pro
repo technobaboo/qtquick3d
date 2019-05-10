@@ -29,7 +29,6 @@ SOURCES += \
     plugin.cpp
 
 DISTFILES += \
-    qmldir \
-    MetalFenceFineMaterial.qml
+    qmldir
 
 load(qml_plugin)
