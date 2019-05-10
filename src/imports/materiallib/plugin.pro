@@ -19,6 +19,7 @@ QML_FILES = \
             CarPaintBlueStandardMaterial.qml \
             CarPaintColorPeel2LayerMaterial.qml \
             CarPaintYellowStandardMaterial.qml \
+            ConcreteMaterial.qml \
             CopperMaterial.qml \
             MeshFenceMaterial.qml \
             MetalFenceFineMaterial.qml \

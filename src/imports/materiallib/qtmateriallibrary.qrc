@@ -70,5 +70,6 @@
         <file>shaders/carPaintColorPeel2Layer.frag</file>
         <file>shaders/walnutMatte.frag</file>
         <file>shaders/carPaintYellowStandard.frag</file>
+        <file>shaders/concrete.frag</file>
     </qresource>
 </RCC>
