@@ -54,5 +54,6 @@
         <file>shaders/aluminum.frag</file>
         <file>shaders/aluminumAnodizedEmissive.frag</file>
         <file>shaders/aluminumAnodized.frag</file>
+        <file>shaders/aluminumAnisotropic.frag</file>
     </qresource>
 </RCC>

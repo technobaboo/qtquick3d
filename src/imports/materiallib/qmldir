@@ -1,6 +1,7 @@
 module QtDemonMaterialLibrary
 plugin qtdemonmaterialplugin
 classname QtDemonMaterialPlugin
+AluminumAnisotropicMaterial 1.0 AluminumAnisotropicMaterial.qml
 AluminumMaterial 1.0 AluminumMaterial.qml
 AluminumAnodizedEmissiveMaterial 1.0 AluminumAnodizedEmissiveMaterial.qml
 AluminumAnodizedMaterial 1.0 AluminumAnodizedMaterial.qml
