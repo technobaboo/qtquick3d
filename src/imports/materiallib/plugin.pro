@@ -10,6 +10,7 @@ QML_FILES = \
             AluminumAnodizedMaterial.qml \
             CopperMaterial.qml \
             MeshFenceMaterial.qml \
+            MetalFenceFineMaterial.qml \
             PorcelainMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml
@@ -25,6 +26,7 @@ SOURCES += \
     plugin.cpp
 
 DISTFILES += \
-    qmldir
+    qmldir \
+    MetalFenceFineMaterial.qml
 
 load(qml_plugin)

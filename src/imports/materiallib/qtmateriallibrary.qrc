@@ -9,6 +9,7 @@
         <file>shaders/porcelain.frag</file>
         <file>shaders/simpleGlass.frag</file>
         <file>shaders/meshFence.frag</file>
+        <file>shaders/metalFenceFine.frag</file>
         <file>maps/randomGradient1D.png</file>
         <file>maps/randomGradient2D.png</file>
         <file>maps/randomGradient3D.png</file>
