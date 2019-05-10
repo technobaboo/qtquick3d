@@ -64,5 +64,7 @@
         <file>shaders/bambooNaturalMatteEmissive.frag</file>
         <file>shaders/bambooNaturalMatte.frag</file>
         <file>shaders/paperOffice.frag</file>
+        <file>shaders/carbonFiberEmissive.frag</file>
+        <file>shaders/carbonFiber.frag</file>
     </qresource>
 </RCC>

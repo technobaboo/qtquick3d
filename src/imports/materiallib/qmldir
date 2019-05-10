@@ -11,6 +11,8 @@ AluminumTexturedAnisotropicMaterial 1.0 AluminumTexturedAnisotropicMaterial.qml
 AsphaltMaterial 1.0 AsphaltMaterial.qml
 BambooNaturalMatteEmissiveMaterial 1.0 BambooNaturalMatteEmissiveMaterial.qml
 BambooNaturalMatteMaterial 1.0 BambooNaturalMatteMaterial.qml
+CarbonFiberEmissiveMaterial 1.0 CarbonFiberEmissiveMaterial.qml
+CarbonFiberMaterial 1.0 CarbonFiberMaterial.qml
 CopperMaterial 1.0 CopperMaterial.qml
 PorcelainMaterial 1.0 PorcelainMaterial.qml
 GlassMaterial 1.0 GlassMaterial.qml

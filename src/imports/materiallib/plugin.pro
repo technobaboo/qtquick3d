@@ -14,6 +14,8 @@ QML_FILES = \
             AsphaltMaterial.qml \
             BambooNaturalMatteEmissiveMaterial.qml \
             BambooNaturalMatteMaterial.qml \
+            CarbonFiberEmissiveMaterial.qml \
+            CarbonFiberMaterial.qml \
             CopperMaterial.qml \
             MeshFenceMaterial.qml \
             MetalFenceFineMaterial.qml \
