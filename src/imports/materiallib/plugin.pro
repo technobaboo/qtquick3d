@@ -14,6 +14,7 @@ QML_FILES = \
             CopperMaterial.qml \
             MeshFenceMaterial.qml \
             MetalFenceFineMaterial.qml \
+            PaperArtisticMaterial.qml \
             PorcelainMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml

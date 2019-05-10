@@ -14,6 +14,7 @@ GlassMaterial 1.0 GlassMaterial.qml
 FrostedGlassMaterial 1.0 FrostedGlassMaterial.qml
 MeshFenceMaterial 1.0 MeshFenceMaterial.qml
 MetalFenceFineMaterial 1.0 MetalFenceFineMaterial.qml
+PaperArtisticMaterial 1.0 PaperArtisticMaterial.qml
 designersupported
 depends QtDemon 1.0
 depends QtQuick.Window 2.1
