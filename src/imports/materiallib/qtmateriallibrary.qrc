@@ -66,5 +66,6 @@
         <file>shaders/paperOffice.frag</file>
         <file>shaders/carbonFiberEmissive.frag</file>
         <file>shaders/carbonFiber.frag</file>
+        <file>shaders/carPaintBlueStandard.frag</file>
     </qresource>
 </RCC>
