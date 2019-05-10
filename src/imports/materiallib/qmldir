@@ -15,6 +15,7 @@ CarbonFiberEmissiveMaterial 1.0 CarbonFiberEmissiveMaterial.qml
 CarbonFiberMaterial 1.0 CarbonFiberMaterial.qml
 CarPaintBlueStandardMaterial 1.0 CarPaintBlueStandardMaterial.qml
 CarPaintColorPeel2LayerMaterial 1.0 CarPaintColorPeel2LayerMaterial.qml
+CarPaintYellowStandardMaterial 1.0 CarPaintYellowStandardMaterial.qml
 CopperMaterial 1.0 CopperMaterial.qml
 PorcelainMaterial 1.0 PorcelainMaterial.qml
 GlassMaterial 1.0 GlassMaterial.qml
