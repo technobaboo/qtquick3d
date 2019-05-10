@@ -10,6 +10,7 @@ QML_FILES = \
             AluminumMaterial.qml \
             AluminumAnodizedEmissiveMaterial.qml \
             AluminumAnodizedMaterial.qml \
+            AluminumTexturedAnisotropicMaterial.qml \
             CopperMaterial.qml \
             MeshFenceMaterial.qml \
             MetalFenceFineMaterial.qml \

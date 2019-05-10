@@ -7,6 +7,7 @@ AluminumEmissiveMaterial 1.0 AluminumEmissiveMaterial.qml
 AluminumMaterial 1.0 AluminumMaterial.qml
 AluminumAnodizedEmissiveMaterial 1.0 AluminumAnodizedEmissiveMaterial.qml
 AluminumAnodizedMaterial 1.0 AluminumAnodizedMaterial.qml
+AluminumTexturedAnisotropicMaterial 1.0 AluminumTexturedAnisotropicMaterial.qml
 CopperMaterial 1.0 CopperMaterial.qml
 PorcelainMaterial 1.0 PorcelainMaterial.qml
 GlassMaterial 1.0 GlassMaterial.qml
