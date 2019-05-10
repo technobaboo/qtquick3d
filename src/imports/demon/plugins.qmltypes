@@ -132,10 +132,17 @@ Module {
         prototype: "QDemonMaterial"
         exports: ["QtDemon/DemonCustomMaterial 1.0"]
         exportMetaObjectRevisions: [0]
-        Property { name: "source"; type: "string" }
         Property { name: "hasTransparency"; type: "bool" }
         Property { name: "hasRefraction"; type: "bool" }
         Property { name: "hasVolumetricDF"; type: "bool" }
+        Property { name: "alwaysDirty"; type: "bool" }
+        Property { name: "shaderInfo"; type: "QDemonCustomMaterialShaderInfo"; isPointer: true }
+        Property {
+            name: "passes"
+            type: "QDemonCustomMaterialRenderPass"
+            isList: true
+            isReadonly: true
+        }
         Signal {
             name: "hasTransparencyChanged"
             Parameter { name: "hasTransparency"; type: "bool" }
@@ -152,6 +159,10 @@ Module {
             name: "sourceChanged"
             Parameter { name: "source"; type: "string" }
         }
+        Signal {
+            name: "alwaysDirtyChanged"
+            Parameter { name: "alwaysDirty"; type: "bool" }
+        }
         Method {
             name: "setHasTransparency"
             Parameter { name: "hasTransparency"; type: "bool" }
@@ -167,6 +178,293 @@ Module {
         Method {
             name: "setSource"
             Parameter { name: "source"; type: "string" }
+        }
+        Method {
+            name: "setShaderInfo"
+            Parameter { name: "shaderInfo"; type: "QDemonCustomMaterialShaderInfo"; isPointer: true }
+        }
+        Method {
+            name: "setAlwaysDirty"
+            Parameter { name: "alwaysDirty"; type: "bool" }
+        }
+    }
+    Component {
+        name: "QDemonCustomMaterialBlending"
+        prototype: "QDemonCustomMaterialRenderCommand"
+        exports: ["QtDemon/DemonCustomMaterialBlending 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "SrcBlending"
+            values: {
+                "Unknown": 0,
+                "Zero": 1,
+                "One": 2,
+                "SrcColor": 3,
+                "OneMinusSrcColor": 4,
+                "DstColor": 5,
+                "OneMinusDstColor": 6,
+                "SrcAlpha": 7,
+                "OneMinusSrcAlpha": 8,
+                "DstAlpha": 9,
+                "OneMinusDstAlpha": 10,
+                "ConstantColor": 11,
+                "OneMinusConstantColor": 12,
+                "ConstantAlpha": 13,
+                "OneMinusConstantAlpha": 14,
+                "SrcAlphaSaturate": 15
+            }
+        }
+        Enum {
+            name: "DestBlending"
+            values: {
+                "Unknown": 0,
+                "Zero": 1,
+                "One": 2,
+                "SrcColor": 3,
+                "OneMinusSrcColor": 4,
+                "DstColor": 5,
+                "OneMinusDstColor": 6,
+                "SrcAlpha": 7,
+                "OneMinusSrcAlpha": 8,
+                "DstAlpha": 9,
+                "OneMinusDstAlpha": 10,
+                "ConstantColor": 11,
+                "OneMinusConstantColor": 12,
+                "ConstantAlpha": 13,
+                "OneMinusConstantAlpha": 14
+            }
+        }
+        Property { name: "srcBlending"; type: "SrcBlending" }
+        Property { name: "destBlending"; type: "DestBlending" }
+        Method {
+            name: "setDestBlending"
+            Parameter { name: "destBlending"; type: "DestBlending" }
+        }
+        Method {
+            name: "setSrcBlending"
+            Parameter { name: "srcBlending"; type: "SrcBlending" }
+        }
+    }
+    Component {
+        name: "QDemonCustomMaterialBuffer"
+        prototype: "QObject"
+        exports: ["QtDemon/DemonCustomMaterialBuffer 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "Type"
+            values: {
+                "FrameBuffer": 0,
+                "UserDefined": 1
+            }
+        }
+        Enum {
+            name: "MagnifyingOp"
+            values: {
+                "Unknown": 0,
+                "Nearest": 1,
+                "Linear": 2
+            }
+        }
+        Enum {
+            name: "TextureCoordOp"
+            values: {
+                "Unknown": 0,
+                "ClampToEdge": 1,
+                "MirroredRepeat": 2,
+                "Repeat": 3
+            }
+        }
+        Enum {
+            name: "AllocateBufferFlagValues"
+            values: {
+                "None": 0,
+                "SceneLifetime": 1
+            }
+        }
+        Enum {
+            name: "TextureFormat"
+            values: {
+                "Unknown": 0,
+                "R8": 1,
+                "R16": 2,
+                "R16F": 3,
+                "R32I": 4,
+                "R32UI": 5,
+                "R32F": 6,
+                "RG8": 7,
+                "RGBA8": 8,
+                "RGB8": 9,
+                "SRGB8": 10,
+                "SRGB8A8": 11,
+                "RGB565": 12,
+                "RGBA5551": 13,
+                "Alpha8": 14,
+                "Luminance8": 15,
+                "Luminance16": 16,
+                "LuminanceAlpha8": 17,
+                "RGBA16F": 18,
+                "RG16F": 19,
+                "RG32F": 20,
+                "RGB32F": 21,
+                "RGBA32F": 22,
+                "R11G11B10": 23,
+                "RGB9E5": 24,
+                "RGBA_DXT1": 25,
+                "RGB_DXT1": 26,
+                "RGBA_DXT3": 27,
+                "RGBA_DXT5": 28,
+                "Depth16": 29,
+                "Depth24": 30,
+                "Depth32": 31,
+                "Depth24Stencil8": 32
+            }
+        }
+        Property { name: "format"; type: "TextureFormat" }
+        Property { name: "magOp"; type: "MagnifyingOp" }
+        Property { name: "coordOp"; type: "TextureCoordOp" }
+        Property { name: "sizeMultiplier"; type: "float" }
+        Property { name: "bufferFlags"; type: "AllocateBufferFlagValues" }
+        Property { name: "name"; type: "QByteArray" }
+    }
+    Component {
+        name: "QDemonCustomMaterialBufferBlit"
+        prototype: "QDemonCustomMaterialRenderCommand"
+        exports: ["QtDemon/DemonCustomMaterialBufferBlit 1.0"]
+        exportMetaObjectRevisions: [0]
+        Property { name: "source"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
+        Property { name: "destination"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
+    }
+    Component {
+        name: "QDemonCustomMaterialBufferInput"
+        prototype: "QDemonCustomMaterialRenderCommand"
+        exports: ["QtDemon/DemonCustomMaterialBufferInput 1.0"]
+        exportMetaObjectRevisions: [0]
+        Property { name: "buffer"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
+        Property { name: "bufferName"; type: "QByteArray" }
+        Property { name: "param"; type: "QByteArray" }
+    }
+    Component {
+        name: "QDemonCustomMaterialRenderCommand"
+        prototype: "QObject"
+        exports: ["QtDemon/DemonCustomMaterialCommand 1.0"]
+        exportMetaObjectRevisions: [0]
+    }
+    Component {
+        name: "QDemonCustomMaterialRenderPass"
+        prototype: "QObject"
+        exports: ["QtDemon/DemonCustomMaterialPass 1.0"]
+        exportMetaObjectRevisions: [0]
+        Property {
+            name: "commands"
+            type: "QDemonCustomMaterialRenderCommand"
+            isList: true
+            isReadonly: true
+        }
+        Property { name: "output"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
+        Property { name: "shader"; type: "QDemonCustomMaterialShader"; isPointer: true }
+    }
+    Component {
+        name: "QDemonCustomMaterialRenderState"
+        prototype: "QDemonCustomMaterialRenderCommand"
+        exports: ["QtDemon/DemonCustomMaterialRenderState 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "RenderState"
+            values: {
+                "Unknown": 0,
+                "Blend": 1,
+                "CullFace": 2,
+                "DepthTest": 3,
+                "StencilTest": 4,
+                "ScissorTest": 5,
+                "DepthWrite": 6,
+                "Multisample": 7
+            }
+        }
+        Property { name: "renderState"; type: "RenderState" }
+        Property { name: "enabled"; type: "bool" }
+        Method {
+            name: "setRenderState"
+            Parameter { name: "renderState"; type: "RenderState" }
+        }
+    }
+    Component {
+        name: "QDemonCustomMaterialShader"
+        prototype: "QObject"
+        exports: ["QtDemon/DemonCustomMaterialShader 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "Stage"
+            values: {
+                "Shared": 0,
+                "Vertex": 1,
+                "Fragment": 2,
+                "Geometry": 3
+            }
+        }
+        Property { name: "shader"; type: "QByteArray" }
+        Property { name: "stage"; type: "Stage" }
+    }
+    Component {
+        name: "QDemonCustomMaterialShaderInfo"
+        prototype: "QObject"
+        exports: ["QtDemon/DemonCustomMaterialShaderInfo 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "MaterialShaderKeyValues"
+            values: {
+                "Diffuse": 1,
+                "Specular": 2,
+                "Glossy": 4,
+                "Cutout": 8,
+                "Refraction": 16,
+                "Transparent": 32,
+                "Displace": 64,
+                "Volumetric": 128,
+                "Transmissive": 256
+            }
+        }
+        Property { name: "version"; type: "QByteArray" }
+        Property { name: "type"; type: "QByteArray" }
+        Property { name: "shaderKey"; type: "int" }
+        Property { name: "layers"; type: "int" }
+    }
+    Component {
+        name: "QDemonCustomMaterialTexture"
+        prototype: "QObject"
+        exports: ["QtDemon/DemonCustomMaterialTexture 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "TextureType"
+            values: {
+                "Unknown": 0,
+                "Diffuse": 1,
+                "Specular": 2,
+                "Environment": 3,
+                "Bump": 4,
+                "Normal": 5,
+                "Displace": 6,
+                "Emissive": 7,
+                "Emissive2": 8,
+                "Anisotropy": 9,
+                "Translucent": 10,
+                "LightmapIndirect": 11,
+                "LightmapRadiosity": 12,
+                "LightmapShadow": 13
+            }
+        }
+        Property { name: "image"; type: "QDemonImage"; isPointer: true }
+        Property { name: "name"; type: "QByteArray" }
+        Property { name: "type"; type: "TextureType" }
+        Property { name: "enabled"; type: "bool" }
+        Property { name: "hidden"; type: "bool" }
+        Signal {
+            name: "textureDirty"
+            Parameter { name: "texture"; type: "QDemonCustomMaterialTexture"; isPointer: true }
+        }
+        Method {
+            name: "setImage"
+            Parameter { name: "image"; type: "QDemonImage"; isPointer: true }
         }
     }
     Component {
@@ -1037,24 +1335,23 @@ Module {
             name: "Type"
             values: {
                 "Unknown": 0,
-                "Presentation": 1,
-                "Scene": 2,
-                "Node": 3,
-                "Layer": 4,
-                "Light": 5,
-                "Camera": 6,
-                "Model": 7,
-                "DefaultMaterial": 8,
-                "Image": 9,
-                "Text": 10,
-                "Effect": 11,
-                "CustomMaterial": 12,
-                "RenderPlugin": 13,
-                "ReferencedMaterial": 14,
-                "Path": 15,
-                "PathSubPath": 16,
-                "Lightmaps": 17,
-                "LastKnownGraphObjectType": 18
+                "SceneEnvironment": 1,
+                "Node": 2,
+                "Layer": 3,
+                "Light": 4,
+                "Camera": 5,
+                "Model": 6,
+                "DefaultMaterial": 7,
+                "Image": 8,
+                "Text": 9,
+                "Effect": 10,
+                "CustomMaterial": 11,
+                "RenderPlugin": 12,
+                "ReferencedMaterial": 13,
+                "Path": 14,
+                "PathSubPath": 15,
+                "Lightmaps": 16,
+                "LastKnownGraphObjectType": 17
             }
         }
         Property { name: "parent"; type: "QDemonObject"; isPointer: true }
@@ -1110,7 +1407,8 @@ Module {
     }
     Component {
         name: "QDemonSceneEnvironment"
-        prototype: "QObject"
+        defaultProperty: "data"
+        prototype: "QDemonObject"
         exports: ["QtDemon/DemonSceneEnvironment 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
