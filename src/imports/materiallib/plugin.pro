@@ -35,6 +35,7 @@ QML_FILES = \
             RubberStuddedEmissiveMaterial.qml \
             SteelMilledConcentricMaterial.qml \
             GlassMaterial.qml \
+            GlassRefractiveMaterial.qml \
             FrostedGlassMaterial.qml \
             FrostedGlassSinglePassMaterial.qml \
             WalnutMatteMaterial.qml

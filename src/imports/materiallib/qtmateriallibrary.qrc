@@ -80,5 +80,6 @@
         <file>shaders/rubberStuddedEmissive.frag</file>
         <file>shaders/steelMilledConcentric.frag</file>
         <file>shaders/frostedThinGlassSp.frag</file>
+        <file>shaders/simpleGlassRefractive.frag</file>
     </qresource>
 </RCC>
