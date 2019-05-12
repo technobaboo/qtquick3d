@@ -32,6 +32,7 @@ PlasticStructuredRedEmissiveMaterial 1.0 PlasticStructuredRedEmissiveMaterial.qm
 PowderCoatMaterial 1.0 PowderCoatMaterial.qml
 PowderCoatEmissiveMaterial 1.0 PowderCoatEmissiveMaterial.qml
 RubberStuddedMaterial 1.0 RubberStuddedMaterial.qml
+RubberStuddedEmissiveMaterial 1.0 RubberStuddedEmissiveMaterial.qml
 designersupported
 depends QtDemon 1.0
 depends QtQuick.Window 2.1
