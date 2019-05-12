@@ -31,6 +31,7 @@ QML_FILES = \
             PorcelainMaterial.qml \
             PowderCoatMaterial.qml \
             PowderCoatEmissiveMaterial.qml \
+            RubberStuddedMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml \
             WalnutMatteMaterial.qml

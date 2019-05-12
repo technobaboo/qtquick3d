@@ -76,5 +76,6 @@
         <file>shaders/powderCoat.frag</file>
         <file>shaders/leatherSmoothedBlack.frag</file>
         <file>shaders/powderCoatEmissive.frag</file>
+        <file>shaders/rubberStudded.frag</file>
     </qresource>
 </RCC>
