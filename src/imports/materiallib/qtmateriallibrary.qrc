@@ -75,5 +75,6 @@
         <file>shaders/plasticStructuredRedEmissive.frag</file>
         <file>shaders/powderCoat.frag</file>
         <file>shaders/leatherSmoothedBlack.frag</file>
+        <file>shaders/powderCoatEmissive.frag</file>
     </qresource>
 </RCC>

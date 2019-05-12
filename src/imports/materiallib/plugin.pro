@@ -30,6 +30,7 @@ QML_FILES = \
             PlasticStructuredRedEmissiveMaterial.qml \
             PorcelainMaterial.qml \
             PowderCoatMaterial.qml \
+            PowderCoatEmissiveMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml \
             WalnutMatteMaterial.qml
