@@ -36,6 +36,7 @@ QML_FILES = \
             SteelMilledConcentricMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml \
+            FrostedGlassSinglePassMaterial.qml \
             WalnutMatteMaterial.qml
 
 # !static: CONFIG += qmlcache

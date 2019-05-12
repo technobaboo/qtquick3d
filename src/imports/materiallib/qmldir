@@ -22,6 +22,7 @@ LeatherSmoothedBlackMaterial 1.0 LeatherSmoothedBlackMaterial.qml
 PorcelainMaterial 1.0 PorcelainMaterial.qml
 GlassMaterial 1.0 GlassMaterial.qml
 FrostedGlassMaterial 1.0 FrostedGlassMaterial.qml
+FrostedGlassSinglePassMaterial 1.0 FrostedGlassSinglePassMaterial.qml
 MeshFenceMaterial 1.0 MeshFenceMaterial.qml
 MetalFenceFineMaterial 1.0 MetalFenceFineMaterial.qml
 PaperArtisticMaterial 1.0 PaperArtisticMaterial.qml
