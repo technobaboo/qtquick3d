@@ -78,5 +78,6 @@
         <file>shaders/powderCoatEmissive.frag</file>
         <file>shaders/rubberStudded.frag</file>
         <file>shaders/rubberStuddedEmissive.frag</file>
+        <file>shaders/steelMilledConcentric.frag</file>
     </qresource>
 </RCC>

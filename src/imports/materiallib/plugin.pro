@@ -33,6 +33,7 @@ QML_FILES = \
             PowderCoatEmissiveMaterial.qml \
             RubberStuddedMaterial.qml \
             RubberStuddedEmissiveMaterial.qml \
+            SteelMilledConcentricMaterial.qml \
             GlassMaterial.qml \
             FrostedGlassMaterial.qml \
             WalnutMatteMaterial.qml
