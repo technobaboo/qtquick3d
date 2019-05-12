@@ -192,7 +192,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderNode : public QDemonRenderGraphOb
     void calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP, QMatrix3x3 &outNormalMatrix) const;
 
     // This should be in a utility file somewhere
-    void calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const;
+    QMatrix3x3 calculateNormalMatrix() const;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderNode::Flags)

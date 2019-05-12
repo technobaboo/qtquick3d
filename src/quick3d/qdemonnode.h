@@ -4,11 +4,12 @@
 #include <QtQuick3d/qdemonobject.h>
 
 #include <QVector3D>
+#include <QMatrix4x4>
 
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
 QT_BEGIN_NAMESPACE
-
+class QDemonRenderNode;
 class Q_QUICK3D_EXPORT QDemonNode : public QDemonObject
 {
     Q_OBJECT
@@ -24,6 +25,10 @@ class Q_QUICK3D_EXPORT QDemonNode : public QDemonObject
     Q_PROPERTY(RotationOrder rotationOrder READ rotationOrder WRITE setRotationOrder NOTIFY rotationOrderChanged)
     Q_PROPERTY(Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
+    Q_PROPERTY(QVector3D forward READ forward NOTIFY forwardChanged)
+    Q_PROPERTY(QVector3D up READ up NOTIFY upChanged)
+    Q_PROPERTY(QVector3D right READ right NOTIFY rightChanged)
+    Q_PROPERTY(QVector3D globalPosition READ globalPosition NOTIFY globalPositionChanged)
 
 public:
     enum RotationOrder {
@@ -60,6 +65,11 @@ public:
     Orientation orientation() const;
     bool visible() const;
 
+    QVector3D forward() const;
+    QVector3D up() const;
+    QVector3D right() const;
+    QVector3D globalPosition() const;
+
     QDemonObject::Type type() const override;
 
 public Q_SLOTS:
@@ -76,6 +86,9 @@ public Q_SLOTS:
     void setOrientation(Orientation orientation);
     void setVisible(bool visible);
 
+private Q_SLOTS:
+    void updateTransformProperties();
+
 Q_SIGNALS:
     void xChanged(float x);
     void yChanged(float y);
@@ -90,6 +103,13 @@ Q_SIGNALS:
     void orientationChanged(Orientation orientation);
     void visibleChanged(bool visible);
 
+    void forwardChanged(QVector3D forward);
+    void upChanged(QVector3D up);
+    void rightChanged(QVector3D right);
+    void globalPositionChanged(QVector3D globalPosition);
+
+    void transformPropertiesDirty();
+
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
@@ -103,6 +123,11 @@ private:
     RotationOrder m_rotationorder = YXZ;
     Orientation m_orientation = LeftHanded;
     bool m_visible = true;
+    QMatrix4x4 m_globalTransform;
+    QVector3D m_front{ 0.0f, 0.0f, -1.0f};
+    QVector3D m_up {0.0f, 1.0f, 0.0f};
+    QVector3D m_right {1.0f, 0.0f, 0.0f};
+    QVector3D m_globalPosition;
     friend QDemonSceneManager;
 };
 

@@ -494,13 +494,13 @@ QVector3D QDemonRenderNode::getGlobalPivot() const
 void QDemonRenderNode::calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP, QMatrix3x3 &outNormalMatrix) const
 {
     outMVP = inViewProjection * globalTransform;
-    calculateNormalMatrix(outNormalMatrix);
+    outNormalMatrix = calculateNormalMatrix();
 }
 
-void QDemonRenderNode::calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const
+QMatrix3x3 QDemonRenderNode::calculateNormalMatrix() const
 {
-    outNormalMatrix = mat44::getUpper3x3(globalTransform);
-    outNormalMatrix = mat33::getInverse(outNormalMatrix).transposed();
+    QMatrix3x3 outNormalMatrix = mat44::getUpper3x3(globalTransform);
+    return mat33::getInverse(outNormalMatrix).transposed();
 }
 
 QT_END_NAMESPACE

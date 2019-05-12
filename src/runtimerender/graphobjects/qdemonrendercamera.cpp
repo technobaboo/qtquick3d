@@ -425,8 +425,7 @@ QDemonRenderRay QDemonRenderCamera::unproject(const QVector2D &inViewportRelativ
     }
 
     outOrigin = mat44::transform(globalTransform, outOrigin);
-    QMatrix3x3 theNormalMatrix;
-    calculateNormalMatrix(theNormalMatrix);
+    QMatrix3x3 theNormalMatrix = calculateNormalMatrix();
 
     outDir = mat33::transform(theNormalMatrix, outDir);
     outDir.normalize();

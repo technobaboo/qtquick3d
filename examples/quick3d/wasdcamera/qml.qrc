@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>TestScene.qml</file>
+        <file>WasdController.qml</file>
+    </qresource>
+</RCC>
