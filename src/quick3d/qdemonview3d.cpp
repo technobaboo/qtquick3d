@@ -5,6 +5,7 @@
 #include "qdemonimage.h"
 #include "qdemonscenerenderer.h"
 #include <QtDemonRuntimeRender/QDemonRenderLayer>
+#include <QOpenGLFunctions>
 
 #include <qsgtextureprovider.h>
 #include <QSGSimpleTextureNode>
@@ -265,13 +266,14 @@ static QSurfaceFormat findIdealGLVersion()
 }
 
 static bool isBlackListedES3Driver(QOpenGLContext &ctx) {
+    auto glFunctions = ctx.functions();
     static bool hasBeenTested = false;
     static bool result = false;
     if (!hasBeenTested) {
         QOffscreenSurface offscreenSurface;
         offscreenSurface.create();
         ctx.makeCurrent(&offscreenSurface);
-        QString vendorString = QString::fromLatin1(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+        QString vendorString = QString::fromLatin1(reinterpret_cast<const char *>(glFunctions->glGetString(GL_RENDERER)));
         ctx.doneCurrent();
         if (vendorString == QStringLiteral("PowerVR Rogue GE8300"))
             result = true;
