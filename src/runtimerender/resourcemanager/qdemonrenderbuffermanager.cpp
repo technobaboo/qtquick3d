@@ -162,15 +162,13 @@ void QDemonBufferManager::unaliasImagePath(QString inSourcePath)
     aliasImageMap.remove(inSourcePath);
 }
 
-QString QDemonBufferManager::getImagePath(QString inSourcePath)
+QString QDemonBufferManager::getImagePath(const QString &inSourcePath) const
 {
-    AliasImageMap::iterator theAliasIter = aliasImageMap.find(inSourcePath);
-    if (theAliasIter != aliasImageMap.end())
-        return theAliasIter.value();
-    return inSourcePath;
+    const auto foundIt = aliasImageMap.constFind(inSourcePath);
+    return (foundIt != aliasImageMap.cend()) ? foundIt.value() : inSourcePath;
 }
 
-QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImagePath, QDemonRef<QDemonLoadedTexture> inLoadedImage, bool inForceScanForTransparency, bool inBsdfMipmaps)
+QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString &inImagePath, QDemonRef<QDemonLoadedTexture> inLoadedImage, bool inForceScanForTransparency, bool inBsdfMipmaps)
 {
     //        SStackPerfTimer __perfTimer(perfTimer, "Image Upload");
     {
@@ -259,25 +257,28 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
     return theImage.value();
 }
 
-QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImagePath, bool inForceScanForTransparency, bool inBsdfMipmaps)
+QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString &inImagePath, bool inForceScanForTransparency, bool inBsdfMipmaps)
 {
-    inImagePath = getImagePath(inImagePath);
+    const QString realImagePath = getImagePath(inImagePath);
 
-    if (inImagePath.isNull())
+    if (Q_UNLIKELY(realImagePath.isNull()))
         return QDemonRenderImageTextureData();
 
-    ImageMap::iterator theIter = imageMap.find(inImagePath);
-    if (theIter == imageMap.end() && !inImagePath.isNull()) {
+    const auto foundIt = imageMap.constFind(realImagePath);
+    if (foundIt != imageMap.cend())
+        return foundIt.value();
+
+    if (Q_LIKELY(!realImagePath.isNull())) {
         QDemonRef<QDemonLoadedTexture> theLoadedImage;
         {
             //                SStackPerfTimer __perfTimer(perfTimer, "Image Decompression");
-            theLoadedImage = QDemonLoadedTexture::load(inImagePath, *inputStreamFactory, true, context->renderContextType());
+            theLoadedImage = QDemonLoadedTexture::load(realImagePath, *inputStreamFactory, true, context->renderContextType());
             // Hackish solution to custom materials not finding their textures if they are used
             // in sub-presentations. Note: Runtime 1 is going to be removed in Qt 3D Studio 2.x,
             // so this should be ok.
             if (!theLoadedImage) {
-                if (QDir(inImagePath).isRelative()) {
-                    QString searchPath = inImagePath;
+                if (QDir(realImagePath).isRelative()) {
+                    QString searchPath = realImagePath;
                     if (searchPath.startsWith(QLatin1String("./")))
                         searchPath.prepend(QLatin1String("."));
                     int loops = 0;
@@ -293,7 +294,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
                     // have absolute path at this point. It points to the wrong place with
                     // the new project structure, so we need to split it up and construct
                     // the new absolute path here.
-                    QString wholePath = inImagePath;
+                    QString wholePath = realImagePath;
                     QStringList splitPath = wholePath.split(QLatin1String("../"));
                     if (splitPath.size() > 1) {
                         QString searchPath = splitPath.at(0) + splitPath.at(1);
@@ -313,18 +314,17 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
             }
         }
 
-        if (theLoadedImage) {
-            return loadRenderImage(inImagePath, theLoadedImage, inForceScanForTransparency, inBsdfMipmaps);
-        } else {
-            // We want to make sure that bad path fails once and doesn't fail over and over
-            // again
-            // which could slow down the system quite a bit.
-            ImageMap::iterator theImage = imageMap.insert(inImagePath, QDemonRenderImageTextureData());
-            qCWarning(WARNING, "Failed to load image: %s", qPrintable(inImagePath));
-            theIter = theImage;
-        }
+        if (Q_LIKELY(theLoadedImage))
+            return loadRenderImage(realImagePath, theLoadedImage, inForceScanForTransparency, inBsdfMipmaps);
+
+        // We want to make sure that bad path fails once and doesn't fail over and over
+        // again
+        // which could slow down the system quite a bit.
+        imageMap.insert(realImagePath, QDemonRenderImageTextureData());
+        qCWarning(WARNING, "Failed to load image: %s", qPrintable(realImagePath));
     }
-    return theIter.value();
+
+    return QDemonRenderImageTextureData();
 }
 
 QDemonMeshUtilities::MultiLoadResult QDemonBufferManager::loadPrimitive(const QString &inRelativePath) const

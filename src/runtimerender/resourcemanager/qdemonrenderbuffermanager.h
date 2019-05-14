@@ -101,17 +101,17 @@ public:
 
     // Returns the given source path unless the source path is aliased; in which case returns
     // the aliased path.
-    QString getImagePath(QString inSourcePath);
+    QString getImagePath(const QString &inSourcePath) const;
     // Returns a texture and a boolean indicating if this texture has transparency in it or not.
     // Can't name this LoadImage because that gets mangled by windows to LoadImageA (uggh)
     // In some cases we need to only scan particular images for transparency.
-    QDemonRenderImageTextureData loadRenderImage(QString inImagePath,
-                                                         QDemonRef<QDemonLoadedTexture> inTexture,
-                                                         bool inForceScanForTransparency = false,
-                                                         bool inBsdfMipmaps = false);
-    QDemonRenderImageTextureData loadRenderImage(QString inSourcePath,
-                                                         bool inForceScanForTransparency = false,
-                                                         bool inBsdfMipmaps = false);
+    QDemonRenderImageTextureData loadRenderImage(const QString &inImagePath,
+                                                 QDemonRef<QDemonLoadedTexture> inTexture,
+                                                 bool inForceScanForTransparency = false,
+                                                 bool inBsdfMipmaps = false);
+    QDemonRenderImageTextureData loadRenderImage(const QString &inSourcePath,
+                                                 bool inForceScanForTransparency = false,
+                                                 bool inBsdfMipmaps = false);
     QDemonRenderMesh *loadMesh(const QString &inSourcePath);
 
     QDemonRenderMesh *createMesh(const QString &inSourcePath,

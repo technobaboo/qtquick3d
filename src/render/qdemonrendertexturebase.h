@@ -119,7 +119,7 @@ public:
      */
     virtual void bind() = 0;
 
-    virtual quint32 numMipmaps() { return m_maxMipLevel; }
+    virtual quint32 numMipmaps() const { return m_maxMipLevel; }
 
     /**
      * @brief Query if texture needs coordinate swizzle

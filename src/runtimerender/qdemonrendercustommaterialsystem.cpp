@@ -899,14 +899,14 @@ void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &inMa
                                                 const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
     QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inPropertyName);
-    if (theConstant) {
+    if (Q_LIKELY(theConstant)) {
         if (theConstant->getShaderConstantType() == inPropertyType) {
             if (inPropertyType == QDemonRenderShaderDataType::Texture2D) {
                 //                    StaticAssert<sizeof(QString) == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
                 QDemonRenderCustomMaterial::TextureProperty *textureProperty = reinterpret_cast<QDemonRenderCustomMaterial::TextureProperty *>(propertyValue.value<void *>());
                 QDemonRenderImage *image = textureProperty->texImage;
                 if (image) {
-                    const QString imageSource = image->m_imagePath;
+                    const QString &imageSource = image->m_imagePath;
                     QDemonRef<QDemonBufferManager> theBufferManager(context->bufferManager());
                     QDemonRef<QDemonRenderTexture2D> theTexture;
 
@@ -1156,7 +1156,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
     // size intentionally requiried every loop;
     qint32 bufferIdx = findBuffer(inCommand.m_name);
     if (bufferIdx < allocatedBuffers.size()) {
-        QDemonCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
+        const QDemonCustomMaterialBuffer &theEntry = allocatedBuffers.at(bufferIdx);
         QDemonTextureDetails theDetails = theEntry.texture->textureDetails();
         if (theDetails.width == theWidth && theDetails.height == theHeight && theDetails.format == theFormat) {
             theTexture = theEntry.texture;

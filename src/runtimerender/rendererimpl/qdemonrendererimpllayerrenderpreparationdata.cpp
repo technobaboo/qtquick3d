@@ -126,11 +126,11 @@ bool QDemonLayerRenderPreparationData::needsWidgetTexture() const
 void QDemonLayerRenderPreparationData::setShaderFeature(const QByteArray &theStr, bool inValue)
 {
     QDemonShaderPreprocessorFeature item(theStr, inValue);
-    QVector<QDemonShaderPreprocessorFeature>::iterator iter = features.begin(), end = features.end();
+    auto iter = features.cbegin();
+    const auto end = features.cend();
 
-    // empty loop intentional.
-    for (; iter != end && ((iter->name == theStr) == false); ++iter)
-        ;
+    while (iter != end && iter->name != theStr)
+        ++iter;
 
     if (iter != end) {
         if (iter->enabled != inValue) {

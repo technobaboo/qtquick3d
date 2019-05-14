@@ -59,7 +59,7 @@ Q_DECLARE_FLAGS(QDemonShaderCacheProgramFlags, ShaderCacheProgramFlagValues)
 struct QDemonShaderPreprocessorFeature
 {
     QByteArray name;
-    bool enabled = false;
+    mutable bool enabled = false;
     QDemonShaderPreprocessorFeature() = default;
     QDemonShaderPreprocessorFeature(const QByteArray &inName, bool val) : name(inName), enabled(val) {}
     bool operator<(const QDemonShaderPreprocessorFeature &inOther) const;

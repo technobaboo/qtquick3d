@@ -838,7 +838,7 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
     theRenderContext->setDepthFunction(QDemonRenderBoolOp::LessThanOrEqual);
     theRenderContext->setBlendingEnabled(false);
     QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
-    auto theOpaqueObjects = getOpaqueRenderableObjects();
+    const auto theOpaqueObjects = getOpaqueRenderableObjects();
     bool usingDepthBuffer = layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthTest) && theOpaqueObjects.size() > 0;
 
     if (usingDepthBuffer) {
@@ -849,11 +849,10 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
         theRenderContext->setDepthTestEnabled(false);
     }
 
-    for (quint32 idx = 0, end = theOpaqueObjects.size(); idx < end; ++idx) {
-        QDemonRenderableObject &theObject(*theOpaqueObjects[idx]);
-        QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject.scopedLights);
+    for (const auto &theObject : theOpaqueObjects) {
+        QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject->scopedLights);
         setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
-        inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
+        inRenderFn(*this, *theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
     }
 
     // transparent objects
@@ -861,19 +860,18 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
         theRenderContext->setBlendingEnabled(true && inEnableBlending);
         theRenderContext->setDepthWriteEnabled(inEnableTransparentDepthWrite);
 
-        auto theTransparentObjects = getTransparentRenderableObjects();
+        const auto theTransparentObjects = getTransparentRenderableObjects();
         // Assume all objects have transparency if the layer's depth test enabled flag is true.
         if (layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthTest)) {
-            for (quint32 idx = 0, end = theTransparentObjects.size(); idx < end; ++idx) {
-                QDemonRenderableObject &theObject(*theTransparentObjects[idx]);
-                if (!(theObject.renderableFlags.isCompletelyTransparent())) {
+            for (const auto &theObject : theTransparentObjects) {
+                if (!(theObject->renderableFlags.isCompletelyTransparent())) {
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     // SW fallback for advanced blend modes.
                     // Renders transparent objects to a separate FBO and blends them in shader
                     // with the opaque items and background.
                     QDemonRenderDefaultMaterial::MaterialBlendMode blendMode = QDemonRenderDefaultMaterial::MaterialBlendMode::Normal;
-                    if (theObject.renderableFlags.isDefaultMaterialMeshSubset())
-                        blendMode = static_cast<QDemonSubsetRenderable &>(theObject).getBlendingMode();
+                    if (theObject->renderableFlags.isDefaultMaterialMeshSubset())
+                        blendMode = static_cast<QDemonSubsetRenderable &>(*theObject).getBlendingMode();
                     bool useBlendFallback = (blendMode == QDemonRenderDefaultMaterial::MaterialBlendMode::Overlay
                                              || blendMode == QDemonRenderDefaultMaterial::MaterialBlendMode::ColorBurn
                                              || blendMode == QDemonRenderDefaultMaterial::MaterialBlendMode::ColorDodge)
@@ -882,10 +880,10 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                     if (useBlendFallback)
                         setupDrawFB(true);
 #endif
-                    QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject.scopedLights);
+                    QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject->scopedLights);
                     setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
 
-                    inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
+                    inRenderFn(*this, *theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     // SW fallback for advanced blend modes.
                     // Continue blending after transparent objects have been rendered to a FBO
@@ -904,20 +902,19 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
         // If the layer doesn't have depth enabled then we have to render via an alternate route
         // where the transparent objects vector could have both opaque and transparent objects.
         else {
-            for (quint32 idx = 0, end = theTransparentObjects.size(); idx < end; ++idx) {
-                QDemonRenderableObject &theObject(*theTransparentObjects[idx]);
-                if (!(theObject.renderableFlags.isCompletelyTransparent())) {
+            for (const auto &theObject : theTransparentObjects) {
+                if (!(theObject->renderableFlags.isCompletelyTransparent())) {
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     QDemonRenderDefaultMaterial::MaterialBlendMode blendMode = QDemonRenderDefaultMaterial::MaterialBlendMode::Normal;
-                    if (theObject.renderableFlags.isDefaultMaterialMeshSubset())
-                        blendMode = static_cast<QDemonSubsetRenderable &>(theObject).getBlendingMode();
+                    if (theObject->renderableFlags.isDefaultMaterialMeshSubset())
+                        blendMode = static_cast<QDemonSubsetRenderable &>(*theObject).getBlendingMode();
                     bool useBlendFallback = (blendMode == QDemonRenderDefaultMaterial::MaterialBlendMode::Overlay
                                              || blendMode == QDemonRenderDefaultMaterial::MaterialBlendMode::ColorBurn
                                              || blendMode == QDemonRenderDefaultMaterial::MaterialBlendMode::ColorDodge)
                             && !theRenderContext->supportsAdvancedBlendHW()
                             && !theRenderContext->supportsAdvancedBlendHwKHR();
 
-                    if (theObject.renderableFlags.hasTransparency()) {
+                    if (theObject->renderableFlags.hasTransparency()) {
                         theRenderContext->setBlendingEnabled(true && inEnableBlending);
                         // If we have SW fallback for blend mode, render to a FBO and blend back.
                         // Slow as this must be done per-object (transparent and opaque items
@@ -926,9 +923,9 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                             setupDrawFB(false);
                     }
 #endif
-                    QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject.scopedLights);
+                    QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject->scopedLights);
                     setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
-                    inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
+                    inRenderFn(*this, *theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     if (useBlendFallback) {
                         blendAdvancedToFB(blendMode, false, theFB);

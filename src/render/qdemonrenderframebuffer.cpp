@@ -112,7 +112,7 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachment attachmen
         return;
     }
 
-    quint32 attachmentBit = (1 << static_cast<int>(attachment));
+    const quint32 attachmentBit = (1 << static_cast<int>(attachment));
 
     // early out
     // if there is nothing to detach

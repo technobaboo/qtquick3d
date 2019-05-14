@@ -128,8 +128,6 @@ public:
      */
     void bind() override;
 
-    quint32 numMipmaps() override { return m_maxMipLevel; }
-
     /**
      * @brief Query if texture needs coordinate swizzle
      *
