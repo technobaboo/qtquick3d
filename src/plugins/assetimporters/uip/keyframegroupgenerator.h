@@ -6,6 +6,8 @@
 #include "uippresentation.h"
 #include "uipparser.h"
 
+QT_BEGIN_NAMESPACE
+
 class KeyframeGroupGenerator
 {
 public:
@@ -72,5 +74,7 @@ private:
     using KeyframeGroupMap = QHash<QString, KeyframeGroup *>;
     QHash<GraphObject *, KeyframeGroupMap> m_targetKeyframeMap;
 };
+
+QT_END_NAMESPACE
 
 #endif // KEYFRAMEGROUPGENERATOR_H

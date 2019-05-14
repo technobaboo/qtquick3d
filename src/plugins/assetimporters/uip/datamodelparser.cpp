@@ -1,5 +1,7 @@
 #include "datamodelparser.h"
 
+QT_BEGIN_NAMESPACE
+
 QDebug operator<<(QDebug dbg, const DataModelParser::Property &prop)
 {
     QDebugStateSaver saver(dbg);

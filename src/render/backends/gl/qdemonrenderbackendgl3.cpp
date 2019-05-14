@@ -779,4 +779,4 @@ void QDemonRenderBackendGL3Impl::waitSync(QDemonRenderBackendSyncObject so, QDem
     GL_CALL_EXTRA_FUNCTION(glWaitSync(syncID, 0, GL_TIMEOUT_IGNORED));
 }
 
-QT_BEGIN_NAMESPACE
+QT_END_NAMESPACE

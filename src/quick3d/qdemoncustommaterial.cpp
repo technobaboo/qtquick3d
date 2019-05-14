@@ -5,6 +5,8 @@
 #include "qdemonobject_p.h"
 #include "qdemonview3d.h"
 
+Q_DECLARE_OPAQUE_POINTER(QDemonCustomMaterialTexture)
+
 QT_BEGIN_NAMESPACE
 
 template <QVariant::Type>

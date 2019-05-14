@@ -90,8 +90,6 @@ Q_SIGNALS:
     void textureDirty(QDemonCustomMaterialTexture * texture);
 };
 
-Q_DECLARE_OPAQUE_POINTER(QDemonCustomMaterialTexture)
-
 class Q_QUICK3D_EXPORT QDemonCustomMaterialBuffer : public QObject
 {
     Q_OBJECT

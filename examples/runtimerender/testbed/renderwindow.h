@@ -7,11 +7,13 @@
 #include <QtDemon/qtdemonglobal.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
+QT_BEGIN_NAMESPACE
 class QDemonRenderContext;
 class QDemonRenderLayer;
 struct QDemonRenderPresentation;
 struct QDemonRenderScene;
 struct QDemonRenderModel;
+QT_END_NAMESPACE
 
 class RenderWindow : public QWindow
 {

@@ -43,8 +43,8 @@ Q_SIGNALS:
     void needsUpdate();
 };
 
-QML_DECLARE_TYPE(QDemonSceneManager)
-
 QT_END_NAMESPACE
+
+QML_DECLARE_TYPE(QDemonSceneManager)
 
 #endif // QDEMONSCENEMANAGER_P_H

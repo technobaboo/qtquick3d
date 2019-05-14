@@ -38,7 +38,9 @@
 #include <QtCore/QElapsedTimer>
 #include <QtGui/QOpenGLContext>
 
+QT_BEGIN_NAMESPACE
 class QDemonRenderContext;
+QT_END_NAMESPACE
 
 class QDemonRenderExample : public QWindow
 {
