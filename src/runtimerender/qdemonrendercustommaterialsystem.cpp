@@ -666,12 +666,12 @@ struct QDemonMaterialOrComputeShader
 
 struct QDemonCustomMaterialBuffer
 {
-    QString name;
+    QByteArray name;
     QDemonRef<QDemonRenderFrameBuffer> frameBuffer;
     QDemonRef<QDemonRenderTexture2D> texture;
     dynamic::QDemonAllocateBufferFlags flags;
 
-    QDemonCustomMaterialBuffer(const QString &inName,
+    QDemonCustomMaterialBuffer(const QByteArray &inName,
                                const QDemonRef<QDemonRenderFrameBuffer> &inFb,
                                const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                dynamic::QDemonAllocateBufferFlags inFlags)
@@ -763,7 +763,7 @@ void QDemonMaterialSystem::releaseBuffer(qint32 inIdx)
     }
 }
 
-qint32 QDemonMaterialSystem::findBuffer(const QString &inName) const
+qint32 QDemonMaterialSystem::findBuffer(const QByteArray &inName) const
 {
     for (qint32 idx = 0, end = allocatedBuffers.size(); idx < end; ++idx) {
         if (allocatedBuffers.at(idx).name == inName)
@@ -783,23 +783,25 @@ bool QDemonMaterialSystem::textureNeedsMips(const QDemonRenderCustomMaterial::Te
 }
 
 void QDemonMaterialSystem::setTexture(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                                      const QString &inPropName,
+                                      const QByteArray &inPropName,
                                       const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                       const QDemonRenderCustomMaterial::TextureProperty *inPropDec,
                                       bool needMips)
 {
     QDemonRef<QDemonCustomMaterialTextureData> theTextureEntry;
-    for (quint32 idx = 0, end = textureEntries.size(); idx < end && theTextureEntry == nullptr; ++idx) {
-        if (textureEntries[idx].first == inPropName && textureEntries[idx].second->shader == inShader
-                && textureEntries[idx].second->texture == inTexture) {
-            theTextureEntry = textureEntries[idx].second;
+    auto it = textureEntries.cbegin();
+    const auto end = textureEntries.cend();
+    for (; it != end && theTextureEntry == nullptr; ++it) {
+        if (it->first == inPropName && it->second->shader == inShader
+            && it->second->texture == inTexture) {
+            theTextureEntry = it->second;
             break;
         }
     }
     if (theTextureEntry == nullptr) {
         QDemonRef<QDemonCustomMaterialTextureData> theNewEntry(new QDemonCustomMaterialTextureData(
-                                                                   QDemonCustomMaterialTextureData::createTextureEntry(inShader, inTexture, inPropName.toUtf8(), needMips)));
-        textureEntries.push_back(QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>>(inPropName, theNewEntry));
+                                                                   QDemonCustomMaterialTextureData::createTextureEntry(inShader, inTexture, inPropName, needMips)));
+        textureEntries.push_back(QPair<QByteArray, QDemonRef<QDemonCustomMaterialTextureData>>(inPropName, theNewEntry));
         theTextureEntry = theNewEntry;
     }
     // TODO: Already set?
@@ -891,12 +893,12 @@ QDemonMaterialOrComputeShader QDemonMaterialSystem::bindShader(QDemonCustomMater
 }
 
 void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &inMaterial,
-                                                const QString &inPropertyName,
+                                                const QByteArray &inPropertyName,
                                                 const QVariant &propertyValue,
                                                 QDemonRenderShaderDataType inPropertyType,
                                                 const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
-    QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inPropertyName.toLocal8Bit());
+    QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inPropertyName);
     if (theConstant) {
         if (theConstant->getShaderConstantType() == inPropertyType) {
             if (inPropertyType == QDemonRenderShaderDataType::Texture2D) {

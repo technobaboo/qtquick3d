@@ -79,7 +79,7 @@ private:
     typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonCustomMaterialShader>> ShaderMap;
     typedef QPair<QString, QDemonRenderImage *> AllocatedImageEntry;
     typedef QPair<QString, QString> TStrStrPair;
-    typedef QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
+    typedef QPair<QByteArray, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
 
     QDemonRenderContextInterface *context = nullptr;
     ShaderMap shaderMap;
@@ -104,7 +104,7 @@ private:
                                              const TShaderFeatureSet &inFeatureSet);
 
     void doApplyInstanceValue(QDemonRenderCustomMaterial &inMaterial,
-                              const QString &propertyName,
+                              const QByteArray &propertyName,
                               const QVariant &propertyValue,
                               QDemonRenderShaderDataType inPropertyType,
                               const QDemonRef<QDemonRenderShaderProgram> &inShader);
@@ -149,10 +149,10 @@ private:
     void prepareDisplacementForRender(QDemonRenderCustomMaterial &inMaterial);
     void prepareMaterialForRender(QDemonRenderCustomMaterial &inMaterial);
 
-    qint32 findBuffer(const QString &inName) const;
+    qint32 findBuffer(const QByteArray &inName) const;
     bool textureNeedsMips(const QDemonRenderCustomMaterial::TextureProperty *inPropDec, QDemonRenderTexture2D *inTexture);
     void setTexture(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                    const QString &inPropName,
+                    const QByteArray &inPropName,
                     const QDemonRef<QDemonRenderTexture2D> &inTexture,
                     const QDemonRenderCustomMaterial::TextureProperty *inPropDec = nullptr,
                     bool needMips = false);

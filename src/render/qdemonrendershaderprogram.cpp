@@ -756,25 +756,16 @@ QByteArray QDemonRenderShaderProgram::errorMessage()
     return m_errorMessage;
 }
 
-QDemonRef<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::shaderConstant(const char *constantName)
+QDemonRef<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::shaderConstant(const QByteArray &constantName) const
 {
-    TShaderConstantMap::iterator theIter = m_constants.find(constantName);
-
-    if (theIter != m_constants.end())
-        return theIter.value();
-
-    return nullptr;
+    const auto foundIt = m_constants.constFind(constantName);
+    return (foundIt != m_constants.cend()) ? foundIt.value() : nullptr;
 }
 
-QDemonRef<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::shaderBuffer(const char *bufferName)
+QDemonRef<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::shaderBuffer(const QByteArray &bufferName) const
 {
-    TShaderBufferMap::iterator theIter = m_shaderBuffers.find(bufferName);
-
-    if (theIter != m_shaderBuffers.end()) {
-        return theIter.value();
-    }
-
-    return nullptr;
+    const auto foundIt = m_shaderBuffers.constFind(bufferName);
+    return (foundIt != m_shaderBuffers.cend()) ? foundIt.value() : nullptr;
 }
 
 QDemonRef<QDemonRenderContext> QDemonRenderShaderProgram::renderContext()

@@ -859,7 +859,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             qCCritical(INVALID_OPERATION,
                        "Effect %s: Failed to find buffer %s for bind",
                        inEffect.className,
-                       inCommand.m_bufferName.toLatin1().constData());
+                       inCommand.m_bufferName.constData());
             QString errorMsg = QObject::tr("Failed to compile \"%1\" effect.\nConsider"
                                            " removing it from the presentation.")
                                        .arg(qPrintable(inEffect.className));

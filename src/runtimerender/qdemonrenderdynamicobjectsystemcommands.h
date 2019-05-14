@@ -204,9 +204,9 @@ struct QDemonBindTarget : public QDemonCommand
 
 struct QDemonBindBuffer : public QDemonCommand
 {
-    QString m_bufferName;
+    QByteArray m_bufferName;
     bool m_needsClear;
-    QDemonBindBuffer(QString inBufName, bool inNeedsClear)
+    QDemonBindBuffer(const QByteArray &inBufName, bool inNeedsClear)
         : QDemonCommand(CommandType::BindBuffer), m_bufferName(inBufName), m_needsClear(inNeedsClear)
     {
     }

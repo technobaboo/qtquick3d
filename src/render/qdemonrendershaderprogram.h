@@ -108,7 +108,7 @@ public:
      *
      * @return return a pointer to a constant class.
      */
-    QDemonRef<QDemonRenderShaderConstantBase> shaderConstant(const char *constantName);
+    QDemonRef<QDemonRenderShaderConstantBase> shaderConstant(const QByteArray &constantName) const;
 
     /**
      * @brief Query a shader buffer (constant, ... )
@@ -117,7 +117,7 @@ public:
      *
      * @return return a pointer to a constant class.
      */
-    QDemonRef<QDemonRenderShaderBufferBase> shaderBuffer(const char *bufferName);
+    QDemonRef<QDemonRenderShaderBufferBase> shaderBuffer(const QByteArray &bufferName) const;
 
     const QDemonRef<QDemonRenderBackend> &backend() const { return m_backend; }
 
