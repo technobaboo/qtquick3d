@@ -763,11 +763,12 @@ void QDemonMaterialSystem::releaseBuffer(qint32 inIdx)
     }
 }
 
-qint32 QDemonMaterialSystem::findBuffer(const QString &inName)
+qint32 QDemonMaterialSystem::findBuffer(const QString &inName) const
 {
-    for (qint32 idx = 0, end = allocatedBuffers.size(); idx < end; ++idx)
-        if (allocatedBuffers[idx].name == inName)
+    for (qint32 idx = 0, end = allocatedBuffers.size(); idx < end; ++idx) {
+        if (allocatedBuffers.at(idx).name == inName)
             return idx;
+    }
     return allocatedBuffers.size();
 }
 

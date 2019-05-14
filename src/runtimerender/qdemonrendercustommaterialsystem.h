@@ -149,7 +149,7 @@ private:
     void prepareDisplacementForRender(QDemonRenderCustomMaterial &inMaterial);
     void prepareMaterialForRender(QDemonRenderCustomMaterial &inMaterial);
 
-    qint32 findBuffer(const QString &inName);
+    qint32 findBuffer(const QString &inName) const;
     bool textureNeedsMips(const QDemonRenderCustomMaterial::TextureProperty *inPropDec, QDemonRenderTexture2D *inTexture);
     void setTexture(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                     const QString &inPropName,
