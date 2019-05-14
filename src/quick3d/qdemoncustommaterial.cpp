@@ -15,42 +15,42 @@ struct ShaderType
 template<>
 struct ShaderType<QVariant::Double>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Float; };
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Float; }
     static constexpr const char *name() { return "float"; }
 };
 
 template<>
 struct ShaderType<QVariant::Bool>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Boolean; };
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Boolean; }
     static constexpr const char *name() { return "bool"; }
 };
 
 template<>
 struct ShaderType<QVariant::Int>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Integer; };
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Integer; }
     static constexpr const char *name() { return "int"; }
 };
 
 template<>
 struct ShaderType<QVariant::Vector2D>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec2; };
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec2; }
     static constexpr const char *name() { return "vec2"; }
 };
 
 template<>
 struct ShaderType<QVariant::Vector3D>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec3; };
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec3; }
     static constexpr const char *name() { return "vec3"; }
 };
 
 template<>
 struct ShaderType<QVariant::Vector4D>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec4; };
+    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec4; }
     static constexpr const char *name() { return "vec4"; }
 };
 
