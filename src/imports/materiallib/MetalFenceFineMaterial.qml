@@ -35,7 +35,6 @@ DemonCustomMaterial {
             }
     }
     property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
-        // <Property formalName="Diffuse Map" name="diffuse_texture" description="Diffuse texture of the material" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="diffuse" default="./maps/materials/metal_mesh.png" category="Material"/>
         type: DemonCustomMaterialTexture.Diffuse
         enabled: true
         image: DemonImage {
@@ -45,7 +44,6 @@ DemonCustomMaterial {
         }
     }
     property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
-        // <Property formalName="Bump Map" name="bump_texture" description="Bump texture of the material" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="bump" default="./maps/materials/metal_mesh_bump.png" category="Material"/>
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
@@ -55,7 +53,6 @@ DemonCustomMaterial {
         }
     }
     property DemonCustomMaterialTexture cutout_opacity_texture: DemonCustomMaterialTexture {
-        // <Property formalName="Cutout Opacity Map" name="cutout_opacity_texture" description="Cutout opacity texture of the material" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="cutout" default="./maps/materials/metal_mesh_spec.png" category="Material"/>
         type: DemonCustomMaterial.Unknown // cutout
         enabled: true
         image: DemonImage {

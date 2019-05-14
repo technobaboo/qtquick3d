@@ -25,7 +25,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             id: uEnvironmentTexture
             type: DemonCustomMaterialTexture.Environment
-            name: "uEnvironmentTexture"
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
@@ -37,7 +36,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            name: "uBakedShadowTexture"
             image: DemonImage {
                 id: shadowImage
                 tilingmodehorz: DemonImage.Repeat
@@ -49,7 +47,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture brush_texture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Unknown
             enabled: true
-            name: "brush_texture"
             image: DemonImage {
                 id: brushTexture
                 tilingmodehorz: DemonImage.Repeat
@@ -61,7 +58,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture roughness_texture_u: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Unknown
             enabled: true
-            name: "roughness_texture_u"
             image: DemonImage {
                 id: roughnessUTexture
                 tilingmodehorz: DemonImage.Repeat
@@ -73,7 +69,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture roughness_texture_v: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Unknown
             enabled: true
-            name: "roughness_texture_v"
             image: DemonImage {
                 id: roughnessVTexture
                 tilingmodehorz: DemonImage.Repeat
@@ -86,7 +81,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Bump
             enabled: true
-            name: "bump_texture"
             image: DemonImage {
                 id: bumpTexture
                 tilingmodehorz: DemonImage.Repeat

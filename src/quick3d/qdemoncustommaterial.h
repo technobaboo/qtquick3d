@@ -16,10 +16,8 @@ class Q_QUICK3D_EXPORT QDemonCustomMaterialTexture : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QDemonImage * image READ image WRITE setImage)
-    Q_PROPERTY(QByteArray name MEMBER name)
     Q_PROPERTY(TextureType type MEMBER type)
     Q_PROPERTY(bool enabled MEMBER enabled)
-    Q_PROPERTY(bool hidden MEMBER hidden)
 
 public:
     enum class TextureType
@@ -63,10 +61,8 @@ public:
     QDemonCustomMaterialTexture() = default;
     virtual ~QDemonCustomMaterialTexture() = default;
     QDemonImage *m_image = nullptr;
-    QByteArray name;
     TextureType type;
     bool enabled = true;
-    bool hidden = false;
     QDemonImage *image() const
     {
         return m_image;

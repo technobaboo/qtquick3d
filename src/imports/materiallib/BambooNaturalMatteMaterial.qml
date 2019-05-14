@@ -19,7 +19,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             id: uEnvironmentTexture
             type: DemonCustomMaterialTexture.Environment
-            name: "uEnvironmentTexture"
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
@@ -31,7 +30,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            name: "uBakedShadowTexture"
             image: DemonImage {
                 id: shadowImage
                 tilingmodehorz: DemonImage.Repeat
@@ -43,7 +41,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture reflect_texture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Specular
             enabled: true
-            name: "reflect_texture"
             image: DemonImage {
                 id: reflectionTexture
                 tilingmodehorz: DemonImage.Repeat
@@ -55,7 +52,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Bump
             enabled: true
-            name: "bump_texture"
             image: DemonImage {
                 id: bumpTexture
                 tilingmodehorz: DemonImage.Repeat
@@ -67,7 +63,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Diffuse
             enabled: true
-            name: "diffuse_texture"
             image: DemonImage {
                 id: diffuseTexture
                 tilingmodehorz: DemonImage.Repeat

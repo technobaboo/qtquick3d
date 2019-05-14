@@ -17,7 +17,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             id: uEnvironmentTexture
             type: DemonCustomMaterialTexture.Environment
-            name: "uEnvironmentTexture"
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
@@ -29,7 +28,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            name: "uBakedShadowTexture"
             image: DemonImage {
                 id: shadowImage
                 tilingmodehorz: DemonImage.Repeat

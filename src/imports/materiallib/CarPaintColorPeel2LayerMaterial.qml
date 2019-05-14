@@ -31,7 +31,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             id: uEnvironmentTexture
             type: DemonCustomMaterialTexture.Environment
-            name: "uEnvironmentTexture"
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
@@ -43,7 +42,6 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            name: "uBakedShadowTexture"
             image: DemonImage {
                 id: shadowImage
                 tilingmodehorz: DemonImage.Repeat
@@ -54,8 +52,6 @@ DemonCustomMaterial {
 
     property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Unknown; //Gradient
-            name: "randomGradient1D"
-            hidden: true
             image: DemonImage {
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
@@ -64,8 +60,6 @@ DemonCustomMaterial {
     }
     property DemonCustomMaterialTexture randomGradient2D: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Unknown; //Gradient
-            name: "randomGradient2D"
-            hidden: true
             image: DemonImage {
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
@@ -74,8 +68,6 @@ DemonCustomMaterial {
     }
     property DemonCustomMaterialTexture randomGradient3D: DemonCustomMaterialTexture {
         type: DemonCustomMaterialTexture.Unknown; //Gradient
-        name: "randomGradient3D"
-        // hidden = true
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
@@ -84,8 +76,6 @@ DemonCustomMaterial {
     }
     property DemonCustomMaterialTexture randomGradient4D: DemonCustomMaterialTexture {
         type: DemonCustomMaterialTexture.Unknown; //Gradient
-        name: "randomGradient4D"
-        // hidden = true
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat

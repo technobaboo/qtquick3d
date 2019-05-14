@@ -11,8 +11,6 @@ DemonCustomMaterial {
     property real glass_ior: 1.1
     property vector3d glass_color: Qt.vector3d(0.9, 0.9, 0.9)
     hasTransparency: true
-//    property alias environmentTexture: envImage.source
-//    property alias shadowTexture: shadowImage.source
 
     shaderInfo: DemonCustomMaterialShaderInfo {
         version: "330"
@@ -23,7 +21,6 @@ DemonCustomMaterial {
 
     property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Environment
-            name: "uEnvironmentTexture"
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
@@ -32,7 +29,6 @@ DemonCustomMaterial {
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.LightmapShadow
-            name: "uBakedShadowTexture"
             enabled: uShadowMappingEnabled
             image: DemonImage {
                 id: shadowImage
