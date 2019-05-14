@@ -1456,17 +1456,15 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
     QVector2D theDestSize;
     bool theRenderTargetNeedsClear = false;
 
-    QDemonDataView<dynamic::QDemonCommand *> theCommands = toDataView(inMaterial.commands.cbegin(), inMaterial.commands.size());
-    for (qint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd; ++commandIdx) {
-        const dynamic::QDemonCommand &theCommand(*theCommands[commandIdx]);
-
-        switch (theCommand.m_type) {
+    const auto &commands = inMaterial.commands;
+    for (const auto &command : commands) {
+        switch (command->m_type) {
         case dynamic::CommandType::AllocateBuffer:
-            allocateBuffer(static_cast<const dynamic::QDemonAllocateBuffer &>(theCommand), inTarget);
+            allocateBuffer(static_cast<const dynamic::QDemonAllocateBuffer &>(*command), inTarget);
             break;
         case dynamic::CommandType::BindBuffer:
             theCurrentRenderTarget = bindBuffer(inMaterial,
-                                                static_cast<const dynamic::QDemonBindBuffer &>(theCommand),
+                                                static_cast<const dynamic::QDemonBindBuffer &>(*command),
                                                 theRenderTargetNeedsClear,
                                                 theDestSize);
             break;
@@ -1479,7 +1477,7 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
             theCurrentShader = nullptr;
             QDemonMaterialOrComputeShader theBindResult = bindShader(inRenderContext,
                                                                      inMaterial,
-                                                                     static_cast<const dynamic::QDemonBindShader &>(theCommand),
+                                                                     static_cast<const dynamic::QDemonBindShader &>(*command),
                                                                      inFeatureSet);
             if (theBindResult.isMaterialShader())
                 theCurrentShader = theBindResult.materialShader();
@@ -1502,21 +1500,21 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
             theRenderTargetNeedsClear = false;
             break;
         case dynamic::CommandType::ApplyBlending:
-            applyBlending(static_cast<const dynamic::QDemonApplyBlending &>(theCommand));
+            applyBlending(static_cast<const dynamic::QDemonApplyBlending &>(*command));
             break;
         case dynamic::CommandType::ApplyBufferValue:
             if (theCurrentShader)
                 applyBufferValue(inMaterial,
                                  theCurrentShader->shader,
-                                 static_cast<const dynamic::QDemonApplyBufferValue &>(theCommand),
+                                 static_cast<const dynamic::QDemonApplyBufferValue &>(*command),
                                  theCurrentSourceTexture);
             break;
         case dynamic::CommandType::ApplyBlitFramebuffer:
-            blitFramebuffer(inRenderContext, static_cast<const dynamic::QDemonApplyBlitFramebuffer &>(theCommand), inTarget);
+            blitFramebuffer(inRenderContext, static_cast<const dynamic::QDemonApplyBlitFramebuffer &>(*command), inTarget);
             break;
         case dynamic::CommandType::ApplyRenderState:
             // TODO: The applyRenderStateValue() function is a very naive implementation
-            applyRenderStateValue(static_cast<const dynamic::QDemonApplyRenderState &>(theCommand));
+            applyRenderStateValue(static_cast<const dynamic::QDemonApplyRenderState &>(*command));
             break;
         default:
             Q_ASSERT(false);
@@ -1624,12 +1622,13 @@ void QDemonMaterialSystem::renderSubset(QDemonCustomMaterialRenderContext &inRen
 
 bool QDemonMaterialSystem::renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonRenderCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset)
 {
-    QDemonDataView<dynamic::QDemonCommand *> theCommands = toDataView(inMaterial.commands.cbegin(), inMaterial.commands.size());
+    const auto &commands = inMaterial.commands;
+    auto it = commands.cbegin();
+    const auto end = commands.cend();
     TShaderAndFlags thePrepassShader;
-    for (qint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
-        const dynamic::QDemonCommand &theCommand = *theCommands[idx];
-        if (theCommand.m_type == dynamic::CommandType::BindShader) {
-            const dynamic::QDemonBindShader &theBindCommand = static_cast<const dynamic::QDemonBindShader &>(theCommand);
+    for (; it != end && thePrepassShader.first == nullptr; ++it) {
+        if ((*it)->m_type == dynamic::CommandType::BindShader) {
+            const dynamic::QDemonBindShader &theBindCommand = static_cast<const dynamic::QDemonBindShader &>(*(*it));
             thePrepassShader = context->dynamicObjectSystem()->getDepthPrepassShader(theBindCommand.m_shaderPath,
                                                                                           QString(),
                                                                                           TShaderFeatureSet());
