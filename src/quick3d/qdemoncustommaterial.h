@@ -213,13 +213,11 @@ class Q_QUICK3D_EXPORT QDemonCustomMaterialBufferInput : public QDemonCustomMate
 {
     Q_OBJECT
     Q_PROPERTY(QDemonCustomMaterialBuffer *buffer READ buffer WRITE setBuffer)
-    Q_PROPERTY(QByteArray bufferName MEMBER bufferName)
     Q_PROPERTY(QByteArray param MEMBER param)
 public:
     QDemonCustomMaterialBufferInput() = default;
     ~QDemonCustomMaterialBufferInput() override = default;
     dynamic::QDemonApplyBufferValue command { QByteArray(), QByteArray() };
-    QByteArray &bufferName = command.m_bufferName;
     QByteArray &param = command.m_paramName;
     dynamic::QDemonCommand *getCommand() override { return &command; }
 
