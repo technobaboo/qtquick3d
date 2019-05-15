@@ -11,16 +11,6 @@ float vec2::magnitude(const QVector2D &v)
     return ::sqrtf(v.x() * v.x() + v.y() * v.y());
 }
 
-QVector3D vec3::minimum(const QVector3D &v1, const QVector3D &v2)
-{
-    return QVector3D(qMin(v1.x(), v2.x()), qMin(v1.y(), v2.y()), qMin(v1.z(), v2.z()));
-}
-
-QVector3D vec3::maximum(const QVector3D &v1, const QVector3D &v2)
-{
-    return QVector3D(qMax(v1.x(), v2.x()), qMax(v1.y(), v2.y()), qMax(v1.z(), v2.z()));
-}
-
 bool vec3::isFinite(const QVector3D &v)
 {
     return qIsFinite(v.x()) && qIsFinite(v.y()) && qIsFinite(v.z());

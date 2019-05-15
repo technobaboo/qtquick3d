@@ -22,8 +22,8 @@ float Q_DEMON_EXPORT magnitude(const QVector2D &v);
 }
 
 namespace vec3 {
-QVector3D Q_DEMON_EXPORT minimum(const QVector3D &v1, const QVector3D &v2);
-QVector3D Q_DEMON_EXPORT maximum(const QVector3D &v1, const QVector3D &v2);
+Q_DEMON_EXPORT inline constexpr QVector3D minimum(const QVector3D &v1, const QVector3D &v2) Q_DECL_NOTHROW { return { qMin(v1.x(), v2.x()), qMin(v1.y(), v2.y()), qMin(v1.z(), v2.z()) }; }
+Q_DEMON_EXPORT inline constexpr QVector3D maximum(const QVector3D &v1, const QVector3D &v2) Q_DECL_NOTHROW { return { qMax(v1.x(), v2.x()), qMax(v1.y(), v2.y()), qMax(v1.z(), v2.z()) }; }
 bool Q_DEMON_EXPORT isFinite(const QVector3D &v);
 float Q_DEMON_EXPORT magnitude(const QVector3D &v);
 float Q_DEMON_EXPORT magnitudeSquared(const QVector3D &v);
