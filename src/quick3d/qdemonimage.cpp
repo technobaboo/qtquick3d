@@ -1,5 +1,6 @@
 #include "qdemonimage.h"
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
+#include <QtQml/QQmlFile>
 
 #include "qdemonobject_p.h"
 
@@ -9,7 +10,7 @@ QDemonImage::QDemonImage() {}
 
 QDemonImage::~QDemonImage() {}
 
-QString QDemonImage::source() const
+QUrl QDemonImage::source() const
 {
     return m_source;
 }
@@ -69,7 +70,7 @@ QDemonObject::Type QDemonImage::type() const
     return QDemonObject::Image;
 }
 
-void QDemonImage::setSource(QString source)
+void QDemonImage::setSource(const QUrl &source)
 {
     if (m_source == source)
         return;
@@ -186,7 +187,7 @@ QDemonRenderGraphObject *QDemonImage::updateSpatialNode(QDemonRenderGraphObject 
 
     auto imageNode = static_cast<QDemonRenderImage *>(node);
 
-    imageNode->m_imagePath = m_source;
+    imageNode->m_imagePath = QQmlFile::urlToLocalFileOrQrc(m_source);
     imageNode->m_scale = QVector2D(m_scaleu, m_scalev);
     imageNode->m_pivot = QVector2D(m_pivotu, m_pivotv);
     imageNode->m_rotation = m_rotationuv;

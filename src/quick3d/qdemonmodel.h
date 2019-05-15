@@ -5,13 +5,14 @@
 #include <QtQml/QQmlListProperty>
 #include <QtQuick3d/QDemonMaterial>
 #include <QtCore/QVector>
+#include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
 
 class Q_QUICK3D_EXPORT QDemonModel : public QDemonNode
 {
     Q_OBJECT
-    Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(int skeletonRoot READ skeletonRoot WRITE setSkeletonRoot NOTIFY skeletonRootChanged)
     Q_PROPERTY(QDemonTessModeValues tesselationMode READ tesselationMode WRITE setTesselationMode NOTIFY tesselationModeChanged)
     Q_PROPERTY(float edgeTess READ edgeTess WRITE setEdgeTess NOTIFY edgeTessChanged)
@@ -33,7 +34,7 @@ public:
 
     QDemonObject::Type type() const override;
 
-    QString source() const;
+    QUrl source() const;
     int skeletonRoot() const;
     QDemonTessModeValues tesselationMode() const;
     float edgeTess() const;
@@ -43,7 +44,7 @@ public:
     QQmlListProperty<QDemonMaterial> materials();
 
 public Q_SLOTS:
-    void setSource(QString source);
+    void setSource(const QUrl &source);
     void setSkeletonRoot(int skeletonRoot);
     void setTesselationMode(QDemonTessModeValues tesselationMode);
     void setEdgeTess(float edgeTess);
@@ -51,7 +52,7 @@ public Q_SLOTS:
     void setIsWireframeMode(bool isWireframeMode);
 
 Q_SIGNALS:
-    void sourceChanged(QString source);
+    void sourceChanged(const QUrl &source);
     void skeletonRootChanged(int skeletonRoot);
     void tesselationModeChanged(QDemonTessModeValues tesselationMode);
     void edgeTessChanged(float edgeTess);
@@ -62,7 +63,8 @@ protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
-    QString m_source;
+    QString translateSource();
+    QUrl m_source;
     int m_skeletonRoot = -1;
     QDemonTessModeValues m_tesselationMode = QDemonTessModeValues::NoTess;
     float m_edgeTess = 1.0f;

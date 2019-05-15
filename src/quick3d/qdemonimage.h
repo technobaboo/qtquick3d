@@ -2,6 +2,7 @@
 #define QDEMONIMAGE_H
 
 #include <QtQuick3d/qdemonobject.h>
+#include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
 
@@ -9,7 +10,7 @@ struct QDemonRenderImage;
 class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(float scaleu READ scaleU WRITE setScaleU NOTIFY scaleUChanged)
     Q_PROPERTY(float scalev READ scaleV WRITE setScaleV NOTIFY scaleVChanged)
     Q_PROPERTY(MappingMode mappingmode READ mappingMode WRITE setMappingMode NOTIFY mappingModeChanged)
@@ -42,7 +43,7 @@ public:
     QDemonImage();
     ~QDemonImage() override;
 
-    QString source() const;
+    QUrl source() const;
     float scaleU() const;
     float scaleV() const;
     MappingMode mappingMode() const;
@@ -58,7 +59,7 @@ public:
     QDemonRenderImage *getRenderImage();
 
 public Q_SLOTS:
-    void setSource(QString source);
+    void setSource(const QUrl &source);
     void setScaleU(float scaleu);
     void setScaleV(float scalev);
     void setMappingMode(MappingMode mappingmode);
@@ -71,7 +72,7 @@ public Q_SLOTS:
     void setPivotV(float pivotv);
 
 Q_SIGNALS:
-    void sourceChanged(QString source);
+    void sourceChanged(const QUrl &source);
     void scaleUChanged(float scaleu);
     void scaleVChanged(float scalev);
     void mappingModeChanged(MappingMode mappingmode);
@@ -87,7 +88,7 @@ protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
-    QString m_source;
+    QUrl m_source;
     float m_scaleu = 1.0f;
     float m_scalev = 1.0f;
     MappingMode m_mappingmode = Normal;

@@ -30,7 +30,7 @@ Window {
             clearColor: "green"
             backgroundMode: DemonSceneEnvironment.Color
             lightProbe: DemonImage {
-                source: ":/maps/OpenfootageNET_garage-1024.hdr"
+                source: "maps/OpenfootageNET_garage-1024.hdr"
             }
         }
 

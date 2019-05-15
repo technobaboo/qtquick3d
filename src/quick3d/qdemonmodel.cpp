@@ -7,6 +7,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
+#include <QtQml/QQmlFile>
 
 QT_BEGIN_NAMESPACE
 
@@ -19,7 +20,7 @@ QDemonObject::Type QDemonModel::type() const
     return QDemonObject::Model;
 }
 
-QString QDemonModel::source() const
+QUrl QDemonModel::source() const
 {
     return m_source;
 }
@@ -59,7 +60,7 @@ QQmlListProperty<QDemonMaterial> QDemonModel::materials()
                                             QDemonModel::qmlClearMaterials);
 }
 
-void QDemonModel::setSource(QString source)
+void QDemonModel::setSource(const QUrl &source)
 {
     if (m_source == source)
         return;
@@ -133,8 +134,7 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
     QDemonNode::updateSpatialNode(node);
 
     auto modelNode = static_cast<QDemonRenderModel *>(node);
-
-    modelNode->meshPath = m_source;
+    modelNode->meshPath = translateSource();
     modelNode->skeletonRoot = m_skeletonRoot;
     modelNode->tessellationMode = TessModeValues(m_tesselationMode);
     modelNode->edgeTess = m_edgeTess;
@@ -187,6 +187,26 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
     }
 
     return modelNode;
+}
+
+// Source URL's need a bit of translation for the engine because of the
+// use of fragment syntax for specifiying primitives and sub-meshes
+// So we need to check for the fragment before translating to a qmlfile
+
+QString QDemonModel::translateSource()
+{
+    QString fragment;
+    if (m_source.hasFragment()) {
+        // Check if this is an index, or primative
+        bool isNumber = false;
+        m_source.fragment().toInt(&isNumber);
+        fragment = QStringLiteral("#") + m_source.fragment();
+        // If it wasn't an index, then it was a primative
+        if (!isNumber)
+            return fragment;
+    }
+
+    return QQmlFile::urlToLocalFileOrQrc(m_source) + fragment;
 }
 
 void QDemonModel::qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDemonMaterial *material)
