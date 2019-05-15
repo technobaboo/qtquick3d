@@ -167,9 +167,6 @@ DemonCustomMaterial {
 
     passes: [ DemonCustomMaterialPass {
             shader: noopShader
-            output: frameBuffer
-        }, DemonCustomMaterialPass {
-            shader: noopShader
             output: dummyBuffer
             commands: [ DemonCustomMaterialBufferBlit {
                     destination: frameBuffer

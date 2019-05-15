@@ -379,8 +379,12 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
 
                 // Other commands (BufferInput, Blending ... )
                 const auto &extraCommands = pass->m_commands;
-                for (const auto &command : extraCommands)
+                for (const auto &command : extraCommands) {
+                    const int bufferCount = command->bufferCount();
+                    for (int i = 0; i != bufferCount; ++i)
+                        customMaterial->commands.push_back(command->bufferAt(i)->getCommand());
                     customMaterial->commands.push_back(command->getCommand());
+                }
 
                 // ... and finaly the render command (TODO: indirect/or not?)
                 customMaterial->commands.push_back(new dynamic::QDemonRender(false));

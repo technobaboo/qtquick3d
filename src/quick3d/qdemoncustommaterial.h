@@ -207,6 +207,8 @@ public:
     QDemonCustomMaterialRenderCommand() = default;
     ~QDemonCustomMaterialRenderCommand() override = default;
     virtual dynamic::QDemonCommand *getCommand() { Q_ASSERT(0); return nullptr; }
+    virtual int bufferCount() const { return 0; }
+    virtual QDemonCustomMaterialBuffer *bufferAt(int idx) const { Q_UNUSED(idx); return nullptr; }
 };
 
 class Q_QUICK3D_EXPORT QDemonCustomMaterialBufferInput : public QDemonCustomMaterialRenderCommand
@@ -220,6 +222,13 @@ public:
     dynamic::QDemonApplyBufferValue command { QByteArray(), QByteArray() };
     QByteArray &param = command.m_paramName;
     dynamic::QDemonCommand *getCommand() override { return &command; }
+
+    int bufferCount() const override { return (m_buffer != nullptr) ? 1 : 0; }
+    QDemonCustomMaterialBuffer *bufferAt(int idx) const override
+    {
+        Q_ASSERT(idx < 1 && idx >= 0);
+        return (m_buffer && idx == 0) ? m_buffer : nullptr;
+    }
 
     QDemonCustomMaterialBuffer *buffer() const { return m_buffer; }
     void setBuffer(QDemonCustomMaterialBuffer *buffer) {
@@ -247,6 +256,26 @@ public:
     ~QDemonCustomMaterialBufferBlit() override = default;
     dynamic::QDemonApplyBlitFramebuffer command { QByteArray(), QByteArray() };
     dynamic::QDemonCommand *getCommand() override { return &command; }
+
+    int bufferCount() const override {
+        if (m_source != nullptr && m_destination != nullptr)
+            return 2;
+        if (m_source || m_destination)
+            return 1;
+
+        return 0;
+    }
+
+    QDemonCustomMaterialBuffer *bufferAt(int idx) const override
+    {
+        Q_ASSERT(idx < 2 && idx >= 0);
+        if (idx == 0)
+            return m_source ? m_source : m_destination;
+        if (idx == 1 && m_destination)
+            return m_destination;
+
+        return nullptr;
+    }
 
     QDemonCustomMaterialBuffer *source() const { return m_source; }
     void setSource(QDemonCustomMaterialBuffer *src)

@@ -74,12 +74,6 @@ DemonCustomMaterial {
     }
 
     DemonCustomMaterialShader {
-        id: noopShader
-        stage: DemonCustomMaterialShader.Fragment
-        shader: "shaders/frostedThinGlassNoop.frag"
-    }
-
-    DemonCustomMaterialShader {
         id: frostedGlassSpFragShader
         stage: DemonCustomMaterialShader.Fragment
         shader: "shaders/frostedThinGlassSp.frag"
@@ -96,9 +90,6 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: noopShader
-            output: tempBuffer
-        }, DemonCustomMaterialPass {
             shader: frostedGlassSpFragShader
             commands: [ DemonCustomMaterialBufferBlit {
                     destination: tempBuffer
