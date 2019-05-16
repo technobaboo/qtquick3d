@@ -78,7 +78,7 @@ private:
     QDemonRef<QDemonOffscreenRenderManager> m_offscreenRenderManager;
     QDemonRef<QDemonRendererInterface> m_renderer;
     QDemonRef<QDemonDynamicObjectSystem> m_dynamicObjectSystem;
-    QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
+    QDemonRef<QDemonEffectSystem> m_effectSystem;
     QDemonRef<QDemonShaderCache> m_shaderCache;
     QDemonRef<QDemonAbstractThreadPool> m_threadPool;
     QDemonRef<IImageBatchLoader> m_imageBatchLoader;
@@ -170,7 +170,7 @@ public:
     QDemonRef<QDemonRenderContext> renderContext();
     QDemonRef<QDemonOffscreenRenderManager> offscreenRenderManager();
     QDemonRef<QDemonInputStreamFactory> inputStreamFactory();
-    QDemonRef<QDemonEffectSystemInterface> effectSystem();
+    QDemonRef<QDemonEffectSystem> effectSystem();
     QDemonRef<QDemonShaderCache> shaderCache();
     QDemonRef<QDemonAbstractThreadPool> threadPool();
     QDemonRef<IImageBatchLoader> imageBatchLoader();

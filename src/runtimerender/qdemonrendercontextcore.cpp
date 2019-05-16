@@ -86,7 +86,7 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
 
     m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, &m_perfTimer);
     m_dynamicObjectSystem = new QDemonDynamicObjectSystem(this);
-    m_effectSystem = QDemonEffectSystemInterface::createEffectSystem(this);
+    m_effectSystem = new QDemonEffectSystem(this);
     m_customMaterialSystem = new QDemonMaterialSystem(this);
     m_customMaterialSystem->setRenderContextInterface(this);
     // as does the custom material system
@@ -199,7 +199,7 @@ QDemonRef<QDemonOffscreenRenderManager> QDemonRenderContextInterface::offscreenR
 
 QDemonRef<QDemonInputStreamFactory> QDemonRenderContextInterface::inputStreamFactory() { return m_inputStreamFactory; }
 
-QDemonRef<QDemonEffectSystemInterface> QDemonRenderContextInterface::effectSystem() { return m_effectSystem; }
+QDemonRef<QDemonEffectSystem> QDemonRenderContextInterface::effectSystem() { return m_effectSystem; }
 
 QDemonRef<QDemonShaderCache> QDemonRenderContextInterface::shaderCache() { return m_shaderCache; }
 

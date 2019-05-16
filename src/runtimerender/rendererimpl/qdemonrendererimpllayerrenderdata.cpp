@@ -1560,7 +1560,7 @@ void QDemonLayerRenderData::applyLayerPostEffects()
         return;
     }
 
-    QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->demonContext()->effectSystem());
+    QDemonRef<QDemonEffectSystem> theEffectSystem(renderer->demonContext()->effectSystem());
     QDemonRef<QDemonResourceManager> theResourceManager(renderer->demonContext()->resourceManager());
     // we use the non MSAA buffer for the effect
     QDemonRef<QDemonRenderTexture2D> theLayerColorTexture = m_layerTexture.getTexture();

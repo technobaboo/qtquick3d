@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 struct QDemonRenderLayer;
 struct QDemonEffectContext;
-class QDemonEffectSystemInterface;
+class QDemonEffectSystem;
 
 // Effects are post-render effect applied to the layer.  There can be more than one of
 // them and they have completely variable properties.
@@ -58,9 +58,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderEffect : public QDemonRenderGraph
 
     // If our active flag value changes, then we ask the effect manager
     // to reset our context.
-    void setActive(bool inActive, QDemonEffectSystemInterface &inSystem);
+    void setActive(bool inActive, QDemonEffectSystem &inSystem);
 
-    void reset(QDemonEffectSystemInterface &inSystem);
+    void reset(QDemonEffectSystem &inSystem);
 
     using Flag = QDemonRenderNode::Flag;
     Q_DECLARE_FLAGS(Flags, Flag)

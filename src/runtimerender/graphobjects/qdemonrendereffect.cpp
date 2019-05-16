@@ -42,7 +42,7 @@ void QDemonRenderEffect::initialize()
     m_nextEffect = nullptr;
 }
 
-void QDemonRenderEffect::setActive(bool inActive, QDemonEffectSystemInterface &inManager)
+void QDemonRenderEffect::setActive(bool inActive, QDemonEffectSystem &inManager)
 {
     if (flags.testFlag(Flag::Active) != inActive) {
         flags.setFlag(Flag::Active, inActive);
@@ -52,7 +52,7 @@ void QDemonRenderEffect::setActive(bool inActive, QDemonEffectSystemInterface &i
     }
 }
 
-void QDemonRenderEffect::reset(QDemonEffectSystemInterface &inSystem)
+void QDemonRenderEffect::reset(QDemonEffectSystem &inSystem)
 {
     if (m_context)
         inSystem.resetEffectFrameData(*m_context);
