@@ -151,18 +151,18 @@ struct QDemonAllocateImage : public QDemonAllocateBuffer
 
 struct QDemonAllocateDataBuffer : public QDemonCommand
 {
-    QString m_name;
+    QByteArray m_name;
     QDemonRenderBufferType m_dataBufferType;
-    QString m_wrapName;
+    QByteArray m_wrapName;
     QDemonRenderBufferType m_dataBufferWrapType;
     float m_size;
     QDemonAllocateBufferFlags m_bufferFlags;
 
     QDemonAllocateDataBuffer() : QDemonCommand(CommandType::AllocateDataBuffer) {}
 
-    QDemonAllocateDataBuffer(QString inName,
+    QDemonAllocateDataBuffer(const QByteArray &inName,
                              QDemonRenderBufferType inBufferType,
-                             QString inWrapName,
+                             const QByteArray &inWrapName,
                              QDemonRenderBufferType inBufferWrapType,
                              float inSize,
                              QDemonAllocateBufferFlags inFlags)
@@ -309,12 +309,12 @@ struct QDemonApplyBufferValue : public QDemonCommand
 // bind a buffer to a given shader parameter.
 struct QDemonApplyImageValue : public QDemonCommand
 {
-    QString m_imageName; ///< name which the image was allocated
-    QString m_paramName; ///< must match the name in the shader
+    QByteArray m_imageName; ///< name which the image was allocated
+    QByteArray m_paramName; ///< must match the name in the shader
     bool m_bindAsTexture; ///< bind image as texture
     bool m_needSync; ///< if true we add a memory barrier before usage
 
-    QDemonApplyImageValue(QString bufferName, QString shaderParam, bool inBindAsTexture, bool inNeedSync)
+    QDemonApplyImageValue(const QByteArray &bufferName, const QByteArray &shaderParam, bool inBindAsTexture, bool inNeedSync)
         : QDemonCommand(CommandType::ApplyImageValue)
         , m_imageName(bufferName)
         , m_paramName(shaderParam)
@@ -335,10 +335,10 @@ struct QDemonApplyImageValue : public QDemonCommand
 // bind a buffer to a given shader parameter.
 struct QDemonApplyDataBufferValue : public QDemonCommand
 {
-    QString m_paramName; ///< must match the name in the shader
+    QByteArray m_paramName; ///< must match the name in the shader
     QDemonRenderBufferType m_bindAs; ///< to which target we bind this buffer
 
-    QDemonApplyDataBufferValue(QString inShaderParam, QDemonRenderBufferType inBufferType)
+    QDemonApplyDataBufferValue(const QByteArray &inShaderParam, QDemonRenderBufferType inBufferType)
         : QDemonCommand(CommandType::ApplyDataBufferValue), m_paramName(inShaderParam), m_bindAs(inBufferType)
     {
     }
@@ -352,8 +352,8 @@ struct QDemonApplyDepthValue : public QDemonCommand
 {
     // If no param name is given, the buffer is bound to the
     // input texture parameter (texture0).
-    QString m_paramName;
-    QDemonApplyDepthValue(QString param) : QDemonCommand(CommandType::ApplyDepthValue), m_paramName(param) {}
+    QByteArray m_paramName;
+    QDemonApplyDepthValue(const QByteArray &param) : QDemonCommand(CommandType::ApplyDepthValue), m_paramName(param) {}
     QDemonApplyDepthValue(const QDemonApplyDepthValue &inOther)
         : QDemonCommand(CommandType::ApplyDepthValue), m_paramName(inOther.m_paramName)
     {

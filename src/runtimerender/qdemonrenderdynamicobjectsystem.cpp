@@ -193,59 +193,6 @@ QDemonDynamicObjectSystem::QDemonDynamicObjectSystem(QDemonRenderContextInterfac
 
 QDemonDynamicObjectSystem::~QDemonDynamicObjectSystem() {}
 
-void QDemonDynamicObjectSystem::setRenderCommands(const QString &inClassName, const QDemonDataView<dynamic::QDemonCommand *> &inCommands)
-{
-    Q_UNUSED(inClassName)
-    Q_UNUSED(inCommands)
-//    QDemonRef<QDemonDynamicObjectClass> theClass = nullptr;// = const_cast<QDemonDynamicObjectSystem &>(*this).findClass(inClassName);
-//    if (theClass == nullptr) {
-//        Q_ASSERT(false);
-//        return;
-//    }
-//    theClass->releaseCommands();
-//    quint32 commandAllocationSize = 0;
-//    for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {
-//        quint32 commandSize = align(dynamic::QDemonCommand::getSizeofCommand(*inCommands[idx]));
-//        commandAllocationSize += commandSize;
-//    }
-//    quint32 commandPtrSize = inCommands.size() * sizeof(dynamic::QDemonCommand *);
-//    quint32 totalAllocationSize = align8(commandAllocationSize) + commandPtrSize;
-//    quint8 *theCommandDataBegin = (quint8 *)::malloc(totalAllocationSize);
-//    quint8 *theCurrentCommandData(theCommandDataBegin);
-//    dynamic::QDemonCommand **theCommandPtrBegin = reinterpret_cast<dynamic::QDemonCommand **>(
-//            theCommandDataBegin + align8(commandAllocationSize));
-//    dynamic::QDemonCommand **theCurrentCommandPtr = theCommandPtrBegin;
-//    memset(theCommandDataBegin, 0, totalAllocationSize);
-
-//    theClass->m_requiresDepthTexture = false;
-//    for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {
-//        dynamic::QDemonCommand &theCommand(*inCommands[idx]);
-//        quint32 theCommandSize = dynamic::QDemonCommand::getSizeofCommand(theCommand);
-//        dynamic::QDemonCommand::copyConstructCommand(theCurrentCommandData, theCommand);
-//        if (theCommand.m_type == dynamic::CommandType::ApplyDepthValue)
-//            theClass->m_requiresDepthTexture = true;
-//        if (theCommand.m_type == dynamic::CommandType::BindTarget) {
-//            dynamic::QDemonBindTarget *bt = reinterpret_cast<dynamic::QDemonBindTarget *>(&theCommand);
-//            theClass->m_outputFormat = bt->m_outputFormat;
-//        }
-
-//        *theCurrentCommandPtr = reinterpret_cast<dynamic::QDemonCommand *>(theCurrentCommandData);
-//        ++theCurrentCommandPtr;
-//        theCurrentCommandData += align(theCommandSize);
-//    }
-//    Q_ASSERT(theCurrentCommandData - theCommandDataBegin == (int)commandAllocationSize);
-//    Q_ASSERT((quint8 *)theCurrentCommandPtr - theCommandDataBegin == (int)totalAllocationSize);
-//    theClass->m_renderCommands = QDemonDataView<dynamic::QDemonCommand *>(theCommandPtrBegin, inCommands.size());
-}
-
-QDemonDataView<dynamic::QDemonCommand *> QDemonDynamicObjectSystem::getRenderCommands(const QString &inClassName) const
-{
-//    QDemonRef<QDemonDynamicObjectClass> cls = nullptr; //const_cast<QDemonDynamicObjectSystem &>(*this).findClass(inClassName);
-//    if (cls)
-//        return cls->m_renderCommands;
-    return QDemonDataView<dynamic::QDemonCommand *>();
-}
-
 void QDemonDynamicObjectSystem::setShaderData(const QString &inPath,
                                               const QByteArray &inData,
                                               const QByteArray &inShaderType,

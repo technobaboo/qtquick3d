@@ -67,13 +67,13 @@ typedef QPair<QString, QString> TStrStrPair;
 struct QDemonAllocatedBufferEntry
 {
     QAtomicInt ref;
-    QString name;
+    QByteArray name;
     QDemonRef<QDemonRenderFrameBuffer> frameBuffer;
     QDemonRef<QDemonRenderTexture2D> texture;
     QDemonAllocateBufferFlags flags;
     bool needsClear;
 
-    QDemonAllocatedBufferEntry(const QString &inName, QDemonRenderFrameBuffer &inFb, QDemonRenderTexture2D &inTexture, QDemonAllocateBufferFlags inFlags)
+    QDemonAllocatedBufferEntry(const QByteArray &inName, QDemonRenderFrameBuffer &inFb, QDemonRenderTexture2D &inTexture, QDemonAllocateBufferFlags inFlags)
         : name(inName), frameBuffer(&inFb), texture(&inTexture), flags(inFlags), needsClear(true)
     {
     }
@@ -83,12 +83,12 @@ struct QDemonAllocatedBufferEntry
 struct QDemonAllocatedImageEntry
 {
     QAtomicInt ref;
-    QString name;
+    QByteArray name;
     QDemonRef<QDemonRenderImage2D> image;
     QDemonRef<QDemonRenderTexture2D> texture;
     QDemonAllocateBufferFlags flags;
 
-    QDemonAllocatedImageEntry(QString inName, QDemonRenderImage2D &inImage, QDemonRenderTexture2D &inTexture, QDemonAllocateBufferFlags inFlags)
+    QDemonAllocatedImageEntry(const QByteArray &inName, QDemonRenderImage2D &inImage, QDemonRenderTexture2D &inTexture, QDemonAllocateBufferFlags inFlags)
         : name(inName), image(&inImage), texture(&inTexture), flags(inFlags)
     {
     }
@@ -117,14 +117,14 @@ struct QDemonImageEntry
 struct QDemonAllocatedDataBufferEntry
 {
     QAtomicInt ref;
-    QString name;
+    QByteArray name;
     QDemonRef<QDemonRenderDataBuffer> dataBuffer;
     QDemonRenderBufferType bufferType;
     QDemonByteRef bufferData;
     QDemonAllocateBufferFlags flags;
     bool needsClear;
 
-    QDemonAllocatedDataBufferEntry(const QString &inName,
+    QDemonAllocatedDataBufferEntry(const QByteArray &inName,
                                    QDemonRenderDataBuffer &inDataBuffer,
                                    QDemonRenderBufferType inType,
                                    const QDemonByteRef &data,
@@ -173,14 +173,14 @@ struct QDemonTextureEntry
     {
     }
 
-    void set(const QDemonRef<QDemonRenderTexture2D> &inTexture, bool inNeedsAlphaMultiply, const QDemonPropertyDefinition *inDefinition)
+    void set(const QDemonRef<QDemonRenderTexture2D> &inTexture, bool inNeedsAlphaMultiply, const QDemonRenderEffect::TextureProperty *inDefinition)
     {
         float theMixValue(inNeedsAlphaMultiply ? 0.0f : 1.0f);
         if (inTexture && inDefinition) {
-            inTexture->setMagFilter(inDefinition->magFilterOp);
-            inTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp>(inDefinition->magFilterOp));
-            inTexture->setTextureWrapS(inDefinition->coordOp);
-            inTexture->setTextureWrapT(inDefinition->coordOp);
+            inTexture->setMagFilter(inDefinition->magFilterType);
+            inTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp>(inDefinition->magFilterType));
+            inTexture->setTextureWrapS(inDefinition->clampType);
+            inTexture->setTextureWrapT(inDefinition->clampType);
         }
         texture.set(inTexture.data());
         if (inTexture) {
@@ -221,7 +221,7 @@ struct QDemonEffectClass
 struct QDemonEffectContext
 {
     QAtomicInt ref;
-    QString m_className;
+    QByteArray m_className;
     QDemonRenderContextInterface *m_context;
     QDemonRef<QDemonResourceManager> m_resourceManager;
     QVector<QDemonAllocatedBufferEntry> m_allocatedBuffers;
@@ -231,7 +231,7 @@ struct QDemonEffectContext
     QVector<TNamedImageEntry> m_imageEntries;
     QVector<TNamedDataBufferEntry> m_dataBufferEntries;
 
-    QDemonEffectContext(const QString &inName, QDemonRenderContextInterface *ctx, const QDemonRef<QDemonResourceManager> &inManager)
+    QDemonEffectContext(const QByteArray &inName, QDemonRenderContextInterface *ctx, const QDemonRef<QDemonResourceManager> &inManager)
         : m_className(inName), m_context(ctx), m_resourceManager(inManager)
     {
     }
@@ -309,12 +309,12 @@ struct QDemonEffectContext
     }
 
     void setTexture(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                    const QString &inPropName,
+                    const QByteArray &inPropName,
                     const QDemonRef<QDemonRenderTexture2D> &inTexture,
                     bool inNeedsMultiply,
                     QString &inStringBuilder,
                     QString &inStringBuilder2,
-                    const QDemonPropertyDefinition *inPropDec = nullptr)
+                    const QDemonRenderEffect::TextureProperty *inPropDec = nullptr)
     {
         QDemonRef<QDemonTextureEntry> theTextureEntry;
         for (qint32 idx = 0, end = m_textureEntries.size(); idx < end && theTextureEntry == nullptr; ++idx) {
@@ -323,14 +323,14 @@ struct QDemonEffectContext
         }
         if (theTextureEntry == nullptr) {
             QDemonRef<QDemonTextureEntry> theNewEntry(new QDemonTextureEntry(
-                    QDemonTextureEntry::createTextureEntry(inShader, inPropName.toLatin1(), inStringBuilder, inStringBuilder2)));
+                    QDemonTextureEntry::createTextureEntry(inShader, inPropName, inStringBuilder, inStringBuilder2)));
             m_textureEntries.push_back(QPair<QString, QDemonRef<QDemonTextureEntry>>(inPropName, theNewEntry));
             theTextureEntry = theNewEntry;
         }
         theTextureEntry->set(inTexture, inNeedsMultiply, inPropDec);
     }
 
-    void setImage(const QDemonRef<QDemonRenderShaderProgram> &inShader, const QString &inPropName, const QDemonRef<QDemonRenderImage2D> &inImage)
+    void setImage(const QDemonRef<QDemonRenderShaderProgram> &inShader, const QByteArray &inPropName, const QDemonRef<QDemonRenderImage2D> &inImage)
     {
         QDemonRef<QDemonImageEntry> theImageEntry;
         for (qint32 idx = 0, end = m_imageEntries.size(); idx < end && theImageEntry == nullptr; ++idx) {
@@ -339,7 +339,7 @@ struct QDemonEffectContext
         }
         if (theImageEntry == nullptr) {
             QDemonRef<QDemonImageEntry> theNewEntry(
-                    new QDemonImageEntry(QDemonImageEntry::createImageEntry(inShader, inPropName.toLatin1())));
+                    new QDemonImageEntry(QDemonImageEntry::createImageEntry(inShader, inPropName)));
             m_imageEntries.push_back(QPair<QString, QDemonRef<QDemonImageEntry>>(inPropName, theNewEntry));
             theImageEntry = theNewEntry;
         }
@@ -419,21 +419,21 @@ QDemonEffectSystem::QDemonEffectSystem(QDemonRenderContextInterface *inContext) 
 
 QDemonEffectSystem::~QDemonEffectSystem()
 {
-    //        for (quint32 idx = 0, end = m_Contexts.size(); idx < end; ++idx)
-    //            delete m_Contexts[idx];
-    //            m_Contexts.clear();
+    for (qint32 idx = 0, end = m_contexts.size(); idx < end; ++idx)
+        delete m_contexts[idx].data();
+    m_contexts.clear();
 }
 
 QDemonEffectContext &QDemonEffectSystem::getEffectContext(QDemonRenderEffect &inEffect)
 {
     if (inEffect.m_context == nullptr) {
-        //            inEffect.m_context = QDemonRef<QDemonEffectContext>(new QDemonEffectContext(inEffect.className, m_context, m_resourceManager));
-        //            m_contexts.push_back(inEffect.m_context);
+        inEffect.m_context = new QDemonEffectContext(inEffect.className, m_context, m_resourceManager);
+        m_contexts.push_back(inEffect.m_context);
     }
     return *inEffect.m_context;
 }
 
-QDemonRef<QDemonEffectClass> QDemonEffectSystem::getEffectClass(const QString &inStr)
+QDemonRef<QDemonEffectClass> QDemonEffectSystem::getEffectClass(const QByteArray &inStr)
 {
     TEffectClassMap::iterator theIter = m_effectClasses.find(inStr);
     if (theIter != m_effectClasses.end())
@@ -446,7 +446,7 @@ const QDemonRef<QDemonEffectClass> QDemonEffectSystem::getEffectClass(const QStr
     return const_cast<QDemonEffectSystem *>(this)->getEffectClass(inStr);
 }
 
-bool QDemonEffectSystem::isEffectRegistered(QString inStr) { return getEffectClass(inStr) != nullptr; }
+bool QDemonEffectSystem::isEffectRegistered(const QByteArray &inStr) { return getEffectClass(inStr) != nullptr; }
 
 QVector<QString> QDemonEffectSystem::getRegisteredEffects()
 {
@@ -454,73 +454,6 @@ QVector<QString> QDemonEffectSystem::getRegisteredEffects()
     for (TEffectClassMap::iterator theIter = m_effectClasses.begin(), theEnd = m_effectClasses.end(); theIter != theEnd; ++theIter)
         m_effectList.push_back(theIter.key());
     return m_effectList;
-}
-
-bool QDemonEffectSystem::registerGLSLEffect(QString, const char *, QDemonDataView<dynamic::QDemonPropertyDeclaration>)
-{
-    //        if (isEffectRegistered(inName))
-    //            return false;
-
-    ////        m_context->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
-    ////        QDemonDynamicObjectClass &theClass = *m_context->dynamicObjectSystem()->dynamicObjectClass(inName);
-
-    //        QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(theClass));
-    //        m_effectClasses.insert(inName, theEffect);
-
-    //        // Setup the commands required to run this effect
-    //        //        StaticAssert<(sizeof(SBindShader) % 4 == 0)>::valid_expression();
-    //        //        StaticAssert<(sizeof(SApplyInstanceValue) % 4 == 0)>::valid_expression();
-    //        //        StaticAssert<(sizeof(SRender) % 4 == 0)>::valid_expression();
-
-    //        quint32 commandAllocationSize = sizeof(QDemonBindTarget);
-    //        commandAllocationSize += sizeof(QDemonBindShader);
-    //        commandAllocationSize += sizeof(QDemonApplyInstanceValue) * inProperties.size();
-    //        commandAllocationSize += sizeof(QDemonRender);
-
-    //        quint32 commandCount = 3 + inProperties.size();
-    //        quint32 commandPtrAllocationSize = commandCount * sizeof(QDemonCommand *);
-    //        quint32 allocationSize = align8(commandAllocationSize) + commandPtrAllocationSize;
-    //        quint8 *startBuffer = (quint8 *)::malloc(allocationSize);
-    //        quint8 *dataBuffer = startBuffer;
-    //        // Setup the command buffer such that the ptrs to the commands and the commands themselves
-    //        // are
-    //        // all in the same block of memory.  This enables quicker iteration (trivially quicker, most
-    //        // likely)
-    //        // but it also enables simpler memory management (single free).
-    //        // Furthermore, for a single glsl file the effect properties map precisely into the
-    //        // glsl file itself.
-    //        QDemonCommand **theFirstCommandPtr = (reinterpret_cast<QDemonCommand **>(dataBuffer + align8(commandAllocationSize)));
-    //        QDemonCommand **theCommandPtr = theFirstCommandPtr;
-    //        memset(dataBuffer, 0, commandAllocationSize);
-
-    //        new (dataBuffer) QDemonBindTarget();
-    //        *theCommandPtr = (QDemonCommand *)dataBuffer;
-    //        ++theCommandPtr;
-    //        dataBuffer += sizeof(QDemonBindTarget);
-
-    //        new (dataBuffer) QDemonBindShader(QString::fromLocal8Bit(inPathToEffect));
-    //        *theCommandPtr = (QDemonCommand *)dataBuffer;
-    //        ++theCommandPtr;
-    //        dataBuffer += sizeof(QDemonBindShader);
-
-    //        for (quint32 idx = 0, end = inProperties.size(); idx < end; ++idx) {
-    //            const QDemonPropertyDefinition &theDefinition(theEffect->dynamicClass->getProperties()[idx]);
-    //            new (dataBuffer) QDemonApplyInstanceValue(theDefinition.name, theDefinition.dataType, theDefinition.offset);
-    //            *theCommandPtr = (QDemonCommand *)dataBuffer;
-    //            ++theCommandPtr;
-    //            dataBuffer += sizeof(QDemonApplyInstanceValue);
-    //        }
-    //        new (dataBuffer) QDemonRender(false);
-    //        *theCommandPtr = (QDemonCommand *)dataBuffer;
-    //        ++theCommandPtr;
-    //        dataBuffer += sizeof(QDemonRender);
-    //        // Ensure we end up *exactly* where we expected to.
-    //        Q_ASSERT(dataBuffer == startBuffer + commandAllocationSize);
-    //        Q_ASSERT(theCommandPtr - theFirstCommandPtr == (int)inProperties.size() + 3);
-    //        m_context->dynamicObjectSystem()->setRenderCommands(inName, QDemonDataView<QDemonCommand *>(theFirstCommandPtr, commandCount));
-    //        ::free(startBuffer);
-    //        return true;
-    return false;
 }
 
 void QDemonEffectSystem::setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonByteView inDefaultData)
@@ -533,19 +466,20 @@ void QDemonEffectSystem::setEffectPropertyEnumNames(QString inName, QString inPr
     //        m_context->dynamicObjectSystem()->setPropertyEnumNames(inName, inPropName, inNames);
 }
 
-bool QDemonEffectSystem::registerEffect(QString inName, QDemonDataView<QDemonPropertyDeclaration> inProperties)
+bool QDemonEffectSystem::registerEffect(const QByteArray &inName)
 {
-    //        if (isEffectRegistered(inName))
-    //            return false;
-    //        m_context->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
-    //        auto theClass = m_context->dynamicObjectSystem()->dynamicObjectClass(inName);
-    //        QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(*theClass));
-    //        m_effectClasses.insert(inName, theEffect);
-    //        return true;
-    return false;
+    Q_ASSERT(0);
+//    if (isEffectRegistered(inName))
+//        return false;
+//    m_context->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
+//    auto theClass = m_context->dynamicObjectSystem()->dynamicObjectClass(inName);
+//    QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(*theClass));
+//    m_effectClasses.insert(inName, theEffect);
+//    return true;
+return false;
 }
 
-bool QDemonEffectSystem::unregisterEffect(QString inName)
+bool QDemonEffectSystem::unregisterEffect(const QByteArray &inName)
 {
     //        if (!isEffectRegistered(inName))
     //            return false;
@@ -564,34 +498,13 @@ bool QDemonEffectSystem::unregisterEffect(QString inName)
     return false;
 }
 
-QDemonDataView<QString> QDemonEffectSystem::getEffectPropertyEnumNames(QString inName, QString inPropName) const
-{
-    //        const auto theClass = getEffectClass(inName);
-    //        if (theClass == nullptr) {
-    //            Q_ASSERT(false);
-    //            QDemonDataView<QString>();
-    //        }
-    //        const QDemonPropertyDefinition *theDefinitionPtr = theClass->dynamicClass->findPropertyByName(inPropName);
-    //        if (theDefinitionPtr)
-    //            return theDefinitionPtr->enumValueNames;
-    return QDemonDataView<QString>();
-}
-
-QDemonDataView<QDemonPropertyDefinition> QDemonEffectSystem::getEffectProperties(QString inEffectName) const
-{
-    //        const auto theClass = getEffectClass(inEffectName);
-    //        if (theClass)
-    //            return theClass->dynamicClass->getProperties();
-    return QDemonDataView<QDemonPropertyDefinition>();
-}
-
 void QDemonEffectSystem::setEffectPropertyTextureSettings(QString inName, QString inPropName, QString inPropPath, QDemonRenderTextureTypeValue inTexType, QDemonRenderTextureCoordOp inCoordOp, QDemonRenderTextureMagnifyingOp inMagFilterOp, QDemonRenderTextureMinifyingOp inMinFilterOp)
 {
     //        m_context->dynamicObjectSystem()
     //                ->setPropertyTextureSettings(inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
 }
 
-void QDemonEffectSystem::setEffectRequiresDepthTexture(QString inEffectName, bool inValue)
+void QDemonEffectSystem::setEffectRequiresDepthTexture(const QByteArray &inEffectName, bool inValue)
 {
     //        auto theClass = getEffectClass(inEffectName);
     //        if (theClass == nullptr) {
@@ -601,7 +514,7 @@ void QDemonEffectSystem::setEffectRequiresDepthTexture(QString inEffectName, boo
     //        theClass->dynamicClass->setRequiresDepthTexture(inValue);
 }
 
-bool QDemonEffectSystem::doesEffectRequireDepthTexture(QString inEffectName) const
+bool QDemonEffectSystem::doesEffectRequireDepthTexture(const QByteArray &inEffectName) const
 {
     //        const auto theClass = getEffectClass(inEffectName);
     //        if (theClass == nullptr) {
@@ -612,17 +525,18 @@ bool QDemonEffectSystem::doesEffectRequireDepthTexture(QString inEffectName) con
     return false;
 }
 
-void QDemonEffectSystem::setEffectRequiresCompilation(QString inEffectName, bool inValue)
+void QDemonEffectSystem::setEffectRequiresCompilation(const QByteArray &inEffectName, bool inValue)
 {
-    //        auto theClass = getEffectClass(inEffectName);
-    //        if (theClass == nullptr) {
-    //            Q_ASSERT(false);
-    //            return;
-    //        }
-    //        theClass->dynamicClass->setRequiresCompilation(inValue);
+    auto theClass = getEffectClass(inEffectName);
+    if (theClass == nullptr) {
+        Q_ASSERT(false);
+        return;
+    }
+    Q_ASSERT(0);
+//    theClass->dynamicClass->setRequiresCompilation(inValue);
 }
 
-bool QDemonEffectSystem::doesEffectRequireCompilation(QString inEffectName) const
+bool QDemonEffectSystem::doesEffectRequireCompilation(const QByteArray &inEffectName) const
 {
     //        const auto theClass = getEffectClass(inEffectName);
     //        if (theClass == nullptr) {
@@ -633,17 +547,7 @@ bool QDemonEffectSystem::doesEffectRequireCompilation(QString inEffectName) cons
     return false;
 }
 
-void QDemonEffectSystem::setEffectCommands(QString inEffectName, QDemonDataView<QDemonCommand *> inCommands)
-{
-    //        m_context->dynamicObjectSystem()->setRenderCommands(inEffectName, inCommands);
-}
-
-QDemonDataView<QDemonCommand *> QDemonEffectSystem::getEffectCommands(QString inEffectName) const
-{
-    return QDemonDataView<dynamic::QDemonCommand *>();/*m_context->dynamicObjectSystem()->getRenderCommands(inEffectName);*/
-}
-
-QDemonRenderEffect *QDemonEffectSystem::createEffectInstance(QString inEffectName)
+QDemonRenderEffect *QDemonEffectSystem::createEffectInstance(const QByteArray &inEffectName)
 {
     auto theClass = getEffectClass(inEffectName);
     if (theClass == nullptr)
@@ -763,7 +667,7 @@ void QDemonEffectSystem::allocateDataBuffer(QDemonRenderEffect &inEffect, const 
         QDemonByteRef data((quint8 *)initialData, theBufferSize);
         memset(initialData, 0x0L, theBufferSize);
         if (inCommand.m_dataBufferType == QDemonRenderBufferType::Storage) {
-            theDataBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_name.toLocal8Bit(),
+            theDataBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_name,
                                                           QDemonRenderBufferUsageType::Dynamic,
                                                           data,
                                                           nullptr);
@@ -787,7 +691,7 @@ void QDemonEffectSystem::allocateDataBuffer(QDemonRenderEffect &inEffect, const 
         // create wrapper buffer
         if (inCommand.m_dataBufferWrapType == QDemonRenderBufferType::Storage
                 && !inCommand.m_wrapName.isEmpty() && theDataBuffer) {
-            theDataWrapBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_wrapName.toLocal8Bit(),
+            theDataWrapBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_wrapName,
                                                               QDemonRenderBufferUsageType::Dynamic,
                                                               data,
                                                               theDataBuffer.data());
@@ -853,71 +757,79 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonEffectSystem::bindBuffer(QDemonRenderEf
 
 QDemonRef<QDemonEffectShader> QDemonEffectSystem::bindShader(const QString &inEffectId, const QDemonBindShader &inCommand)
 {
-    //        auto theClass = getEffectClass(inEffectId);
-    //        if (!theClass) {
-    //            Q_ASSERT(false);
-    //            return nullptr;
-    //        }
+    auto theClass = getEffectClass(inEffectId);
+    if (!theClass) {
+        Q_ASSERT(false);
+        return nullptr;
+    }
 
-    //        bool forceCompilation = theClass->dynamicClass->requiresCompilation();
+    Q_ASSERT(0);
+    bool forceCompilation = true; // theClass->dynamicClass->requiresCompilation();
 
-    //        auto key = TStrStrPair(inCommand.m_shaderPath, inCommand.m_shaderDefine);
-    //        auto theInsertResult = m_shaderMap.find(key);
-    //        const bool found = (theInsertResult != m_shaderMap.end());
-    //        if (!found)
-    //            theInsertResult = m_shaderMap.insert(key, QDemonRef<QDemonEffectShader>());
+    auto key = TStrStrPair(inCommand.m_shaderPath, inCommand.m_shaderDefine);
+    auto theInsertResult = m_shaderMap.find(key);
+    const bool found = (theInsertResult != m_shaderMap.end());
+    if (!found)
+        theInsertResult = m_shaderMap.insert(key, QDemonRef<QDemonEffectShader>());
 
-    //        if (found || forceCompilation) {
-    //            auto theProgram = m_context->dynamicObjectSystem()
-    //                                      ->getShaderProgram(inCommand.m_shaderPath,
-    //                                                         inCommand.m_shaderDefine,
-    //                                                         TShaderFeatureSet(),
-    //                                                         QDemonDynamicShaderProgramFlags(),
-    //                                                         forceCompilation)
-    //                                      .first;
-    //            if (theProgram)
-    //                theInsertResult.value() = QDemonRef<QDemonEffectShader>(new QDemonEffectShader(theProgram));
-    //        }
-    //        if (theInsertResult.value()) {
-    //            auto theContext(m_context->renderContext());
-    //            theContext->setActiveShader(theInsertResult.value()->m_shader);
-    //        }
+    if (found || forceCompilation) {
+        auto theProgram = m_context->dynamicObjectSystem()
+                                  ->getShaderProgram(inCommand.m_shaderPath,
+                                                     inCommand.m_shaderDefine,
+                                                     TShaderFeatureSet(),
+                                                     QDemonDynamicShaderProgramFlags(),
+                                                     forceCompilation)
+                                  .first;
+        if (theProgram)
+            theInsertResult.value() = QDemonRef<QDemonEffectShader>(new QDemonEffectShader(theProgram));
+    }
+    if (theInsertResult.value()) {
+        auto theContext(m_context->renderContext());
+        theContext->setActiveShader(theInsertResult.value()->m_shader);
+    }
 
-    //        return theInsertResult.value();
+    return theInsertResult.value();
     return nullptr;
 }
 
-void QDemonEffectSystem::doApplyInstanceValue(QDemonRenderEffect *inEffect, quint8 *inDataPtr, const QString &inPropertyName, QDemonRenderShaderDataType inPropertyType, const QDemonRef<QDemonRenderShaderProgram> &inShader, const QDemonPropertyDefinition &inDefinition)
+void QDemonEffectSystem::doApplyInstanceValue(QDemonRenderEffect *inEffect,
+                                              const QByteArray &inPropertyName,
+                                              const QVariant &propertyValue,
+                                              QDemonRenderShaderDataType inPropertyType,
+                                              const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
-    auto theConstant = inShader->shaderConstant(inPropertyName.toLocal8Bit());
+    auto theConstant = inShader->shaderConstant(inPropertyName);
     if (theConstant) {
         if (theConstant->getShaderConstantType() == inPropertyType) {
             if (inPropertyType == QDemonRenderShaderDataType::Texture2D) {
-                // TODO:
-                //                    StaticAssert<sizeof(QString) == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
-                QString theStrPtr = QString::fromLatin1(reinterpret_cast<char *>(inDataPtr));
                 auto theBufferManager(m_context->bufferManager());
                 auto theOffscreenRenderer = m_context->offscreenRenderManager();
                 bool needsAlphaMultiply = true;
-                QDemonRef<QDemonRenderTexture2D> theTexture;
-                if (!theStrPtr.isEmpty()) {
-                    if (theOffscreenRenderer->hasOffscreenRenderer(theStrPtr)) {
-                        QDemonOffscreenRenderResult theResult = theOffscreenRenderer->getRenderedItem(theStrPtr);
-                        needsAlphaMultiply = false;
-                        theTexture = theResult.texture;
-                    } else {
-                        QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(theStrPtr);
-                        needsAlphaMultiply = true;
-                        theTexture = theTextureData.m_texture;
+
+                const QDemonRenderEffect::TextureProperty *textureProperty = reinterpret_cast<QDemonRenderEffect::TextureProperty *>(propertyValue.value<void *>());
+                QDemonRenderImage *image = textureProperty->texImage;
+                if (image) {
+                    const QString &imageSource = image->m_imagePath;
+                    QDemonRef<QDemonRenderTexture2D> theTexture;
+                    if (!imageSource.isEmpty()) {
+                        if (theOffscreenRenderer->hasOffscreenRenderer(imageSource)) {
+                            QDemonOffscreenRenderResult theResult = theOffscreenRenderer->getRenderedItem(imageSource);
+                            needsAlphaMultiply = false;
+                            theTexture = theResult.texture;
+                        } else {
+                            QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(imageSource);
+                            needsAlphaMultiply = true;
+                            theTexture = theTextureData.m_texture;
+                        }
                     }
+                    getEffectContext(*inEffect).setTexture(inShader,
+                                                           inPropertyName,
+                                                           theTexture,
+                                                           needsAlphaMultiply,
+                                                           m_textureStringBuilder,
+                                                           m_textureStringBuilder2,
+                                                           textureProperty);
                 }
-                getEffectContext(*inEffect).setTexture(inShader,
-                                                       inPropertyName,
-                                                       theTexture,
-                                                       needsAlphaMultiply,
-                                                       m_textureStringBuilder,
-                                                       m_textureStringBuilder2,
-                                                       &inDefinition);
             } else if (inPropertyType == QDemonRenderShaderDataType::Image2D) {
                 // TODO:
                 //                    StaticAssert<sizeof(QString)
@@ -929,86 +841,85 @@ void QDemonEffectSystem::doApplyInstanceValue(QDemonRenderEffect *inEffect, quin
             } else {
                 switch (inPropertyType) {
                 case QDemonRenderShaderDataType::Integer:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<qint32 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.toInt());
                     break;
                 case QDemonRenderShaderDataType::IntegerVec2:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<qint32_2 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<qint32_2>());
                     break;
                 case QDemonRenderShaderDataType::IntegerVec3:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<qint32_3 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<qint32_3>());
                     break;
                 case QDemonRenderShaderDataType::IntegerVec4:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<qint32_4 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<qint32_4>());
                     break;
                 case QDemonRenderShaderDataType::Boolean:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<bool>());
                     break;
                 case QDemonRenderShaderDataType::BooleanVec2:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool_2 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<bool_2>());
                     break;
                 case QDemonRenderShaderDataType::BooleanVec3:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool_3 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<bool_3>());
                     break;
                 case QDemonRenderShaderDataType::BooleanVec4:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool_4 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<bool_4>());
                     break;
                 case QDemonRenderShaderDataType::Float:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<float *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<float>());
                     break;
                 case QDemonRenderShaderDataType::Vec2:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QVector2D *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<QVector2D>());
                     break;
                 case QDemonRenderShaderDataType::Vec3:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QVector3D *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<QVector3D>());
                     break;
                 case QDemonRenderShaderDataType::Vec4:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QVector4D *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<QVector4D>());
                     break;
                 case QDemonRenderShaderDataType::UnsignedInteger:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<quint32 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<quint32>());
                     break;
                 case QDemonRenderShaderDataType::UnsignedIntegerVec2:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<quint32_2 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<quint32_2>());
                     break;
                 case QDemonRenderShaderDataType::UnsignedIntegerVec3:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<quint32_3 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<quint32_3>());
                     break;
                 case QDemonRenderShaderDataType::UnsignedIntegerVec4:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<quint32_4 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<quint32_4>());
                     break;
                 case QDemonRenderShaderDataType::Matrix3x3:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QMatrix3x3 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<QMatrix3x3>());
                     break;
                 case QDemonRenderShaderDataType::Matrix4x4:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QMatrix4x4 *>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), propertyValue.value<QMatrix4x4>());
                     break;
                 case QDemonRenderShaderDataType::Texture2D:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTexture2D **>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTexture2D **>(propertyValue.value<void *>())));
                     break;
                 case QDemonRenderShaderDataType::Texture2DHandle:
                     inShader->setPropertyValue(theConstant.data(),
-                                               *(reinterpret_cast<QDemonRenderTexture2D ***>(inDataPtr)));
+                                               *(reinterpret_cast<QDemonRenderTexture2D ***>(propertyValue.value<void *>())));
                     break;
                 case QDemonRenderShaderDataType::Texture2DArray:
                     inShader->setPropertyValue(theConstant.data(),
-                                               *(reinterpret_cast<QDemonRenderTexture2DArray **>(inDataPtr)));
+                                               *(reinterpret_cast<QDemonRenderTexture2DArray **>(propertyValue.value<void *>())));
                     break;
                 case QDemonRenderShaderDataType::TextureCube:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTextureCube **>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTextureCube **>(propertyValue.value<void *>())));
                     break;
                 case QDemonRenderShaderDataType::TextureCubeHandle:
                     inShader->setPropertyValue(theConstant.data(),
-                                               *(reinterpret_cast<QDemonRenderTextureCube ***>(inDataPtr)));
+                                               *(reinterpret_cast<QDemonRenderTextureCube ***>(propertyValue.value<void *>())));
                     break;
                 case QDemonRenderShaderDataType::Image2D:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderImage2D **>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderImage2D **>(propertyValue.value<void *>())));
                     break;
                 case QDemonRenderShaderDataType::DataBuffer:
-                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderDataBuffer **>(inDataPtr)));
+                    inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderDataBuffer **>(propertyValue.value<void *>())));
                     break;
                 default:
-                    Q_ASSERT(false);
-                    break;
+                    Q_UNREACHABLE();
                 }
             }
 
@@ -1022,7 +933,10 @@ void QDemonEffectSystem::doApplyInstanceValue(QDemonRenderEffect *inEffect, quin
     }
 }
 
-void QDemonEffectSystem::applyInstanceValue(QDemonRenderEffect *inEffect, const QDemonRef<QDemonEffectClass> &inClass, const QDemonRef<QDemonRenderShaderProgram> &inShader, const QDemonApplyInstanceValue &inCommand)
+void QDemonEffectSystem::applyInstanceValue(QDemonRenderEffect *inEffect,
+                                            const QDemonRef<QDemonEffectClass> &inClass,
+                                            const QDemonRef<QDemonRenderShaderProgram> &inShader,
+                                            const QDemonApplyInstanceValue &inCommand)
 {
     // sanity check
     //        if (!inCommand.m_propertyName.isEmpty()) {
@@ -1153,7 +1067,7 @@ QDemonEffectTextureData QDemonEffectSystem::applyBufferValue(QDemonRenderEffect 
 
 void QDemonEffectSystem::applyDepthValue(QDemonRenderEffect *inEffect, const QDemonRef<QDemonRenderShaderProgram> &inShader, const QDemonApplyDepthValue &inCommand, const QDemonRef<QDemonRenderTexture2D> &inTexture)
 {
-    auto theConstant = inShader->shaderConstant(inCommand.m_paramName.toLatin1());
+    auto theConstant = inShader->shaderConstant(inCommand.m_paramName);
 
     if (theConstant) {
         if (theConstant->getShaderConstantType() != QDemonRenderShaderDataType::Texture2D) {
@@ -1190,7 +1104,7 @@ void QDemonEffectSystem::applyImageValue(QDemonRenderEffect *inEffect, const QDe
     }
 
     if (!inCommand.m_paramName.isEmpty()) {
-        auto theConstant = inShader->shaderConstant(inCommand.m_paramName.toLatin1());
+        auto theConstant = inShader->shaderConstant(inCommand.m_paramName);
 
         if (theConstant) {
             if (inCommand.m_needSync) {
@@ -1240,7 +1154,7 @@ void QDemonEffectSystem::applyDataBufferValue(QDemonRenderEffect *inEffect, cons
             Q_ASSERT(false);
         }
 
-        auto theConstant = inShader->shaderBuffer(inCommand.m_paramName.toLatin1());
+        auto theConstant = inShader->shaderBuffer(inCommand.m_paramName);
 
         if (theConstant) {
             getEffectContext(*inEffect).setDataBuffer(inShader, inCommand.m_paramName, theBufferToBind.dataBuffer);
@@ -1357,208 +1271,213 @@ void QDemonEffectSystem::renderPass(QDemonEffectShader &inShader, const QMatrix4
     }
 }
 
-void QDemonEffectSystem::doRenderEffect(QDemonRenderEffect *inEffect, const QDemonRef<QDemonEffectClass> &inClass, const QDemonRef<QDemonRenderTexture2D> &inSourceTexture, QMatrix4x4 &inMVP, const QDemonRef<QDemonRenderFrameBuffer> &inTarget, bool inEnableBlendWhenRenderToTarget, const QDemonRef<QDemonRenderTexture2D> &inDepthTexture, const QDemonRef<QDemonRenderTexture2D> &inDepthStencilTexture, const QVector2D &inCameraClipRange)
+void QDemonEffectSystem::doRenderEffect(QDemonRenderEffect *inEffect,
+                                        const QDemonRef<QDemonEffectClass> &inClass,
+                                        const QDemonRef<QDemonRenderTexture2D> &inSourceTexture,
+                                        QMatrix4x4 &inMVP,
+                                        const QDemonRef<QDemonRenderFrameBuffer> &inTarget,
+                                        bool inEnableBlendWhenRenderToTarget,
+                                        const QDemonRef<QDemonRenderTexture2D> &inDepthTexture,
+                                        const QDemonRef<QDemonRenderTexture2D> &inDepthStencilTexture,
+                                        const QVector2D &inCameraClipRange)
 {
-    Q_ASSERT(0);
+    // Run through the effect commands and render the effect.
+    // QDemonRenderTexture2D* theCurrentTexture(&inSourceTexture);
+    auto theContext = m_context->renderContext();
 
-    //        // Run through the effect commands and render the effect.
-    //        // QDemonRenderTexture2D* theCurrentTexture(&inSourceTexture);
-    //        auto theContext = m_context->renderContext();
+    // Context variables that are updated during the course of a pass.
+    QDemonEffectTextureData theCurrentSourceTexture(inSourceTexture, false);
+    QDemonRef<QDemonRenderTexture2D> theCurrentDepthStencilTexture;
+    QDemonRef<QDemonRenderFrameBuffer> theCurrentRenderTarget(inTarget);
+    QDemonRef<QDemonEffectShader> theCurrentShader;
+    QRect theOriginalViewport(theContext->viewport());
+    bool wasScissorEnabled = theContext->isScissorTestEnabled();
+    bool wasBlendingEnabled = theContext->isBlendingEnabled();
+    // save current blending setup
+    QDemonRenderBlendFunctionArgument theBlendFunc = theContext->blendFunction();
+    QDemonRenderBlendEquationArgument theBlendEqu = theContext->blendEquation();
+    bool intermediateBlendingEnabled = false;
+    QDemonTextureDetails theDetails(inSourceTexture->textureDetails());
+    const qint32 theFinalWidth = theDetails.width;
+    const qint32 theFinalHeight = theDetails.height;
+    QVector2D theDestSize;
+    {
+        // Ensure no matter the command run goes we replace the rendering system to some
+        // semblance of the approprate
+        // setting.
+        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
+                                                                                            &QDemonRenderContext::renderTarget,
+                                                                                            &QDemonRenderContext::setRenderTarget);
+        QDemonRenderContextScopedProperty<QRect> __viewport(*theContext,
+                                                            &QDemonRenderContext::viewport,
+                                                            &QDemonRenderContext::setViewport);
+        QDemonRenderContextScopedProperty<bool> __scissorEnabled(*theContext,
+                                                                 &QDemonRenderContext::isScissorTestEnabled,
+                                                                 &QDemonRenderContext::setScissorTestEnabled);
+        QDemonRenderContextScopedProperty<bool> __stencilTest(*theContext,
+                                                              &QDemonRenderContext::isStencilTestEnabled,
+                                                              &QDemonRenderContext::setStencilTestEnabled);
+        QDemonRenderContextScopedProperty<QDemonRenderBoolOp> __depthFunction(*theContext,
+                                                                              &QDemonRenderContext::depthFunction,
+                                                                              &QDemonRenderContext::setDepthFunction);
+        QDemonOption<QDemonDepthStencil> theCurrentDepthStencil;
 
-    //        // Context variables that are updated during the course of a pass.
-    //        QDemonEffectTextureData theCurrentSourceTexture(inSourceTexture, false);
-    //        QDemonRef<QDemonRenderTexture2D> theCurrentDepthStencilTexture;
-    //        QDemonRef<QDemonRenderFrameBuffer> theCurrentRenderTarget(inTarget);
-    //        QDemonRef<QDemonEffectShader> theCurrentShader;
-    //        QRect theOriginalViewport(theContext->viewport());
-    //        bool wasScissorEnabled = theContext->isScissorTestEnabled();
-    //        bool wasBlendingEnabled = theContext->isBlendingEnabled();
-    //        // save current blending setup
-    //        QDemonRenderBlendFunctionArgument theBlendFunc = theContext->blendFunction();
-    //        QDemonRenderBlendEquationArgument theBlendEqu = theContext->blendEquation();
-    //        bool intermediateBlendingEnabled = false;
-    //        QDemonTextureDetails theDetails(inSourceTexture->textureDetails());
-    //        quint32 theFinalWidth = (quint32)(theDetails.width);
-    //        quint32 theFinalHeight = (quint32)(theDetails.height);
-    //        QVector2D theDestSize;
-    //        {
-    //            // Ensure no matter the command run goes we replace the rendering system to some
-    //            // semblance of the approprate
-    //            // setting.
-    //            QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
-    //                                                                                                &QDemonRenderContext::renderTarget,
-    //                                                                                                &QDemonRenderContext::setRenderTarget);
-    //            QDemonRenderContextScopedProperty<QRect> __viewport(*theContext,
-    //                                                                &QDemonRenderContext::viewport,
-    //                                                                &QDemonRenderContext::setViewport);
-    //            QDemonRenderContextScopedProperty<bool> __scissorEnabled(*theContext,
-    //                                                                     &QDemonRenderContext::isScissorTestEnabled,
-    //                                                                     &QDemonRenderContext::setScissorTestEnabled);
-    //            QDemonRenderContextScopedProperty<bool> __stencilTest(*theContext,
-    //                                                                  &QDemonRenderContext::isStencilTestEnabled,
-    //                                                                  &QDemonRenderContext::setStencilTestEnabled);
-    //            QDemonRenderContextScopedProperty<QDemonRenderBoolOp> __depthFunction(*theContext,
-    //                                                                                        &QDemonRenderContext::depthFunction,
-    //                                                                                        &QDemonRenderContext::setDepthFunction);
-    //            QDemonOption<QDemonDepthStencil> theCurrentDepthStencil;
+        theContext->setScissorTestEnabled(false);
+        theContext->setBlendingEnabled(false);
+        theContext->setCullingEnabled(false);
+        theContext->setDepthTestEnabled(false);
+        theContext->setDepthWriteEnabled(false);
 
-    //            theContext->setScissorTestEnabled(false);
-    //            theContext->setBlendingEnabled(false);
-    //            theContext->setCullingEnabled(false);
-    //            theContext->setDepthTestEnabled(false);
-    //            theContext->setDepthWriteEnabled(false);
+        QMatrix4x4 theMVP;
+        const auto &theCommands = inEffect->commands;
+        for (const auto &theCommand : theCommands) {
+            switch (theCommand->m_type) {
+            case CommandType::AllocateBuffer:
+                allocateBuffer(*inEffect,
+                               static_cast<const QDemonAllocateBuffer &>(*theCommand),
+                               theFinalWidth,
+                               theFinalHeight,
+                               theDetails.format);
+                break;
 
-    //            QMatrix4x4 theMVP;
-    //            QDemonDataView<dynamic::QDemonCommand *> theCommands = inClass->dynamicClass->getRenderCommands();
-    //            for (quint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd; ++commandIdx) {
-    //                const QDemonCommand &theCommand(*theCommands[commandIdx]);
-    //                switch (theCommand.m_type) {
-    //                case CommandType::AllocateBuffer:
-    //                    allocateBuffer(*inEffect,
-    //                                   static_cast<const QDemonAllocateBuffer &>(theCommand),
-    //                                   theFinalWidth,
-    //                                   theFinalHeight,
-    //                                   theDetails.format);
-    //                    break;
+            case CommandType::AllocateImage:
+                allocateImage(*inEffect, static_cast<const QDemonAllocateImage &>(*theCommand), theFinalWidth, theFinalHeight);
+                break;
 
-    //                case CommandType::AllocateImage:
-    //                    allocateImage(*inEffect, static_cast<const QDemonAllocateImage &>(theCommand), theFinalWidth, theFinalHeight);
-    //                    break;
+            case CommandType::AllocateDataBuffer:
+                allocateDataBuffer(*inEffect, static_cast<const QDemonAllocateDataBuffer &>(*theCommand));
+                break;
 
-    //                case CommandType::AllocateDataBuffer:
-    //                    allocateDataBuffer(*inEffect, static_cast<const QDemonAllocateDataBuffer &>(theCommand));
-    //                    break;
+            case CommandType::BindBuffer:
+                theCurrentRenderTarget = bindBuffer(*inEffect, static_cast<const QDemonBindBuffer &>(*theCommand), theMVP, theDestSize);
+                break;
 
-    //                case CommandType::BindBuffer:
-    //                    theCurrentRenderTarget = bindBuffer(*inEffect, static_cast<const QDemonBindBuffer &>(theCommand), theMVP, theDestSize);
-    //                    break;
+            case CommandType::BindTarget: {
+                m_context->renderContext()->setRenderTarget(inTarget);
+                theCurrentRenderTarget = inTarget;
+                theMVP = inMVP;
+                theContext->setViewport(theOriginalViewport);
+                theDestSize = QVector2D(float(theFinalWidth), float(theFinalHeight));
+                // This isn't necessary if we are rendering to an offscreen buffer and not
+                // compositing
+                // with other objects.
+                if (inEnableBlendWhenRenderToTarget) {
+                    theContext->setBlendingEnabled(wasBlendingEnabled);
+                    theContext->setScissorTestEnabled(wasScissorEnabled);
+                    // The blending setup was done before we apply the effect
+                    theContext->setBlendFunction(theBlendFunc);
+                    theContext->setBlendEquation(theBlendEqu);
+                }
+            } break;
+            case CommandType::BindShader:
+                theCurrentShader = bindShader(inEffect->className, static_cast<const QDemonBindShader &>(*theCommand));
+                break;
+            case CommandType::ApplyInstanceValue:
+                if (theCurrentShader)
+                    applyInstanceValue(inEffect,
+                                       inClass,
+                                       theCurrentShader->m_shader,
+                                       static_cast<const QDemonApplyInstanceValue &>(*theCommand));
+                break;
+            case CommandType::ApplyValue:
+                if (theCurrentShader)
+                    applyValue(inEffect, inClass, theCurrentShader->m_shader, static_cast<const QDemonApplyValue &>(*theCommand));
+                break;
+            case CommandType::ApplyBlending:
+                intermediateBlendingEnabled = applyBlending(static_cast<const QDemonApplyBlending &>(*theCommand));
+                break;
+            case CommandType::ApplyBufferValue:
+                if (theCurrentShader)
+                    theCurrentSourceTexture = applyBufferValue(inEffect,
+                                                               theCurrentShader->m_shader,
+                                                               static_cast<const QDemonApplyBufferValue &>(*theCommand),
+                                                               inSourceTexture,
+                                                               theCurrentSourceTexture);
+                break;
+            case CommandType::ApplyDepthValue:
+                if (theCurrentShader)
+                    applyDepthValue(inEffect, theCurrentShader->m_shader, static_cast<const QDemonApplyDepthValue &>(*theCommand), inDepthTexture);
+                if (!inDepthTexture) {
+                    qCCritical(INVALID_OPERATION,
+                               "Depth value command detected but no "
+                               "depth buffer provided for effect %s",
+                               qPrintable(inEffect->className));
+                    Q_ASSERT(false);
+                }
+                break;
+            case CommandType::ApplyImageValue:
+                if (theCurrentShader)
+                    applyImageValue(inEffect, theCurrentShader->m_shader, static_cast<const QDemonApplyImageValue &>(*theCommand));
+                break;
+            case CommandType::ApplyDataBufferValue:
+                if (theCurrentShader)
+                    applyDataBufferValue(inEffect,
+                                         theCurrentShader->m_shader,
+                                         static_cast<const QDemonApplyDataBufferValue &>(*theCommand));
+                break;
+            case CommandType::DepthStencil: {
+                const QDemonDepthStencil &theDepthStencil = static_cast<const QDemonDepthStencil &>(*theCommand);
+                theCurrentDepthStencilTexture = findTexture(inEffect, theDepthStencil.m_bufferName);
+                if (theCurrentDepthStencilTexture)
+                    theCurrentDepthStencil = theDepthStencil;
+            } break;
+            case CommandType::Render:
+                if (theCurrentShader && theCurrentSourceTexture.texture) {
+                    renderPass(*theCurrentShader,
+                               theMVP,
+                               theCurrentSourceTexture,
+                               theCurrentRenderTarget,
+                               theDestSize,
+                               inCameraClipRange,
+                               theCurrentDepthStencilTexture,
+                               theCurrentDepthStencil,
+                               static_cast<const QDemonRender &>(*theCommand).m_drawIndirect);
+                }
+                // Reset the source texture regardless
+                theCurrentSourceTexture = QDemonEffectTextureData(inSourceTexture, false);
+                theCurrentDepthStencilTexture = nullptr;
+                theCurrentDepthStencil = QDemonOption<QDemonDepthStencil>();
+                // reset intermediate blending state
+                if (intermediateBlendingEnabled) {
+                    theContext->setBlendingEnabled(false);
+                    intermediateBlendingEnabled = false;
+                }
+                break;
+            case CommandType::ApplyRenderState:
+                applyRenderStateValue(theCurrentRenderTarget.data(),
+                                      inDepthStencilTexture,
+                                      static_cast<const QDemonApplyRenderState &>(*theCommand));
+                break;
+            default:
+                Q_ASSERT(false);
+                break;
+            }
+        }
 
-    //                case CommandType::BindTarget: {
-    //                    m_context->renderContext()->setRenderTarget(inTarget);
-    //                    theCurrentRenderTarget = inTarget;
-    //                    theMVP = inMVP;
-    //                    theContext->setViewport(theOriginalViewport);
-    //                    theDestSize = QVector2D((float)theFinalWidth, (float)theFinalHeight);
-    //                    // This isn't necessary if we are rendering to an offscreen buffer and not
-    //                    // compositing
-    //                    // with other objects.
-    //                    if (inEnableBlendWhenRenderToTarget) {
-    //                        theContext->setBlendingEnabled(wasBlendingEnabled);
-    //                        theContext->setScissorTestEnabled(wasScissorEnabled);
-    //                        // The blending setup was done before we apply the effect
-    //                        theContext->setBlendFunction(theBlendFunc);
-    //                        theContext->setBlendEquation(theBlendEqu);
-    //                    }
-    //                } break;
-    //                case CommandType::BindShader:
-    //                    theCurrentShader = bindShader(inEffect->className, static_cast<const QDemonBindShader &>(theCommand));
-    //                    break;
-    //                case CommandType::ApplyInstanceValue:
-    //                    if (theCurrentShader)
-    //                        applyInstanceValue(inEffect,
-    //                                           inClass,
-    //                                           theCurrentShader->m_shader,
-    //                                           static_cast<const QDemonApplyInstanceValue &>(theCommand));
-    //                    break;
-    //                case CommandType::ApplyValue:
-    //                    if (theCurrentShader)
-    //                        applyValue(inEffect, inClass, theCurrentShader->m_shader, static_cast<const QDemonApplyValue &>(theCommand));
-    //                    break;
-    //                case CommandType::ApplyBlending:
-    //                    intermediateBlendingEnabled = applyBlending(static_cast<const QDemonApplyBlending &>(theCommand));
-    //                    break;
-    //                case CommandType::ApplyBufferValue:
-    //                    if (theCurrentShader)
-    //                        theCurrentSourceTexture = applyBufferValue(inEffect,
-    //                                                                   theCurrentShader->m_shader,
-    //                                                                   static_cast<const QDemonApplyBufferValue &>(theCommand),
-    //                                                                   inSourceTexture,
-    //                                                                   theCurrentSourceTexture);
-    //                    break;
-    //                case CommandType::ApplyDepthValue:
-    //                    if (theCurrentShader)
-    //                        applyDepthValue(inEffect, theCurrentShader->m_shader, static_cast<const QDemonApplyDepthValue &>(theCommand), inDepthTexture);
-    //                    if (!inDepthTexture) {
-    //                        qCCritical(INVALID_OPERATION,
-    //                                   "Depth value command detected but no "
-    //                                   "depth buffer provided for effect %s",
-    //                                   qPrintable(inEffect->className));
-    //                        Q_ASSERT(false);
-    //                    }
-    //                    break;
-    //                case CommandType::ApplyImageValue:
-    //                    if (theCurrentShader)
-    //                        applyImageValue(inEffect, theCurrentShader->m_shader, static_cast<const QDemonApplyImageValue &>(theCommand));
-    //                    break;
-    //                case CommandType::ApplyDataBufferValue:
-    //                    if (theCurrentShader)
-    //                        applyDataBufferValue(inEffect,
-    //                                             theCurrentShader->m_shader,
-    //                                             static_cast<const QDemonApplyDataBufferValue &>(theCommand));
-    //                    break;
-    //                case CommandType::DepthStencil: {
-    //                    const QDemonDepthStencil &theDepthStencil = static_cast<const QDemonDepthStencil &>(theCommand);
-    //                    theCurrentDepthStencilTexture = findTexture(inEffect, theDepthStencil.m_bufferName);
-    //                    if (theCurrentDepthStencilTexture)
-    //                        theCurrentDepthStencil = theDepthStencil;
-    //                } break;
-    //                case CommandType::Render:
-    //                    if (theCurrentShader && theCurrentSourceTexture.texture) {
-    //                        renderPass(*theCurrentShader,
-    //                                   theMVP,
-    //                                   theCurrentSourceTexture,
-    //                                   theCurrentRenderTarget,
-    //                                   theDestSize,
-    //                                   inCameraClipRange,
-    //                                   theCurrentDepthStencilTexture,
-    //                                   theCurrentDepthStencil,
-    //                                   static_cast<const QDemonRender &>(theCommand).m_drawIndirect);
-    //                    }
-    //                    // Reset the source texture regardless
-    //                    theCurrentSourceTexture = QDemonEffectTextureData(inSourceTexture, false);
-    //                    theCurrentDepthStencilTexture = nullptr;
-    //                    theCurrentDepthStencil = QDemonOption<QDemonDepthStencil>();
-    //                    // reset intermediate blending state
-    //                    if (intermediateBlendingEnabled) {
-    //                        theContext->setBlendingEnabled(false);
-    //                        intermediateBlendingEnabled = false;
-    //                    }
-    //                    break;
-    //                case CommandType::ApplyRenderState:
-    //                    applyRenderStateValue(theCurrentRenderTarget.data(),
-    //                                          inDepthStencilTexture,
-    //                                          static_cast<const QDemonApplyRenderState &>(theCommand));
-    //                    break;
-    //                default:
-    //                    Q_ASSERT(false);
-    //                    break;
-    //                }
-    //            }
+        setEffectRequiresCompilation(inEffect->className, false);
 
-    //            setEffectRequiresCompilation(inEffect->className, false);
+        // reset to default stencil state
+        if (inDepthStencilTexture)
+            theContext->setDepthStencilState(m_defaultStencilState);
 
-    //            // reset to default stencil state
-    //            if (inDepthStencilTexture)
-    //                theContext->setDepthStencilState(m_defaultStencilState);
-
-    //            // Release any per-frame buffers
-    //            if (inEffect->m_context) {
-    //                QDemonEffectContext &theContext(*inEffect->m_context);
-    //                // Query for size on every loop intentional
-    //                for (qint32 idx = 0; idx < theContext.m_allocatedBuffers.size(); ++idx) {
-    //                    if (theContext.m_allocatedBuffers[idx].flags.isSceneLifetime() == false) {
-    //                        theContext.releaseBuffer(idx);
-    //                        --idx;
-    //                    }
-    //                }
-    //                for (qint32 idx = 0; idx < theContext.m_allocatedImages.size(); ++idx) {
-    //                    if (theContext.m_allocatedImages[idx].flags.isSceneLifetime() == false) {
-    //                        theContext.releaseImage(idx);
-    //                        --idx;
-    //                    }
-    //                }
-    //            }
-    //        }
+        // Release any per-frame buffers
+        if (inEffect->m_context) {
+            QDemonEffectContext &theContext(*inEffect->m_context);
+            // Query for size on every loop intentional
+            for (qint32 idx = 0; idx < theContext.m_allocatedBuffers.size(); ++idx) {
+                if (theContext.m_allocatedBuffers[idx].flags.isSceneLifetime() == false) {
+                    theContext.releaseBuffer(idx);
+                    --idx;
+                }
+            }
+            for (qint32 idx = 0; idx < theContext.m_allocatedImages.size(); ++idx) {
+                if (theContext.m_allocatedImages[idx].flags.isSceneLifetime() == false) {
+                    theContext.releaseImage(idx);
+                    --idx;
+                }
+            }
+        }
+    }
 }
 
 QDemonRef<QDemonRenderTexture2D> QDemonEffectSystem::renderEffect(QDemonEffectRenderArgument inRenderArgument)

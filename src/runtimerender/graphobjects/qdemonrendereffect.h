@@ -38,21 +38,52 @@ struct QDemonRenderLayer;
 struct QDemonEffectContext;
 class QDemonEffectSystem;
 
+#include <QtDemonRuntimeRender/qdemonrenderimage.h>
+
+namespace dynamic
+{
+struct QDemonCommand;
+}
+
 // Effects are post-render effect applied to the layer.  There can be more than one of
 // them and they have completely variable properties.
 // see IEffectManager in order to create these effects.
 // The data for the effect immediately follows the effect
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderEffect : public QDemonRenderGraphObject
 {
-    QDemonRenderEffect() : QDemonRenderGraphObject(Type::Effect) {}
+    QDemonRenderEffect();
     ~QDemonRenderEffect();
+
+    struct TextureProperty
+    {
+        QDemonRenderImage *texImage = nullptr;
+        QByteArray name;
+        QDemonRenderShaderDataType shaderDataType;
+        // TODO: Note needed?
+        QDemonRenderTextureMagnifyingOp magFilterType = QDemonRenderTextureMagnifyingOp::Linear;
+        QDemonRenderTextureMinifyingOp minFilterType = QDemonRenderTextureMinifyingOp::Linear;
+        QDemonRenderTextureCoordOp clampType = QDemonRenderTextureCoordOp::ClampToEdge;
+        QDemonRenderTextureTypeValue usageType;
+    };
+
+    QVector<TextureProperty> textureProperties;
+
+    struct Property
+    {
+        QByteArray name;
+        mutable QVariant value;
+        QDemonRenderShaderDataType shaderDataType;
+        int pid = -1;
+    };
+
+    QVector<Property> properties;
 
     QDemonRenderLayer *m_layer;
     QDemonRenderEffect *m_nextEffect;
     // Opaque pointer to context type implemented by the effect system.
     // May be null in which case the effect system will generate a new context
     // the first time it needs to render this effect.
-    QDemonEffectContext *m_context = nullptr;
+    QDemonEffectContext *m_context;
 
     void initialize();
 
@@ -64,6 +95,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderEffect : public QDemonRenderGraph
 
     using Flag = QDemonRenderNode::Flag;
     Q_DECLARE_FLAGS(Flags, Flag)
+
+    QVector<dynamic::QDemonCommand *> commands;
 
     Flags flags;
     const char *className = nullptr;

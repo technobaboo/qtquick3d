@@ -106,7 +106,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystem
 
     typedef QHash<QString, char *> TPathDataMap;
     typedef QSet<QString> TPathSet;
-    typedef QHash<QString, QDemonRef<QDemonEffectClass>> TEffectClassMap;
+    typedef QHash<QByteArray, QDemonRef<QDemonEffectClass>> TEffectClassMap;
     typedef QHash<TStrStrPair, QDemonRef<QDemonEffectShader>> TShaderMap;
     typedef QVector<QDemonRef<QDemonEffectContext>> TContextList;
 
@@ -130,17 +130,11 @@ public:
 
     QDemonEffectContext &getEffectContext(QDemonRenderEffect &inEffect);
 
-    QDemonRef<QDemonEffectClass> getEffectClass(const QString &inStr);
+    QDemonRef<QDemonEffectClass> getEffectClass(const QByteArray &inStr);
     const QDemonRef<QDemonEffectClass> getEffectClass(const QString &inStr) const;
 
-    bool isEffectRegistered(QString inStr);
+    bool isEffectRegistered(const QByteArray &inStr);
     QVector<QString> getRegisteredEffects();
-
-    // Shorthand method that creates an effect and auto-generates the effect commands like such:
-    // BindShader(inPathToEffect)
-    // foreach( propdec in inProperties ) ApplyValue( propDecType )
-    // ApplyShader()
-    bool registerGLSLEffect(QString /*inName*/, const char */*inPathToEffect*/, QDemonDataView<dynamic::QDemonPropertyDeclaration> /*inProperties*/);
 
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
@@ -152,13 +146,9 @@ public:
     // Effect properties cannot change after the effect is created because that would invalidate
     // existing effect instances.
     // Effect commands, which are stored on the effect class, can change.
-    bool registerEffect(QString inName, QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties);
+    bool registerEffect(const QByteArray &inName /*, QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties*/);
 
-    bool unregisterEffect(QString inName);
-
-    QDemonDataView<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const;
-
-    QDemonDataView<dynamic::QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const;
+    bool unregisterEffect(const QByteArray &inName);
 
     void setEffectPropertyTextureSettings(QString inName,
                                           QString inPropName,
@@ -172,27 +162,17 @@ public:
     // value"
     // command then this effect does not require the depth texture.
     // So the setter here is completely optional.
-    void setEffectRequiresDepthTexture(QString inEffectName, bool inValue);
+    void setEffectRequiresDepthTexture(const QByteArray &inEffectName, bool inValue);
 
-    bool doesEffectRequireDepthTexture(QString inEffectName) const;
+    bool doesEffectRequireDepthTexture(const QByteArray &inEffectName) const;
 
-    void setEffectRequiresCompilation(QString inEffectName, bool inValue);
+    void setEffectRequiresCompilation(const QByteArray &inEffectName, bool inValue);
 
-    bool doesEffectRequireCompilation(QString inEffectName) const;
-
-    // The effect commands are the actual commands that run for a given effect.  The tell the
-    // system exactly
-    // explicitly things like bind this shader, bind this render target, apply this property,
-    // run this shader
-    // See UICRenderEffectCommands.h for the list of commands.
-    // These commands are copied into the effect.
-    void setEffectCommands(QString inEffectName, QDemonDataView<dynamic::QDemonCommand *> inCommands);
-
-    QDemonDataView<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const;
+    bool doesEffectRequireCompilation(const QByteArray &inEffectName) const;
 
     // An effect instance is just a property bag along with the name of the effect to run.
     // This instance is what is placed into the object graph.
-    QDemonRenderEffect *createEffectInstance(QString inEffectName);
+    QDemonRenderEffect *createEffectInstance(const QByteArray &inEffectName);
 
     void allocateBuffer(QDemonRenderEffect &inEffect,
                         const dynamic::QDemonAllocateBuffer &inCommand,
@@ -217,11 +197,10 @@ public:
     QDemonRef<QDemonEffectShader> bindShader(const QString &inEffectId, const dynamic::QDemonBindShader &inCommand);
 
     void doApplyInstanceValue(QDemonRenderEffect *inEffect,
-                              quint8 *inDataPtr,
-                              const QString &inPropertyName,
+                              const QByteArray &inPropertyName,
+                              const QVariant &propertyValue,
                               QDemonRenderShaderDataType inPropertyType,
-                              const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                              const dynamic::QDemonPropertyDefinition &inDefinition);
+                              const QDemonRef<QDemonRenderShaderProgram> &inShader);
 
     void applyInstanceValue(QDemonRenderEffect *inEffect,
                             const QDemonRef<QDemonEffectClass> &inClass,

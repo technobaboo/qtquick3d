@@ -36,6 +36,8 @@
 
 QT_BEGIN_NAMESPACE
 
+QDemonRenderEffect::QDemonRenderEffect() : QDemonRenderGraphObject(Type::Effect) {}
+
 void QDemonRenderEffect::initialize()
 {
     m_layer = nullptr;

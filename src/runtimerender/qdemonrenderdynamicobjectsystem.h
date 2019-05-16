@@ -78,63 +78,6 @@ struct QDemonDynamicShaderMapKey
 
 struct QDemonCommand;
 
-struct QDemonPropertyDeclaration
-{
-    // NOTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // The data here is memcpyied, so only trivial type with know life expectency!!!
-    // Alternatively we need to do a copyConstruct as done for the commands
-    const char *name;
-    // The datatypes map directly to the obvious types *except*
-    // for QDemonRenderTexture2DPtr.  This type will be interpreted as a
-    // QString (they are the same binary size)
-    // and will be used to lookup the texture from the buffer manager.
-    QDemonRenderShaderDataType dataType = QDemonRenderShaderDataType::Unknown;
-
-    QDemonPropertyDeclaration(const char *inName, QDemonRenderShaderDataType inDtype)
-        : name(inName), dataType(inDtype)
-    {
-    }
-    QDemonPropertyDeclaration() = default;
-};
-
-struct QDemonPropertyDefinition
-{
-    // NOTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // The data here is memcpyied, so only trivial type with know life expectency!!!
-    // Alternatively we need to do a copyConstruct as done for the commands
-    const char *name = nullptr;
-
-    //*not* relative to the presentation directory
-    const char *imagePath = nullptr;
-    // The datatypes map directly to the obvious types *except*
-    // for QDemonRenderTexture2DPtr.  This type will be interpreted as a
-    // QString and will be used to lookup the texture
-    // from the buffer manager.
-    QDemonRenderShaderDataType dataType = QDemonRenderShaderDataType::Unknown;
-    // All offsets are relative to the beginning of the SEffect
-    // and are aligned to 4 byte boundaries.
-    quint32 offset = 0;
-    // Sizeof this datatype.
-    quint32 byteSize = 0;
-    QDemonDataView<QString> enumValueNames;
-
-    ///< texture usage type like diffuse, specular, ...
-    QDemonRenderTextureTypeValue texUsageType = QDemonRenderTextureTypeValue::Unknown;
-    // Applies to both s,t
-    QDemonRenderTextureCoordOp coordOp = QDemonRenderTextureCoordOp::ClampToEdge;
-    // Set mag Filter
-    QDemonRenderTextureMagnifyingOp magFilterOp = QDemonRenderTextureMagnifyingOp::Linear;
-    // Set min Filter
-    QDemonRenderTextureMinifyingOp minFilterOp = QDemonRenderTextureMinifyingOp::Linear;
-    bool isEnumProperty = false;
-
-    QDemonPropertyDefinition() = default;
-    QDemonPropertyDefinition(const char *inName, QDemonRenderShaderDataType inType, quint32 inOffset, quint32 inByteSize)
-        : name(inName), dataType(inType), offset(inOffset), byteSize(inByteSize)
-    {
-    }
-};
-
 struct QDemonDynamicShaderProgramFlags : public QDemonShaderCacheProgramFlags
 {
     TessModeValues tessMode = TessModeValues::NoTess;
@@ -174,14 +117,12 @@ typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShader
 
 struct QDemonDynamicObjectSystem
 {
-//    typedef QHash<QString, QDemonRef<QDemonDynamicObjectClass>> TStringClassMap;
     typedef QHash<QString, QByteArray> TPathDataMap;
     typedef QHash<QString, QDemonDynamicObjectShaderInfo> TShaderInfoMap;
     typedef QSet<QString> TPathSet;
     typedef QHash<dynamic::QDemonDynamicShaderMapKey, TShaderAndFlags> TShaderMap;
 
     QDemonRenderContextInterface *m_context;
-//    TStringClassMap m_classes;
     TPathDataMap m_expandedFiles;
     TShaderMap m_shaderMap;
     TShaderInfoMap m_shaderInfoMap;
@@ -198,10 +139,6 @@ struct QDemonDynamicObjectSystem
     QDemonDynamicObjectSystem(QDemonRenderContextInterface *ctx);
 
     ~QDemonDynamicObjectSystem();
-
-    void setRenderCommands(const QString &inClassName, const QDemonDataView<dynamic::QDemonCommand *> &inCommands);
-
-    QDemonDataView<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const;
 
     void setShaderData(const QString &inPath,
                        const QByteArray &inData,
