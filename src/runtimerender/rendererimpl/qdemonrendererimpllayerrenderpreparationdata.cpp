@@ -1007,14 +1007,14 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
     bool SSAOEnabled = (layer.aoStrength > 0.0f && layer.aoDistance > 0.0f);
     bool SSDOEnabled = (layer.shadowStrength > 0.0f && layer.shadowDist > 0.0f);
-    setShaderFeature("QDEMON_ENABLE_SSAO", SSAOEnabled);
-    setShaderFeature("QDEMON_ENABLE_SSDO", SSDOEnabled);
+    setShaderFeature(QByteArrayLiteral("QDEMON_ENABLE_SSAO"), SSAOEnabled);
+    setShaderFeature(QByteArrayLiteral("QDEMON_ENABLE_SSDO"), SSDOEnabled);
     bool requiresDepthPrepass = (hasOffscreenRenderer == false) && (SSAOEnabled || SSDOEnabled);
-    setShaderFeature("QDEMON_ENABLE_SSM", false); // by default no shadow map generation
+    setShaderFeature(QByteArrayLiteral("QDEMON_ENABLE_SSM"), false); // by default no shadow map generation
 
     if (layer.flags.testFlag(QDemonRenderLayer::Flag::Active)) {
         // Get the layer's width and height.
-        QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->demonContext()->effectSystem());
+        QDemonRef<QDemonEffectSystem> theEffectSystem(renderer->demonContext()->effectSystem());
         for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect; theEffect = theEffect->m_nextEffect) {
             if (theEffect->flags.testFlag(QDemonRenderEffect::Flag::Dirty)) {
                 wasDirty = true;
@@ -1067,15 +1067,15 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
             bool lightProbeValid = HasValidLightProbe(layer.lightProbe);
 
-            setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE", lightProbeValid);
-            setShaderFeature("QDEMON_ENABLE_IBL_FOV", layer.probeFov < 180.0f);
+            setShaderFeature(QByteArrayLiteral("QDEMON_ENABLE_LIGHT_PROBE"), lightProbeValid);
+            setShaderFeature(QByteArrayLiteral("QDEMON_ENABLE_IBL_FOV"), layer.probeFov < 180.0f);
 
             if (lightProbeValid && layer.lightProbe2 && checkLightProbeDirty(*layer.lightProbe2)) {
                 renderer->prepareImageForIbl(*layer.lightProbe2);
                 wasDataDirty = true;
             }
 
-            setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE_2", lightProbeValid && HasValidLightProbe(layer.lightProbe2));
+            setShaderFeature(QByteArrayLiteral("QDEMON_ENABLE_LIGHT_PROBE_2"), lightProbeValid && HasValidLightProbe(layer.lightProbe2));
 
             // Push nodes in reverse depth first order
 //            if (renderableNodes.empty()) {
@@ -1164,7 +1164,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                                                                 mapMode,
                                                                 ShadowFilterValues::NONE);
                             thePrepResult.flags.setRequiresShadowMapPass(true);
-                            setShaderFeature("QDEMON_ENABLE_SSM", true);
+                            setShaderFeature(QByteArrayLiteral("QDEMON_ENABLE_SSM"), true);
                         }
                     }
                     TLightToNodeMap::iterator iter = lightToNodeMap.insert(theLight, (QDemonRenderNode *)nullptr);
