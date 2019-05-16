@@ -816,11 +816,6 @@ void QDemonMaterialSystem::setMaterialClassShader(QString inName, const QByteArr
     context->dynamicObjectSystem()->setShaderData(inName, inShaderData, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
 }
 
-//void QDemonMaterialSystem::setCustomMaterialCommands(QString inName, QDemonDataView<dynamic::QDemonCommand *> inCommands)
-//{
-//    context->dynamicObjectSystem()->setRenderCommands(inName, inCommands);
-//}
-
 QDemonRef<QDemonRenderShaderProgram> QDemonMaterialSystem::getShader(QDemonCustomMaterialRenderContext &inRenderContext, const QDemonRenderCustomMaterial &inMaterial, const dynamic::QDemonBindShader &inCommand, const TShaderFeatureSet &inFeatureSet, const dynamic::QDemonDynamicShaderProgramFlags &inFlags)
 {
     QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator(context->customMaterialShaderGenerator());
@@ -914,7 +909,6 @@ void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &inMa
                         QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(imageSource);
                         if (theTextureData.m_texture) {
                             theTexture = theTextureData.m_texture;
-                            dynamic::QDemonPropertyDefinition def;
                             setTexture(inShader,
                                        inPropertyName,
                                        theTexture,

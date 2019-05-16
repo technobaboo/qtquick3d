@@ -162,14 +162,6 @@ public:
 
     ~QDemonMaterialSystem();
 
-    // The custom material commands are the actual commands that run for a given material
-    // effect.  The tell the system exactly
-    // explicitly things like bind this shader, bind this render target, apply this property,
-    // run this shader
-    // See UICRenderEffectCommands.h for the list of commands.
-    // These commands are copied into the effect.
-//    void setCustomMaterialCommands(QString inName, QDemonDataView<dynamic::QDemonCommand *> inCommands);
-
     void setMaterialClassShader(QString inName,
                                 const QByteArray &inShaderType,
                                 const QByteArray &inShaderVersion,
