@@ -29,7 +29,7 @@ DemonCustomMaterial {
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
-                source: "maps/spherical_checker.jpg"
+                source: "maps/spherical_checker.png"
             }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -37,7 +37,7 @@ DemonCustomMaterial {
             enabled: uShadowMappingEnabled
             image: DemonImage {
                 id: shadowImage
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
     property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {

@@ -45,44 +45,44 @@ MATERIAL_IMAGE_FILES += \
     maps/randomGradient2D.png \
     maps/randomGradient3D.png \
     maps/randomGradient4D.png \
-    maps/art_paper_normal.jpg \
-    maps/art_paper_trans.jpg \
-    maps/asphalt.jpg \
-    maps/asphalt_bump.jpg \
-    maps/bamboo_natural.jpg \
-    maps/bamboo_natural_bump.jpg \
-    maps/bamboo_natural_spec.jpg \
-    maps/brushed_a.jpg \
-    maps/brushed_full_contrast.jpg \
-    maps/carbon_fiber.jpg \
-    maps/carbon_fiber_aniso.jpg \
-    maps/carbon_fiber_bump.jpg \
-    maps/carbon_fiber_spec.jpg \
-    maps/concentric_milled_steel.jpg \
-    maps/concentric_milled_steel_aniso.jpg \
-    maps/concrete_plain.jpg \
-    maps/concrete_plain_bump.jpg \
-    maps/cyclone_mesh_fencing.jpg \
-    maps/cyclone_mesh_fencing_normal.jpg \
-    maps/emissive.jpg \
-    maps/emissive_mask.jpg \
-    maps/grunge_b.jpg \
-    maps/grunge_d.jpg \
-    maps/metal_mesh.jpg \
-    maps/metal_mesh_bump.jpg \
-    maps/metal_mesh_spec.jpg \
-    maps/paper_diffuse.jpg \
-    maps/paper_trans.jpg \
-    maps/powdercoat_bump_01.jpg \
-    maps/shadow.jpg \
-    maps/smooth_black_leather.jpg \
-    maps/smooth_black_leather_bump.jpg \
-    maps/smooth_black_leather_spec.jpg \
-    maps/spherical_checker.jpg \
-    maps/studded_rubber_bump.jpg \
-    maps/walnut.jpg \
-    maps/walnut_bump.jpg \
-    maps/walnut_spec.jpg
+    maps/art_paper_normal.png \
+    maps/art_paper_trans.png \
+    maps/asphalt.png \
+    maps/asphalt_bump.png \
+    maps/bamboo_natural.png \
+    maps/bamboo_natural_bump.png \
+    maps/bamboo_natural_spec.png \
+    maps/brushed_a.png \
+    maps/brushed_full_contrast.png \
+    maps/carbon_fiber.png \
+    maps/carbon_fiber_aniso.png \
+    maps/carbon_fiber_bump.png \
+    maps/carbon_fiber_spec.png \
+    maps/concentric_milled_steel.png \
+    maps/concentric_milled_steel_aniso.png \
+    maps/concrete_plain.png \
+    maps/concrete_plain_bump.png \
+    maps/cyclone_mesh_fencing.png \
+    maps/cyclone_mesh_fencing_normal.png \
+    maps/emissive.png \
+    maps/emissive_mask.png \
+    maps/grunge_b.png \
+    maps/grunge_d.png \
+    maps/metal_mesh.png \
+    maps/metal_mesh_bump.png \
+    maps/metal_mesh_spec.png \
+    maps/paper_diffuse.png \
+    maps/paper_trans.png \
+    maps/powdercoat_bump_01.png \
+    maps/shadow.png \
+    maps/smooth_black_leather.png \
+    maps/smooth_black_leather_bump.png \
+    maps/smooth_black_leather_spec.png \
+    maps/spherical_checker.png \
+    maps/studded_rubber_bump.png \
+    maps/walnut.png \
+    maps/walnut_bump.png \
+    maps/walnut_spec.png
 
 QML_FILES += $$MATERIAL_IMAGE_FILES
 

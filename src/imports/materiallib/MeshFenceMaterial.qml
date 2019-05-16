@@ -23,7 +23,7 @@ DemonCustomMaterial {
             type: DemonCustomMaterialTexture.Environment
             image: DemonImage {
                 id: envImage
-                source: "maps/spherical_checker.jpg"
+                source: "maps/spherical_checker.png"
             }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -31,7 +31,7 @@ DemonCustomMaterial {
             type: DemonCustomMaterialTexture.LightmapShadow
             image: DemonImage {
                 id: shadowImage
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
     property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
@@ -40,7 +40,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/cyclone_mesh_fencing.jpg"
+            source: "maps/cyclone_mesh_fencing.png"
         }
     }
 
@@ -50,7 +50,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/cyclone_mesh_fencing_normal.jpg"
+            source: "maps/cyclone_mesh_fencing_normal.png"
         }
     }
 

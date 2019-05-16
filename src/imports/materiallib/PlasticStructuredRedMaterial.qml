@@ -25,7 +25,7 @@ DemonCustomMaterial {
             type: DemonCustomMaterialTexture.Environment
             image: DemonImage {
                 id: envImage
-                source: "maps/spherical_checker.jpg"
+                source: "maps/spherical_checker.png"
             }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -33,7 +33,7 @@ DemonCustomMaterial {
             type: DemonCustomMaterialTexture.LightmapShadow
             image: DemonImage {
                 id: shadowImage
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
     property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {

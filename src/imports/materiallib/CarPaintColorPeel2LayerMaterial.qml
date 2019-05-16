@@ -36,7 +36,7 @@ DemonCustomMaterial {
                 id: envImage
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/spherical_checker.jpg"
+                source: "maps/spherical_checker.png"
             }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -46,7 +46,7 @@ DemonCustomMaterial {
                 id: shadowImage
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
 

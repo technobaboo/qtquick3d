@@ -23,7 +23,7 @@ DemonCustomMaterial {
             type: DemonCustomMaterialTexture.Environment
             image: DemonImage {
                 id: envImage
-                source: "maps/spherical_checker.jpg"
+                source: "maps/spherical_checker.png"
             }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -31,7 +31,7 @@ DemonCustomMaterial {
             type: DemonCustomMaterialTexture.LightmapShadow
             image: DemonImage {
                 id: shadowImage
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
     property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
@@ -40,7 +40,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/metal_mesh.jpg"
+            source: "maps/metal_mesh.png"
         }
     }
     property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
@@ -49,7 +49,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/metal_mesh_bump.jpg"
+            source: "maps/metal_mesh_bump.png"
         }
     }
     property DemonCustomMaterialTexture cutout_opacity_texture: DemonCustomMaterialTexture {
@@ -58,7 +58,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/metal_mesh_spec.jpg"
+            source: "maps/metal_mesh_spec.png"
         }
     }
 

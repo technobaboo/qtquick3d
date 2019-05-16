@@ -25,7 +25,7 @@ DemonCustomMaterial {
             type: DemonCustomMaterialTexture.LightmapShadow
             image: DemonImage {
                 id: shadowImage
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
     property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
@@ -34,7 +34,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/paper_diffuse.jpg"
+            source: "maps/paper_diffuse.png"
         }
     }
     property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
@@ -43,7 +43,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/paper_diffuse.jpg"
+            source: "maps/paper_diffuse.png"
         }
     }
     property DemonCustomMaterialTexture transmission_texture: DemonCustomMaterialTexture {
@@ -52,7 +52,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/paper_trans.jpg"
+            source: "maps/paper_trans.png"
         }
     }
 

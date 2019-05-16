@@ -23,7 +23,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/spherical_checker.jpg"
+            source: "maps/spherical_checker.png"
         }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -33,7 +33,7 @@ DemonCustomMaterial {
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
                 id: shadowImage
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
     property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
@@ -42,7 +42,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/walnut.jpg"
+            source: "maps/walnut.png"
         }
     }
     property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
@@ -51,7 +51,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/walnut_bump.jpg"
+            source: "maps/walnut_bump.png"
         }
     }
     property DemonCustomMaterialTexture reflect_texture: DemonCustomMaterialTexture {
@@ -60,7 +60,7 @@ DemonCustomMaterial {
         image: DemonImage {
             tilingmodehorz: DemonImage.Repeat
             tilingmodevert: DemonImage.Repeat
-            source: "maps/walnut_spec.jpg"
+            source: "maps/walnut_spec.png"
         }
     }
 

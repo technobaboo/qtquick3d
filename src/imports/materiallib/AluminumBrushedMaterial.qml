@@ -30,7 +30,7 @@ DemonCustomMaterial {
                 id: envImage
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/spherical_checker.jpg"
+                source: "maps/spherical_checker.png"
             }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -40,7 +40,7 @@ DemonCustomMaterial {
                 id: shadowImage
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
 
@@ -51,7 +51,7 @@ DemonCustomMaterial {
                 id: brushTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/brushed_full_contrast.jpg"
+                source: "maps/brushed_full_contrast.png"
             }
     }
 
@@ -62,7 +62,7 @@ DemonCustomMaterial {
                 id: roughnessUTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/brushed_full_contrast.jpg"
+                source: "maps/brushed_full_contrast.png"
             }
     }
 
@@ -73,7 +73,7 @@ DemonCustomMaterial {
                 id: roughnessVTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/brushed_full_contrast.jpg"
+                source: "maps/brushed_full_contrast.png"
             }
     }
 
@@ -85,7 +85,7 @@ DemonCustomMaterial {
                 id: bumpTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/brushed_a.jpg"
+                source: "maps/brushed_a.png"
             }
     }
 

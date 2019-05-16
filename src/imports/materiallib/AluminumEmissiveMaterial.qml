@@ -30,7 +30,7 @@ DemonCustomMaterial {
                 id: envImage
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/spherical_checker.jpg"
+                source: "maps/spherical_checker.png"
             }
     }
     property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
@@ -40,7 +40,7 @@ DemonCustomMaterial {
                 id: shadowImage
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/shadow.jpg"
+                source: "maps/shadow.png"
             }
     }
 
@@ -51,7 +51,7 @@ DemonCustomMaterial {
                 id: reflectionTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/grunge_b.jpg"
+                source: "maps/grunge_b.png"
             }
     }
 
@@ -62,7 +62,7 @@ DemonCustomMaterial {
                 id: roughnessTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/grunge_d.jpg"
+                source: "maps/grunge_d.png"
             }
     }
 
@@ -74,7 +74,7 @@ DemonCustomMaterial {
                 id: emissiveImage
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/emissive.jpg"
+                source: "maps/emissive.png"
             }
     }
 
@@ -86,7 +86,7 @@ DemonCustomMaterial {
                 id: emissiveMaskImage
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/emissive_mask.jpg"
+                source: "maps/emissive_mask.png"
             }
     }
 
@@ -97,7 +97,7 @@ DemonCustomMaterial {
                 id: bumpTexture
                 tilingmodehorz: DemonImage.Repeat
                 tilingmodevert: DemonImage.Repeat
-                source: "maps/grunge_d.jpg"
+                source: "maps/grunge_d.png"
             }
     }
 
