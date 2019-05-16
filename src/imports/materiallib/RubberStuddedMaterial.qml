@@ -8,7 +8,6 @@ DemonCustomMaterial {
     property real roughness: 0.25
     property real material_ior: 1.8
     property real glossy_weight: 0.5
-    property real diffuse_weight: 1.0
     property real bump_amount: 9.0
     property vector2d texture_tiling: Qt.vector2d(10.0, 7.0)
     property vector3d base_color: Qt.vector3d(0.0, 0.0, 0.0)
