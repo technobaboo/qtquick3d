@@ -569,7 +569,7 @@ private:
     bool m_hasRefraction = false;
     bool m_hasVolumetricDF = false;
     QString m_source;
-    QDemonCustomMaterialShaderInfo *m_shaderInfo;
+    QDemonCustomMaterialShaderInfo *m_shaderInfo = nullptr;
     QVector<QDemonCustomMaterialRenderPass *> m_passes;
     bool m_alwaysDirty = false;
 };
