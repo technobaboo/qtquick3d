@@ -11,6 +11,7 @@ Add support for Post Processing Effects (applied to View3D ouput)
 Add flag for rendering directly to the window 
 Move the blend mode's out of SceneEnvironment/View3D.  Instead these are a special kind of shader effect applied between Qt Quick Items, add examples
 Add support for picking
+Add skybox mode for backround
 
 ## Import API
 Add QML helpers
