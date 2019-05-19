@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    obj \
-    uip
+    uip \
+    assimp
