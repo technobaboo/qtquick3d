@@ -15,7 +15,6 @@ Add skybox mode for backround
 
 ## Import API
 Add QML helpers
-Actually get OBJ importer working, or remove it
 Use libassimp to impliment to support general importing of assets (shortcut)
 GLTF2 Support (either as native mesh, or convert to QML component)
 
