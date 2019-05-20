@@ -51,8 +51,8 @@ struct QDemonRenderPickSubResult
     QMatrix4x4 m_textureMatrix;
     QDemonRenderTextureCoordOp m_horizontalTilingMode;
     QDemonRenderTextureCoordOp m_verticalTilingMode;
-    quint32 m_viewportWidth;
-    quint32 m_viewportHeight;
+    qint32 m_viewportWidth;
+    qint32 m_viewportHeight;
     QDemonRenderPickSubResult *m_nextSibling;
 
     QDemonRenderPickSubResult();
@@ -60,8 +60,8 @@ struct QDemonRenderPickSubResult
                               const QMatrix4x4 &inTextureMatrix,
                               QDemonRenderTextureCoordOp inHorizontalTilingMode,
                               QDemonRenderTextureCoordOp inVerticalTilingMode,
-                              quint32 width,
-                              quint32 height);
+                              qint32 width,
+                              qint32 height);
     ~QDemonRenderPickSubResult();
 };
 

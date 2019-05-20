@@ -1590,7 +1590,7 @@ void QDemonLayerRenderData::applyLayerPostEffects()
             if (!theRenderedEffect) {
                 QString errorMsg = QObject::tr("Failed to compile \"%1\" effect.\nConsider"
                                                " removing it from the presentation.")
-                                           .arg(theEffect->className);
+                                           .arg(QString::fromLatin1(theEffect->className));
                 qFatal("%s", errorMsg.toUtf8().constData());
                 break;
             }

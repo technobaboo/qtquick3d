@@ -376,11 +376,11 @@ public:
                                                                     QDemonDataView<quint32> strides,
                                                                     QDemonDataView<quint32> offsets);
 
-    QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr);
-    QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr);
-    QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QByteArray &inStr);
+    QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr) const;
+    QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr) const;
+    QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QByteArray &inStr) const;
 
-    QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr);
+    QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr) const;
     QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr);
     QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator();
 
