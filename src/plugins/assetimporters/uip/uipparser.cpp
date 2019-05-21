@@ -59,7 +59,7 @@ UipPresentation *UipParser::createPresentation(const QString &presentationName)
         return nullptr;
     }
 
-    qint64 loadTime = elapsedSinceSetSource();
+    const quint64 loadTime = elapsedSinceSetSource();
     qDebug("Presentation %s loaded in %lld ms", qPrintable(m_presentation->sourceFile()), loadTime);
 
 

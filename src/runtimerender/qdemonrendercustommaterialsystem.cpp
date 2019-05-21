@@ -1006,7 +1006,7 @@ void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &inMa
             qCCritical(INVALID_OPERATION,
                        "CustomMaterial ApplyInstanceValue command datatype and "
                        "shader datatypes differ for property %s",
-                       qPrintable(inPropertyName));
+                       inPropertyName.constData());
             Q_ASSERT(false);
         }
     }
@@ -1129,7 +1129,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
         if (theSourceTexture.hasTexture2D()) {
             theSourceTextureDetails = theSourceTexture.texture2D()->textureDetails();
         } else {
-            qCCritical(INVALID_OPERATION, "CustomMaterial %s: Invalid source texture", qPrintable(inCommand.m_name));
+            qCCritical(INVALID_OPERATION, "CustomMaterial %s: Invalid source texture", inCommand.m_name.constData());
             Q_ASSERT(false);
             return;
         }
@@ -1186,8 +1186,8 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonMaterialSystem::bindBuffer(const QDemon
     if (theBuffer == nullptr) {
         qCCritical(INVALID_OPERATION,
                    "Material %s: Failed to find buffer %s for bind",
-                   qPrintable(inMaterial.className),
-                   qPrintable(inCommand.m_bufferName));
+                   inMaterial.className,
+                   inCommand.m_bufferName.constData());
         Q_ASSERT(false);
         return nullptr;
     }

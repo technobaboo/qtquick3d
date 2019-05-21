@@ -194,21 +194,21 @@ struct QDemonTextureEntry
     }
 
     static QDemonTextureEntry createTextureEntry(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                                                 const char *inStem,
+                                                 const QByteArray &inStem,
                                                  QString &inBuilder,
                                                  QString &inBuilder2)
     {
-        inBuilder = inStem;
-        inBuilder.append("Info");
-        inBuilder2 = "flag";
-        inBuilder2.append(inStem);
+        inBuilder = QString::fromLatin1(inStem);
+        inBuilder.append(QString::fromLatin1("Info"));
+        inBuilder2 = QString::fromLatin1("flag");
+        inBuilder2.append(QString::fromLatin1(inStem));
         return QDemonTextureEntry(inShader, inStem, inBuilder.toLocal8Bit(), inBuilder2.toLocal8Bit());
     }
 };
 
-typedef QPair<QString, QDemonRef<QDemonTextureEntry>> TNamedTextureEntry;
-typedef QPair<QString, QDemonRef<QDemonImageEntry>> TNamedImageEntry;
-typedef QPair<QString, QDemonRef<QDemonDataBufferEntry>> TNamedDataBufferEntry;
+typedef QPair<QByteArray, QDemonRef<QDemonTextureEntry>> TNamedTextureEntry;
+typedef QPair<QByteArray, QDemonRef<QDemonImageEntry>> TNamedImageEntry;
+typedef QPair<QByteArray, QDemonRef<QDemonDataBufferEntry>> TNamedDataBufferEntry;
 
 struct QDemonEffectClass
 {
@@ -281,7 +281,7 @@ struct QDemonEffectContext
         }
     }
 
-    qint32 findBuffer(const QString &inName)
+    qint32 findBuffer(const QByteArray &inName)
     {
         for (qint32 idx = 0, end = m_allocatedBuffers.size(); idx < end; ++idx)
             if (m_allocatedBuffers[idx].name == inName)
@@ -289,7 +289,7 @@ struct QDemonEffectContext
         return m_allocatedBuffers.size();
     }
 
-    qint32 findImage(const QString &inName)
+    qint32 findImage(const QByteArray &inName)
     {
         for (qint32 idx = 0, end = m_allocatedImages.size(); idx < end; ++idx)
             if (m_allocatedImages[idx].name == inName)
@@ -298,7 +298,7 @@ struct QDemonEffectContext
         return m_allocatedImages.size();
     }
 
-    qint32 findDataBuffer(const QString &inName)
+    qint32 findDataBuffer(const QByteArray &inName)
     {
         for (qint32 idx = 0, end = m_allocatedDataBuffers.size(); idx < end; ++idx) {
             if (m_allocatedDataBuffers[idx].name == inName)
@@ -324,7 +324,7 @@ struct QDemonEffectContext
         if (theTextureEntry == nullptr) {
             QDemonRef<QDemonTextureEntry> theNewEntry(new QDemonTextureEntry(
                     QDemonTextureEntry::createTextureEntry(inShader, inPropName, inStringBuilder, inStringBuilder2)));
-            m_textureEntries.push_back(QPair<QString, QDemonRef<QDemonTextureEntry>>(inPropName, theNewEntry));
+            m_textureEntries.push_back(QPair<QByteArray, QDemonRef<QDemonTextureEntry>>(inPropName, theNewEntry));
             theTextureEntry = theNewEntry;
         }
         theTextureEntry->set(inTexture, inNeedsMultiply, inPropDec);
@@ -340,7 +340,7 @@ struct QDemonEffectContext
         if (theImageEntry == nullptr) {
             QDemonRef<QDemonImageEntry> theNewEntry(
                     new QDemonImageEntry(QDemonImageEntry::createImageEntry(inShader, inPropName)));
-            m_imageEntries.push_back(QPair<QString, QDemonRef<QDemonImageEntry>>(inPropName, theNewEntry));
+            m_imageEntries.push_back(QPair<QByteArray, QDemonRef<QDemonImageEntry>>(inPropName, theNewEntry));
             theImageEntry = theNewEntry;
         }
 
@@ -348,7 +348,7 @@ struct QDemonEffectContext
     }
 
     void setDataBuffer(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                       const QString &inPropName,
+                       const QByteArray &inPropName,
                        const QDemonRef<QDemonRenderDataBuffer> &inBuffer)
     {
         QDemonRef<QDemonDataBufferEntry> theDataBufferEntry;
@@ -358,8 +358,8 @@ struct QDemonEffectContext
         }
         if (theDataBufferEntry == nullptr) {
             QDemonRef<QDemonDataBufferEntry> theNewEntry(new QDemonDataBufferEntry(
-                    QDemonDataBufferEntry::createDataBufferEntry(inShader, inPropName.toLatin1())));
-            m_dataBufferEntries.push_back(QPair<QString, QDemonRef<QDemonDataBufferEntry>>(inPropName, theNewEntry));
+                    QDemonDataBufferEntry::createDataBufferEntry(inShader, inPropName)));
+            m_dataBufferEntries.push_back(QPair<QByteArray, QDemonRef<QDemonDataBufferEntry>>(inPropName, theNewEntry));
             theDataBufferEntry = theNewEntry;
         }
 
@@ -705,14 +705,13 @@ void QDemonEffectSystem::allocateDataBuffer(QDemonRenderEffect &inEffect, const 
     }
 }
 
-QDemonRef<QDemonRenderTexture2D> QDemonEffectSystem::findTexture(QDemonRenderEffect *inEffect, const QString &inName)
+QDemonRef<QDemonRenderTexture2D> QDemonEffectSystem::findTexture(QDemonRenderEffect *inEffect, const QByteArray &inName)
 {
     if (inEffect->m_context) {
         QDemonEffectContext &theContext(*inEffect->m_context);
         qint32 bufferIdx = theContext.findBuffer(inName);
-        if (bufferIdx < theContext.m_allocatedBuffers.size()) {
+        if (bufferIdx < theContext.m_allocatedBuffers.size())
             return theContext.m_allocatedBuffers[bufferIdx].texture;
-        }
     }
     Q_ASSERT(false);
     return nullptr;
@@ -738,7 +737,7 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonEffectSystem::bindBuffer(QDemonRenderEf
                    inCommand.m_bufferName.constData());
         QString errorMsg = QObject::tr("Failed to compile \"%1\" effect.\nConsider"
                                        " removing it from the presentation.")
-                .arg(qPrintable(inEffect.className));
+                                   .arg(QString::fromLatin1(inEffect.className));
         // TODO:
         //            QDEMON_ALWAYS_ASSERT_MESSAGE(errorMsg.toUtf8());
         outMVP = QMatrix4x4();
@@ -789,7 +788,6 @@ QDemonRef<QDemonEffectShader> QDemonEffectSystem::bindShader(const QString &inEf
     }
 
     return theInsertResult.value();
-    return nullptr;
 }
 
 void QDemonEffectSystem::doApplyInstanceValue(QDemonRenderEffect *inEffect,
@@ -927,7 +925,7 @@ void QDemonEffectSystem::doApplyInstanceValue(QDemonRenderEffect *inEffect,
             qCCritical(INVALID_OPERATION,
                        "Effect ApplyInstanceValue command datatype "
                        "and shader datatypes differ for property %s",
-                       qPrintable(inPropertyName));
+                       inPropertyName.constData());
             Q_ASSERT(false);
         }
     }
@@ -1032,8 +1030,8 @@ QDemonEffectTextureData QDemonEffectSystem::applyBufferValue(QDemonRenderEffect 
             Q_ASSERT(false);
             qCCritical(INVALID_OPERATION,
                        "Effect %s: Failed to find buffer %s for bind",
-                       qPrintable(inEffect->className),
-                       qPrintable(inCommand.m_bufferName));
+                       inEffect->className,
+                       inCommand.m_bufferName.constData());
             Q_ASSERT(false);
         }
     } else { // no name means bind the source
@@ -1047,8 +1045,8 @@ QDemonEffectTextureData QDemonEffectSystem::applyBufferValue(QDemonRenderEffect 
             if (theConstant->getShaderConstantType() != QDemonRenderShaderDataType::Texture2D) {
                 qCCritical(INVALID_OPERATION,
                            "Effect %s: Binding buffer to parameter %s that is not a texture",
-                           qPrintable(inEffect->className),
-                           qPrintable(inCommand.m_paramName));
+                           inEffect->className,
+                           inCommand.m_paramName.constData());
                 Q_ASSERT(false);
             } else {
                 getEffectContext(*inEffect).setTexture(inShader,
@@ -1073,8 +1071,8 @@ void QDemonEffectSystem::applyDepthValue(QDemonRenderEffect *inEffect, const QDe
         if (theConstant->getShaderConstantType() != QDemonRenderShaderDataType::Texture2D) {
             qCCritical(INVALID_OPERATION,
                        "Effect %s: Binding buffer to parameter %s that is not a texture",
-                       qPrintable(inEffect->className),
-                       qPrintable(inCommand.m_paramName));
+                       inEffect->className,
+                       inCommand.m_paramName.constData());
             Q_ASSERT(false);
         } else {
             getEffectContext(*inEffect).setTexture(inShader, inCommand.m_paramName, inTexture, false, m_textureStringBuilder, m_textureStringBuilder2);
@@ -1098,8 +1096,8 @@ void QDemonEffectSystem::applyImageValue(QDemonRenderEffect *inEffect, const QDe
     if (theImageToBind.image == nullptr) {
         qCCritical(INVALID_OPERATION,
                    "Effect %s: Failed to find image %s for bind",
-                   qPrintable(inEffect->className),
-                   qPrintable(inCommand.m_imageName));
+                   inEffect->className,
+                   inCommand.m_imageName.constData());
         Q_ASSERT(false);
     }
 
@@ -1120,8 +1118,8 @@ void QDemonEffectSystem::applyImageValue(QDemonRenderEffect *inEffect, const QDe
             } else {
                 qCCritical(INVALID_OPERATION,
                            "Effect %s: Binding buffer to parameter %s that is not a texture",
-                           qPrintable(inEffect->className),
-                           qPrintable(inCommand.m_paramName));
+                           inEffect->className,
+                           inCommand.m_paramName.constData());
                 Q_ASSERT(false);
             }
         }
@@ -1149,8 +1147,8 @@ void QDemonEffectSystem::applyDataBufferValue(QDemonRenderEffect *inEffect, cons
         if (theBufferToBind.dataBuffer == nullptr) {
             qCCritical(INVALID_OPERATION,
                        "Effect %s: Failed to find buffer %s for bind",
-                       qPrintable(inEffect->className),
-                       qPrintable(inCommand.m_paramName));
+                       inEffect->className,
+                       inCommand.m_paramName.constData());
             Q_ASSERT(false);
         }
 
@@ -1370,7 +1368,7 @@ void QDemonEffectSystem::doRenderEffect(QDemonRenderEffect *inEffect,
                 }
             } break;
             case CommandType::BindShader:
-                theCurrentShader = bindShader(inEffect->className, static_cast<const QDemonBindShader &>(*theCommand));
+                theCurrentShader = bindShader(QString::fromLatin1(inEffect->className), static_cast<const QDemonBindShader &>(*theCommand));
                 break;
             case CommandType::ApplyInstanceValue:
                 if (theCurrentShader)
@@ -1401,7 +1399,7 @@ void QDemonEffectSystem::doRenderEffect(QDemonRenderEffect *inEffect,
                     qCCritical(INVALID_OPERATION,
                                "Depth value command detected but no "
                                "depth buffer provided for effect %s",
-                               qPrintable(inEffect->className));
+                               inEffect->className);
                     Q_ASSERT(false);
                 }
                 break;

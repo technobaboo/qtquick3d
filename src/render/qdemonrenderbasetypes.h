@@ -549,7 +549,7 @@ struct QDemonRenderTextureFormat
         return 0;
     }
 
-    quint32 getNumberOfComponent() const
+    qint32 getNumberOfComponent() const
     {
         switch (format) {
         case R8:

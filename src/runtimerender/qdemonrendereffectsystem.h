@@ -187,7 +187,7 @@ public:
 
     void allocateDataBuffer(QDemonRenderEffect &inEffect, const dynamic::QDemonAllocateDataBuffer &inCommand);
 
-    QDemonRef<QDemonRenderTexture2D> findTexture(QDemonRenderEffect *inEffect, const QString &inName);
+    QDemonRef<QDemonRenderTexture2D> findTexture(QDemonRenderEffect *inEffect, const QByteArray &inName);
 
     QDemonRef<QDemonRenderFrameBuffer> bindBuffer(QDemonRenderEffect &inEffect,
                                                   const dynamic::QDemonBindBuffer &inCommand,

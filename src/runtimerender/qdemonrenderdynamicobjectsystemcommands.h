@@ -242,12 +242,12 @@ struct QDemonBindShader : public QDemonCommand
 struct QDemonApplyInstanceValue : public QDemonCommand
 {
     // Name of value to apply in shader
-    QString m_propertyName;
+    QByteArray m_propertyName;
     // type of value
     QDemonRenderShaderDataType m_valueType;
     // offset in the effect data section of value.
     quint32 m_valueOffset;
-    QDemonApplyInstanceValue(QString inName, QDemonRenderShaderDataType inValueType, quint32 inValueOffset)
+    QDemonApplyInstanceValue(const QByteArray &inName, QDemonRenderShaderDataType inValueType, quint32 inValueOffset)
         : QDemonCommand(CommandType::ApplyInstanceValue), m_propertyName(inName), m_valueType(inValueType), m_valueOffset(inValueOffset)
     {
     }
@@ -267,10 +267,10 @@ struct QDemonApplyInstanceValue : public QDemonCommand
 
 struct QDemonApplyValue : public QDemonCommand
 {
-    QString m_propertyName;
+    QByteArray m_propertyName;
     QDemonRenderShaderDataType m_valueType;
     QDemonByteRef m_value;
-    QDemonApplyValue(QString inName, QDemonRenderShaderDataType inValueType)
+    QDemonApplyValue(const QByteArray &inName, QDemonRenderShaderDataType inValueType)
         : QDemonCommand(CommandType::ApplyValue), m_propertyName(inName), m_valueType(inValueType)
     {
     }
@@ -443,7 +443,7 @@ struct QDemonDepthStencilFlags : public QFlags<QDemonDepthStencilFlagValue>
 
 struct QDemonDepthStencil : public QDemonCommand
 {
-    QString m_bufferName;
+    QByteArray m_bufferName;
     QDemonDepthStencilFlags m_glags;
     QDemonRenderStencilOp m_stencilFailOperation = QDemonRenderStencilOp::Keep;
     QDemonRenderStencilOp m_depthPassOperation = QDemonRenderStencilOp::Keep;
@@ -454,7 +454,7 @@ struct QDemonDepthStencil : public QDemonCommand
 
     QDemonDepthStencil() : QDemonCommand(CommandType::DepthStencil) {}
 
-    QDemonDepthStencil(QString bufName,
+    QDemonDepthStencil(const QByteArray &bufName,
                        QDemonDepthStencilFlags flags,
                        QDemonRenderStencilOp inStencilOp,
                        QDemonRenderStencilOp inDepthPassOp,
