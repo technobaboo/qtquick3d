@@ -112,7 +112,7 @@ public:
     ///< destructor
     ~QDemonRenderBackendInputAssemblerGL()
     {
-    };
+    }
 
     QDemonRenderBackendAttributeLayoutGL *m_attribLayout; ///< pointer to attribute layout
     QDemonDataView<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
