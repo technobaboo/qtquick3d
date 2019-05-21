@@ -337,22 +337,22 @@ void QDemonDynamicObjectSystem::insertSnapperDirectives(QString &str)
 {
     int beginIndex = 0;
     // Snapper macros:
-    //  #define SNAPPER_SAMPLER2D(propName, propNiceName, texFilter, texWrap, showUI ) \
-    //      uniform sampler2D propName;                                     \
-    //      uniform int flag##propName;                                     \
-    //      uniform vec4 propName##Info;                                    \
-    //      vec4 texture2D_##propName(vec2 uv)                              \
-    //      {                                                               \
-    //          return GetTextureValue( propName, uv, propName##Info.z );   \
+    //  #define SNAPPER_SAMPLER2D(propName, propNiceName, texFilter, texWrap, showUI )
+    //      uniform sampler2D propName;
+    //      uniform int flag##propName;
+    //      uniform vec4 propName##Info;
+    //      vec4 texture2D_##propName(vec2 uv)
+    //      {
+    //          return GetTextureValue( propName, uv, propName##Info.z );
     //      }
     //
-    //  #define SNAPPER_SAMPLER2DWITHDEFAULT(propName, propNiceName, texFilter, texWrap, defaultPath, showUI ) \
+    //  #define SNAPPER_SAMPLER2DWITHDEFAULT(propName, propNiceName, texFilter, texWrap, defaultPath, showUI )
     //      SNAPPER_SAMPLER2D( propName, propNiceName, texFilter, texWrap, showUI )
     //
-    //  #define SNAPPER_SAMPLERCUBE(propName, propNiceName, texFilter, texWrap ) \
-    //      uniform samplerCube propName;   \
-    //      uniform vec2 propName##UVRange; \
-    //      uniform int flag##propName;     \
+    //  #define SNAPPER_SAMPLERCUBE(propName, propNiceName, texFilter, texWrap )
+    //      uniform samplerCube propName;
+    //      uniform vec2 propName##UVRange;
+    //      uniform int flag##propName;
     //      uniform vec2 propName##Size;
     QString snapperSampler = QStringLiteral("SNAPPER_SAMPLER2D(");
     QString snapperSamplerDefault = QStringLiteral("SNAPPER_SAMPLER2DWITHDEFAULT(");
