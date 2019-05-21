@@ -143,11 +143,11 @@ bool QDemonRenderBackendGLBase::isESCompatible() const
 
 const char *QDemonRenderBackendGLBase::getShadingLanguageVersion()
 {
-    const char *retval = (const char *)GL_CALL_FUNCTION(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    const GLubyte *retval = GL_CALL_FUNCTION(glGetString(GL_SHADING_LANGUAGE_VERSION));
     if (retval == nullptr)
         return "";
 
-    return retval;
+    return reinterpret_cast<const char *>(retval);
 }
 
 qint32 QDemonRenderBackendGLBase::getMaxCombinedTextureUnits()
@@ -362,12 +362,12 @@ QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject QDemonRenderBack
                                                                                                 depthStencilOpFront,
                                                                                                 depthStencilOpBack);
 
-    return (QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject)retval;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject>(retval);
 }
 
 void QDemonRenderBackendGLBase::releaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject inDepthStencilState)
 {
-    QDemonRenderBackendDepthStencilStateGL *inputState = (QDemonRenderBackendDepthStencilStateGL *)inDepthStencilState;
+    QDemonRenderBackendDepthStencilStateGL *inputState = reinterpret_cast<QDemonRenderBackendDepthStencilStateGL *>(inDepthStencilState);
     delete inputState;
 }
 
@@ -377,17 +377,17 @@ QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject QDemonRenderBacken
 {
     QDemonRenderBackendRasterizerStateGL *retval = new QDemonRenderBackendRasterizerStateGL(depthBias, depthScale, cullFace);
 
-    return (QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject)retval;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject>(retval);
 }
 
 void QDemonRenderBackendGLBase::releaseRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState)
 {
-    delete (QDemonRenderBackendRasterizerStateGL *)rasterizerState;
+    delete reinterpret_cast<QDemonRenderBackendRasterizerStateGL *>(rasterizerState);
 }
 
 void QDemonRenderBackendGLBase::setDepthStencilState(QDemonRenderBackendDepthStencilStateObject inDepthStencilState)
 {
-    QDemonRenderBackendDepthStencilStateGL *inputState = (QDemonRenderBackendDepthStencilStateGL *)inDepthStencilState;
+    QDemonRenderBackendDepthStencilStateGL *inputState = reinterpret_cast<QDemonRenderBackendDepthStencilStateGL *>(inDepthStencilState);
     if (inputState && !(*m_currentDepthStencilState == *inputState)) {
         // we check on a per single state base
         if (inputState->m_depthEnable != m_currentDepthStencilState->m_depthEnable) {
@@ -451,7 +451,7 @@ void QDemonRenderBackendGLBase::setRasterizerState(QDemonRenderBackendRasterizer
         // store current state
         *m_currentRasterizerState = *inputState;
 
-        if (m_currentRasterizerState->m_depthBias != 0.0 || m_currentRasterizerState->m_depthScale != 0.0) {
+        if (m_currentRasterizerState->m_depthBias != 0.0f || m_currentRasterizerState->m_depthScale != 0.0f) {
             GL_CALL_FUNCTION(glEnable(GL_POLYGON_OFFSET_FILL));
         } else {
             GL_CALL_FUNCTION(glDisable(GL_POLYGON_OFFSET_FILL));
@@ -484,7 +484,7 @@ void QDemonRenderBackendGLBase::setDepthFunc(const QDemonRenderBoolOp func)
 bool QDemonRenderBackendGLBase::getDepthWrite()
 {
     qint32 value;
-    GL_CALL_FUNCTION(glGetIntegerv(GL_DEPTH_WRITEMASK, (GLint *)&value));
+    GL_CALL_FUNCTION(glGetIntegerv(GL_DEPTH_WRITEMASK, reinterpret_cast<GLint *>(&value)));
     return value ? true : false;
 }
 
@@ -503,10 +503,10 @@ void QDemonRenderBackendGLBase::getBlendFunc(QDemonRenderBlendFunctionArgument *
     Q_ASSERT(pBlendFuncArg);
     qint32_4 values;
 
-    GL_CALL_FUNCTION(glGetIntegerv(GL_BLEND_SRC_RGB, (GLint *)&values.x));
-    GL_CALL_FUNCTION(glGetIntegerv(GL_BLEND_SRC_ALPHA, (GLint *)&values.y));
-    GL_CALL_FUNCTION(glGetIntegerv(GL_BLEND_DST_RGB, (GLint *)&values.z));
-    GL_CALL_FUNCTION(glGetIntegerv(GL_BLEND_DST_ALPHA, (GLint *)&values.w));
+    GL_CALL_FUNCTION(glGetIntegerv(GL_BLEND_SRC_RGB, reinterpret_cast<GLint *>(&values.x)));
+    GL_CALL_FUNCTION(glGetIntegerv(GL_BLEND_SRC_ALPHA, reinterpret_cast<GLint *>(&values.y)));
+    GL_CALL_FUNCTION(glGetIntegerv(GL_BLEND_DST_RGB, reinterpret_cast<GLint *>(&values.z)));
+    GL_CALL_FUNCTION(glGetIntegerv(GL_BLEND_DST_ALPHA, reinterpret_cast<GLint *>(&values.w)));
 
     pBlendFuncArg->m_srcRgb = GLConversion::fromGLToSrcBlendFunc(values.x);
     pBlendFuncArg->m_srcAlpha = GLConversion::fromGLToSrcBlendFunc(values.y);
@@ -541,7 +541,7 @@ void QDemonRenderBackendGLBase::setBlendBarrier()
 void QDemonRenderBackendGLBase::getScissorRect(QRect *pRect)
 {
     Q_ASSERT(pRect);
-    GL_CALL_FUNCTION(glGetIntegerv(GL_SCISSOR_BOX, (GLint *)pRect));
+    GL_CALL_FUNCTION(glGetIntegerv(GL_SCISSOR_BOX, reinterpret_cast<GLint *>(pRect)));
 }
 
 void QDemonRenderBackendGLBase::setScissorRect(const QRect &rect)
@@ -552,7 +552,7 @@ void QDemonRenderBackendGLBase::setScissorRect(const QRect &rect)
 void QDemonRenderBackendGLBase::getViewportRect(QRect *pRect)
 {
     Q_ASSERT(pRect);
-    GL_CALL_FUNCTION(glGetIntegerv(GL_VIEWPORT, (GLint *)pRect));
+    GL_CALL_FUNCTION(glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint *>(pRect)));
 }
 
 void QDemonRenderBackendGLBase::setViewportRect(const QRect &rect)
@@ -592,7 +592,7 @@ QDemonRenderBackend::QDemonRenderBackendBufferObject QDemonRenderBackendGLBase::
         }
     }
 
-    return (QDemonRenderBackend::QDemonRenderBackendBufferObject)bufID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject>(bufID);
 }
 
 void QDemonRenderBackendGLBase::bindBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferType bindFlags)
@@ -820,7 +820,7 @@ QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGL
 
     GL_CALL_FUNCTION(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 
-    return (QDemonRenderBackend::QDemonRenderBackendRenderbufferObject)bufID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendRenderbufferObject>(bufID);
 }
 
 void QDemonRenderBackendGLBase::releaseRenderbuffer(QDemonRenderBackendRenderbufferObject rbo)
@@ -864,7 +864,7 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderBackendGLBase:
     GLuint texID = 0;
 
     GL_CALL_FUNCTION(glGenTextures(1, &texID));
-    return (QDemonRenderBackend::QDemonRenderBackendTextureObject)texID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendTextureObject>(texID);
 }
 
 void QDemonRenderBackendGLBase::bindTexture(QDemonRenderBackendTextureObject to,
@@ -929,7 +929,7 @@ void QDemonRenderBackendGLBase::setTextureData2D(QDemonRenderBackendTextureObjec
         GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
     }
 
-    GL_CALL_FUNCTION(glTexImage2D(glTarget, level, glInternalFormat, (GLsizei)width, (GLsizei)height, border, glformat, gltype, hostData));
+    GL_CALL_FUNCTION(glTexImage2D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), border, glformat, gltype, hostData));
 
     GL_CALL_FUNCTION(glBindTexture(glTarget, 0));
 }
@@ -1012,7 +1012,7 @@ void QDemonRenderBackendGLBase::setTextureSubData2D(QDemonRenderBackendTextureOb
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = 0;
     GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
-    GL_CALL_FUNCTION(glTexSubImage2D(glTarget, level, xOffset, yOffset, (GLsizei)width, (GLsizei)height, glformat, gltype, hostData));
+    GL_CALL_FUNCTION(glTexSubImage2D(glTarget, level, xOffset, yOffset, GLsizei(width), GLsizei(height), glformat, gltype, hostData));
 
     GL_CALL_FUNCTION(glBindTexture(glTarget, 0));
 }
@@ -1151,7 +1151,7 @@ QDemonRenderBackend::QDemonRenderBackendSamplerObject QDemonRenderBackendGLBase:
     Q_UNUSED(borderColor)
 
     // return a dummy handle
-    return (QDemonRenderBackend::QDemonRenderBackendSamplerObject)0x0001;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendSamplerObject>(0x0001);
 }
 
 void QDemonRenderBackendGLBase::updateSampler(QDemonRenderBackendSamplerObject /* so */,
@@ -1249,7 +1249,7 @@ QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject QDemonRenderBackendGL
 
     QDemonRenderBackendAttributeLayoutGL *retval = new (newMem) QDemonRenderBackendAttributeLayoutGL(entryRef, maxInputSlot);
 
-    return (QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject)retval;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject>(retval);
 }
 
 void QDemonRenderBackendGLBase::releaseAttribLayout(QDemonRenderBackendAttribLayoutObject ao)
@@ -1276,19 +1276,19 @@ QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject QDemonRenderBackend
                                                                                           offsets,
                                                                                           patchVertexCount);
 
-    return (QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject)retval;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject>(retval);
 }
 
 void QDemonRenderBackendGLBase::releaseInputAssembler(QDemonRenderBackendInputAssemblerObject iao)
 {
-    QDemonRenderBackendInputAssemblerGL *inputAssembler = (QDemonRenderBackendInputAssemblerGL *)iao;
+    QDemonRenderBackendInputAssemblerGL *inputAssembler = reinterpret_cast<QDemonRenderBackendInputAssemblerGL *>(iao);
     delete inputAssembler;
 }
 
 bool QDemonRenderBackendGLBase::compileSource(GLuint shaderID, QDemonByteView source, QByteArray &errorMessage, bool binary)
 {
     GLint shaderSourceSize = static_cast<GLint>(source.size());
-    const char *shaderSourceData = (const char *)source.begin();
+    const char *shaderSourceData = reinterpret_cast<const char *>(source.begin());
     GLint shaderStatus = GL_TRUE;
 
     if (!binary) {
@@ -1332,7 +1332,7 @@ QDemonRenderBackend::QDemonRenderBackendVertexShaderObject QDemonRenderBackendGL
         shaderID = 0;
     }
 
-    return (QDemonRenderBackend::QDemonRenderBackendVertexShaderObject)shaderID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendVertexShaderObject>(shaderID);
 }
 
 QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject QDemonRenderBackendGLBase::createFragmentShader(QDemonByteView source,
@@ -1346,7 +1346,7 @@ QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject QDemonRenderBackend
         shaderID = 0;
     }
 
-    return (QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject)shaderID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject>(shaderID);
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBackendGLBase::createTessControlShader(
@@ -1361,7 +1361,7 @@ QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBack
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return (QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject) nullptr;
+    return nullptr;
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderBackendGLBase::createTessEvaluationShader(
@@ -1376,7 +1376,7 @@ QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderB
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return (QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject) nullptr;
+    return nullptr;
 }
 
 QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackendGLBase::createGeometryShader(QDemonByteView source,
@@ -1390,7 +1390,7 @@ QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackend
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return (QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject) nullptr;
+    return nullptr;
 }
 
 QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendGLBase::createComputeShader(QDemonByteView source,
@@ -1404,7 +1404,7 @@ QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendG
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return (QDemonRenderBackend::QDemonRenderBackendComputeShaderObject) nullptr;
+    return nullptr;
 }
 
 void QDemonRenderBackendGLBase::releaseVertexShader(QDemonRenderBackendVertexShaderObject vso)
@@ -1451,7 +1451,7 @@ void QDemonRenderBackendGLBase::releaseComputeShader(QDemonRenderBackendComputeS
 
 void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendVertexShaderObject vso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, vso);
 
     GL_CALL_FUNCTION(glAttachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1459,7 +1459,7 @@ void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendFragmentShaderObject fso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, fso);
 
     GL_CALL_FUNCTION(glAttachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1467,7 +1467,7 @@ void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendTessControlShaderObject tcso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, tcso);
 
     GL_CALL_FUNCTION(glAttachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1475,7 +1475,7 @@ void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendTessEvaluationShaderObject teso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, teso);
 
     GL_CALL_FUNCTION(glAttachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1483,7 +1483,7 @@ void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendGeometryShaderObject gso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, gso);
 
     GL_CALL_FUNCTION(glAttachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1491,7 +1491,7 @@ void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendComputeShaderObject cso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, cso);
 
     GL_CALL_FUNCTION(glAttachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1499,7 +1499,7 @@ void QDemonRenderBackendGLBase::attachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendVertexShaderObject vso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, vso);
 
     GL_CALL_FUNCTION(glDetachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1507,7 +1507,7 @@ void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendFragmentShaderObject fso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, fso);
 
     GL_CALL_FUNCTION(glDetachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1515,7 +1515,7 @@ void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendTessControlShaderObject tcso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, tcso);
 
     GL_CALL_FUNCTION(glDetachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1523,7 +1523,7 @@ void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendTessEvaluationShaderObject teso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, teso);
 
     GL_CALL_FUNCTION(glDetachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1531,7 +1531,7 @@ void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendGeometryShaderObject gso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, gso);
 
     GL_CALL_FUNCTION(glDetachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1539,7 +1539,7 @@ void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObj
 
 void QDemonRenderBackendGLBase::detachShader(QDemonRenderBackendShaderProgramObject po, QDemonRenderBackendComputeShaderObject cso)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint shaderID = HandleToID_cast(GLuint, size_t, cso);
 
     GL_CALL_FUNCTION(glDetachShader(static_cast<GLuint>(pProgram->m_programID), shaderID));
@@ -1560,12 +1560,12 @@ QDemonRenderBackend::QDemonRenderBackendShaderProgramObject QDemonRenderBackendG
         }
     }
 
-    return (QDemonRenderBackend::QDemonRenderBackendShaderProgramObject)theProgram;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendShaderProgramObject>(theProgram);
 }
 
 void QDemonRenderBackendGLBase::releaseShaderProgram(QDemonRenderBackendShaderProgramObject po)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 
     GL_CALL_FUNCTION(glDeleteProgram(programID));
@@ -1580,7 +1580,7 @@ void QDemonRenderBackendGLBase::releaseShaderProgram(QDemonRenderBackendShaderPr
 
 bool QDemonRenderBackendGLBase::linkProgram(QDemonRenderBackendShaderProgramObject po, QByteArray &errorMessage)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 
     GL_CALL_FUNCTION(glLinkProgram(programID));
@@ -1602,7 +1602,7 @@ bool QDemonRenderBackendGLBase::linkProgram(QDemonRenderBackendShaderProgramObje
 
         if (numAttribs) {
             QDemonRenderBackendShaderInputEntryGL *tempShaderInputEntry = static_cast<QDemonRenderBackendShaderInputEntryGL *>(
-                    ::malloc(sizeof(QDemonRenderBackendShaderInputEntryGL) * m_maxAttribCount));
+                    ::malloc(sizeof(QDemonRenderBackendShaderInputEntryGL) * size_t(m_maxAttribCount)));
 
             GLint maxLength;
             GL_CALL_FUNCTION(glGetProgramiv(programID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength));
@@ -1673,7 +1673,7 @@ void QDemonRenderBackendGLBase::setActiveProgram(QDemonRenderBackendShaderProgra
     GLuint programID = 0;
 
     if (po) {
-        QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+        QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
         programID = static_cast<GLuint>(pProgram->m_programID);
     }
 
@@ -1715,7 +1715,7 @@ void QDemonRenderBackendGLBase::dispatchCompute(QDemonRenderBackendShaderProgram
 qint32 QDemonRenderBackendGLBase::getConstantCount(QDemonRenderBackendShaderProgramObject po)
 {
     Q_ASSERT(po);
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 
     GLint numUniforms;
@@ -1741,11 +1741,11 @@ qint32 QDemonRenderBackendGLBase::getConstantInfoByID(QDemonRenderBackendShaderP
                                                       char *nameBuf)
 {
     Q_ASSERT(po);
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 
     GLenum glType;
-    GL_CALL_FUNCTION(glGetActiveUniform(programID, id, bufSize, nullptr, numElem, &glType, nameBuf));
+    GL_CALL_FUNCTION(glGetActiveUniform(programID, id, GLsizei(bufSize), nullptr, numElem, &glType, nameBuf));
     *type = GLConversion::fromShaderGLToPropertyDataTypes(glType);
 
     qint32 uniformLoc = GL_CALL_FUNCTION(glGetUniformLocation(programID, nameBuf));
@@ -1913,43 +1913,43 @@ void QDemonRenderBackendGLBase::setConstantValue(QDemonRenderBackendShaderProgra
 
     switch (glType) {
     case GL_FLOAT:
-        GL_CALL_FUNCTION(glUniform1fv(id, count, (GLfloat *)value));
+        GL_CALL_FUNCTION(glUniform1fv(GLint(id), count, reinterpret_cast<const GLfloat *>(value)));
         break;
     case GL_FLOAT_VEC2:
-        GL_CALL_FUNCTION(glUniform2fv(id, count, (GLfloat *)value));
+        GL_CALL_FUNCTION(glUniform2fv(GLint(id), count, reinterpret_cast<const GLfloat *>(value)));
         break;
     case GL_FLOAT_VEC3:
-        GL_CALL_FUNCTION(glUniform3fv(id, count, (GLfloat *)value));
+        GL_CALL_FUNCTION(glUniform3fv(GLint(id), count, reinterpret_cast<const GLfloat *>(value)));
         break;
     case GL_FLOAT_VEC4:
-        GL_CALL_FUNCTION(glUniform4fv(id, count, (GLfloat *)value));
+        GL_CALL_FUNCTION(glUniform4fv(GLint(id), count, reinterpret_cast<const GLfloat *>(value)));
         break;
     case GL_INT:
-        GL_CALL_FUNCTION(glUniform1iv(id, count, (GLint *)value));
+        GL_CALL_FUNCTION(glUniform1iv(GLint(id), count, reinterpret_cast<const GLint *>(value)));
         break;
     case GL_BOOL: {
         // Cast int value to be 0 or 1, matching to bool
         GLint *boolValue = (GLint *)value;
         *boolValue = *(GLboolean *)value;
-        GL_CALL_FUNCTION(glUniform1iv(id, count, boolValue));
+        GL_CALL_FUNCTION(glUniform1iv(GLint(id), count, boolValue));
     } break;
     case GL_INT_VEC2:
     case GL_BOOL_VEC2:
-        GL_CALL_FUNCTION(glUniform2iv(id, count, (GLint *)value));
+        GL_CALL_FUNCTION(glUniform2iv(GLint(id), count, reinterpret_cast<const GLint *>(value)));
         break;
     case GL_INT_VEC3:
     case GL_BOOL_VEC3:
-        GL_CALL_FUNCTION(glUniform3iv(id, count, (GLint *)value));
+        GL_CALL_FUNCTION(glUniform3iv(GLint(id), count, reinterpret_cast<const GLint *>(value)));
         break;
     case GL_INT_VEC4:
     case GL_BOOL_VEC4:
-        GL_CALL_FUNCTION(glUniform4iv(id, count, (GLint *)value));
+        GL_CALL_FUNCTION(glUniform4iv(GLint(id), count, reinterpret_cast<const GLint *>(value)));
         break;
     case GL_FLOAT_MAT3:
-        GL_CALL_FUNCTION(glUniformMatrix3fv(id, count, transpose, (GLfloat *)value));
+        GL_CALL_FUNCTION(glUniformMatrix3fv(GLint(id), count, transpose, reinterpret_cast<const GLfloat *>(value)));
         break;
     case GL_FLOAT_MAT4:
-        GL_CALL_FUNCTION(glUniformMatrix4fv(id, count, transpose, (GLfloat *)value));
+        GL_CALL_FUNCTION(glUniformMatrix4fv(GLint(id), count, transpose, reinterpret_cast<const GLfloat *>(value)));
         break;
     case GL_IMAGE_2D:
     case GL_SAMPLER_2D:
@@ -1957,11 +1957,11 @@ void QDemonRenderBackendGLBase::setConstantValue(QDemonRenderBackendShaderProgra
     case GL_SAMPLER_2D_SHADOW:
     case GL_SAMPLER_CUBE: {
         if (count > 1) {
-            GLint *sampler = (GLint *)value;
-            GL_CALL_FUNCTION(glUniform1iv(id, count, sampler));
+            const GLint *sampler = reinterpret_cast<const GLint *>(value);
+            GL_CALL_FUNCTION(glUniform1iv(GLint(id), count, sampler));
         } else {
-            GLint sampler = *(GLint *)value;
-            GL_CALL_FUNCTION(glUniform1i(id, sampler));
+            const GLint sampler = *reinterpret_cast<const GLint *>(value);
+            GL_CALL_FUNCTION(glUniform1i(GLint(id), sampler));
         }
     } break;
     default:
@@ -1973,7 +1973,7 @@ void QDemonRenderBackendGLBase::setConstantValue(QDemonRenderBackendShaderProgra
 
 void QDemonRenderBackendGLBase::draw(QDemonRenderDrawMode drawMode, quint32 start, quint32 count)
 {
-    GL_CALL_FUNCTION(glDrawArrays(m_conversion.fromDrawModeToGL(drawMode, m_backendSupport.caps.bits.bTessellationSupported), start, count));
+    GL_CALL_FUNCTION(glDrawArrays(m_conversion.fromDrawModeToGL(drawMode, m_backendSupport.caps.bits.bTessellationSupported), GLint(start), GLsizei(count)));
 }
 
 void QDemonRenderBackendGLBase::drawIndirect(QDemonRenderDrawMode drawMode, const void *indirect)
@@ -1989,7 +1989,7 @@ void QDemonRenderBackendGLBase::drawIndexed(QDemonRenderDrawMode drawMode,
                                             const void *indices)
 {
     GL_CALL_FUNCTION(glDrawElements(m_conversion.fromDrawModeToGL(drawMode, m_backendSupport.caps.bits.bTessellationSupported),
-                                    count,
+                                    GLint(count),
                                     m_conversion.fromIndexBufferComponentsTypesToGL(type),
                                     indices));
 }
@@ -2173,38 +2173,38 @@ void QDemonRenderBackendGLBase::coverStrokePathInstanced(QDemonRenderBackendPath
 ///< private calls
 const char *QDemonRenderBackendGLBase::getVersionString()
 {
-    const char *retval = (const char *)GL_CALL_FUNCTION(glGetString(GL_VERSION));
+    const GLubyte *retval = GL_CALL_FUNCTION(glGetString(GL_VERSION));
     if (retval == nullptr)
         return "";
 
-    return retval;
+    return reinterpret_cast<const char *>(retval);
 }
 
 const char *QDemonRenderBackendGLBase::getVendorString()
 {
-    const char *retval = (const char *)GL_CALL_FUNCTION(glGetString(GL_VENDOR));
+    const GLubyte *retval = GL_CALL_FUNCTION(glGetString(GL_VENDOR));
     if (retval == nullptr)
         return "";
 
-    return retval;
+    return reinterpret_cast<const char *>(retval);
 }
 
 const char *QDemonRenderBackendGLBase::getRendererString()
 {
-    const char *retval = (const char *)GL_CALL_FUNCTION(glGetString(GL_RENDERER));
+    const GLubyte *retval = GL_CALL_FUNCTION(glGetString(GL_RENDERER));
     if (retval == nullptr)
         return "";
 
-    return retval;
+    return reinterpret_cast<const char *>(retval);
 }
 
 const char *QDemonRenderBackendGLBase::getExtensionString()
 {
-    const char *retval = (const char *)GL_CALL_FUNCTION(glGetString(GL_EXTENSIONS));
+    const GLubyte *retval = GL_CALL_FUNCTION(glGetString(GL_EXTENSIONS));
     if (retval == nullptr)
         return "";
 
-    return retval;
+    return reinterpret_cast<const char *>(retval);
 }
 
 /**
