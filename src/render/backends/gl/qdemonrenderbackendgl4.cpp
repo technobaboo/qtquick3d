@@ -366,7 +366,7 @@ qint32 QDemonRenderBackendGL4Impl::getStorageBufferCount(QDemonRenderBackendShad
 {
     GLint numStorageBuffers = 0;
     Q_ASSERT(po);
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 
 #if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
@@ -505,43 +505,43 @@ void QDemonRenderBackendGL4Impl::setConstantValue(QDemonRenderBackendShaderProgr
 
     switch (glType) {
     case GL_FLOAT:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform1fv(programID, id, count, (GLfloat *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform1fv(programID, GLint(id), count, static_cast<const GLfloat *>(value)));
         break;
     case GL_FLOAT_VEC2:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform2fv(programID, id, count, (GLfloat *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform2fv(programID, GLint(id), count, static_cast<const GLfloat *>(value)));
         break;
     case GL_FLOAT_VEC3:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform3fv(programID, id, count, (GLfloat *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform3fv(programID, GLint(id), count, static_cast<const GLfloat *>(value)));
         break;
     case GL_FLOAT_VEC4:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform4fv(programID, id, count, (GLfloat *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform4fv(programID, GLint(id), count, static_cast<const GLfloat *>(value)));
         break;
     case GL_INT:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform1iv(programID, id, count, (GLint *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform1iv(programID, GLint(id), count, static_cast<const GLint *>(value)));
         break;
     case GL_BOOL: {
         // Cast int value to be 0 or 1, matching to bool
         GLint *boolValue = (GLint *)value;
         *boolValue = *(GLboolean *)value;
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform1iv(programID, id, count, boolValue));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform1iv(programID, GLint(id), count, boolValue));
     } break;
     case GL_INT_VEC2:
     case GL_BOOL_VEC2:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform2iv(programID, id, count, (GLint *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform2iv(programID, GLint(id), count, static_cast<const GLint *>(value)));
         break;
     case GL_INT_VEC3:
     case GL_BOOL_VEC3:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform3iv(programID, id, count, (GLint *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform3iv(programID, GLint(id), count, static_cast<const GLint *>(value)));
         break;
     case GL_INT_VEC4:
     case GL_BOOL_VEC4:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniform4iv(programID, id, count, (GLint *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniform4iv(programID, GLint(id), count, static_cast<const GLint *>(value)));
         break;
     case GL_FLOAT_MAT3:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniformMatrix3fv(programID, id, count, transpose, (GLfloat *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniformMatrix3fv(programID, GLint(id), count, transpose, static_cast<const GLfloat *>(value)));
         break;
     case GL_FLOAT_MAT4:
-        GL_CALL_EXTRA_FUNCTION(glProgramUniformMatrix4fv(programID, id, count, transpose, (GLfloat *)value));
+        GL_CALL_EXTRA_FUNCTION(glProgramUniformMatrix4fv(programID, GLint(id), count, transpose, static_cast<const GLfloat *>(value)));
         break;
     case GL_IMAGE_2D:
     case GL_SAMPLER_2D:
@@ -549,15 +549,15 @@ void QDemonRenderBackendGL4Impl::setConstantValue(QDemonRenderBackendShaderProgr
     case GL_SAMPLER_2D_SHADOW:
     case GL_SAMPLER_CUBE: {
         if (count <= 1) {
-            GLint sampler = *(GLint *)value;
-            GL_CALL_EXTRA_FUNCTION(glProgramUniform1i(programID, id, sampler));
+            GLint sampler = *static_cast<const GLint *>(value);
+            GL_CALL_EXTRA_FUNCTION(glProgramUniform1i(programID, GLint(id), sampler));
         } else {
-            GLint *sampler = (GLint *)value;
-            GL_CALL_EXTRA_FUNCTION(glProgramUniform1iv(programID, id, count, sampler));
+            const GLint *sampler = static_cast<const GLint *>(value);
+            GL_CALL_EXTRA_FUNCTION(glProgramUniform1iv(programID, GLint(id), count, sampler));
         }
     } break;
     default:
-        qCCritical(INTERNAL_ERROR, "Unknown shader type format %d", type);
+        qCCritical(INTERNAL_ERROR, "Unknown shader type format %d", int(type));
         Q_ASSERT(false);
         break;
     }
@@ -613,7 +613,7 @@ void QDemonRenderBackendGL4Impl::setProgramStages(QDemonRenderBackendProgramPipe
     GLuint programID = 0;
 
     if (po) {
-        QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
+        QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
         programID = static_cast<GLuint>(pProgram->m_programID);
     }
 
@@ -639,7 +639,7 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::c
 {
     GLuint pathID = GL_CALL_NVPATH_EXT(glGenPathsNV(GLsizei(range)));
 
-    return QDemonRenderBackend::QDemonRenderBackendPathObject(pathID);
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendPathObject>(pathID);
 }
 void QDemonRenderBackendGL4Impl::setPathSpecification(QDemonRenderBackendPathObject inPathObject,
                                                       QDemonByteView inPathCommands,
@@ -718,13 +718,13 @@ void QDemonRenderBackendGL4Impl::setPathCoverDepthFunc(QDemonRenderBoolOp inDept
 
 void QDemonRenderBackendGL4Impl::stencilStrokePath(QDemonRenderBackendPathObject inPathObject)
 {
-    GL_CALL_NVPATH_EXT(glStencilStrokePathNV(HandleToID_cast(GLuint, size_t, inPathObject), 0x1, (GLuint)~0));
+    GL_CALL_NVPATH_EXT(glStencilStrokePathNV(HandleToID_cast(GLuint, size_t, inPathObject), 0x1, ~GLuint(0)));
 }
 
 void QDemonRenderBackendGL4Impl::stencilFillPath(QDemonRenderBackendPathObject inPathObject)
 {
 #if defined(GL_NV_path_rendering)
-    GL_CALL_NVPATH_EXT(glStencilFillPathNV(HandleToID_cast(GLuint, size_t, inPathObject), GL_COUNT_UP_NV, (GLuint)~0));
+    GL_CALL_NVPATH_EXT(glStencilFillPathNV(HandleToID_cast(GLuint, size_t, inPathObject), GL_COUNT_UP_NV, ~GLuint(0)));
 #endif
 }
 
@@ -732,7 +732,7 @@ void QDemonRenderBackendGL4Impl::releasePathNVObject(QDemonRenderBackendPathObje
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
-    GL_CALL_NVPATH_EXT(glDeletePathsNV(pathID, (GLsizei)range));
+    GL_CALL_NVPATH_EXT(glDeletePathsNV(pathID, GLsizei(range)));
 }
 
 void QDemonRenderBackendGL4Impl::stencilFillPathInstanced(QDemonRenderBackendPathObject po,
@@ -746,7 +746,7 @@ void QDemonRenderBackendGL4Impl::stencilFillPathInstanced(QDemonRenderBackendPat
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
-    GL_CALL_NVPATH_EXT(glStencilFillPathInstancedNV((GLsizei)numPaths,
+    GL_CALL_NVPATH_EXT(glStencilFillPathInstancedNV(GLsizei(numPaths),
                                                     m_conversion.fromPathTypeToGL(type),
                                                     charCodes,
                                                     pathID,
@@ -767,7 +767,7 @@ void QDemonRenderBackendGL4Impl::stencilStrokePathInstancedN(QDemonRenderBackend
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
-    GL_CALL_NVPATH_EXT(glStencilStrokePathInstancedNV((GLsizei)numPaths,
+    GL_CALL_NVPATH_EXT(glStencilStrokePathInstancedNV(GLsizei(numPaths),
                                                       m_conversion.fromPathTypeToGL(type),
                                                       charCodes,
                                                       pathID,
@@ -787,7 +787,7 @@ void QDemonRenderBackendGL4Impl::coverFillPathInstanced(QDemonRenderBackendPathO
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
-    GL_CALL_NVPATH_EXT(glCoverFillPathInstancedNV((GLsizei)numPaths,
+    GL_CALL_NVPATH_EXT(glCoverFillPathInstancedNV(GLsizei(numPaths),
                                                   m_conversion.fromPathTypeToGL(type),
                                                   charCodes,
                                                   pathID,
@@ -806,7 +806,7 @@ void QDemonRenderBackendGL4Impl::coverStrokePathInstanced(QDemonRenderBackendPat
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
-    GL_CALL_NVPATH_EXT(glCoverStrokePathInstancedNV((GLsizei)numPaths,
+    GL_CALL_NVPATH_EXT(glCoverStrokePathInstancedNV(GLsizei(numPaths),
                                                     m_conversion.fromPathTypeToGL(type),
                                                     charCodes,
                                                     pathID,
@@ -827,13 +827,13 @@ void QDemonRenderBackendGL4Impl::loadPathGlyphs(QDemonRenderBackendPathObject po
                                                 float emScale)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
-    GLuint pathTemplateID = (pathParameterTemplate == nullptr) ? ~0 : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
+    GLuint pathTemplateID = (pathParameterTemplate == nullptr) ? ~GLuint(0) : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
 
     GL_CALL_NVPATH_EXT(glPathGlyphsNV(pathID,
                                       m_conversion.fromPathFontTargetToGL(fontTarget),
                                       fontName,
                                       m_conversion.fromPathFontStyleToGL(fontStyle),
-                                      (GLsizei)numGlyphs,
+                                      GLsizei(numGlyphs),
                                       m_conversion.fromPathTypeToGL(type),
                                       charCodes,
                                       m_conversion.fromPathMissingGlyphsToGL(handleMissingGlyphs),
@@ -851,7 +851,7 @@ QDemonRenderPathReturnValues QDemonRenderBackendGL4Impl::loadPathGlyphsIndexed(Q
                                                                                      float emScale)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
-    GLuint pathTemplateID = (pathParameterTemplate == nullptr) ? ~0 : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
+    GLuint pathTemplateID = (pathParameterTemplate == nullptr) ? ~GLuint(0) : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
     GLenum glRet = 0;
 
     glRet = GL_CALL_QDEMON_EXT(glPathGlyphIndexArrayNV(pathID,
@@ -859,7 +859,7 @@ QDemonRenderPathReturnValues QDemonRenderBackendGL4Impl::loadPathGlyphsIndexed(Q
                                                        fontName,
                                                        m_conversion.fromPathFontStyleToGL(fontStyle),
                                                        firstGlyphIndex,
-                                                       (GLsizei)numGlyphs,
+                                                       GLsizei(numGlyphs),
                                                        pathTemplateID,
                                                        emScale));
 
@@ -874,7 +874,7 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::l
         float emScale,
         quint32 *count)
 {
-    GLuint pathTemplateID = (pathParameterTemplate == nullptr) ? ~0 : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
+    GLuint pathTemplateID = (pathParameterTemplate == nullptr) ? ~GLuint(0) : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
     GLuint baseAndCount[2] = { 0, 0 };
 
     GL_CALL_QDEMON_EXT(glPathGlyphIndexRangeNV(m_conversion.fromPathFontTargetToGL(fontTarget),
@@ -887,7 +887,7 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::l
     if (count)
         *count = baseAndCount[1];
 
-    return QDemonRenderBackend::QDemonRenderBackendPathObject(baseAndCount[0]);
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendPathObject>(baseAndCount[0]);
 }
 
 void QDemonRenderBackendGL4Impl::loadPathGlyphRange(QDemonRenderBackendPathObject po,
@@ -908,7 +908,7 @@ void QDemonRenderBackendGL4Impl::loadPathGlyphRange(QDemonRenderBackendPathObjec
                                           fontName,
                                           m_conversion.fromPathFontStyleToGL(fontStyle),
                                           firstGlyph,
-                                          (GLsizei)numGlyphs,
+                                          GLsizei(numGlyphs),
                                           m_conversion.fromPathMissingGlyphsToGL(handleMissingGlyphs),
                                           pathTemplateID,
                                           emScale));
@@ -925,11 +925,11 @@ void QDemonRenderBackendGL4Impl::getPathMetrics(QDemonRenderBackendPathObject po
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
     GL_CALL_NVPATH_EXT(glGetPathMetricsNV(m_conversion.fromPathMetricQueryFlagsToGL(metricQueryMask),
-                                          (GLsizei)numPaths,
+                                          GLsizei(numPaths),
                                           m_conversion.fromPathTypeToGL(type),
                                           charCodes,
                                           pathID,
-                                          (GLsizei)stride,
+                                          GLsizei(stride),
                                           metrics));
 }
 
@@ -942,7 +942,7 @@ void QDemonRenderBackendGL4Impl::getPathMetricsRange(QDemonRenderBackendPathObje
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
     GL_CALL_NVPATH_EXT(
-            glGetPathMetricRangeNV(m_conversion.fromPathMetricQueryFlagsToGL(metricQueryMask), pathID, (GLsizei)numPaths, (GLsizei)stride, metrics));
+            glGetPathMetricRangeNV(m_conversion.fromPathMetricQueryFlagsToGL(metricQueryMask), pathID, GLsizei(numPaths), GLsizei(stride), metrics));
 }
 
 void QDemonRenderBackendGL4Impl::getPathSpacing(QDemonRenderBackendPathObject po,
@@ -958,7 +958,7 @@ void QDemonRenderBackendGL4Impl::getPathSpacing(QDemonRenderBackendPathObject po
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
     GL_CALL_NVPATH_EXT(glGetPathSpacingNV(m_conversion.fromPathListModeToGL(pathListMode),
-                                          (GLsizei)numPaths,
+                                          GLsizei(numPaths),
                                           m_conversion.fromPathTypeToGL(type),
                                           charCodes,
                                           pathID,
