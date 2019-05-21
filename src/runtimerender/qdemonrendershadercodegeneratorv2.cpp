@@ -370,7 +370,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
                 QDemonStageGeneratorBase &theStage(internalGetStage(stageName));
                 theStage.buildShaderSource();
                 theStage.updateShaderCacheFlags(theCacheFlags);
-                theDynamicSystem->insertShaderHeaderInformation(theStage.m_finalBuilder, inShaderName.constData());
+                theDynamicSystem->insertShaderHeaderInformation(theStage.m_finalBuilder, inShaderName);
             }
         }
 

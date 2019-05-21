@@ -59,7 +59,7 @@ struct QDemonDynamicShaderMapKey
     QVector<QDemonShaderPreprocessorFeature> m_features;
     TessModeValues m_tessMode;
     bool m_wireframeMode;
-    size_t m_hashCode;
+    uint m_hashCode;
     QDemonDynamicShaderMapKey(TStrStrPair inName, TShaderFeatureSet inFeatures, TessModeValues inTessMode, bool inWireframeMode)
         : m_name(inName), m_tessMode(inTessMode), m_wireframeMode(inWireframeMode)
     {
@@ -149,9 +149,9 @@ struct QDemonDynamicObjectSystem
 
     QByteArray getShaderCacheKey(const char *inId, const char *inProgramMacro, const dynamic::QDemonDynamicShaderProgramFlags &inFlags);
 
-    void insertShaderHeaderInformation(QByteArray &theReadBuffer, const char *inPathToEffect);
+    void insertShaderHeaderInformation(QByteArray &theReadBuffer, const QByteArray &inPathToEffect);
 
-    void doInsertShaderHeaderInformation(QByteArray &theReadBuffer, const QString &inPathToEffect);
+    void doInsertShaderHeaderInformation(QByteArray &theReadBuffer, const QByteArray &inPathToEffect);
 
     QByteArray doLoadShader(const QString &inPathToEffect);
 
@@ -168,7 +168,7 @@ struct QDemonDynamicObjectSystem
                                                        bool inForceCompilation = false);
 
     // This just returns the custom material shader source without compiling
-    QString getShaderSource(QString inPath);
+    QByteArray getShaderSource(const QString &inPath);
 
     TShaderAndFlags getShaderProgram(QString inPath,
                                      QString inProgramMacro,
@@ -176,11 +176,11 @@ struct QDemonDynamicObjectSystem
                                      const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                      bool inForceCompilation);
 
-    TShaderAndFlags getDepthPrepassShader(QString inPath, QString inPMacro, TShaderFeatureSet inFeatureSet);
+    TShaderAndFlags getDepthPrepassShader(const QString &inPath, const QString &inPMacro, const TShaderFeatureSet &inFeatureSet);
 
     void setShaderCodeLibraryVersion(const QByteArray &version);
 
-    QString shaderCodeLibraryVersion();
+    QByteArray shaderCodeLibraryVersion();
 
     void setShaderCodeLibraryPlatformDirectory(const QString &directory);
 
