@@ -59,122 +59,122 @@ uint qHash(const QDemonDynamicShaderMapKey &inKey)
     return inKey.m_hashCode;
 }
 
-quint32 QDemonCommand::getSizeofCommand(const QDemonCommand &inCommand)
-{
-    switch (inCommand.m_type) {
-    case CommandType::AllocateBuffer:
-        return sizeof(QDemonAllocateBuffer);
-    case CommandType::BindBuffer:
-        return sizeof(QDemonBindBuffer);
-    case CommandType::BindTarget:
-        return sizeof(QDemonBindTarget);
-    case CommandType::BindShader:
-        return sizeof(QDemonBindShader);
-    case CommandType::Render:
-        return sizeof(QDemonRender);
-    case CommandType::ApplyBufferValue:
-        return sizeof(QDemonApplyBufferValue);
-    case CommandType::ApplyDepthValue:
-        return sizeof(QDemonApplyDepthValue);
-    case CommandType::ApplyInstanceValue:
-        return sizeof(QDemonApplyInstanceValue);
-    case CommandType::ApplyBlending:
-        return sizeof(QDemonApplyBlending);
-    case CommandType::ApplyRenderState:
-        return sizeof(QDemonApplyRenderState);
-    case CommandType::ApplyBlitFramebuffer:
-        return sizeof(QDemonApplyBlitFramebuffer);
-    case CommandType::ApplyValue:
-        return sizeof(QDemonApplyValue) + static_cast<const QDemonApplyValue &>(inCommand).m_value.mSize;
-    case CommandType::DepthStencil:
-        return sizeof(QDemonDepthStencil);
-    case CommandType::AllocateImage:
-        return sizeof(QDemonAllocateImage);
-    case CommandType::ApplyImageValue:
-        return sizeof(QDemonApplyImageValue);
-    case CommandType::AllocateDataBuffer:
-        return sizeof(QDemonAllocateDataBuffer);
-    case CommandType::ApplyDataBufferValue:
-        return sizeof(QDemonApplyDataBufferValue);
-    default:
-        break;
-    }
-    Q_ASSERT(false);
-    return 0;
-}
+//quint32 QDemonCommand::getSizeofCommand(const QDemonCommand &inCommand)
+//{
+//    switch (inCommand.m_type) {
+//    case CommandType::AllocateBuffer:
+//        return sizeof(QDemonAllocateBuffer);
+//    case CommandType::BindBuffer:
+//        return sizeof(QDemonBindBuffer);
+//    case CommandType::BindTarget:
+//        return sizeof(QDemonBindTarget);
+//    case CommandType::BindShader:
+//        return sizeof(QDemonBindShader);
+//    case CommandType::Render:
+//        return sizeof(QDemonRender);
+//    case CommandType::ApplyBufferValue:
+//        return sizeof(QDemonApplyBufferValue);
+//    case CommandType::ApplyDepthValue:
+//        return sizeof(QDemonApplyDepthValue);
+//    case CommandType::ApplyInstanceValue:
+//        return sizeof(QDemonApplyInstanceValue);
+//    case CommandType::ApplyBlending:
+//        return sizeof(QDemonApplyBlending);
+//    case CommandType::ApplyRenderState:
+//        return sizeof(QDemonApplyRenderState);
+//    case CommandType::ApplyBlitFramebuffer:
+//        return sizeof(QDemonApplyBlitFramebuffer);
+//    case CommandType::ApplyValue:
+//        return sizeof(QDemonApplyValue) + static_cast<const QDemonApplyValue &>(inCommand).m_value.mSize;
+//    case CommandType::DepthStencil:
+//        return sizeof(QDemonDepthStencil);
+//    case CommandType::AllocateImage:
+//        return sizeof(QDemonAllocateImage);
+//    case CommandType::ApplyImageValue:
+//        return sizeof(QDemonApplyImageValue);
+//    case CommandType::AllocateDataBuffer:
+//        return sizeof(QDemonAllocateDataBuffer);
+//    case CommandType::ApplyDataBufferValue:
+//        return sizeof(QDemonApplyDataBufferValue);
+//    default:
+//        break;
+//    }
+//    Q_ASSERT(false);
+//    return 0;
+//}
 
-template<typename TCommandType>
-inline void CopyConstructCommandT(quint8 *inDataBuffer, const QDemonCommand &inCommand)
-{
-    TCommandType *theCommand = (TCommandType *)inDataBuffer;
-    theCommand = new (theCommand) TCommandType(static_cast<const TCommandType &>(inCommand));
-}
+//template<typename TCommandType>
+//inline void CopyConstructCommandT(quint8 *inDataBuffer, const QDemonCommand &inCommand)
+//{
+//    TCommandType *theCommand = (TCommandType *)inDataBuffer;
+//    theCommand = new (theCommand) TCommandType(static_cast<const TCommandType &>(inCommand));
+//}
 
-void QDemonCommand::copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand)
-{
-    switch (inCommand.m_type) {
-    case CommandType::AllocateBuffer:
-        CopyConstructCommandT<QDemonAllocateBuffer>(inDataBuffer, inCommand);
-        break;
-    case CommandType::BindBuffer:
-        CopyConstructCommandT<QDemonBindBuffer>(inDataBuffer, inCommand);
-        break;
-    case CommandType::BindTarget:
-        CopyConstructCommandT<QDemonBindTarget>(inDataBuffer, inCommand);
-        break;
-    case CommandType::BindShader:
-        CopyConstructCommandT<QDemonBindShader>(inDataBuffer, inCommand);
-        break;
-    case CommandType::Render:
-        CopyConstructCommandT<QDemonRender>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyBufferValue:
-        CopyConstructCommandT<QDemonApplyBufferValue>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyDepthValue:
-        CopyConstructCommandT<QDemonApplyDepthValue>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyInstanceValue:
-        CopyConstructCommandT<QDemonApplyInstanceValue>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyBlending:
-        CopyConstructCommandT<QDemonApplyBlending>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyRenderState:
-        CopyConstructCommandT<QDemonApplyRenderState>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyBlitFramebuffer:
-        CopyConstructCommandT<QDemonApplyBlitFramebuffer>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyValue: {
-        CopyConstructCommandT<QDemonApplyValue>(inDataBuffer, inCommand);
-        QDemonApplyValue &dest = *reinterpret_cast<QDemonApplyValue *>(inDataBuffer);
-        quint8 *destMem = inDataBuffer + sizeof(QDemonApplyValue);
-        const QDemonApplyValue &src = static_cast<const QDemonApplyValue &>(inCommand);
-        memcpy(destMem, src.m_value.mData, src.m_value.mSize);
-        dest.m_value.mData = destMem;
-        break;
-    }
-    case CommandType::DepthStencil:
-        CopyConstructCommandT<QDemonDepthStencil>(inDataBuffer, inCommand);
-        break;
-    case CommandType::AllocateImage:
-        CopyConstructCommandT<QDemonAllocateImage>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyImageValue:
-        CopyConstructCommandT<QDemonApplyImageValue>(inDataBuffer, inCommand);
-        break;
-    case CommandType::AllocateDataBuffer:
-        CopyConstructCommandT<QDemonAllocateDataBuffer>(inDataBuffer, inCommand);
-        break;
-    case CommandType::ApplyDataBufferValue:
-        CopyConstructCommandT<QDemonApplyDataBufferValue>(inDataBuffer, inCommand);
-        break;
-    default:
-        Q_ASSERT(false);
-        break;
-    }
-}
+//void QDemonCommand::copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand)
+//{
+//    switch (inCommand.m_type) {
+//    case CommandType::AllocateBuffer:
+//        CopyConstructCommandT<QDemonAllocateBuffer>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::BindBuffer:
+//        CopyConstructCommandT<QDemonBindBuffer>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::BindTarget:
+//        CopyConstructCommandT<QDemonBindTarget>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::BindShader:
+//        CopyConstructCommandT<QDemonBindShader>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::Render:
+//        CopyConstructCommandT<QDemonRender>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyBufferValue:
+//        CopyConstructCommandT<QDemonApplyBufferValue>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyDepthValue:
+//        CopyConstructCommandT<QDemonApplyDepthValue>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyInstanceValue:
+//        CopyConstructCommandT<QDemonApplyInstanceValue>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyBlending:
+//        CopyConstructCommandT<QDemonApplyBlending>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyRenderState:
+//        CopyConstructCommandT<QDemonApplyRenderState>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyBlitFramebuffer:
+//        CopyConstructCommandT<QDemonApplyBlitFramebuffer>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyValue: {
+//        CopyConstructCommandT<QDemonApplyValue>(inDataBuffer, inCommand);
+//        QDemonApplyValue &dest = *reinterpret_cast<QDemonApplyValue *>(inDataBuffer);
+//        quint8 *destMem = inDataBuffer + sizeof(QDemonApplyValue);
+//        const QDemonApplyValue &src = static_cast<const QDemonApplyValue &>(inCommand);
+//        memcpy(destMem, src.m_value.mData, src.m_value.mSize);
+//        dest.m_value.mData = destMem;
+//        break;
+//    }
+//    case CommandType::DepthStencil:
+//        CopyConstructCommandT<QDemonDepthStencil>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::AllocateImage:
+//        CopyConstructCommandT<QDemonAllocateImage>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyImageValue:
+//        CopyConstructCommandT<QDemonApplyImageValue>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::AllocateDataBuffer:
+//        CopyConstructCommandT<QDemonAllocateDataBuffer>(inDataBuffer, inCommand);
+//        break;
+//    case CommandType::ApplyDataBufferValue:
+//        CopyConstructCommandT<QDemonApplyDataBufferValue>(inDataBuffer, inCommand);
+//        break;
+//    default:
+//        Q_ASSERT(false);
+//        break;
+//    }
+//}
 }
 
 QString QDemonDynamicObjectSystem::getShaderCodeLibraryDirectory()

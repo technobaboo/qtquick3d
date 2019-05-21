@@ -68,8 +68,8 @@ struct QDemonCommand
     QDemonCommand(CommandType inType) : m_type(inType) {}
     QDemonCommand() : m_type(CommandType::Unknown) {}
     // Implemented in UICRenderEffectSystem.cpp
-    static quint32 getSizeofCommand(const QDemonCommand &inCommand);
-    static void copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand);
+//    static quint32 getSizeofCommand(const QDemonCommand &inCommand);
+//    static void copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand);
 };
 
 enum class AllocateBufferFlagValues
