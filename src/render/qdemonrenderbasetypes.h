@@ -1971,6 +1971,9 @@ static inline int sizeofPixelFormat(QDemonRenderReadPixelFormat f)
     case QDemonRenderReadPixelFormat::RGBA8:
         return 4;
     }
+
+    Q_ASSERT(0);
+    return 0;
 }
 
 // Now for scoped property access.

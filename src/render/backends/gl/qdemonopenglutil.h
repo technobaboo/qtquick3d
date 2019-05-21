@@ -697,6 +697,8 @@ struct GLConversion
         case QDemonRenderBufferType::DrawIndirect:
             return GL_DRAW_INDIRECT_BUFFER;
         }
+        Q_ASSERT(false);
+        return 0;
     }
 
     static QDemonRenderBufferType fromGLToBindBufferFlags(GLenum value)
