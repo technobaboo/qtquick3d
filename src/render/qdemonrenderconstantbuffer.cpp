@@ -67,9 +67,9 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
     m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxConstantBufferBlockSize, &m_maxBlockSize);
 
     if (data.size()) {
-        Q_ASSERT(data.size() < (quint32)m_maxBlockSize);
+        Q_ASSERT(data.size() < m_maxBlockSize);
         m_shadowCopy.resize(data.size());
-        memcpy(m_shadowCopy.begin(), data.begin(), data.size());
+        memcpy(m_shadowCopy.begin(), data.begin(), size_t(data.size()));
     }
     context->registerConstantBuffer(this);
 }
@@ -191,7 +191,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
     } else {
         // some sanity checks
         bSuccess = true;
-        bSuccess &= (m_shadowCopy.size() <= (quint32)bufSize);
+        bSuccess &= (m_shadowCopy.size() <= bufSize);
     }
 
     return bSuccess;
@@ -246,11 +246,11 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonByteView 
     const QByteArray theName = inName;
     TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);
     if (entry != m_constantBufferEntryMap.end()) {
-        quint32 size = entry.value()->m_count * uniformTypeSize(entry.value()->m_type);
+        const qint32 size = entry.value()->m_count * uniformTypeSize(entry.value()->m_type);
         Q_ASSERT(size == value.size());
-        if (!memcmp(m_shadowCopy.constBegin() + entry.value()->m_offset, value.begin(), size))
+        if (!memcmp(m_shadowCopy.constBegin() + entry.value()->m_offset, value.begin(), size_t(size)))
             return;
-        memcpy(m_shadowCopy.begin() + entry.value()->m_offset, value.begin(), size);
+        memcpy(m_shadowCopy.begin() + entry.value()->m_offset, value.begin(), size_t(size));
         setDirty(entry.value()->m_offset, size);
     }
 }
@@ -323,7 +323,7 @@ qint32 QDemonRenderConstantBuffer::uniformTypeSize(QDemonRenderShaderDataType ty
     case QDemonRenderShaderDataType::Matrix4x4:
         return sizeof(float) * 16;
     default:
-        Q_ASSERT(!"Unhandled type in QDemonRenderConstantBuffer::getUniformTypeSize");
+        Q_ASSERT_X(0, "Unhandled type",  "QDemonRenderConstantBuffer::getUniformTypeSize");
         break;
     }
 
