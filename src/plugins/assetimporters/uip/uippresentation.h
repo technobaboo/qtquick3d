@@ -207,6 +207,7 @@ public:
     bool isNode() const { return m_type >= FirstNodeType; }
     float startTime() { return m_startTime * 0.001f; }
     float endTime() { return m_endTime * 0.001f; }
+    State state() const { return m_state; }
 
     QString qmlId();
     virtual void writeQmlHeader(QTextStream &output, int tabLevel) = 0;

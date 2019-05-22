@@ -147,7 +147,6 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         QVector2D pos[] = { QVector2D(0, 0), QVector2D(0, 1), QVector2D(1, 1), QVector2D(1, 0) };
 
         if (m_quadVertexBuffer == nullptr) {
-            size_t bufSize = sizeof(pos);
             m_quadVertexBuffer = new QDemonRenderVertexBuffer(theRenderContext, QDemonRenderBufferUsageType::Static,
                                                               2 * sizeof(float),
                                                               toByteView(pos, 4));

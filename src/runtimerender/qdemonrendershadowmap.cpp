@@ -46,20 +46,18 @@ QDemonRenderShadowMap::~QDemonRenderShadowMap()
     m_shadowMapList.clear();
 }
 
-namespace {
-bool IsDepthFormat(QDemonRenderTextureFormat format)
-{
-    switch (format.format) {
-    case QDemonRenderTextureFormat::Depth16:
-    case QDemonRenderTextureFormat::Depth24:
-    case QDemonRenderTextureFormat::Depth32:
-    case QDemonRenderTextureFormat::Depth24Stencil8:
-        return true;
-    default:
-        return false;
-    }
-}
-}
+//static bool isDepthFormat(QDemonRenderTextureFormat format)
+//{
+//    switch (format.format) {
+//    case QDemonRenderTextureFormat::Depth16:
+//    case QDemonRenderTextureFormat::Depth24:
+//    case QDemonRenderTextureFormat::Depth32:
+//    case QDemonRenderTextureFormat::Depth24Stencil8:
+//        return true;
+//    default:
+//        return false;
+//    }
+//}
 
 void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
                                               qint32 width,

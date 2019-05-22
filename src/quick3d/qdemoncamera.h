@@ -5,7 +5,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderCamera;
+struct QDemonRenderCamera;
 class Q_QUICK3D_EXPORT QDemonCamera : public QDemonNode
 {
     Q_OBJECT

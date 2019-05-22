@@ -534,6 +534,7 @@ QDemonRenderShaderProgram::QDemonRenderShaderProgram(const QDemonRef<QDemonRende
 {
     m_handle = m_backend->createShaderProgram(separableProgram);
 
+    Q_UNUSED(m_programName)
     Q_ASSERT(m_handle);
 }
 

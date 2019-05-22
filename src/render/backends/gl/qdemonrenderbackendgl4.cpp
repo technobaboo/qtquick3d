@@ -366,10 +366,9 @@ qint32 QDemonRenderBackendGL4Impl::getStorageBufferCount(QDemonRenderBackendShad
 {
     GLint numStorageBuffers = 0;
     Q_ASSERT(po);
+#if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
-
-#if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     if (m_backendSupport.caps.bits.bProgramInterfaceSupported)
         GL_CALL_EXTRA_FUNCTION(glGetProgramInterfaceiv(programID, GL_SHADER_STORAGE_BLOCK, GL_ACTIVE_RESOURCES, &numStorageBuffers));
 #endif
@@ -392,9 +391,9 @@ qint32 QDemonRenderBackendGL4Impl::getStorageBufferInfoByID(QDemonRenderBackendS
     Q_ASSERT(bufferSize);
     Q_ASSERT(paramCount);
 
+#if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
-#if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     if (m_backendSupport.caps.bits.bProgramInterfaceSupported) {
         GL_CALL_EXTRA_FUNCTION(glGetProgramResourceName(programID, GL_SHADER_STORAGE_BLOCK, id, nameBufSize, length, nameBuf));
 
@@ -413,6 +412,9 @@ qint32 QDemonRenderBackendGL4Impl::getStorageBufferInfoByID(QDemonRenderBackendS
             *paramCount = params[2];
         }
     }
+#else
+    Q_UNUSED(id)
+    Q_UNUSED(nameBufSize)
 #endif
     return bufferIndex;
 }
@@ -421,6 +423,9 @@ void QDemonRenderBackendGL4Impl::programSetStorageBuffer(quint32 index, QDemonRe
 {
 #if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     GL_CALL_EXTRA_FUNCTION(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, HandleToID_cast(GLuint, size_t, bo)));
+#else
+    Q_UNUSED(index)
+    Q_UNUSED(bo)
 #endif
 }
 
@@ -428,9 +433,9 @@ qint32 QDemonRenderBackendGL4Impl::getAtomicCounterBufferCount(QDemonRenderBacke
 {
     GLint numAtomicCounterBuffers = 0;
     Q_ASSERT(po);
+#if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
-#if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     if (m_backendSupport.caps.bits.bProgramInterfaceSupported)
         GL_CALL_EXTRA_FUNCTION(glGetProgramInterfaceiv(programID, GL_ATOMIC_COUNTER_BUFFER, GL_ACTIVE_RESOURCES, &numAtomicCounterBuffers));
 #endif
@@ -453,9 +458,9 @@ qint32 QDemonRenderBackendGL4Impl::getAtomicCounterBufferInfoByID(QDemonRenderBa
     Q_ASSERT(bufferSize);
     Q_ASSERT(paramCount);
 
+#if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
-#if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     if (m_backendSupport.caps.bits.bProgramInterfaceSupported) {
         {
 #define QUERY_COUNT 3
@@ -480,6 +485,9 @@ qint32 QDemonRenderBackendGL4Impl::getAtomicCounterBufferInfoByID(QDemonRenderBa
             GL_CALL_EXTRA_FUNCTION(glGetProgramResourceName(programID, GL_UNIFORM, params[0], nameBufSize, length, nameBuf));
         }
     }
+#else
+    Q_UNUSED(id)
+    Q_UNUSED(nameBufSize)
 #endif
     return bufferIndex;
 }
@@ -488,6 +496,9 @@ void QDemonRenderBackendGL4Impl::programSetAtomicCounterBuffer(quint32 index, QD
 {
 #if defined(GL_VERSION_4_3) || defined(QT_OPENGL_ES_3_1)
     GL_CALL_EXTRA_FUNCTION(glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, index, HandleToID_cast(GLuint, size_t, bo)));
+#else
+    Q_UNUSED(index)
+    Q_UNUSED(bo)
 #endif
 }
 

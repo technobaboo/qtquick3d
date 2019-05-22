@@ -55,12 +55,12 @@ quint32 QDemonRenderIndexBuffer::numIndices() const
 
 void QDemonRenderIndexBuffer::draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset)
 {
-    m_backend->drawIndexed(drawMode, count, m_componentType, (const void *)(offset * getSizeOfType(m_componentType)));
+    m_backend->drawIndexed(drawMode, count, m_componentType, reinterpret_cast<const void *>(offset * getSizeOfType(m_componentType)));
 }
 
 void QDemonRenderIndexBuffer::drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset)
 {
-    m_backend->drawIndexedIndirect(drawMode, m_componentType, (const void *)offset);
+    m_backend->drawIndexedIndirect(drawMode, m_componentType, reinterpret_cast<const void *>(offset));
 }
 
 void QDemonRenderIndexBuffer::bind()

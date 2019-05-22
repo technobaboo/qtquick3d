@@ -103,7 +103,7 @@ void SGFramebufferObjectNode::render()
 
         resetOpenGLState();
 
-        if (texture() && (texture()->textureId() != textureId || texture()->textureSize() != renderer->surfaceSize())) {
+        if (texture() && (GLuint(texture()->textureId()) != textureId || texture()->textureSize() != renderer->surfaceSize())) {
             delete texture();
             setTexture(window->createTextureFromId(textureId, renderer->surfaceSize(), QQuickWindow::TextureHasAlphaChannel));
         }

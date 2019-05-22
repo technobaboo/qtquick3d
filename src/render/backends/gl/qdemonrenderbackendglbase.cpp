@@ -1254,7 +1254,7 @@ QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject QDemonRenderBackendGL
 
 void QDemonRenderBackendGLBase::releaseAttribLayout(QDemonRenderBackendAttribLayoutObject ao)
 {
-    QDemonRenderBackendAttributeLayoutGL *attribLayout = (QDemonRenderBackendAttributeLayoutGL *)ao;
+    QDemonRenderBackendAttributeLayoutGL *attribLayout = reinterpret_cast<QDemonRenderBackendAttributeLayoutGL *>(ao);
 
     delete attribLayout;
 };
@@ -1267,7 +1267,7 @@ QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject QDemonRenderBackend
         QDemonDataView<quint32> offsets,
         quint32 patchVertexCount)
 {
-    QDemonRenderBackendAttributeLayoutGL *attribLayoutGL = (QDemonRenderBackendAttributeLayoutGL *)attribLayout;
+    QDemonRenderBackendAttributeLayoutGL *attribLayoutGL = reinterpret_cast<QDemonRenderBackendAttributeLayoutGL *>(attribLayout);
 
     QDemonRenderBackendInputAssemblerGL *retval = new QDemonRenderBackendInputAssemblerGL(attribLayoutGL,
                                                                                           buffers,
@@ -1609,7 +1609,7 @@ bool QDemonRenderBackendGLBase::linkProgram(QDemonRenderBackendShaderProgramObje
             qint8 *nameBuf = static_cast<qint8 *>(::malloc(size_t(maxLength)));
 
             // fill in data
-            quint32 count = 0;
+            qint32 count = 0;
             for (int idx = 0; idx != numAttribs; ++idx) {
                 GLint size = 0;
                 GLenum glType;
@@ -1965,7 +1965,7 @@ void QDemonRenderBackendGLBase::setConstantValue(QDemonRenderBackendShaderProgra
         }
     } break;
     default:
-        qCCritical(INTERNAL_ERROR, "Unknown shader type format %d", type);
+        qCCritical(INTERNAL_ERROR, "Unknown shader type format %d", int(type));
         Q_ASSERT(false);
         break;
     }

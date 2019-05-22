@@ -193,7 +193,7 @@ QDemonDynamicObjectSystem::QDemonDynamicObjectSystem(QDemonRenderContextInterfac
 
 QDemonDynamicObjectSystem::~QDemonDynamicObjectSystem() {}
 
-void QDemonDynamicObjectSystem::setShaderData(const QString &inPath,
+void QDemonDynamicObjectSystem::setShaderData(const QByteArray &inPath,
                                               const QByteArray &inData,
                                               const QByteArray &inShaderType,
                                               const QByteArray &inShaderVersion,
@@ -212,8 +212,8 @@ void QDemonDynamicObjectSystem::setShaderData(const QString &inPath,
         // UdoL TODO: Add this to the load / save setction
         // In addition we should merge the source code into SDynamicObjectShaderInfo as well
         QDemonDynamicObjectShaderInfo &theShaderInfo = m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
-        theShaderInfo.m_type = QString::fromLocal8Bit(inShaderType);
-        theShaderInfo.m_version = QString::fromLocal8Bit(inShaderVersion);
+        theShaderInfo.m_type = inShaderType;
+        theShaderInfo.m_version = inShaderVersion;
         theShaderInfo.m_hasGeomShader = inHasGeomShader;
         theShaderInfo.m_isComputeShader = inIsComputeShader;
     }
@@ -221,12 +221,12 @@ void QDemonDynamicObjectSystem::setShaderData(const QString &inPath,
     return;
 }
 
-QByteArray QDemonDynamicObjectSystem::getShaderCacheKey(const char *inId,
-                                                        const char *inProgramMacro,
+QByteArray QDemonDynamicObjectSystem::getShaderCacheKey(const QByteArray &inId,
+                                                        const QByteArray &inProgramMacro,
                                                         const dynamic::QDemonDynamicShaderProgramFlags &inFlags)
 {
     QByteArray shaderKey = inId;
-    if (inProgramMacro && *inProgramMacro) {
+    if (!inProgramMacro.isEmpty()) {
         shaderKey.append("#");
         shaderKey.append(inProgramMacro);
     }
@@ -261,7 +261,7 @@ void QDemonDynamicObjectSystem::doInsertShaderHeaderInformation(QByteArray &theR
         const int theActualBegin = thePos + includeSearch().length();
         const auto &theInclude = theReadBuffer.mid(theActualBegin, theEndQuote - theActualBegin);
         // If we haven't included the file yet this round
-        auto theHeader = doLoadShader(QString::fromLatin1(theInclude));
+        auto theHeader = doLoadShader(theInclude);
         // Strip copywrite headers from include if present
         if (theHeader.startsWith(copyrightHeaderStart())) {
             int clipPos = theHeader.indexOf(copyrightHeaderEnd()) ;
@@ -276,7 +276,7 @@ void QDemonDynamicObjectSystem::doInsertShaderHeaderInformation(QByteArray &theR
     }
 }
 
-QByteArray QDemonDynamicObjectSystem::doLoadShader(const QString &inPathToEffect)
+QByteArray QDemonDynamicObjectSystem::doLoadShader(const QByteArray &inPathToEffect)
 {
     auto theInsert = m_expandedFiles.find(inPathToEffect);
     const bool found = (theInsert != m_expandedFiles.end());
@@ -291,19 +291,19 @@ QByteArray QDemonDynamicObjectSystem::doLoadShader(const QString &inPathToEffect
         QSharedPointer<QIODevice> theStream;
         if (!platformDir.isEmpty()) {
             QTextStream stream(&fullPath);
-            stream << platformDir << QLatin1Char('/') << inPathToEffect;
+            stream << platformDir << QLatin1Char('/') << QString::fromLocal8Bit(inPathToEffect);
             theStream = m_context->inputStreamFactory()->getStreamForFile(fullPath, true);
         }
 
         if (theStream.isNull()) {
             fullPath.clear();
             QTextStream stream(&fullPath);
-            stream << defaultDir << QLatin1Char('/') << ver << QLatin1Char('/') << inPathToEffect;
+            stream << defaultDir << QLatin1Char('/') << ver << QLatin1Char('/') << QString::fromLocal8Bit(inPathToEffect);
             theStream = m_context->inputStreamFactory()->getStreamForFile(fullPath, true);
             if (theStream.isNull()) {
                 fullPath.clear();
                 QTextStream stream(&fullPath);
-                stream << defaultDir << QLatin1Char('/') << inPathToEffect;
+                stream << defaultDir << QLatin1Char('/') << QString::fromLocal8Bit(inPathToEffect);
                 theStream = m_context->inputStreamFactory()->getStreamForFile(fullPath, false);
             }
         }
@@ -316,14 +316,14 @@ QByteArray QDemonDynamicObjectSystem::doLoadShader(const QString &inPathToEffect
                     theReadBuffer.append(readBuf, int(amountRead));
             } while (amountRead);
         } else {
-            qCCritical(INVALID_OPERATION, "Failed to find include file %s", qPrintable(inPathToEffect));
+            qCCritical(INVALID_OPERATION, "Failed to find include file %s", qPrintable(QString::fromLocal8Bit(inPathToEffect)));
             Q_ASSERT(false);
         }
         theInsert = m_expandedFiles.insert(inPathToEffect, theReadBuffer);
     } else {
         theReadBuffer = theInsert.value();
     }
-    doInsertShaderHeaderInformation(theReadBuffer, inPathToEffect.toLatin1());
+    doInsertShaderHeaderInformation(theReadBuffer, inPathToEffect);
     return theReadBuffer;
 }
 
@@ -407,10 +407,10 @@ void QDemonDynamicObjectSystem::insertSnapperDirectives(QString &str)
     }
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonDynamicObjectSystem::compileShader(QString inId,
-                                                                              const char *inProgramSource,
-                                                                              const char *inGeomSource,
-                                                                              QString inProgramMacroName,
+QDemonRef<QDemonRenderShaderProgram> QDemonDynamicObjectSystem::compileShader(const QByteArray &inId,
+                                                                              const QByteArray &inProgramSource,
+                                                                              const QByteArray &inGeomSource,
+                                                                              QByteArray inProgramMacroName,
                                                                               TShaderFeatureSet inFeatureSet,
                                                                               const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                                                               bool inForceCompilation)
@@ -425,15 +425,15 @@ QDemonRef<QDemonRenderShaderProgram> QDemonDynamicObjectSystem::compileShader(QS
 
     if (!inProgramMacroName.isEmpty()) {
         m_vertShader.append("#define ");
-        m_vertShader.append(inProgramMacroName.toLatin1());
+        m_vertShader.append(inProgramMacroName);
         m_vertShader.append("\n");
 
         m_fragShader.append("#define ");
-        m_fragShader.append(inProgramMacroName.toLatin1());
+        m_fragShader.append(inProgramMacroName);
         m_fragShader.append("\n");
     }
 
-    if (inGeomSource && inFlags & ShaderCacheProgramFlagValues::GeometryShaderEnabled) {
+    if (!inGeomSource.isEmpty() && inFlags & ShaderCacheProgramFlagValues::GeometryShaderEnabled) {
         theFlags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
 
         m_geometryShader.append("#define GEOMETRY_SHADER 1\n");
@@ -466,7 +466,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonDynamicObjectSystem::compileShader(QS
 
     QDemonRef<QDemonShaderCache> theShaderCache = m_context->shaderCache();
 
-    QByteArray theKey = getShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
+    QByteArray theKey = getShaderCacheKey(inId, inProgramMacroName, inFlags);
     if (inForceCompilation) {
         return theShaderCache->forceCompileProgram(theKey, m_vertShader, m_fragShader, nullptr, nullptr, m_geometryShader, theFlags, inFeatureSet, false);
     }
@@ -474,15 +474,15 @@ QDemonRef<QDemonRenderShaderProgram> QDemonDynamicObjectSystem::compileShader(QS
     return theShaderCache->compileProgram(theKey, m_vertShader, m_fragShader, nullptr, nullptr, m_geometryShader, theFlags, inFeatureSet);
 }
 
-QByteArray QDemonDynamicObjectSystem::getShaderSource(const QString &inPath)
+QByteArray QDemonDynamicObjectSystem::getShaderSource(const QByteArray &inPath)
 {
     QByteArray source(QByteArrayLiteral("#define FRAGMENT_SHADER\n"));
     source.append(doLoadShader(inPath));
     return source;
 }
 
-TShaderAndFlags QDemonDynamicObjectSystem::getShaderProgram(QString inPath,
-                                                            QString inProgramMacro,
+TShaderAndFlags QDemonDynamicObjectSystem::getShaderProgram(const QByteArray &inPath,
+                                                            const QByteArray &inProgramMacro,
                                                             TShaderFeatureSet inFeatureSet,
                                                             const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                                             bool inForceCompilation)
@@ -497,8 +497,8 @@ TShaderAndFlags QDemonDynamicObjectSystem::getShaderProgram(QString inPath,
     // TODO: This looks funky (if found)...
     if (found || inForceCompilation) {
         QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->shaderCache()
-                                                                  ->getProgram(getShaderCacheKey(inPath.toLocal8Bit(),
-                                                                                                 inProgramMacro.toLocal8Bit(),
+                                                                  ->getProgram(getShaderCacheKey(inPath,
+                                                                                                 inProgramMacro,
                                                                                                  inFlags),
                                                                                inFeatureSet);
         dynamic::QDemonDynamicShaderProgramFlags theFlags(inFlags);
@@ -517,7 +517,7 @@ TShaderAndFlags QDemonDynamicObjectSystem::getShaderProgram(QString inPath,
                     shaderVersionStr = "#version 310 es\n";
                 theShaderBuffer = doLoadShader(inPath);
                 theShaderBuffer.insert(0, shaderVersionStr);
-                theProgram = m_context->renderContext()->compileComputeSource(inPath.toLocal8Bit(), toByteView(theShaderBuffer)).m_shader;
+                theProgram = m_context->renderContext()->compileComputeSource(inPath, toByteView(theShaderBuffer)).m_shader;
             }
         }
         theInserter.value() = TShaderAndFlags(theProgram, theFlags);
@@ -525,19 +525,18 @@ TShaderAndFlags QDemonDynamicObjectSystem::getShaderProgram(QString inPath,
     return theInserter.value();
 }
 
-TShaderAndFlags QDemonDynamicObjectSystem::getDepthPrepassShader(const QString &inPath, const QString &inPMacro, const TShaderFeatureSet &inFeatureSet)
+TShaderAndFlags QDemonDynamicObjectSystem::getDepthPrepassShader(const QByteArray &inPath, const QByteArray &inPMacro, const TShaderFeatureSet &inFeatureSet)
 {
     QDemonDynamicObjectShaderInfo &theShaderInfo = m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
     if (theShaderInfo.m_hasGeomShader == false)
         return TShaderAndFlags();
     // else, here we go...
     dynamic::QDemonDynamicShaderProgramFlags theFlags;
-    QByteArray shaderKey = inPMacro.toUtf8();
-    shaderKey.append("depthprepass");
+    const QByteArray shaderKey = inPMacro + QByteArrayLiteral("depthprepass");
 
     const QByteArray &theProgramMacro = shaderKey;
 
-    const dynamic::QDemonDynamicShaderMapKey shaderMapKey(TStrStrPair(inPath, QString::fromLatin1(theProgramMacro)),
+    const dynamic::QDemonDynamicShaderMapKey shaderMapKey(TStrStrPair(inPath, theProgramMacro),
                                                           inFeatureSet,
                                                           theFlags.tessMode,
                                                           theFlags.wireframeMode);
@@ -546,7 +545,7 @@ TShaderAndFlags QDemonDynamicObjectSystem::getDepthPrepassShader(const QString &
     const bool found = theInserter != m_shaderMap.end();
     if (found) {
         QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->shaderCache()
-                                                                  ->getProgram(getShaderCacheKey(inPath.toLocal8Bit(),
+                                                                  ->getProgram(getShaderCacheKey(inPath,
                                                                                                  theProgramMacro,
                                                                                                  theFlags),
                                                                                inFeatureSet);
@@ -574,7 +573,7 @@ TShaderAndFlags QDemonDynamicObjectSystem::getDepthPrepassShader(const QString &
             programBuffer.append(fragmentSource);
             programBuffer.append("\n#endif");
             flags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
-            theProgram = compileShader(inPath, programBuffer, geomSource, QString::fromLatin1(theProgramMacro), inFeatureSet, flags);
+            theProgram = compileShader(inPath, programBuffer, geomSource, theProgramMacro, inFeatureSet, flags);
         }
         theInserter.value() = TShaderAndFlags(theProgram, flags);
     }

@@ -690,21 +690,22 @@ struct QDemonStringMemoryBarrierFlagMap
     }
 };
 
-const QDemonStringMemoryBarrierFlagMap g_StringMemoryFlagMap[] = {
-    QDemonStringMemoryBarrierFlagMap("vertex_attribute", QDemonRenderBufferBarrierValues::VertexAttribArray),
-    QDemonStringMemoryBarrierFlagMap("element_array", QDemonRenderBufferBarrierValues::ElementArray),
-    QDemonStringMemoryBarrierFlagMap("uniform_buffer", QDemonRenderBufferBarrierValues::UniformBuffer),
-    QDemonStringMemoryBarrierFlagMap("texture_fetch", QDemonRenderBufferBarrierValues::TextureFetch),
-    QDemonStringMemoryBarrierFlagMap("shader_image_access", QDemonRenderBufferBarrierValues::ShaderImageAccess),
-    QDemonStringMemoryBarrierFlagMap("command_buffer", QDemonRenderBufferBarrierValues::CommandBuffer),
-    QDemonStringMemoryBarrierFlagMap("pixel_buffer", QDemonRenderBufferBarrierValues::PixelBuffer),
-    QDemonStringMemoryBarrierFlagMap("texture_update", QDemonRenderBufferBarrierValues::TextureUpdate),
-    QDemonStringMemoryBarrierFlagMap("buffer_update", QDemonRenderBufferBarrierValues::BufferUpdate),
-    QDemonStringMemoryBarrierFlagMap("frame_buffer", QDemonRenderBufferBarrierValues::Framebuffer),
-    QDemonStringMemoryBarrierFlagMap("transform_feedback", QDemonRenderBufferBarrierValues::TransformFeedback),
-    QDemonStringMemoryBarrierFlagMap("atomic_counter", QDemonRenderBufferBarrierValues::AtomicCounter),
-    QDemonStringMemoryBarrierFlagMap("shader_storage", QDemonRenderBufferBarrierValues::ShaderStorage),
-};
+// TODO:
+//const QDemonStringMemoryBarrierFlagMap g_StringMemoryFlagMap[] = {
+//    QDemonStringMemoryBarrierFlagMap("vertex_attribute", QDemonRenderBufferBarrierValues::VertexAttribArray),
+//    QDemonStringMemoryBarrierFlagMap("element_array", QDemonRenderBufferBarrierValues::ElementArray),
+//    QDemonStringMemoryBarrierFlagMap("uniform_buffer", QDemonRenderBufferBarrierValues::UniformBuffer),
+//    QDemonStringMemoryBarrierFlagMap("texture_fetch", QDemonRenderBufferBarrierValues::TextureFetch),
+//    QDemonStringMemoryBarrierFlagMap("shader_image_access", QDemonRenderBufferBarrierValues::ShaderImageAccess),
+//    QDemonStringMemoryBarrierFlagMap("command_buffer", QDemonRenderBufferBarrierValues::CommandBuffer),
+//    QDemonStringMemoryBarrierFlagMap("pixel_buffer", QDemonRenderBufferBarrierValues::PixelBuffer),
+//    QDemonStringMemoryBarrierFlagMap("texture_update", QDemonRenderBufferBarrierValues::TextureUpdate),
+//    QDemonStringMemoryBarrierFlagMap("buffer_update", QDemonRenderBufferBarrierValues::BufferUpdate),
+//    QDemonStringMemoryBarrierFlagMap("frame_buffer", QDemonRenderBufferBarrierValues::Framebuffer),
+//    QDemonStringMemoryBarrierFlagMap("transform_feedback", QDemonRenderBufferBarrierValues::TransformFeedback),
+//    QDemonStringMemoryBarrierFlagMap("atomic_counter", QDemonRenderBufferBarrierValues::AtomicCounter),
+//    QDemonStringMemoryBarrierFlagMap("shader_storage", QDemonRenderBufferBarrierValues::ShaderStorage),
+//};
 
 struct QDemonStringBlendFuncMap
 {
@@ -713,24 +714,25 @@ struct QDemonStringBlendFuncMap
     constexpr QDemonStringBlendFuncMap(const char *nm, QDemonRenderSrcBlendFunc val) : name(nm), value(val) {}
 };
 
-const QDemonStringBlendFuncMap g_BlendFuncMap[] = {
-    QDemonStringBlendFuncMap("Unknown", QDemonRenderSrcBlendFunc::Unknown),
-    QDemonStringBlendFuncMap("Zero", QDemonRenderSrcBlendFunc::Zero),
-    QDemonStringBlendFuncMap("One", QDemonRenderSrcBlendFunc::One),
-    QDemonStringBlendFuncMap("SrcColor", QDemonRenderSrcBlendFunc::SrcColor),
-    QDemonStringBlendFuncMap("OneMinusSrcColor", QDemonRenderSrcBlendFunc::OneMinusSrcColor),
-    QDemonStringBlendFuncMap("DstColor", QDemonRenderSrcBlendFunc::DstColor),
-    QDemonStringBlendFuncMap("OneMinusDstColor", QDemonRenderSrcBlendFunc::OneMinusDstColor),
-    QDemonStringBlendFuncMap("SrcAlpha", QDemonRenderSrcBlendFunc::SrcAlpha),
-    QDemonStringBlendFuncMap("OneMinusSrcAlpha", QDemonRenderSrcBlendFunc::OneMinusSrcAlpha),
-    QDemonStringBlendFuncMap("DstAlpha", QDemonRenderSrcBlendFunc::DstAlpha),
-    QDemonStringBlendFuncMap("OneMinusDstAlpha", QDemonRenderSrcBlendFunc::OneMinusDstAlpha),
-    QDemonStringBlendFuncMap("ConstantColor", QDemonRenderSrcBlendFunc::ConstantColor),
-    QDemonStringBlendFuncMap("OneMinusConstantColor", QDemonRenderSrcBlendFunc::OneMinusConstantColor),
-    QDemonStringBlendFuncMap("ConstantAlpha", QDemonRenderSrcBlendFunc::ConstantAlpha),
-    QDemonStringBlendFuncMap("OneMinusConstantAlpha", QDemonRenderSrcBlendFunc::OneMinusConstantAlpha),
-    QDemonStringBlendFuncMap("SrcAlphaSaturate", QDemonRenderSrcBlendFunc::SrcAlphaSaturate)
-};
+// TODO:
+//const QDemonStringBlendFuncMap g_BlendFuncMap[] = {
+//    QDemonStringBlendFuncMap("Unknown", QDemonRenderSrcBlendFunc::Unknown),
+//    QDemonStringBlendFuncMap("Zero", QDemonRenderSrcBlendFunc::Zero),
+//    QDemonStringBlendFuncMap("One", QDemonRenderSrcBlendFunc::One),
+//    QDemonStringBlendFuncMap("SrcColor", QDemonRenderSrcBlendFunc::SrcColor),
+//    QDemonStringBlendFuncMap("OneMinusSrcColor", QDemonRenderSrcBlendFunc::OneMinusSrcColor),
+//    QDemonStringBlendFuncMap("DstColor", QDemonRenderSrcBlendFunc::DstColor),
+//    QDemonStringBlendFuncMap("OneMinusDstColor", QDemonRenderSrcBlendFunc::OneMinusDstColor),
+//    QDemonStringBlendFuncMap("SrcAlpha", QDemonRenderSrcBlendFunc::SrcAlpha),
+//    QDemonStringBlendFuncMap("OneMinusSrcAlpha", QDemonRenderSrcBlendFunc::OneMinusSrcAlpha),
+//    QDemonStringBlendFuncMap("DstAlpha", QDemonRenderSrcBlendFunc::DstAlpha),
+//    QDemonStringBlendFuncMap("OneMinusDstAlpha", QDemonRenderSrcBlendFunc::OneMinusDstAlpha),
+//    QDemonStringBlendFuncMap("ConstantColor", QDemonRenderSrcBlendFunc::ConstantColor),
+//    QDemonStringBlendFuncMap("OneMinusConstantColor", QDemonRenderSrcBlendFunc::OneMinusConstantColor),
+//    QDemonStringBlendFuncMap("ConstantAlpha", QDemonRenderSrcBlendFunc::ConstantAlpha),
+//    QDemonStringBlendFuncMap("OneMinusConstantAlpha", QDemonRenderSrcBlendFunc::OneMinusConstantAlpha),
+//    QDemonStringBlendFuncMap("SrcAlphaSaturate", QDemonRenderSrcBlendFunc::SrcAlphaSaturate)
+//};
 
 
 QDemonMaterialSystem::QDemonMaterialSystem(QDemonRenderContextInterface *ct)
@@ -810,14 +812,19 @@ void QDemonMaterialSystem::setTexture(const QDemonRef<QDemonRenderShaderProgram>
 
 // TODO: Use an enum for the shader type?
 // Remove and call the setShaderData func directly?
-void QDemonMaterialSystem::setMaterialClassShader(QString inName, const QByteArray &inShaderType, const QByteArray &inShaderVersion,
+void QDemonMaterialSystem::setMaterialClassShader(const QByteArray &inName, const QByteArray &inShaderType, const QByteArray &inShaderVersion,
                                                   const QByteArray &inShaderData, bool inHasGeomShader, bool inIsComputeShader)
 {
     context->dynamicObjectSystem()->setShaderData(inName, inShaderData, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonMaterialSystem::getShader(QDemonCustomMaterialRenderContext &inRenderContext, const QDemonRenderCustomMaterial &inMaterial, const dynamic::QDemonBindShader &inCommand, const TShaderFeatureSet &inFeatureSet, const dynamic::QDemonDynamicShaderProgramFlags &inFlags)
+QDemonRef<QDemonRenderShaderProgram> QDemonMaterialSystem::getShader(QDemonCustomMaterialRenderContext &inRenderContext,
+                                                                     const QDemonRenderCustomMaterial &inMaterial,
+                                                                     const dynamic::QDemonBindShader &inCommand,
+                                                                     const TShaderFeatureSet &inFeatureSet,
+                                                                     const dynamic::QDemonDynamicShaderProgramFlags &inFlags)
 {
+    Q_UNUSED(inFlags);
     QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator(context->customMaterialShaderGenerator());
 
     // generate key
@@ -836,7 +843,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonMaterialSystem::getShader(QDemonCusto
                                                               inRenderContext.firstImage,
                                                               (inMaterial.m_hasTransparency || inMaterial.m_hasRefraction),
                                                               "custom material pipeline-- ",
-                                                              inCommand.m_shaderPath.toUtf8());
+                                                              inCommand.m_shaderPath);
 
     return theProgram;
 }
@@ -867,8 +874,9 @@ QDemonMaterialOrComputeShader QDemonMaterialSystem::bindShader(QDemonCustomMater
                                                  QDemonRef<QDemonCustomMaterialShader>(
                                                      new QDemonCustomMaterialShader(theProgram, theFlags)));
         }
-    } else if (theInsertResult.value())
+    } else if (theInsertResult.value()) {
         theProgram = theInsertResult.value()->shader;
+    }
 
     if (theProgram) {
         if (theProgram->programType() == QDemonRenderShaderProgram::ProgramType::Graphics) {
@@ -893,6 +901,7 @@ void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &inMa
                                                 QDemonRenderShaderDataType inPropertyType,
                                                 const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
+    Q_UNUSED(inMaterial)
     QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inPropertyName);
     if (Q_LIKELY(theConstant)) {
         if (theConstant->getShaderConstantType() == inPropertyType) {
@@ -1531,7 +1540,7 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
     }
 }
 
-QString QDemonMaterialSystem::getShaderName(const QDemonRenderCustomMaterial &inMaterial)
+QByteArray QDemonMaterialSystem::getShaderName(const QDemonRenderCustomMaterial &inMaterial)
 {
     auto it = inMaterial.commands.cbegin();
     const auto end = inMaterial.commands.cend();
@@ -1543,7 +1552,7 @@ QString QDemonMaterialSystem::getShaderName(const QDemonRenderCustomMaterial &in
     }
 
     Q_UNREACHABLE();
-    return QString();
+    return QByteArray();
 }
 
 void QDemonMaterialSystem::applyShaderPropertyValues(const QDemonRenderCustomMaterial &inMaterial, const QDemonRef<QDemonRenderShaderProgram> &inProgram)
@@ -1627,8 +1636,8 @@ bool QDemonMaterialSystem::renderDepthPrepass(const QMatrix4x4 &inMVP, const QDe
         if ((*it)->m_type == dynamic::CommandType::BindShader) {
             const dynamic::QDemonBindShader &theBindCommand = static_cast<const dynamic::QDemonBindShader &>(*(*it));
             thePrepassShader = context->dynamicObjectSystem()->getDepthPrepassShader(theBindCommand.m_shaderPath,
-                                                                                          QString(),
-                                                                                          TShaderFeatureSet());
+                                                                                     QByteArray(),
+                                                                                     TShaderFeatureSet());
         }
     }
 

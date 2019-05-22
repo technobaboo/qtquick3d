@@ -1048,14 +1048,20 @@ void Scene::setProperties(const QXmlStreamAttributes &attrs, PropSetFlags flags)
 
 void Scene::writeQmlHeader(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 void Scene::writeQmlProperties(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 void Scene::writeQmlFooter(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output);
+    Q_UNUSED(tabLevel);
 }
 
 Slide::Slide()
@@ -1156,14 +1162,20 @@ void Slide::removeAnimation(const AnimationTrack &track)
 
 void Slide::writeQmlHeader(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 void Slide::writeQmlProperties(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 void Slide::writeQmlFooter(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 Image::Image()
@@ -1213,6 +1225,9 @@ QString tilingModeToString(Image::TilingMode mode)
     case Image::NoTiling:
         return QStringLiteral("DemonImage.ClampToEdge");
     }
+
+    Q_ASSERT(false);
+    return QString();
 }
 }
 
@@ -1314,6 +1329,9 @@ QString rotationOrderToString(Node::RotationOrder ro) {
     case Node::ZYXr:
         return QStringLiteral("DemonNode.ZYXr");
     }
+
+    Q_ASSERT(false);
+    return QString();
 }
 QString orientationToString(Node::Orientation orientation)
 {
@@ -1394,6 +1412,9 @@ QString progressiveAAToString(LayerNode::ProgressiveAA mode)
     case LayerNode::PAA8x:
         return QStringLiteral("DemonSceneEnvironment.X8");
     }
+
+    Q_ASSERT(false);
+    return QString();
 }
 
 QString multisampleAAToString(LayerNode::MultisampleAA mode)
@@ -1408,6 +1429,9 @@ QString multisampleAAToString(LayerNode::MultisampleAA mode)
     case LayerNode::SSAA:
         return QStringLiteral("DemonSceneEnvironment.SSAA");
     }
+
+    Q_ASSERT(false);
+    return QString();
 }
 
 QString layerBackgroundToString(LayerNode::LayerBackground mode)
@@ -1420,6 +1444,9 @@ QString layerBackgroundToString(LayerNode::LayerBackground mode)
     case LayerNode::Unspecified:
         return QStringLiteral("DemonSceneEnvironment.Unspecified");
     }
+
+    Q_ASSERT(false);
+    return QString();
 }
 
 QString blendTypeToString(LayerNode::BlendType type)
@@ -1442,6 +1469,9 @@ QString blendTypeToString(LayerNode::BlendType type)
     case LayerNode::ColorDodge:
         return QStringLiteral("DemonSceneEnvironment.ColorDodge");
     }
+
+    Q_ASSERT(false);
+    return QString();
 }
 }
 
@@ -1685,6 +1715,8 @@ QString cameraScaleModeToString(CameraNode::ScaleMode mode)
     case CameraNode::FitVertical:
         return QStringLiteral("DemonCamera.FitVertical");
     }
+    Q_ASSERT(false);
+    return QString();
 }
 QString cameraScaleAnchorToString(CameraNode::ScaleAnchor anchor)
 {
@@ -1708,6 +1740,8 @@ QString cameraScaleAnchorToString(CameraNode::ScaleAnchor anchor)
     case CameraNode::NW:
         return QStringLiteral("DemonCamera.NorthWest");
     }
+    Q_ASSERT(false);
+    return QString();
 }
 
 }
@@ -1776,6 +1810,8 @@ QString lightTypeToString(LightNode::LightType type)
     case LightNode::Area:
         return QStringLiteral("DemonLight.Area");
     }
+    Q_ASSERT(false);
+    return QString();
 }
 }
 
@@ -1869,6 +1905,8 @@ QString tesselationModeToString(ModelNode::Tessellation mode)
     case ModelNode::NPatch:
         return QStringLiteral("DemonModel.TessNPatch");
     }
+    Q_ASSERT(false);
+    return QString();
 }
 }
 
@@ -1991,19 +2029,25 @@ void TextNode::setProperties(const QXmlStreamAttributes &attrs, PropSetFlags fla
 void TextNode::applyPropertyChanges(const PropertyChangeList &changeList)
 {
     Node::applyPropertyChanges(changeList);
-    setProps(changeList, 0);
+    setProps(changeList, nullptr);
 }
 
 void TextNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 void TextNode::writeQmlProperties(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 void TextNode::writeQmlFooter(QTextStream &output, int tabLevel)
 {
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 template<typename V>
@@ -2081,6 +2125,8 @@ QString shaderBlendModeToString(DefaultMaterial::BlendMode mode)
     case DefaultMaterial::ColorDodge:
         return QStringLiteral("DemonDefaultMaterial.ColorDodge");
     }
+    Q_ASSERT(false);
+    return QString();
 }
 QString shaderSpecularModelToString(DefaultMaterial::SpecularModel model)
 {
@@ -2092,6 +2138,8 @@ QString shaderSpecularModelToString(DefaultMaterial::SpecularModel model)
     case DefaultMaterial::KWard:
         return QStringLiteral("DemonDefaultMaterial.KWard");
     }
+    Q_ASSERT(false);
+    return QString();
 }
 }
 
@@ -2436,17 +2484,20 @@ void BehaviorInstance::applyPropertyChanges(const PropertyChangeList &changeList
 
 void BehaviorInstance::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 void BehaviorInstance::writeQmlProperties(QTextStream &output, int tabLevel)
 {
-
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 void BehaviorInstance::writeQmlFooter(QTextStream &output, int tabLevel)
 {
-
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 template<typename V>

@@ -49,7 +49,7 @@ struct QDemonRenderDynamicGraphObject;
 class QDemonRenderContextInterface;
 struct QDemonDynamicObjectClass;
 
-typedef QPair<QString, QString> TStrStrPair;
+typedef QPair<QByteArray, QByteArray> TStrStrPair;
 
 namespace dynamic {
 
@@ -101,13 +101,13 @@ struct QDemonDynamicShaderProgramFlags : public QDemonShaderCacheProgramFlags
 
 struct QDemonDynamicObjectShaderInfo
 {
-    QString m_type; ///< shader type (GLSL or HLSL)
-    QString m_version; ///< shader version (e.g. 330 vor GLSL)
+    QByteArray m_type; ///< shader type (GLSL or HLSL)
+    QByteArray m_version; ///< shader version (e.g. 330 vor GLSL)
     bool m_hasGeomShader;
     bool m_isComputeShader;
 
     QDemonDynamicObjectShaderInfo() : m_hasGeomShader(false), m_isComputeShader(false) {}
-    QDemonDynamicObjectShaderInfo(QString inType, QString inVersion, bool inHasGeomShader, bool inIsComputeShader)
+    QDemonDynamicObjectShaderInfo(const QByteArray &inType, const QByteArray &inVersion, bool inHasGeomShader, bool inIsComputeShader)
         : m_type(inType), m_version(inVersion), m_hasGeomShader(inHasGeomShader), m_isComputeShader(inIsComputeShader)
     {
     }
@@ -117,8 +117,8 @@ typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShader
 
 struct QDemonDynamicObjectSystem
 {
-    typedef QHash<QString, QByteArray> TPathDataMap;
-    typedef QHash<QString, QDemonDynamicObjectShaderInfo> TShaderInfoMap;
+    typedef QHash<QByteArray, QByteArray> TPathDataMap;
+    typedef QHash<QByteArray, QDemonDynamicObjectShaderInfo> TShaderInfoMap;
     typedef QSet<QString> TPathSet;
     typedef QHash<dynamic::QDemonDynamicShaderMapKey, TShaderAndFlags> TShaderMap;
 
@@ -140,43 +140,43 @@ struct QDemonDynamicObjectSystem
 
     ~QDemonDynamicObjectSystem();
 
-    void setShaderData(const QString &inPath,
+    void setShaderData(const QByteArray &inPath,
                        const QByteArray &inData,
                        const QByteArray &inShaderType,
                        const QByteArray &inShaderVersion,
                        bool inHasGeomShader,
                        bool inIsComputeShader);
 
-    QByteArray getShaderCacheKey(const char *inId, const char *inProgramMacro, const dynamic::QDemonDynamicShaderProgramFlags &inFlags);
+    QByteArray getShaderCacheKey(const QByteArray &inId, const QByteArray &inProgramMacro, const dynamic::QDemonDynamicShaderProgramFlags &inFlags);
 
     void insertShaderHeaderInformation(QByteArray &theReadBuffer, const QByteArray &inPathToEffect);
 
     void doInsertShaderHeaderInformation(QByteArray &theReadBuffer, const QByteArray &inPathToEffect);
 
-    QByteArray doLoadShader(const QString &inPathToEffect);
+    QByteArray doLoadShader(const QByteArray &inPathToEffect);
 
     QStringList getParameters(const QString &str, int begin, int end);
 
     void insertSnapperDirectives(QString &str);
 
-    QDemonRef<QDemonRenderShaderProgram> compileShader(QString inId,
-                                                       const char *inProgramSource,
-                                                       const char *inGeomSource,
-                                                       QString inProgramMacroName,
+    QDemonRef<QDemonRenderShaderProgram> compileShader(const QByteArray &inId,
+                                                       const QByteArray &inProgramSource,
+                                                       const QByteArray &inGeomSource,
+                                                       QByteArray inProgramMacroName,
                                                        TShaderFeatureSet inFeatureSet,
                                                        const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                                        bool inForceCompilation = false);
 
     // This just returns the custom material shader source without compiling
-    QByteArray getShaderSource(const QString &inPath);
+    QByteArray getShaderSource(const QByteArray &inPath);
 
-    TShaderAndFlags getShaderProgram(QString inPath,
-                                     QString inProgramMacro,
+    TShaderAndFlags getShaderProgram(const QByteArray &inPath,
+                                     const QByteArray &inProgramMacro,
                                      TShaderFeatureSet inFeatureSet,
                                      const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                      bool inForceCompilation);
 
-    TShaderAndFlags getDepthPrepassShader(const QString &inPath, const QString &inPMacro, const TShaderFeatureSet &inFeatureSet);
+    TShaderAndFlags getDepthPrepassShader(const QByteArray &inPath, const QByteArray &inPMacro, const TShaderFeatureSet &inFeatureSet);
 
     void setShaderCodeLibraryVersion(const QByteArray &version);
 

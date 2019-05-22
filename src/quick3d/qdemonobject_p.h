@@ -202,7 +202,7 @@ public:
 
     QDemonRenderGraphObject *spatialNode = nullptr;
 
-    bool componentComplete;
+    bool componentComplete = true;
     bool culled;
 };
 

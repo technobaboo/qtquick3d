@@ -56,15 +56,6 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace {
-void swapXY(QVector2D &v)
-{
-    const auto tmp = v.x();
-    v.setX(v.y());
-    v.setY(tmp);
-}
-}
-
 QDemonRenderContextInterface::~QDemonRenderContextInterface() = default;
 
 QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemonRenderContext> &ctx, const QString &inApplicationDirectory)

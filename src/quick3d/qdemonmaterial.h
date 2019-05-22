@@ -26,7 +26,7 @@ public:
     QDemonMaterial();
     ~QDemonMaterial();
 
-    QDemonObject::Type type() const = 0;
+    QDemonObject::Type type() const override = 0;
 
     QDemonImage *lightmapIndirect() const;
     QDemonImage *lightmapRadiosity() const;

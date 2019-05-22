@@ -39,8 +39,7 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderContext::QDemonRenderContext(const QDemonRef<QDemonRenderBackend> &inBackend)
     : m_backend(inBackend)
-    , m_dirtyFlags(0)
-    , m_defaultOffscreenRenderTarget((QDemonRenderBackend::QDemonRenderBackendRenderTargetObject) nullptr)
+    , m_defaultOffscreenRenderTarget(nullptr)
     , m_dephBits(16)
     , m_stencilBits(8)
     , m_nextTextureUnit(1)
@@ -281,8 +280,8 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileBinary(const c
 #endif
 }
 
-QDemonRenderVertFragCompilationResult QDemonRenderContext::compileComputeSource(const char *shaderName,
-                                                                                    QDemonByteView computeShaderSource)
+QDemonRenderVertFragCompilationResult QDemonRenderContext::compileComputeSource(const QByteArray &shaderName,
+                                                                                QDemonByteView computeShaderSource)
 {
     QDemonRenderVertFragCompilationResult result = QDemonRenderShaderProgram::createCompute(this, shaderName, computeShaderSource);
 
@@ -632,7 +631,7 @@ void QDemonRenderContext::drawIndirect(QDemonRenderDrawMode drawMode, quint32 of
 
     QDemonRef<QDemonRenderIndexBuffer> theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->indexBuffer();
     if (theIndexBuffer == nullptr)
-        m_backend->drawIndirect(drawMode, (const void *)offset);
+        m_backend->drawIndirect(drawMode, reinterpret_cast<const void *>(offset));
     else
         theIndexBuffer->drawIndirect(drawMode, offset);
 
@@ -648,21 +647,20 @@ QMatrix4x4 QDemonRenderContext::applyVirtualViewportToProjectionMatrix(const QMa
     // Run conversion to floating point once.
     QRectF theVirtualViewport(inVirtualViewport);
     QRectF theViewport(inViewport);
-    if (theVirtualViewport.width() == 0 || theVirtualViewport.height() == 0 || theViewport.width() == 0
-        || theViewport.height() == 0) {
+    if (Q_UNLIKELY(qFuzzyIsNull(theVirtualViewport.width()) || qFuzzyIsNull(theVirtualViewport.height()) || qFuzzyIsNull(theViewport.width())
+                   || qFuzzyIsNull(theViewport.height()))) {
         Q_ASSERT(false);
         return inProjection;
     }
     QMatrix4x4 theScaleTransMat;
-    float theHeightDiff = theViewport.height() - theVirtualViewport.height();
-    float theViewportOffY = theVirtualViewport.y() - theViewport.y();
-    QVector2D theCameraOffsets = QVector2D(theVirtualViewport.width() - theViewport.width()
-                                                   + (theVirtualViewport.x() - theViewport.x()) * 2.0f,
-                                           theHeightDiff + (theViewportOffY - theHeightDiff) * 2.0f);
-    QVector2D theCameraScale = QVector2D(theVirtualViewport.width() / theViewport.width(),
-                                         theVirtualViewport.height() / theViewport.height());
+    const qreal theHeightDiff = theViewport.height() - theVirtualViewport.height();
+    const qreal theViewportOffY = theVirtualViewport.y() - theViewport.y();
+    QVector2D theCameraOffsets = QVector2D(float(theVirtualViewport.width() - theViewport.width() + (theVirtualViewport.x() - theViewport.x())) * 2.0f,
+                                           float(theHeightDiff + (theViewportOffY - theHeightDiff)) * 2.0f);
+    QVector2D theCameraScale = QVector2D(float(theVirtualViewport.width() / theViewport.width()),
+                                         float(theVirtualViewport.height() / theViewport.height()));
 
-    QVector3D theTranslation(theCameraOffsets.x() / theViewport.width(), theCameraOffsets.y() / theViewport.height(), 0);
+    QVector3D theTranslation(theCameraOffsets.x() / float(theViewport.width()), theCameraOffsets.y() / float(theViewport.height()), 0.0f);
     QVector4D column3 = theScaleTransMat.column(3);
     column3.setX(theTranslation.x());
     column3.setY(theTranslation.y());

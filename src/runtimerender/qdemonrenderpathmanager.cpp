@@ -60,14 +60,12 @@ QT_BEGIN_NAMESPACE
 typedef QDemonPathUtilities::QDemonPathBuffer TImportPathBuffer;
 using namespace path;
 
-typedef QPair<QString, QString> TStrStrPair;
-
 struct QDemonPathShaderMapKey
 {
-    QString m_name;
+    QByteArray m_name;
     QDemonShaderDefaultMaterialKey m_materialKey;
     uint m_hashCode;
-    QDemonPathShaderMapKey(const QString &inName, QDemonShaderDefaultMaterialKey inKey)
+    QDemonPathShaderMapKey(const QByteArray &inName, QDemonShaderDefaultMaterialKey inKey)
         : m_name(inName), m_materialKey(inKey)
     {
         m_hashCode = qHash(m_name) ^ m_materialKey.hash();
@@ -145,9 +143,9 @@ struct QDemonPathBuffer
     {
         if (m_subPaths.size()) {
             inSpec.clear();
-            for (quint32 idx = 0, end = m_subPaths.size(); idx < end; ++idx) {
+            for (int idx = 0, end = m_subPaths.size(); idx < end; ++idx) {
                 const QDemonPathSubPathBuffer &theSubPathBuffer(*m_subPaths[idx]);
-                for (quint32 equationIdx = 0, equationEnd = theSubPathBuffer.m_sourceData.size(); equationIdx < equationEnd;
+                for (int equationIdx = 0, equationEnd = theSubPathBuffer.m_sourceData.size(); equationIdx < equationEnd;
                      ++equationIdx) {
                     const QDemonPathAnchorPoint &thePoint = theSubPathBuffer.m_sourceData[equationIdx];
                     if (equationIdx == 0) {
@@ -221,7 +219,7 @@ struct QDemonPathBuffer
 
     void setWidth(float inWidth)
     {
-        if (inWidth != m_width) {
+        if (!qFuzzyCompare(inWidth, m_width)) {
             m_width = inWidth;
             m_flags |= QDemonPathDirtyFlagValue::Width;
         }
@@ -229,7 +227,7 @@ struct QDemonPathBuffer
 
     void setCPUError(float inError)
     {
-        if (inError != m_cpuError) {
+        if (!qFuzzyCompare(inError, m_cpuError)) {
             m_cpuError = inError;
             m_flags |= QDemonPathDirtyFlagValue::CPUError;
         }
@@ -704,9 +702,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     void setPathSubPathData(const QDemonRenderSubPath &inPath, QDemonDataView<QDemonPathAnchorPoint> inPathCubicCurves) override
     {
         QMutexLocker locker(&m_pathBufferMutex);
-        TPathSubPathBufferHash::iterator inserter = m_subPathBuffers.find((QDemonRenderSubPath *)&inPath);
+        auto inserter = m_subPathBuffers.find(const_cast<QDemonRenderSubPath *>(&inPath));
         if (inserter == m_subPathBuffers.end()) {
-            inserter = m_subPathBuffers.insert((QDemonRenderSubPath *)&inPath,
+            inserter = m_subPathBuffers.insert(const_cast<QDemonRenderSubPath *>(&inPath),
                                                QDemonRef<QDemonPathSubPathBuffer>(new QDemonPathSubPathBuffer(
                                                        const_cast<QDemonRenderSubPath &>(inPath))));
         }
@@ -720,16 +718,16 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QDemonRef<QDemonPathBuffer> getPathBufferObject(const QDemonRenderPath &inPath)
     {
-        TPathBufferHash::iterator inserter = m_buffers.find((QDemonRenderPath *)&inPath);
+        TPathBufferHash::iterator inserter = m_buffers.find(const_cast<QDemonRenderPath *>(&inPath));
         if (inserter == m_buffers.end())
-            inserter = m_buffers.insert((QDemonRenderPath *)&inPath, QDemonRef<QDemonPathBuffer>(new QDemonPathBuffer()));
+            inserter = m_buffers.insert(const_cast<QDemonRenderPath *>(&inPath), QDemonRef<QDemonPathBuffer>(new QDemonPathBuffer()));
 
         return inserter.value();
     }
 
     QDemonRef<QDemonPathSubPathBuffer> getPathBufferObject(const QDemonRenderSubPath &inSubPath)
     {
-        TPathSubPathBufferHash::iterator iter = m_subPathBuffers.find((QDemonRenderSubPath *)&inSubPath);
+        TPathSubPathBufferHash::iterator iter = m_subPathBuffers.find(const_cast<QDemonRenderSubPath *>(&inSubPath));
         if (iter != m_subPathBuffers.end())
             return iter.value();
         return nullptr;
@@ -739,7 +737,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     {
         QDemonRef<QDemonPathSubPathBuffer> theBuffer = getPathBufferObject(inPath);
         if (theBuffer)
-            return toDataRef(theBuffer->m_sourceData.data(), (quint32)theBuffer->m_sourceData.size());
+            return toDataRef(theBuffer->m_sourceData.data(), quint32(theBuffer->m_sourceData.size()));
         return QDemonDataRef<QDemonPathAnchorPoint>();
     }
 
@@ -749,9 +747,10 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (theBuffer == nullptr)
             setPathSubPathData(inPath, QDemonDataView<QDemonPathAnchorPoint>());
         theBuffer = getPathBufferObject(inPath);
-        theBuffer->m_sourceData.resize(inNumAnchors);
+        Q_ASSERT(inNumAnchors > INT_MAX);
+        theBuffer->m_sourceData.resize(int(inNumAnchors));
         theBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
-        return toDataRef(theBuffer->m_sourceData.data(), (quint32)theBuffer->m_sourceData.size());
+        return toDataRef(theBuffer->m_sourceData.data(), quint32(theBuffer->m_sourceData.size()));
     }
 
     // This needs to be done using roots of the first derivative.
@@ -775,8 +774,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             if (!theBuffer)
                 continue;
 
-            quint32 numAnchors = theBuffer->m_sourceData.size();
-            for (quint32 idx = 0, end = numAnchors; idx < end; ++idx) {
+            int numAnchors = theBuffer->m_sourceData.size();
+            for (int idx = 0, end = numAnchors; idx < end; ++idx) {
                 const QDemonPathAnchorPoint &thePoint(theBuffer->m_sourceData[idx]);
                 QVector2D position(thePoint.position);
                 retval.include(QVector3D(position.x(), position.y(), 0.0f));
@@ -807,7 +806,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         incomingDxDy.normalize();
         outgoingDxDy.normalize();
         float determinant = (incomingDxDy.x() * outgoingDxDy.y()) - (incomingDxDy.y() * outgoingDxDy.x());
-        if (fabs(determinant) > .001f) {
+        if (std::fabs(determinant) > .001f) {
             float mult = determinant > 0.0f ? 1.0f : -1.0f;
             QVector2D incomingNormal(incomingDxDy.y(), -incomingDxDy.x());
             QVector2D outgoingNormal(outgoingDxDy.y(), -outgoingDxDy.x());
@@ -823,7 +822,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     QDemonOption<QPair<quint32, float>> findBreakEquation(float inTaperStart)
     {
         float lengthTotal = 0;
-        for (quint32 idx = 0, end = m_subdivResult.size(); idx < end; ++idx) {
+        for (int idx = 0, end = m_subdivResult.size(); idx < end; ++idx) {
             if (lengthTotal + m_subdivResult[idx].m_length > inTaperStart) {
                 float breakTValue = (inTaperStart - lengthTotal) / m_subdivResult[idx].m_length;
                 QVector<QDemonResultCubic>::iterator breakIter = m_subdivResult.begin() + idx;
@@ -849,7 +848,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                            originalLength * breakTValue);
 
                 m_subdivResult.insert(breakIter, newCubic);
-                return QPair<quint32, float>(idx, breakTValue);
+                return QPair<quint32, float>(quint32(idx), breakTValue);
             }
             lengthTotal += m_subdivResult[idx].m_length;
         }
@@ -875,10 +874,10 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!inPathBuffer.m_patchData || (((quint32)inPathBuffer.m_flags) & (quint32)geomDirtyFlags) != 0) {
             QDemonPathUtilities::QDemonPathBuffer thePathData = inPathBuffer.getPathData(*m_pathBuilder);
 
-            quint32 dataIdx = 0;
+            int dataIdx = 0;
             QVector2D prevPoint(0, 0);
-            quint32 equationIdx = 0;
-            for (quint32 commandIdx = 0, commandEnd = thePathData.commands.size(); commandIdx < commandEnd; ++commandIdx) {
+            int equationIdx = 0;
+            for (int commandIdx = 0, commandEnd = thePathData.commands.size(); commandIdx < commandEnd; ++commandIdx) {
                 switch (thePathData.commands[commandIdx]) {
                 case QDemonPathUtilities::PathCommand::MoveTo:
                     prevPoint = QVector2D(thePathData.data[dataIdx], thePathData.data[dataIdx + 1]);
@@ -895,7 +894,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                       m_keyPointVec,
                                                       QDemonCubicBezierCurve(prevPoint, c1, c2, p2),
                                                       qMax(inPath.m_linearError, 1.0f),
-                                                      equationIdx);
+                                                      quint32(equationIdx));
                     ++equationIdx;
                     prevPoint = p2;
                 } break;
@@ -914,8 +913,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             QVector2D theEndTaperData(theLocalWidth, thePath.globalOpacity);
 
             float pathLength = 0.0f;
-            for (quint32 idx = 0, end = m_subdivResult.size(); idx < end; ++idx)
-                pathLength += m_subdivResult[idx].m_length;
+            for (int idx = 0, end = m_subdivResult.size(); idx < end; ++idx)
+                pathLength += m_subdivResult.at(idx).m_length;
 
             if (thePath.m_beginCapping == QDemonRenderPath::Capping::Taper || thePath.m_endCapping == QDemonRenderPath::Capping::Taper) {
                 float maxTaperStart = pathLength / 2.0f;
@@ -931,7 +930,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                         quint32 breakEquation = breakEquationAndT->first;
 
                         float lengthTotal = 0;
-                        for (quint32 idx = 0, end = breakEquation; idx <= end; ++idx) {
+                        for (int idx = 0, end = int(breakEquation); idx <= end; ++idx) {
                             QDemonResultCubic &theCubic = m_subdivResult[idx];
                             theCubic.m_mode = QDemonResultCubic::BeginTaper;
 
@@ -954,7 +953,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                         ++breakEquation;
 
                         float lengthTotal = 0;
-                        for (quint32 idx = breakEquation, end = m_subdivResult.size(); idx < end; ++idx) {
+                        for (int idx = int(breakEquation), end = m_subdivResult.size(); idx < end; ++idx) {
                             QDemonResultCubic &theCubic = m_subdivResult[idx];
                             theCubic.m_mode = QDemonResultCubic::EndTaper;
 
@@ -977,7 +976,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             // texture coords
             float texCoordU = 0.0;
 
-            for (quint32 idx = 0, end = m_subdivResult.size(); idx < end; ++idx) {
+            for (int idx = 0, end = m_subdivResult.size(); idx < end; ++idx) {
                 // create patches
                 QDemonResultCubic thePoint(m_subdivResult[idx]);
 
@@ -1015,7 +1014,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 taperData.setX(thePoint.m_taperMultiplier.x());
                 taperData.setY(thePoint.m_taperMultiplier.y());
                 // Note we could put a *lot* more data into this thing.
-                taperData.setZ((float)thePoint.m_mode);
+                taperData.setZ(float(thePoint.m_mode));
                 m_patchBuffer.push_back(taperData);
 
                 // texture coord generation
@@ -1027,14 +1026,14 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             }
 
             // buffer size is 3.0*4.0*bufSize
-            quint32 bufSize = (quint32)m_patchBuffer.size() * sizeof(QVector4D);
+            quint32 bufSize = quint32(m_patchBuffer.size()) * sizeof(QVector4D);
             quint32 stride = sizeof(QVector4D);
 
             if ((!inPathBuffer.m_patchData) || inPathBuffer.m_patchData->size() < bufSize) {
                 inPathBuffer.m_patchData = new QDemonRenderVertexBuffer(theRenderContext, QDemonRenderBufferUsageType::Dynamic,
                                                                         stride,
                                                                         toByteView(m_patchBuffer));
-                inPathBuffer.m_numVertexes = (quint32)m_patchBuffer.size();
+                inPathBuffer.m_numVertexes = quint32(m_patchBuffer.size());
                 inPathBuffer.m_inputAssembler = nullptr;
             } else {
                 Q_ASSERT(inPathBuffer.m_patchData->size() >= bufSize);
@@ -1056,7 +1055,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                                        toDataView(inPathBuffer.m_patchData),
                                                                                        nullptr,
                                                                                        toDataView(stride),
-                                                                                       toDataView((quint32)0),
+                                                                                       toDataView(quint32(0)),
                                                                                        primType,
                                                                                        inputPatchVertexCount);
             }
@@ -1085,7 +1084,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         return theMaterialGenerator;
     }
 
-    QString getMaterialNameForKey(QDemonPathRenderContext &inRenderContext)
+    QByteArray getMaterialNameForKey(QDemonPathRenderContext &inRenderContext)
     {
         bool isDefaultMaterial = (inRenderContext.material.type == QDemonRenderGraphObject::Type::DefaultMaterial);
 
@@ -1097,7 +1096,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             return theMaterialSystem->getShaderName(theCustomMaterial);
         }
 
-        return QString();
+        return QByteArray();
     }
 
     bool preparePaintedPathForRender(const QDemonRenderPath &inPath, QDemonPathBuffer &inPathBuffer)
@@ -1116,8 +1115,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             m_pathSpecification->reset();
             QDemonPathUtilities::QDemonPathBuffer thePathData = inPathBuffer.getPathData(*m_pathBuilder);
 
-            quint32 dataIdx = 0;
-            for (quint32 commandIdx = 0, commandEnd = thePathData.commands.size(); commandIdx < commandEnd; ++commandIdx) {
+            int dataIdx = 0;
+            for (int commandIdx = 0, commandEnd = thePathData.commands.size(); commandIdx < commandEnd; ++commandIdx) {
 
                 switch (thePathData.commands[commandIdx]) {
                 case QDemonPathUtilities::PathCommand::MoveTo:
@@ -1304,7 +1303,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         bool isDepthEnabled = theRenderContext->isDepthTestEnabled();
         bool isStencilEnabled = theRenderContext->isStencilTestEnabled();
         bool isDepthWriteEnabled = theRenderContext->isDepthWriteEnabled();
-        for (quint32 idx = 0, end = m_depthStencilStates.size(); idx < end; ++idx) {
+        for (int idx = 0, end = m_depthStencilStates.size(); idx < end; ++idx) {
             QDemonRef<QDemonRenderDepthStencilState> theState = m_depthStencilStates[idx];
             if (theState->depthFunction() == theDepthFunction && theState->depthEnabled() == isDepthEnabled
                 && theState->depthMask() == isDepthWriteEnabled)
@@ -1397,7 +1396,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                                  toDataView(m_paintedRectVertexBuffer),
                                                                                  m_paintedRectIndexBuffer,
                                                                                  toDataView(stride),
-                                                                                 toDataView((quint32)0),
+                                                                                 toDataView(quint32(0)),
                                                                                  QDemonRenderDrawMode::Triangles);
         }
 
@@ -1655,7 +1654,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                       inFeatureSet,
                                                                       inRenderProperties.lights,
                                                                       inRenderContext.firstImage,
-                                                                      inRenderContext.opacity < 1.0,
+                                                                      inRenderContext.opacity < 1.0f,
                                                                       "path geometry pipeline-- ");
                 } else {
                     QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_context->customMaterialSystem());
@@ -1669,9 +1668,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                           inFeatureSet,
                                                           inRenderProperties.lights,
                                                           inRenderContext.firstImage,
-                                                          inRenderContext.opacity < 1.0,
+                                                          inRenderContext.opacity < 1.0f,
                                                           "path geometry pipeline-- ",
-                                                          theMaterialSystem->getShaderName(theCustomMaterial).toUtf8());
+                                                          theMaterialSystem->getShaderName(theCustomMaterial));
                 }
 
                 if (theProgram)
@@ -1702,7 +1701,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                       inFeatureSet,
                                                                       inRenderProperties.lights,
                                                                       inRenderContext.firstImage,
-                                                                      inRenderContext.opacity < 1.0,
+                                                                      inRenderContext.opacity < 1.0f,
                                                                       "path painted pipeline-- ");
                 } else {
                     QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_context->customMaterialSystem());
@@ -1716,9 +1715,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                           inFeatureSet,
                                                           inRenderProperties.lights,
                                                           inRenderContext.firstImage,
-                                                          inRenderContext.opacity < 1.0,
+                                                          inRenderContext.opacity < 1.0f,
                                                           "path painted pipeline-- ",
-                                                          theMaterialSystem->getShaderName(theCustomMaterial).toUtf8());
+                                                          theMaterialSystem->getShaderName(theCustomMaterial));
                 }
 
                 if (theProgram)

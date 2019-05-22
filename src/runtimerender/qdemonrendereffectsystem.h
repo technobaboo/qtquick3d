@@ -114,7 +114,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystem
     QDemonRef<QDemonResourceManager> m_resourceManager;
     // Keep from dual-including headers.
     TEffectClassMap m_effectClasses;
-    QVector<QString> m_effectList;
+    QVector<QByteArray> m_effectList;
     TContextList m_contexts;
     QString m_textureStringBuilder;
     QString m_textureStringBuilder2;
@@ -130,11 +130,10 @@ public:
 
     QDemonEffectContext &getEffectContext(QDemonRenderEffect &inEffect);
 
-    QDemonRef<QDemonEffectClass> getEffectClass(const QByteArray &inStr);
-    const QDemonRef<QDemonEffectClass> getEffectClass(const QString &inStr) const;
+    const QDemonRef<QDemonEffectClass> getEffectClass(const QByteArray &inStr) const;
 
     bool isEffectRegistered(const QByteArray &inStr);
-    QVector<QString> getRegisteredEffects();
+    QVector<QByteArray> getRegisteredEffects();
 
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
@@ -194,7 +193,7 @@ public:
                                                   QMatrix4x4 &outMVP,
                                                   QVector2D &outDestSize);
 
-    QDemonRef<QDemonEffectShader> bindShader(const QString &inEffectId, const dynamic::QDemonBindShader &inCommand);
+    QDemonRef<QDemonEffectShader> bindShader(const QByteArray &inEffectId, const dynamic::QDemonBindShader &inCommand);
 
     void doApplyInstanceValue(QDemonRenderEffect *inEffect,
                               const QByteArray &inPropertyName,
@@ -285,7 +284,7 @@ public:
     // the data has been
     // auto-generated.  The system will look for data under this path key during the BindShader
     // effect command.
-    void setShaderData(QString path, const char *data, const char *inShaderType, const char *inShaderVersion, bool inHasGeomShader, bool inIsComputeShader);
+    void setShaderData(const QByteArray &path, const char *data, const char *inShaderType, const char *inShaderVersion, bool inHasGeomShader, bool inIsComputeShader);
 
     void init();
 

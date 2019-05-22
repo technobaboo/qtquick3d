@@ -173,7 +173,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonRen
     QDemonRenderGraphObject *m_nextSibling = nullptr;
 
     MaterialShaderKeyFlags m_shaderKeyValues; ///< input from MDL files
-    quint32 m_layerCount = 0; ///< input from MDL files
+    qint32 m_layerCount = 0; ///< input from MDL files
 
     Flags flags;
     bool m_alwaysDirty = false;

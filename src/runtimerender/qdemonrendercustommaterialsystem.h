@@ -78,7 +78,7 @@ public:
 private:
     typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonCustomMaterialShader>> ShaderMap;
     typedef QPair<QString, QDemonRenderImage *> AllocatedImageEntry;
-    typedef QPair<QString, QString> TStrStrPair;
+    typedef QPair<QByteArray, QByteArray> TStrStrPair;
     typedef QPair<QByteArray, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
 
     QDemonRenderContextInterface *context = nullptr;
@@ -162,7 +162,7 @@ public:
 
     ~QDemonMaterialSystem();
 
-    void setMaterialClassShader(QString inName,
+    void setMaterialClassShader(const QByteArray &inName,
                                 const QByteArray &inShaderType,
                                 const QByteArray &inShaderVersion,
                                 const QByteArray &inShaderData,
@@ -182,7 +182,7 @@ public:
     void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, const TShaderFeatureSet &inFeatureSet);
 
     // get shader name
-    QString getShaderName(const QDemonRenderCustomMaterial &inMaterial);
+    QByteArray getShaderName(const QDemonRenderCustomMaterial &inMaterial);
     // apply property values
     void applyShaderPropertyValues(const QDemonRenderCustomMaterial &inMaterial, const QDemonRef<QDemonRenderShaderProgram> &inProgram);
     // Called by the uiccontext so this system can clear any per-frame render information.

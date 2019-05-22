@@ -55,8 +55,6 @@ using namespace dynamic;
 // None of this code will work if the size of void* changes because that would mean that
 // the alignment of some of the objects isn't 4 bytes but would be 8 bytes.
 
-typedef QPair<QString, QString> TStrStrPair;
-
 /*
                 ApplyBufferValue,
                 //Apply the depth buffer as an input texture.
@@ -433,41 +431,47 @@ QDemonEffectContext &QDemonEffectSystem::getEffectContext(QDemonRenderEffect &in
     return *inEffect.m_context;
 }
 
-QDemonRef<QDemonEffectClass> QDemonEffectSystem::getEffectClass(const QByteArray &inStr)
+const QDemonRef<QDemonEffectClass> QDemonEffectSystem::getEffectClass(const QByteArray &inStr) const
 {
-    TEffectClassMap::iterator theIter = m_effectClasses.find(inStr);
-    if (theIter != m_effectClasses.end())
+    const auto theIter = m_effectClasses.constFind(inStr);
+    if (theIter != m_effectClasses.cend())
         return theIter.value();
     return nullptr;
 }
 
-const QDemonRef<QDemonEffectClass> QDemonEffectSystem::getEffectClass(const QString &inStr) const
-{
-    return const_cast<QDemonEffectSystem *>(this)->getEffectClass(inStr);
-}
-
 bool QDemonEffectSystem::isEffectRegistered(const QByteArray &inStr) { return getEffectClass(inStr) != nullptr; }
 
-QVector<QString> QDemonEffectSystem::getRegisteredEffects()
+QVector<QByteArray> QDemonEffectSystem::getRegisteredEffects()
 {
     m_effectList.clear();
-    for (TEffectClassMap::iterator theIter = m_effectClasses.begin(), theEnd = m_effectClasses.end(); theIter != theEnd; ++theIter)
+    auto theIter = m_effectClasses.cbegin();
+    const auto theEnd = m_effectClasses.cend();
+    for (; theIter != theEnd; ++theIter)
         m_effectList.push_back(theIter.key());
     return m_effectList;
 }
 
 void QDemonEffectSystem::setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonByteView inDefaultData)
 {
+    Q_UNUSED(inName)
+    Q_UNUSED(inPropName)
+    Q_UNUSED(inDefaultData)
+    Q_ASSERT(0);
     //        m_context->dynamicObjectSystem()->setPropertyDefaultValue(inName, inPropName, inDefaultData);
 }
 
 void QDemonEffectSystem::setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonDataView<QString> inNames)
 {
+    Q_UNUSED(inName)
+    Q_UNUSED(inPropName)
+    Q_UNUSED(inNames)
+    Q_ASSERT(0);
     //        m_context->dynamicObjectSystem()->setPropertyEnumNames(inName, inPropName, inNames);
 }
 
 bool QDemonEffectSystem::registerEffect(const QByteArray &inName)
 {
+    Q_UNUSED(inName)
     Q_ASSERT(0);
 //    if (isEffectRegistered(inName))
 //        return false;
@@ -481,6 +485,8 @@ return false;
 
 bool QDemonEffectSystem::unregisterEffect(const QByteArray &inName)
 {
+    Q_UNUSED(inName)
+    Q_ASSERT(0);
     //        if (!isEffectRegistered(inName))
     //            return false;
 
@@ -498,14 +504,31 @@ bool QDemonEffectSystem::unregisterEffect(const QByteArray &inName)
     return false;
 }
 
-void QDemonEffectSystem::setEffectPropertyTextureSettings(QString inName, QString inPropName, QString inPropPath, QDemonRenderTextureTypeValue inTexType, QDemonRenderTextureCoordOp inCoordOp, QDemonRenderTextureMagnifyingOp inMagFilterOp, QDemonRenderTextureMinifyingOp inMinFilterOp)
+void QDemonEffectSystem::setEffectPropertyTextureSettings(QString inName,
+                                                          QString inPropName,
+                                                          QString inPropPath,
+                                                          QDemonRenderTextureTypeValue inTexType,
+                                                          QDemonRenderTextureCoordOp inCoordOp,
+                                                          QDemonRenderTextureMagnifyingOp inMagFilterOp,
+                                                          QDemonRenderTextureMinifyingOp inMinFilterOp)
 {
+    Q_UNUSED(inName)
+    Q_UNUSED(inPropName)
+    Q_UNUSED(inPropPath)
+    Q_UNUSED(inTexType)
+    Q_UNUSED(inCoordOp)
+    Q_UNUSED(inMagFilterOp)
+    Q_UNUSED(inMinFilterOp)
+    Q_ASSERT(0);
     //        m_context->dynamicObjectSystem()
     //                ->setPropertyTextureSettings(inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
 }
 
 void QDemonEffectSystem::setEffectRequiresDepthTexture(const QByteArray &inEffectName, bool inValue)
 {
+    Q_UNUSED(inEffectName)
+    Q_UNUSED(inValue)
+    Q_ASSERT(0);
     //        auto theClass = getEffectClass(inEffectName);
     //        if (theClass == nullptr) {
     //            Q_ASSERT(false);
@@ -516,6 +539,8 @@ void QDemonEffectSystem::setEffectRequiresDepthTexture(const QByteArray &inEffec
 
 bool QDemonEffectSystem::doesEffectRequireDepthTexture(const QByteArray &inEffectName) const
 {
+    Q_UNUSED(inEffectName)
+    Q_ASSERT(0);
     //        const auto theClass = getEffectClass(inEffectName);
     //        if (theClass == nullptr) {
     //            Q_ASSERT(false);
@@ -527,17 +552,20 @@ bool QDemonEffectSystem::doesEffectRequireDepthTexture(const QByteArray &inEffec
 
 void QDemonEffectSystem::setEffectRequiresCompilation(const QByteArray &inEffectName, bool inValue)
 {
+    Q_UNUSED(inValue)
+    Q_ASSERT(0);
     auto theClass = getEffectClass(inEffectName);
     if (theClass == nullptr) {
         Q_ASSERT(false);
         return;
     }
-    Q_ASSERT(0);
 //    theClass->dynamicClass->setRequiresCompilation(inValue);
 }
 
 bool QDemonEffectSystem::doesEffectRequireCompilation(const QByteArray &inEffectName) const
 {
+    Q_UNUSED(inEffectName)
+    Q_ASSERT(0);
     //        const auto theClass = getEffectClass(inEffectName);
     //        if (theClass == nullptr) {
     //            Q_ASSERT(false);
@@ -640,8 +668,8 @@ void QDemonEffectSystem::allocateImage(QDemonRenderEffect &inEffect, const QDemo
 
 void QDemonEffectSystem::allocateDataBuffer(QDemonRenderEffect &inEffect, const QDemonAllocateDataBuffer &inCommand)
 {
-    quint32 theBufferSize = (quint32)inCommand.m_size;
-    Q_ASSERT(theBufferSize);
+    const qint32 theBufferSize = qint32(inCommand.m_size);
+    Q_ASSERT(theBufferSize > 0);
     QDemonRef<QDemonRenderDataBuffer> theDataBuffer;
     QDemonRef<QDemonRenderDataBuffer> theDataWrapBuffer;
 
@@ -754,7 +782,7 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonEffectSystem::bindBuffer(QDemonRenderEf
     return theBuffer;
 }
 
-QDemonRef<QDemonEffectShader> QDemonEffectSystem::bindShader(const QString &inEffectId, const QDemonBindShader &inCommand)
+QDemonRef<QDemonEffectShader> QDemonEffectSystem::bindShader(const QByteArray &inEffectId, const QDemonBindShader &inCommand)
 {
     auto theClass = getEffectClass(inEffectId);
     if (!theClass) {
@@ -936,6 +964,11 @@ void QDemonEffectSystem::applyInstanceValue(QDemonRenderEffect *inEffect,
                                             const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                             const QDemonApplyInstanceValue &inCommand)
 {
+    Q_UNUSED(inEffect)
+    Q_UNUSED(inClass)
+    Q_UNUSED(inShader)
+    Q_UNUSED(inCommand)
+    Q_ASSERT(0);
     // sanity check
     //        if (!inCommand.m_propertyName.isEmpty()) {
     //            bool canGetData = inCommand.m_valueOffset + getSizeofShaderDataType(inCommand.m_valueType) <= inEffect->dataSectionByteSize;
@@ -964,6 +997,11 @@ void QDemonEffectSystem::applyInstanceValue(QDemonRenderEffect *inEffect,
 
 void QDemonEffectSystem::applyValue(QDemonRenderEffect *inEffect, const QDemonRef<QDemonEffectClass> &inClass, const QDemonRef<QDemonRenderShaderProgram> &inShader, const QDemonApplyValue &inCommand)
 {
+    Q_UNUSED(inEffect)
+    Q_UNUSED(inClass)
+    Q_UNUSED(inShader)
+    Q_UNUSED(inCommand)
+    Q_ASSERT(0);
     //        if (!inCommand.m_propertyName.isEmpty()) {
     //            quint8 *dataPtr = inCommand.m_value.mData;
     //            const QDemonPropertyDefinition *theDefinition = inClass->dynamicClass->findPropertyByName(inCommand.m_propertyName);
@@ -1368,7 +1406,7 @@ void QDemonEffectSystem::doRenderEffect(QDemonRenderEffect *inEffect,
                 }
             } break;
             case CommandType::BindShader:
-                theCurrentShader = bindShader(QString::fromLatin1(inEffect->className), static_cast<const QDemonBindShader &>(*theCommand));
+                theCurrentShader = bindShader(inEffect->className, static_cast<const QDemonBindShader &>(*theCommand));
                 break;
             case CommandType::ApplyInstanceValue:
                 if (theCurrentShader)
@@ -1579,7 +1617,7 @@ void QDemonEffectSystem::resetEffectFrameData(QDemonEffectContext &inContext)
     }
 }
 
-void QDemonEffectSystem::setShaderData(QString path, const char *data, const char *inShaderType, const char *inShaderVersion, bool inHasGeomShader, bool inIsComputeShader)
+void QDemonEffectSystem::setShaderData(const QByteArray &path, const char *data, const char *inShaderType, const char *inShaderVersion, bool inHasGeomShader, bool inIsComputeShader)
 {
     m_context->dynamicObjectSystem()->setShaderData(path, data, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
 }

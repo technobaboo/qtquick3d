@@ -108,6 +108,7 @@ void QDemonSceneManager::updateDirtyResource(QDemonObject *resourceObject)
 {
     QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(resourceObject);
     quint32 dirty = itemPriv->dirtyAttributes;
+    Q_UNUSED(dirty)
     itemPriv->dirtyAttributes = 0;
     itemPriv->spatialNode = resourceObject->updateSpatialNode(itemPriv->spatialNode);
 
@@ -118,6 +119,7 @@ void QDemonSceneManager::updateDirtySpatialNode(QDemonNode *spatialNode)
 {
     QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(spatialNode);
     quint32 dirty = itemPriv->dirtyAttributes;
+    Q_UNUSED(dirty)
     itemPriv->dirtyAttributes = 0;
     itemPriv->spatialNode = spatialNode->updateSpatialNode(itemPriv->spatialNode);
 

@@ -62,7 +62,6 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
     d->removeFromDirtyList();
 
     QDemonObject *oldParentItem = d->parentItem;
-    QDemonObject *scopeFocusedItem = nullptr;
 
     if (oldParentItem) {
         QDemonObjectPrivate *op = QDemonObjectPrivate::get(oldParentItem);
@@ -209,8 +208,7 @@ void QDemonObject::componentComplete()
 }
 
 QDemonObjectPrivate::QDemonObjectPrivate()
-    : componentComplete(true)
-    , _stateGroup(nullptr)
+    : _stateGroup(nullptr)
     , dirtyAttributes(0)
     , nextDirtyItem(nullptr)
     , prevDirtyItem(nullptr)
@@ -726,6 +724,7 @@ void QDemonObjectPrivate::siblingOrderChanged()
 
 void QDemonObjectPrivate::markSortedChildrenDirty(QDemonObject *child)
 {
+    Q_UNUSED(child);
 }
 
 void QDemonObjectPrivate::refSceneRenderer(QDemonSceneManager *c)
@@ -832,6 +831,10 @@ void QDemonObjectPrivate::itemChange(QDemonObject::ItemChange change, const QDem
 {
     Q_Q(QDemonObject);
     switch (change) {
+    case QDemonObject::ItemRotationHasChanged:
+        // TODO:
+        qWarning("ItemRoationHasChange is unhandled!!!!");
+        break;
     case QDemonObject::ItemChildAddedChange: {
         q->itemChange(change, data);
         if (!changeListeners.isEmpty()) {

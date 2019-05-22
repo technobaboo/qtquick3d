@@ -218,13 +218,13 @@ struct QDemonBindBuffer : public QDemonCommand
 
 struct QDemonBindShader : public QDemonCommand
 {
-    QString m_shaderPath;
+    QByteArray m_shaderPath;
     // One GLSL file can hold multiple shaders in the case of multipass effects.
     // This makes it significantly easier for authors to reason about the shader
     // but it means we need to #define a preprocessor token to indicate which
     // effect we intend to compile at this point.
-    QString m_shaderDefine;
-    QDemonBindShader(QString inShaderPath, QString inShaderDefine = QString())
+    QByteArray m_shaderDefine;
+    QDemonBindShader(const QByteArray &inShaderPath, const QByteArray &inShaderDefine = QByteArray())
         : QDemonCommand(CommandType::BindShader), m_shaderPath(inShaderPath), m_shaderDefine(inShaderDefine)
     {
     }

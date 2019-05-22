@@ -269,7 +269,7 @@ void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonByteView data)
     m_hwBufferInitialized = true;
 
     // we do not allow resize once allocated
-    if ((offset + data.size()) > m_shadowCopy.size())
+    if ((offset + data.size()) > quint32(m_shadowCopy.size()))
         return;
 
     // copy data

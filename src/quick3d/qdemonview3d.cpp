@@ -15,29 +15,29 @@
 
 QT_BEGIN_NAMESPACE
 
-static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *manager, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
-    // disconnect previous destruction listern
-    if (oldO) {
-        if (manager)
-            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
+//static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *manager, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
+//    // disconnect previous destruction listern
+//    if (oldO) {
+//        if (manager)
+//            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
 
-        auto connection = connections.find(oldO);
-        if (connection != connections.end()) {
-            QObject::disconnect(connection.value());
-            connections.erase(connection);
-        }
-    }
+//        auto connection = connections.find(oldO);
+//        if (connection != connections.end()) {
+//            QObject::disconnect(connection.value());
+//            connections.erase(connection);
+//        }
+//    }
 
-    // listen for new map's destruction
-    if (newO) {
-        if (manager)
-            QDemonObjectPrivate::get(newO)->refSceneRenderer(manager);
-        auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
-            callFn(nullptr);
-        });
-        connections.insert(newO, connection);
-    }
-}
+//    // listen for new map's destruction
+//    if (newO) {
+//        if (manager)
+//            QDemonObjectPrivate::get(newO)->refSceneRenderer(manager);
+//        auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
+//            callFn(nullptr);
+//        });
+//        connections.insert(newO, connection);
+//    }
+//}
 
 QDemonView3D::QDemonView3D(QQuickItem *parent)
     : QQuickItem(parent)

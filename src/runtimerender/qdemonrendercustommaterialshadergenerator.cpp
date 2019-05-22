@@ -258,7 +258,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     }
     QDemonShaderDefaultMaterialKey &key() { return *m_currentKey; }
     const QDemonRenderCustomMaterial &material() { return *m_currentMaterial; }
-    bool hasTransparency() { return m_hasTransparency; }
+    bool hasTransparency() const { return m_hasTransparency; }
 
     quint32 convertTextureTypeValue(QDemonImageMapTypes inType)
     {
@@ -352,11 +352,12 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     }
 
     ///< get the light constant buffer and generate if necessary
-    QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(const char *name, quint32 inLightCount)
+    QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(const char *name, qint32 inLightCount)
     {
         QDemonRef<QDemonRenderContext> theContext(m_renderContext->renderContext());
 
         // we assume constant buffer support
+        Q_ASSERT(inLightCount >= 0);
         Q_ASSERT(theContext->supportsConstantBuffer());
         // we only create if if we have lights
         if (!inLightCount || !theContext->supportsConstantBuffer())
@@ -850,7 +851,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         finalValue.append(";\n");
 
         char buf[16];
-        for (quint32 idx = 0; idx < material().m_layerCount; idx++) {
+        for (qint32 idx = 0; idx < material().m_layerCount; idx++) {
             qsnprintf(buf, 16, "[%d]", idx);
             inFragmentShader << "  layers" << buf << ".base += " << finalValue;
             inFragmentShader << "  layers" << buf << ".layer += " << finalValue;
@@ -889,7 +890,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                             "}\n\n";
     }
 
-    void generateFragmentShader(QDemonShaderDefaultMaterialKey &, const QString &inShaderPathName)
+    void generateFragmentShader(QDemonShaderDefaultMaterialKey &, const QByteArray &inShaderPathName)
     {
         QDemonRef<QDemonDynamicObjectSystem> theDynamicSystem(m_renderContext->dynamicObjectSystem());
         QByteArray fragSource = theDynamicSystem->getShaderSource(inShaderPathName);
@@ -1047,6 +1048,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         theKey.toString(generatedShaderString, m_defaultMaterialShaderKeyProperties);
 
         generateVertexShader();
+        // TODO: The material name shouldn't need to be a QString
         generateFragmentShader(theKey, inCustomMaterialName);
 
         vertexGenerator().endVertexGeneration();

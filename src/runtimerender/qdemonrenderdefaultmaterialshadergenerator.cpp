@@ -196,6 +196,7 @@ struct QDemonShaderGeneratorGeneratedShader
         , m_aoShadowParams("cbAoShadow", inShader)
         , m_lightsBuffer("cbBufferLights", inShader)
     {
+        Q_UNUSED(inContext)
     }
     ~QDemonShaderGeneratorGeneratedShader() { delete m_lightConstantProperties; }
 };
@@ -673,7 +674,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
             quint8 stackData[size];
             memset(stackData, 0, 4 * sizeof(qint32));
-            QDemonLightSourceShader *s = new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
+//            QDemonLightSourceShader *s = new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
             QDemonByteView cBuffer(stackData, size);
             pCB = new QDemonRenderConstantBuffer(theContext, theName, QDemonRenderBufferUsageType::Static, cBuffer);
             if (!pCB) {
@@ -794,6 +795,10 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         QDemonRenderableImage *lightmapShadowImage = nullptr;
         quint32 lightmapShadowImageIdx = 0;
         const bool supportStandardDerivatives = m_renderContext->renderContext()->supportsStandardDerivatives();
+
+        Q_UNUSED(lightmapShadowImage)
+        Q_UNUSED(lightmapShadowImageIdx)
+        Q_UNUSED(supportStandardDerivatives)
 
         for (QDemonRenderableImage *img = m_firstImage; img != nullptr; img = img->m_nextImage, ++imageIdx) {
             hasSpecMap = img->m_mapType == QDemonImageMapTypes::Specular;

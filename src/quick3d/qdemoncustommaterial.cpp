@@ -170,8 +170,8 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         shaderPrefix.append("false )\n");
     };
 
-    static const auto appendShaderUniform = [](const QByteArray &type, const QByteArray &name, QByteArray *shaderPrefix, const QString &value = QString()) {
-        shaderPrefix->append(QStringLiteral("uniform %1 %2 %3;\n").arg(QString::fromLatin1(type)).arg(QString::fromLatin1(name)).arg(value.isEmpty() ? QString() : QString("= %1").arg(value)).toLatin1());
+    static const auto appendShaderUniform = [](const QByteArray &type, const QByteArray &name, QByteArray *shaderPrefix) {
+        shaderPrefix->append(QByteArrayLiteral("uniform ") + type + " " + name + ";\n");
     };
 
     static const auto resolveShader = [](const QByteArray &shader) -> QByteArray {
@@ -179,7 +179,7 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         if (shader.startsWith("qrc"))
             offset = 3;
         else if (shader.startsWith("file:/"))
-            offset = 0;
+            offset = 6;
         else if (shader.startsWith(":/"))
             offset = 0;
 
@@ -191,9 +191,9 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         }
 
         if (offset == -1 && path.isEmpty())
-            path = QString::fromLatin1(":/") + QString::fromUtf8(shader);
+            path = QString::fromLatin1(":/") + QString::fromLocal8Bit(shader);
         else
-            path = QString::fromUtf8(shader.constData() + offset);
+            path = QString::fromLocal8Bit(shader.constData() + offset);
 
         QFile f(path);
         if (f.open(QIODevice::ReadOnly | QIODevice::Text))

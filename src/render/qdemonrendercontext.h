@@ -475,7 +475,7 @@ public:
             QDemonByteView tessEvaluationShaderSource = QDemonByteView(),
             QDemonByteView geometryShaderSource = QDemonByteView());
 
-    QDemonRenderVertFragCompilationResult compileComputeSource(const char *shaderName,
+    QDemonRenderVertFragCompilationResult compileComputeSource(const QByteArray &shaderName,
                                                                        QDemonByteView computeShaderSource);
 
     void shaderDestroyed(QDemonRenderShaderProgram *shader);

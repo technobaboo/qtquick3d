@@ -90,6 +90,7 @@ Quat QDemonEulerAngleConverter::eulerToQuat(EulerAngles theEulerAngle)
     Quat theQuaternion;
     double a[3], ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
     int i, j, k, h, n, s, f;
+    Q_UNUSED(h)
 
     EulGetOrd((unsigned int)theEulerAngle.w, i, j, k, h, n, s, f);
     if (f == EulFrmR) {
@@ -148,6 +149,7 @@ void QDemonEulerAngleConverter::eulerToHMatrix(EulerAngles theEulerAngle, HMatri
 {
     double ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
     int i, j, k, h, n, s, f;
+    Q_UNUSED(h)
     EulGetOrd((unsigned int)theEulerAngle.w, i, j, k, h, n, s, f);
 
     if (f == EulFrmR) {
@@ -221,6 +223,7 @@ EulerAngles QDemonEulerAngleConverter::eulerFromHMatrix(HMatrix theMatrix, int t
 {
     EulerAngles theEulerAngle;
     int i, j, k, h, n, s, f;
+    Q_UNUSED(h)
 
     EulGetOrd(theOrder, i, j, k, h, n, s, f);
     if (s == EulRepYes) {
