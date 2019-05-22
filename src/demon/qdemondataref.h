@@ -15,7 +15,7 @@ struct QDemonDataView
     int mSize;
 
     explicit QDemonDataView(const QVector<T> &data) : mData(data.constBegin()), mSize(data.size()) { Q_ASSERT(mSize >= 0); }
-    constexpr QDemonDataView(const T *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize >= 0); }
+    QDemonDataView(const T *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize >= 0); }
     constexpr QDemonDataView() : mData(nullptr), mSize(0) {}
 
     qint32 size() const { return mSize; }
@@ -52,9 +52,9 @@ struct QDemonDataView<quint8>
     explicit QDemonDataView(const QVector<T> &data)
         : mData(reinterpret_cast<const quint8 *>(data.constBegin())), mSize(data.size()*sizeof(T))
     { Q_ASSERT(mSize >= 0); }
-    constexpr QDemonDataView(const quint8 *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize >= 0); }
+    QDemonDataView(const quint8 *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize >= 0); }
     template<typename T>
-    constexpr QDemonDataView(const T *inData, qint32 inSize)
+    QDemonDataView(const T *inData, qint32 inSize)
         : mData(reinterpret_cast<const quint8 *>(inData)), mSize(inSize*sizeof(T))
     { Q_ASSERT(mSize >= 0); }
     constexpr QDemonDataView() : mData(nullptr), mSize(0) {}
