@@ -579,7 +579,7 @@ struct QDemonCustomMaterialsTessellationProperties
 };
 
 /* We setup some shared state on the custom material shaders */
-struct QDemonCustomMaterialShader
+struct QDemonRenderCustomMaterialShader
 {
     QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
@@ -606,7 +606,7 @@ struct QDemonCustomMaterialShader
     QDemonCustomMaterialsTessellationProperties tessellation;
     dynamic::QDemonDynamicShaderProgramFlags programFlags;
 
-    QDemonCustomMaterialShader(const QDemonRef<QDemonRenderShaderProgram> &inShader, dynamic::QDemonDynamicShaderProgramFlags inFlags)
+    QDemonRenderCustomMaterialShader(const QDemonRef<QDemonRenderShaderProgram> &inShader, dynamic::QDemonDynamicShaderProgramFlags inFlags)
         : shader(inShader)
         , modelMatrix("model_matrix", inShader)
         , viewProjMatrix("model_view_projection", inShader)
@@ -637,10 +637,10 @@ struct QDemonCustomMaterialShader
 struct QDemonMaterialOrComputeShader
 {
     // TODO: struct/class?
-    QDemonRef<QDemonCustomMaterialShader> m_materialShader;
+    QDemonRef<QDemonRenderCustomMaterialShader> m_materialShader;
     QDemonRef<QDemonRenderShaderProgram> m_computeShader;
     QDemonMaterialOrComputeShader() = default;
-    QDemonMaterialOrComputeShader(const QDemonRef<QDemonCustomMaterialShader> &inMaterialShader)
+    QDemonMaterialOrComputeShader(const QDemonRef<QDemonRenderCustomMaterialShader> &inMaterialShader)
         : m_materialShader(inMaterialShader)
     {
     }
@@ -652,7 +652,7 @@ struct QDemonMaterialOrComputeShader
     bool isValid() const { return m_materialShader || m_computeShader; }
     bool isComputeShader() const { return m_computeShader != nullptr; }
     bool isMaterialShader() const { return m_materialShader != nullptr; }
-    QDemonRef<QDemonCustomMaterialShader> materialShader()
+    QDemonRef<QDemonRenderCustomMaterialShader> materialShader()
     {
         Q_ASSERT(isMaterialShader());
         return m_materialShader;
@@ -664,21 +664,21 @@ struct QDemonMaterialOrComputeShader
     }
 };
 
-struct QDemonCustomMaterialBuffer
+struct QDemonRenderCustomMaterialBuffer
 {
     QByteArray name;
     QDemonRef<QDemonRenderFrameBuffer> frameBuffer;
     QDemonRef<QDemonRenderTexture2D> texture;
     dynamic::QDemonAllocateBufferFlags flags;
 
-    QDemonCustomMaterialBuffer(const QByteArray &inName,
+    QDemonRenderCustomMaterialBuffer(const QByteArray &inName,
                                const QDemonRef<QDemonRenderFrameBuffer> &inFb,
                                const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                dynamic::QDemonAllocateBufferFlags inFlags)
         : name(inName), frameBuffer(inFb), texture(inTexture), flags(inFlags)
     {
     }
-    QDemonCustomMaterialBuffer() = default;
+    QDemonRenderCustomMaterialBuffer() = default;
 };
 
 struct QDemonStringMemoryBarrierFlagMap
@@ -754,7 +754,7 @@ void QDemonMaterialSystem::releaseBuffer(qint32 inIdx)
     // This causes issues for scene liftime buffers
     // because the resource manager is destroyed before
     QDemonRef<QDemonResourceManager> theManager(context->resourceManager());
-    QDemonCustomMaterialBuffer &theEntry(allocatedBuffers[inIdx]);
+    QDemonRenderCustomMaterialBuffer &theEntry(allocatedBuffers[inIdx]);
     theEntry.frameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
 
     theManager->release(theEntry.frameBuffer);
@@ -871,8 +871,8 @@ QDemonMaterialOrComputeShader QDemonMaterialSystem::bindShader(QDemonCustomMater
 
         if (theProgram) {
             theInsertResult = shaderMap.insert(skey,
-                                                 QDemonRef<QDemonCustomMaterialShader>(
-                                                     new QDemonCustomMaterialShader(theProgram, theFlags)));
+                                                 QDemonRef<QDemonRenderCustomMaterialShader>(
+                                                     new QDemonRenderCustomMaterialShader(theProgram, theFlags)));
         }
     } else if (theInsertResult.value()) {
         theProgram = theInsertResult.value()->shader;
@@ -1098,7 +1098,7 @@ const QDemonRef<QDemonRenderTexture2D> QDemonMaterialSystem::applyBufferValue(co
     if (!inCommand.m_bufferName.isNull()) {
         qint32 bufferIdx = findBuffer(inCommand.m_bufferName);
         if (bufferIdx < allocatedBuffers.size()) {
-            QDemonCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
+            QDemonRenderCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
             theTexture = theEntry.texture;
         } else {
             // we must have allocated the read target before
@@ -1159,7 +1159,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
     // size intentionally requiried every loop;
     qint32 bufferIdx = findBuffer(inCommand.m_name);
     if (bufferIdx < allocatedBuffers.size()) {
-        const QDemonCustomMaterialBuffer &theEntry = allocatedBuffers.at(bufferIdx);
+        const QDemonRenderCustomMaterialBuffer &theEntry = allocatedBuffers.at(bufferIdx);
         QDemonTextureDetails theDetails = theEntry.texture->textureDetails();
         if (theDetails.width == theWidth && theDetails.height == theHeight && theDetails.format == theFormat) {
             theTexture = theEntry.texture;
@@ -1176,7 +1176,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
         theTexture->setTextureWrapS(inCommand.m_texCoordOp);
         theTexture->setTextureWrapT(inCommand.m_texCoordOp);
         theFB->attach(QDemonRenderFrameBufferAttachment::Color0, theTexture);
-        allocatedBuffers.push_back(QDemonCustomMaterialBuffer(inCommand.m_name, theFB, theTexture, inCommand.m_bufferFlags));
+        allocatedBuffers.push_back(QDemonRenderCustomMaterialBuffer(inCommand.m_name, theFB, theTexture, inCommand.m_bufferFlags));
     }
 }
 
@@ -1279,7 +1279,7 @@ void QDemonMaterialSystem::blitFramebuffer(QDemonCustomMaterialRenderContext &in
     if (!inCommand.m_destBufferName.isNull()) {
         qint32 bufferIdx = findBuffer(inCommand.m_destBufferName);
         if (bufferIdx < allocatedBuffers.size()) {
-            QDemonCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
+            QDemonRenderCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
             theContext->setRenderTarget(theEntry.frameBuffer);
         } else {
             // we must have allocated the read target before
@@ -1294,7 +1294,7 @@ void QDemonMaterialSystem::blitFramebuffer(QDemonCustomMaterialRenderContext &in
     if (!inCommand.m_sourceBufferName.isNull()) {
         qint32 bufferIdx = findBuffer(inCommand.m_sourceBufferName);
         if (bufferIdx < allocatedBuffers.size()) {
-            QDemonCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
+            QDemonRenderCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
             theContext->setReadTarget(theEntry.frameBuffer);
             theContext->setReadBuffer(QDemonReadFace::Color0);
         } else {
@@ -1360,7 +1360,7 @@ QDemonLayerGlobalRenderProperties QDemonMaterialSystem::getLayerGlobalRenderProp
                 theLayer.probeFov };
 }
 
-void QDemonMaterialSystem::renderPass(QDemonCustomMaterialRenderContext &inRenderContext, const QDemonRef<QDemonCustomMaterialShader> &inShader, const QDemonRef<QDemonRenderTexture2D> &, const QDemonRef<QDemonRenderFrameBuffer> &inFrameBuffer, bool inRenderTargetNeedsClear, const QDemonRef<QDemonRenderInputAssembler> &inAssembler, quint32 inCount, quint32 inOffset)
+void QDemonMaterialSystem::renderPass(QDemonCustomMaterialRenderContext &inRenderContext, const QDemonRef<QDemonRenderCustomMaterialShader> &inShader, const QDemonRef<QDemonRenderTexture2D> &, const QDemonRef<QDemonRenderFrameBuffer> &inFrameBuffer, bool inRenderTargetNeedsClear, const QDemonRef<QDemonRenderInputAssembler> &inAssembler, quint32 inCount, quint32 inOffset)
 {
     QDemonRef<QDemonRenderContext> theContext(context->renderContext());
     theContext->setRenderTarget(inFrameBuffer);
@@ -1442,7 +1442,7 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
                                                   const TShaderFeatureSet &inFeatureSet)
 {
     QDemonRef<QDemonRenderContext> theContext = context->renderContext();
-    QDemonRef<QDemonCustomMaterialShader> theCurrentShader(nullptr);
+    QDemonRef<QDemonRenderCustomMaterialShader> theCurrentShader(nullptr);
 
     QDemonRef<QDemonRenderFrameBuffer> theCurrentRenderTarget(inTarget);
     QRect theOriginalViewport(theContext->viewport());

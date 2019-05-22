@@ -50,10 +50,10 @@ struct QDemonRenderCustomMaterial;
 class QDemonMaterialSystem;
 struct QDemonRenderSubset;
 struct QDemonShaderMapKey;
-struct QDemonCustomMaterialShader;
+struct QDemonRenderCustomMaterialShader;
 struct QDemonMaterialClass;
 struct QDemonCustomMaterialTextureData;
-struct QDemonCustomMaterialBuffer;
+struct QDemonRenderCustomMaterialBuffer;
 struct QDemonMaterialOrComputeShader;
 namespace dynamic {
 struct QDemonBindShader;
@@ -76,7 +76,7 @@ public:
     QAtomicInt ref;
 
 private:
-    typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonCustomMaterialShader>> ShaderMap;
+    typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonRenderCustomMaterialShader>> ShaderMap;
     typedef QPair<QString, QDemonRenderImage *> AllocatedImageEntry;
     typedef QPair<QByteArray, QByteArray> TStrStrPair;
     typedef QPair<QByteArray, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
@@ -84,7 +84,7 @@ private:
     QDemonRenderContextInterface *context = nullptr;
     ShaderMap shaderMap;
     QVector<CustomMaterialTextureEntry> textureEntries;
-    QVector<QDemonCustomMaterialBuffer> allocatedBuffers;
+    QVector<QDemonRenderCustomMaterialBuffer> allocatedBuffers;
     bool useFastBlits = true;
     QString shaderNameBuilder;
     QElapsedTimer lastFrameTime;
@@ -135,7 +135,7 @@ private:
                          const QDemonRef<QDemonRenderFrameBuffer> &inTarget);
     QDemonLayerGlobalRenderProperties getLayerGlobalRenderProperties(QDemonCustomMaterialRenderContext &inRenderContext);
     void renderPass(QDemonCustomMaterialRenderContext &inRenderContext,
-                    const QDemonRef<QDemonCustomMaterialShader> &inShader,
+                    const QDemonRef<QDemonRenderCustomMaterialShader> &inShader,
                     const QDemonRef<QDemonRenderTexture2D> & /* inSourceTexture */,
                     const QDemonRef<QDemonRenderFrameBuffer> &inFrameBuffer,
                     bool inRenderTargetNeedsClear,
