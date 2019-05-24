@@ -42,7 +42,7 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonRenderBackendLayoutEntryGL
 {
-    QString m_attribName; ///< must be the same name as used in the vertex shader
+    QByteArray m_attribName; ///< must be the same name as used in the vertex shader
     quint8 m_normalize; ///< normalize parameter
     quint32 m_attribIndex; ///< attribute index
     quint32 m_type; ///< GL vertex format type @sa GL_FLOAT, GL_INT
@@ -63,7 +63,7 @@ public:
     ///< destructor
     ~QDemonRenderBackendAttributeLayoutGL() {}
 
-    QDemonRenderBackendLayoutEntryGL *getEntryByName(const QString &entryName) const
+    QDemonRenderBackendLayoutEntryGL *getEntryByName(const QByteArray &entryName) const
     {
         for (int idx = 0; idx != m_layoutAttribEntries.size(); ++idx) {
             if (m_layoutAttribEntries[idx].m_attribName == entryName)

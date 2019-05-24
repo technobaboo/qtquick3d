@@ -1234,7 +1234,7 @@ QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject QDemonRenderBackendGL
     // copy data
     for (int idx = 0; idx != attribs.size(); ++idx) {
         new (&entryRef[idx]) QDemonRenderBackendLayoutEntryGL();
-        entryRef[idx].m_attribName = QString::fromLocal8Bit(attribs.mData[idx].m_name);
+        entryRef[idx].m_attribName = attribs.mData[idx].m_name;
         entryRef[idx].m_normalize = 0;
         entryRef[idx].m_attribIndex = 0; // will be set later
         entryRef[idx].m_type = GLConversion::fromComponentTypeAndNumCompsToAttribGL(attribs.mData[idx].m_componentType,
@@ -1624,7 +1624,7 @@ bool QDemonRenderBackendGLBase::linkProgram(QDemonRenderBackendShaderProgramObje
                 GLConversion::fromAttribGLToComponentTypeAndNumComps(glType, compType, numComps);
 
                 new (&tempShaderInputEntry[count]) QDemonRenderBackendShaderInputEntryGL();
-                tempShaderInputEntry[count].m_attribName = QString::fromLocal8Bit(reinterpret_cast<char *>(nameBuf));
+                tempShaderInputEntry[count].m_attribName = QByteArray(reinterpret_cast<const char *>(nameBuf));
                 tempShaderInputEntry[count].m_attribLocation = GL_CALL_FUNCTION(glGetAttribLocation(programID, (char *)nameBuf));
                 tempShaderInputEntry[count].m_type = glType;
                 tempShaderInputEntry[count].m_numComponents = numComps;

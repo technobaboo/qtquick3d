@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonRenderBackendShaderInputEntryGL
 {
-    QString m_attribName; ///< must be the same name as used in the vertex shader
+    QByteArray m_attribName; ///< must be the same name as used in the vertex shader
     quint32 m_attribLocation; ///< attribute index
     quint32 m_type; ///< GL vertex format type @sa GL_FLOAT, GL_INT
     quint32 m_numComponents; ///< component count. max 4

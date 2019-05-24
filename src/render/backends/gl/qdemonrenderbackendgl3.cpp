@@ -424,15 +424,15 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
 
             if (entry) {
                 QDemonRenderBackendLayoutEntryGL &entryData(*entry);
-                if (entryData.m_type != attrib.m_type || entryData.m_numComponents != attrib.m_numComponents) {
-                    qCCritical(INVALID_OPERATION, "Attrib %s doesn't match vertex layout", qPrintable(attrib.m_attribName));
+                if (Q_UNLIKELY(entryData.m_type != attrib.m_type || entryData.m_numComponents != attrib.m_numComponents)) {
+                    qCCritical(INVALID_OPERATION, "Attrib %s doesn't match vertex layout", attrib.m_attribName.constData());
                     Q_ASSERT(false);
                     return false;
                 } else {
                     entryData.m_attribIndex = attrib.m_attribLocation;
                 }
             } else {
-                qCWarning(WARNING, "Failed to Bind attribute %s", qPrintable(attrib.m_attribName));
+                qCWarning(WARNING, "Failed to Bind attribute %s", attrib.m_attribName.constData());
             }
         }
 
