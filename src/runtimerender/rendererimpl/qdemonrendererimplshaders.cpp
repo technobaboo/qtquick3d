@@ -414,6 +414,8 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
     QDemonShaderStageGeneratorInterface &activeStage() override { return vertex(); }
 };
 
+static QByteArray logPrefix() { return QByteArrayLiteral("mesh subset pipeline-- "); }
+
 QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSubsetRenderable &inRenderable,
                                                                         const TShaderFeatureSet &inFeatureSet)
 {
@@ -421,10 +423,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSu
     // This is time consuming but I feel like it doesn't happen all that often and is very
     // useful to users
     // looking at the log file.
-    const char *logPrefix("mesh subset pipeline-- ");
-
-    m_generatedShaderString.clear();
-    m_generatedShaderString = logPrefix;
+    m_generatedShaderString = logPrefix();
 
     QDemonShaderDefaultMaterialKey theKey(inRenderable.shaderDescription);
     theKey.toString(m_generatedShaderString, m_defaultMaterialShaderKeyProperties);
@@ -443,7 +442,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSu
                                                                                m_currentLayer->globalLights,
                                                                                inRenderable.firstImage,
                                                                                inRenderable.renderableFlags.hasTransparency(),
-                                                                               logPrefix);
+                                                                               logPrefix());
 }
 
 // --------------  Special cases for shadows  -------------------

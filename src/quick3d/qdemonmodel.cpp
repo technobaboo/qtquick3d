@@ -134,6 +134,7 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
     QDemonNode::updateSpatialNode(node);
 
     auto modelNode = static_cast<QDemonRenderModel *>(node);
+    // TODO: Don't call translateSource() unless the source is dirty!
     modelNode->meshPath = translateSource();
     modelNode->skeletonRoot = m_skeletonRoot;
     modelNode->tessellationMode = TessModeValues(m_tesselationMode);

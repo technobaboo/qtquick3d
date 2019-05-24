@@ -1098,18 +1098,19 @@ const QDemonRef<QDemonRenderTexture2D> QDemonMaterialSystem::applyBufferValue(co
     if (!inCommand.m_bufferName.isNull()) {
         qint32 bufferIdx = findBuffer(inCommand.m_bufferName);
         if (bufferIdx < allocatedBuffers.size()) {
-            QDemonRenderCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
+            const QDemonRenderCustomMaterialBuffer &theEntry = allocatedBuffers.at(bufferIdx);
             theTexture = theEntry.texture;
         } else {
             // we must have allocated the read target before
             qCCritical(INTERNAL_ERROR, "CustomMaterial: ApplyBufferValue: Failed to setup read target");
             Q_ASSERT(false);
         }
-    } else
+    } else {
         theTexture = inSourceTexture;
+    }
 
     if (!inCommand.m_paramName.isNull()) {
-        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inCommand.m_paramName.constData());
+        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inCommand.m_paramName);
 
         if (theConstant) {
             if (theConstant->getShaderConstantType() != QDemonRenderShaderDataType::Texture2D) {

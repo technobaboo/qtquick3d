@@ -74,7 +74,7 @@ inline const QVector<QDemonShaderPreprocessorFeature> shaderCacheNoFeatures()
 }
 
 // Hash is dependent on the order of the keys; so make sure their order is consistent!!
-uint hashShaderFeatureSet(QVector<QDemonShaderPreprocessorFeature> inFeatureSet);
+uint hashShaderFeatureSet(const QVector<QDemonShaderPreprocessorFeature> &inFeatureSet);
 
 struct QDemonShaderCacheKey
 {

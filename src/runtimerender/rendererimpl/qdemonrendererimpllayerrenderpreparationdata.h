@@ -177,7 +177,7 @@ struct QDemonScopedLightsListScope
         const auto end = inScopedLights.end();
         while (iter != end) {
             lightsList.push_back(iter->light);
-            lightDirList.push_back(inSrcLightDirList[iter->lightIndex]);
+            lightDirList.push_back(inSrcLightDirList.at(iter->lightIndex));
             ++iter;
         }
     }
@@ -263,7 +263,6 @@ struct QDemonLayerRenderPreparationData
     QDemonRef<QDemonOffscreenRendererInterface> lastFrameOffscreenRenderer;
 
     QVector<QDemonShaderPreprocessorFeature> features;
-    static const char *cgLightingFeatureName;
     bool featuresDirty;
     size_t featureSetHash;
     bool tooManyLightsError;
@@ -276,6 +275,8 @@ struct QDemonLayerRenderPreparationData
     bool usesOffscreenRenderer();
     void createShadowMapManager();
     bool needsWidgetTexture() const;
+
+    static QByteArray cgLightingFeatureName();
 
     QDemonShaderDefaultMaterialKey generateLightingKey(QDemonRenderDefaultMaterial::MaterialLighting inLightingType);
 

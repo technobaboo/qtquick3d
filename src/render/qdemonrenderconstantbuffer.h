@@ -128,7 +128,7 @@ public:
      *
      * @return no return
      */
-    void updateParam(const char *name, QDemonByteView value);
+    void updateParam(const QByteArray &name, QDemonByteView value);
 
     /**
      * @brief update a piece of memory directly within the constant buffer

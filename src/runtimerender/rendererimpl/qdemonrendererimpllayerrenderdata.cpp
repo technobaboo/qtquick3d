@@ -788,6 +788,8 @@ void QDemonLayerRenderData::renderDepthPass(bool inEnableTransparentDepthWrite)
     renderer->endLayerDepthPassRender();
 }
 
+static QByteArray enableLightProbeDefine() { return QByteArrayLiteral("QDEMON_ENABLE_LIGHT_PROBE"); }
+
 inline void renderRenderable(QDemonLayerRenderData &inData,
                              QDemonRenderableObject &inObject,
                              const QVector2D &inCameraProps,
@@ -801,9 +803,9 @@ inline void renderRenderable(QDemonLayerRenderData &inData,
         // PKC : Need a better place to do this.
         QDemonCustomMaterialRenderable &theObject = static_cast<QDemonCustomMaterialRenderable &>(inObject);
         if (!inData.layer.lightProbe && theObject.material.m_iblProbe)
-            inData.setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE", theObject.material.m_iblProbe->m_textureData.m_texture != nullptr);
+            inData.setShaderFeature(enableLightProbeDefine(), theObject.material.m_iblProbe->m_textureData.m_texture != nullptr);
         else if (inData.layer.lightProbe)
-            inData.setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE", inData.layer.lightProbe->m_textureData.m_texture != nullptr);
+            inData.setShaderFeature(enableLightProbeDefine(), inData.layer.lightProbe->m_textureData.m_texture != nullptr);
 
         static_cast<QDemonCustomMaterialRenderable &>(inObject).render(inCameraProps,
                                                                        inData,
@@ -851,7 +853,7 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
 
     for (const auto &theObject : theOpaqueObjects) {
         QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject->scopedLights);
-        setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
+        setShaderFeature(cgLightingFeatureName(), globalLights.empty() == false);
         inRenderFn(*this, *theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
     }
 
@@ -881,7 +883,7 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                         setupDrawFB(true);
 #endif
                     QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject->scopedLights);
-                    setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
+                    setShaderFeature(cgLightingFeatureName(), globalLights.empty() == false);
 
                     inRenderFn(*this, *theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
@@ -924,7 +926,7 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                     }
 #endif
                     QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, theObject->scopedLights);
-                    setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
+                    setShaderFeature(cgLightingFeatureName(), globalLights.empty() == false);
                     inRenderFn(*this, *theObject, theCameraProps, getShaderFeatureSet(), indexLight, inCamera);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     if (useBlendFallback) {

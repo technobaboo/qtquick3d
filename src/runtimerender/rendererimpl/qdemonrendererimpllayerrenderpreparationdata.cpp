@@ -102,8 +102,6 @@ QDemonDefaultMaterialPreparationResult::QDemonDefaultMaterialPreparationResult(Q
 }
 
 #define MAX_AA_LEVELS 8
-const char *
-QDemonLayerRenderPreparationData::cgLightingFeatureName = "QDEMON_ENABLE_CG_LIGHTING";
 
 QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer,
                                                                    const QDemonRef<QDemonRendererImpl> &inRenderer)
@@ -121,6 +119,11 @@ QDemonLayerRenderPreparationData::~QDemonLayerRenderPreparationData() = default;
 bool QDemonLayerRenderPreparationData::needsWidgetTexture() const
 {
     return iRenderWidgets.size() > 0;
+}
+
+QByteArray QDemonLayerRenderPreparationData::cgLightingFeatureName()
+{
+    return  QByteArrayLiteral("QDEMON_ENABLE_CG_LIGHTING");
 }
 
 void QDemonLayerRenderPreparationData::setShaderFeature(const QByteArray &theStr, bool inValue)
@@ -211,7 +214,7 @@ QVector<QDemonRenderableObject *> QDemonLayerRenderPreparationData::getOpaqueRen
         QVector3D theCameraPosition = camera->getGlobalPos();
         renderedOpaqueObjects = opaqueObjects;
         // Setup the object's sorting information
-        for (quint32 idx = 0, end = renderedOpaqueObjects.size(); idx < end; ++idx) {
+        for (int idx = 0, end = renderedOpaqueObjects.size(); idx < end; ++idx) {
             QDemonRenderableObject &theInfo = *renderedOpaqueObjects[idx];
             QVector3D difference = theInfo.worldCenterPoint - theCameraPosition;
             theInfo.cameraDistanceSq = QVector3D::dotProduct(difference, theCameraDirection);
@@ -737,9 +740,9 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
 
     bool subsetDirty = false;
 
-    QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, inScopedLights);
-    setShaderFeature(cgLightingFeatureName, globalLights.empty() == false);
-    for (quint32 idx = 0, end = theMesh->subsets.size(); idx < end && theSourceMaterialObject;
+    const QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, inScopedLights);
+    setShaderFeature(cgLightingFeatureName(), globalLights.empty() == false);
+    for (int idx = 0, end = theMesh->subsets.size(); idx < end && theSourceMaterialObject;
          ++idx, theSourceMaterialObject = theSourceMaterialObject->nextMaterialSibling()) {
         QDemonRenderSubset &theOuterSubset(theMesh->subsets[idx]);
         {

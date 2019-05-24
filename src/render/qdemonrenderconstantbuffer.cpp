@@ -236,7 +236,7 @@ void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderSh
     m_currentOffset += constantSize;
 }
 
-void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonByteView value)
+void QDemonRenderConstantBuffer::updateParam(const QByteArray &inName, QDemonByteView value)
 {
     // allocate space if not done yet
     // NOTE this gets reallocated once we get the real constant buffer size from a program
@@ -244,8 +244,8 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonByteView 
         m_shadowCopy.resize(m_currentSize);
 
     const QByteArray theName = inName;
-    TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);
-    if (entry != m_constantBufferEntryMap.end()) {
+    const auto entry = m_constantBufferEntryMap.constFind(theName);
+    if (entry != m_constantBufferEntryMap.cend()) {
         const qint32 size = entry.value()->m_count * uniformTypeSize(entry.value()->m_type);
         Q_ASSERT(size == value.size());
         if (!memcmp(m_shadowCopy.constBegin() + entry.value()->m_offset, value.begin(), size_t(size)))

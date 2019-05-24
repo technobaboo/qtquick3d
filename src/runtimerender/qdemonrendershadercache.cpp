@@ -166,7 +166,7 @@ uint qHash(const QDemonShaderCacheKey &key)
     return key.m_hashCode;
 }
 
-uint hashShaderFeatureSet(QVector<QDemonShaderPreprocessorFeature> inFeatureSet)
+uint hashShaderFeatureSet(const QVector<QDemonShaderPreprocessorFeature> &inFeatureSet)
 {
     uint retval(0);
     for (int idx = 0, end = inFeatureSet.size(); idx < end; ++idx) {
@@ -174,7 +174,7 @@ uint hashShaderFeatureSet(QVector<QDemonShaderPreprocessorFeature> inFeatureSet)
         // But we need to bind the feature flag together with its name, so that the flags will
         // influence
         // the final hash not only by the true-value count.
-        retval = retval ^ (qHash(inFeatureSet[idx].name) * qHash(inFeatureSet[idx].enabled));
+        retval = retval ^ (qHash(inFeatureSet.at(idx).name) * qHash(inFeatureSet.at(idx).enabled));
     }
     return retval;
 }
