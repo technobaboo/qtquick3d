@@ -66,7 +66,11 @@ struct OffsetDataRef
     quint32 m_offset;
     quint32 m_size;
     OffsetDataRef() : m_offset(0), m_size(0) {}
-    DataType *begin(quint8 *inBase) { return reinterpret_cast<DataType *>(inBase + m_offset); }
+    DataType *begin(quint8 *inBase)
+    {
+        DataType *value = reinterpret_cast<DataType *>(inBase + m_offset);
+        return value;
+    }
     DataType *end(quint8 *inBase) { return begin(inBase) + m_size; }
     const DataType *begin(const quint8 *inBase) const { return reinterpret_cast<const DataType *>(inBase + m_offset); }
     const DataType *end(const quint8 *inBase) const { return begin(inBase) + m_size; }

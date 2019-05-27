@@ -222,7 +222,7 @@ struct ByteWritingSerializer
     void streamify(const OffsetDataRef<TDataType> &data)
     {
         m_byteCounter.streamify(data);
-        m_stream.write(reinterpret_cast<const char *>(data.begin(m_baseAddress)), data.size());
+        int written = m_stream.write(reinterpret_cast<const char *>(data.begin(m_baseAddress)), data.size() * sizeof(TDataType));
     }
     void streamify(const char *data)
     {
@@ -230,8 +230,8 @@ struct ByteWritingSerializer
         if (data == nullptr)
             data = "";
         quint32 len = (quint32)strlen(data) + 1;
-        m_stream.write(reinterpret_cast<const char *>(&len), sizeof(quint32));
-        m_stream.write(data, len);
+        int written = m_stream.write(reinterpret_cast<const char *>(&len), sizeof(quint32));
+        written = m_stream.write(data, len);
     }
     void streamifyCharPointerOffset(quint32 inOffset)
     {
@@ -243,7 +243,7 @@ struct ByteWritingSerializer
     {
         if (m_byteCounter.needsAlignment()) {
             quint8 buffer[] = { 0, 0, 0, 0 };
-            m_stream.write(reinterpret_cast<const char *>(buffer), m_byteCounter.getAlignmentAmount());
+            int written = m_stream.write(reinterpret_cast<const char *>(buffer), m_byteCounter.getAlignmentAmount());
             m_byteCounter.align();
         }
     }
@@ -562,10 +562,13 @@ void Mesh::save(QIODevice &outStream) const
 {
     Mesh &mesh(const_cast<Mesh &>(*this));
     quint8 *baseAddress = reinterpret_cast<quint8 *>(&mesh);
-    quint32 numBytes = sizeof(Mesh) + getMeshDataSize(mesh);
+    quint32 meshSize = sizeof(Mesh);
+    quint32 meshDataSize = getMeshDataSize(mesh);
+    quint32 numBytes = meshSize + meshDataSize;
     MeshDataHeader header(numBytes);
-    outStream.write(reinterpret_cast<const char *>(&header), sizeof(MeshDataHeader));
-    outStream.write(reinterpret_cast<const char *>(this), sizeof(Mesh));
+    int written;
+    written = outStream.write(reinterpret_cast<const char *>(&header), sizeof(MeshDataHeader)); // 12 bytes
+    written = outStream.write(reinterpret_cast<const char *>(this), sizeof(Mesh));
     ByteWritingSerializer writer(outStream, baseAddress);
     serialize(writer, mesh);
 }
@@ -681,12 +684,12 @@ quint32 Mesh::saveMulti(QIODevice &inStream, quint32 inId) const
         nextId = inId;
     quint8 *theWriteBaseAddr = reinterpret_cast<quint8 *>(theWriteHeader);
     // Now write a new header out.
-    inStream.write(reinterpret_cast<char *>(theWriteHeader->m_entries.begin(theWriteBaseAddr)),
+    int written = inStream.write(reinterpret_cast<char *>(theWriteHeader->m_entries.begin(theWriteBaseAddr)),
                    theWriteHeader->m_entries.size());
     MeshMultiEntry newEntry(static_cast<qint64>(meshOffset), nextId);
-    inStream.write(reinterpret_cast<char *>(&newEntry), sizeof(MeshMultiEntry));
+    written = inStream.write(reinterpret_cast<char *>(&newEntry), sizeof(MeshMultiEntry));
     theWriteHeader->m_entries.m_size++;
-    inStream.write(reinterpret_cast<char *>(theWriteHeader), sizeof(MeshMultiHeader));
+    written = inStream.write(reinterpret_cast<char *>(theWriteHeader), sizeof(MeshMultiHeader));
 
     return static_cast<quint32>(nextId);
 }
@@ -943,9 +946,9 @@ public:
         m_vertexBuffer.m_stride = getAlignedOffset(currentOffset, bufferAlignment);
 
         // Packed interleave the data
-        for (quint32 idx = 0, __numItems = (quint32)numItems; idx < __numItems; ++idx) {
+        for (quint32 idx = 0; idx < numItems; ++idx) {
             quint32 dataOffset = 0;
-            for (quint32 entryIdx = 0, __numItems = (quint32)entries.size(); entryIdx < __numItems; ++entryIdx) {
+            for (quint32 entryIdx = 0; entryIdx < entries.size(); ++entryIdx) {
                 const MeshBuilderVBufEntry &entry(entries[entryIdx]);
                 // Ignore entries with no data.
                 if (entry.m_data.begin() == nullptr || entry.m_data.size() == 0)
@@ -956,11 +959,13 @@ public:
                 quint32 offset = byteSize * idx;
                 quint32 newOffset = getAlignedOffset(dataOffset, alignment);
                 QBuffer vertexDataBuffer(&m_vertexBuffer.m_vertexData);
+                vertexDataBuffer.open(QIODevice::WriteOnly | QIODevice::Append);
                 if (newOffset != dataOffset) {
                     QByteArray filler(newOffset - dataOffset, '\0');
                     vertexDataBuffer.write(filler);
                 }
                 vertexDataBuffer.write(entry.m_data.begin() + offset, byteSize);
+                vertexDataBuffer.close();
                 dataOffset = newOffset + byteSize;
             }
             Q_ASSERT(dataOffset == m_vertexBuffer.m_stride);
@@ -974,7 +979,9 @@ public:
             m_vertexBuffer.m_vertexBufferEntries.push_back(entries[idx]);
         }
         QBuffer vertexDataBuffer(&m_vertexBuffer.m_vertexData);
+        vertexDataBuffer.open(QIODevice::WriteOnly);
         vertexDataBuffer.write(data);
+        vertexDataBuffer.close();
         if (stride == 0) {
             // Calculate the stride of the buffer using the vbuf entries
             for (quint32 idx = 0, __numItems = (quint32)entries.size(); idx < __numItems; ++idx) {
@@ -991,7 +998,9 @@ public:
     {
         m_indexBuffer.m_compType = comp;
         QBuffer indexBuffer(&m_indexBuffer.m_indexData);
+        indexBuffer.open(QIODevice::WriteOnly);
         indexBuffer.write(data);
+        indexBuffer.close();
     }
 
     void addJoint(qint32 jointID, qint32 parentID, const float *invBindPose, const float *localToGlobalBoneSpace) override
@@ -1089,6 +1098,7 @@ public:
                 theIter->m_offset = m_newIndexBuffer.size() / theIndexCompSize;
                 // store indices
                 QBuffer newIndexBuffer(&m_newIndexBuffer);
+                newIndexBuffer.open(QIODevice::WriteOnly);
                 newIndexBuffer.write(theIndices, theIter->m_count * theIndexCompSize);
 
                 for (int j = 0, subsetEnd = m_meshSubsetDescs.size(); j < subsetEnd; ++j) {
@@ -1105,6 +1115,7 @@ public:
                         // increment indices count
                         theIter->m_count += theSubset.m_count;
                     }
+                    newIndexBuffer.close();
                 }
 
                 newMeshSubsetDescs.push_back(*theIter);
@@ -1114,8 +1125,9 @@ public:
             m_meshSubsetDescs = newMeshSubsetDescs;
             m_indexBuffer.m_indexData.clear();
             QBuffer indexBuffer(&m_indexBuffer.m_indexData);
+            indexBuffer.open(QIODevice::WriteOnly);
             indexBuffer.write(m_newIndexBuffer);
-
+            indexBuffer.close();
             // compute new bounding box
             for (theIter = m_meshSubsetDescs.begin(); theIter != m_meshSubsetDescs.end(); ++theIter) {
                 theIter->m_bounds = Mesh::calculateSubsetBounds(m_vertexBuffer.m_vertexBufferEntries[0],
