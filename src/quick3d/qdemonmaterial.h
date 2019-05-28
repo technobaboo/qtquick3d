@@ -24,7 +24,7 @@ class Q_QUICK3D_EXPORT QDemonMaterial : public QDemonObject
 
 public:
     QDemonMaterial();
-    ~QDemonMaterial();
+    ~QDemonMaterial() override;
 
     QDemonObject::Type type() const override = 0;
 
