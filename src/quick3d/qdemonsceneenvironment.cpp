@@ -197,6 +197,7 @@ void QDemonSceneEnvironment::setProgressiveAAMode(QDemonSceneEnvironment::QDemon
 
     m_progressiveAAMode = progressiveAAMode;
     emit progressiveAAModeChanged(m_progressiveAAMode);
+    update();
 }
 
 void QDemonSceneEnvironment::setMultisampleAAMode(QDemonSceneEnvironment::QDemonEnvironmentAAModeValues multisampleAAMode)
@@ -206,6 +207,7 @@ void QDemonSceneEnvironment::setMultisampleAAMode(QDemonSceneEnvironment::QDemon
 
     m_multisampleAAMode = multisampleAAMode;
     emit multisampleAAModeChanged(m_multisampleAAMode);
+    update();
 }
 
 void QDemonSceneEnvironment::setBackgroundMode(QDemonSceneEnvironment::QDemonEnvironmentBackgroundTypes backgroundMode)
@@ -215,6 +217,7 @@ void QDemonSceneEnvironment::setBackgroundMode(QDemonSceneEnvironment::QDemonEnv
 
     m_backgroundMode = backgroundMode;
     emit backgroundModeChanged(m_backgroundMode);
+    update();
 }
 
 void QDemonSceneEnvironment::setClearColor(QColor clearColor)
@@ -224,6 +227,7 @@ void QDemonSceneEnvironment::setClearColor(QColor clearColor)
 
     m_clearColor = clearColor;
     emit clearColorChanged(m_clearColor);
+    update();
 }
 
 void QDemonSceneEnvironment::setBlendType(QDemonSceneEnvironment::QDemonEnvironmentBlendTypes blendType)
@@ -233,6 +237,7 @@ void QDemonSceneEnvironment::setBlendType(QDemonSceneEnvironment::QDemonEnvironm
 
     m_blendType = blendType;
     emit blendTypeChanged(m_blendType);
+    update();
 }
 
 void QDemonSceneEnvironment::setAoStrength(float aoStrength)
@@ -242,6 +247,7 @@ void QDemonSceneEnvironment::setAoStrength(float aoStrength)
 
     m_aoStrength = aoStrength;
     emit aoStrengthChanged(m_aoStrength);
+    update();
 }
 
 void QDemonSceneEnvironment::setAoDistance(float aoDistance)
@@ -251,6 +257,7 @@ void QDemonSceneEnvironment::setAoDistance(float aoDistance)
 
     m_aoDistance = aoDistance;
     emit aoDistanceChanged(m_aoDistance);
+    update();
 }
 
 void QDemonSceneEnvironment::setAoSoftness(float aoSoftness)
@@ -260,6 +267,7 @@ void QDemonSceneEnvironment::setAoSoftness(float aoSoftness)
 
     m_aoSoftness = aoSoftness;
     emit aoSoftnessChanged(m_aoSoftness);
+    update();
 }
 
 void QDemonSceneEnvironment::setAoDither(bool aoDither)
@@ -269,6 +277,7 @@ void QDemonSceneEnvironment::setAoDither(bool aoDither)
 
     m_aoDither = aoDither;
     emit aoDitherChanged(m_aoDither);
+    update();
 }
 
 void QDemonSceneEnvironment::setAoSampleRate(int aoSampleRate)
@@ -278,6 +287,7 @@ void QDemonSceneEnvironment::setAoSampleRate(int aoSampleRate)
 
     m_aoSampleRate = aoSampleRate;
     emit aoSampleRateChanged(m_aoSampleRate);
+    update();
 }
 
 void QDemonSceneEnvironment::setAoBias(float aoBias)
@@ -287,6 +297,7 @@ void QDemonSceneEnvironment::setAoBias(float aoBias)
 
     m_aoBias = aoBias;
     emit aoBiasChanged(m_aoBias);
+    update();
 }
 
 void QDemonSceneEnvironment::setShadowStrength(float shadowStrength)
@@ -296,6 +307,7 @@ void QDemonSceneEnvironment::setShadowStrength(float shadowStrength)
 
     m_shadowStrength = shadowStrength;
     emit shadowStrengthChanged(m_shadowStrength);
+    update();
 }
 
 void QDemonSceneEnvironment::setShadowDistance(float shadowDistance)
@@ -305,6 +317,7 @@ void QDemonSceneEnvironment::setShadowDistance(float shadowDistance)
 
     m_shadowDistance = shadowDistance;
     emit shadowDistanceChanged(m_shadowDistance);
+    update();
 }
 
 void QDemonSceneEnvironment::setShadowSoftness(float shadowSoftness)
@@ -314,6 +327,7 @@ void QDemonSceneEnvironment::setShadowSoftness(float shadowSoftness)
 
     m_shadowSoftness = shadowSoftness;
     emit shadowSoftnessChanged(m_shadowSoftness);
+    update();
 }
 
 void QDemonSceneEnvironment::setShadowBias(float shadowBias)
@@ -323,6 +337,7 @@ void QDemonSceneEnvironment::setShadowBias(float shadowBias)
 
     m_shadowBias = shadowBias;
     emit shadowBiasChanged(m_shadowBias);
+    update();
 }
 
 void QDemonSceneEnvironment::setLightProbe(QDemonImage *lightProbe)
@@ -336,6 +351,7 @@ void QDemonSceneEnvironment::setLightProbe(QDemonImage *lightProbe)
 
     m_lightProbe = lightProbe;
     emit lightProbeChanged(m_lightProbe);
+    update();
 }
 
 void QDemonSceneEnvironment::setProbeBrightness(float probeBrightness)
@@ -345,6 +361,7 @@ void QDemonSceneEnvironment::setProbeBrightness(float probeBrightness)
 
     m_probeBrightness = probeBrightness;
     emit probeBrightnessChanged(m_probeBrightness);
+    update();
 }
 
 void QDemonSceneEnvironment::setFastIBL(bool fastIBL)
@@ -354,6 +371,7 @@ void QDemonSceneEnvironment::setFastIBL(bool fastIBL)
 
     m_fastIBL = fastIBL;
     emit fastIBLChanged(m_fastIBL);
+    update();
 }
 
 void QDemonSceneEnvironment::setProbeHorizon(float probeHorizon)
@@ -363,6 +381,7 @@ void QDemonSceneEnvironment::setProbeHorizon(float probeHorizon)
 
     m_probeHorizon = probeHorizon;
     emit probeHorizonChanged(m_probeHorizon);
+    update();
 }
 
 void QDemonSceneEnvironment::setProbeFieldOfView(float probeFieldOfView)
@@ -372,6 +391,7 @@ void QDemonSceneEnvironment::setProbeFieldOfView(float probeFieldOfView)
 
     m_probeFieldOfView = probeFieldOfView;
     emit probeFieldOfViewChanged(m_probeFieldOfView);
+    update();
 }
 
 void QDemonSceneEnvironment::setLightProbe2(QDemonImage *lightProbe2)
@@ -385,6 +405,7 @@ void QDemonSceneEnvironment::setLightProbe2(QDemonImage *lightProbe2)
 
     m_lightProbe2 = lightProbe2;
     emit lightProbe2Changed(m_lightProbe2);
+    update();
 }
 
 void QDemonSceneEnvironment::setProbe2Fade(float probe2Fade)
@@ -394,6 +415,7 @@ void QDemonSceneEnvironment::setProbe2Fade(float probe2Fade)
 
     m_probe2Fade = probe2Fade;
     emit probe2FadeChanged(m_probe2Fade);
+    update();
 }
 
 void QDemonSceneEnvironment::setProbe2Window(float probe2Window)
@@ -403,6 +425,7 @@ void QDemonSceneEnvironment::setProbe2Window(float probe2Window)
 
     m_probe2Window = probe2Window;
     emit probe2WindowChanged(m_probe2Window);
+    update();
 }
 
 void QDemonSceneEnvironment::setProbe2Postion(float probe2Postion)
@@ -412,6 +435,7 @@ void QDemonSceneEnvironment::setProbe2Postion(float probe2Postion)
 
     m_probe2Postion = probe2Postion;
     emit probe2PostionChanged(m_probe2Postion);
+    update();
 }
 
 void QDemonSceneEnvironment::setIsDepthTestDisabled(bool isDepthTestDisabled)
@@ -421,6 +445,7 @@ void QDemonSceneEnvironment::setIsDepthTestDisabled(bool isDepthTestDisabled)
 
     m_isDepthTestDisabled = isDepthTestDisabled;
     emit isDepthTestDisabledChanged(m_isDepthTestDisabled);
+    update();
 }
 
 void QDemonSceneEnvironment::setIsDepthPrePassDisabled(bool isDepthPrePassDisabled)
@@ -430,6 +455,7 @@ void QDemonSceneEnvironment::setIsDepthPrePassDisabled(bool isDepthPrePassDisabl
 
     m_isDepthPrePassDisabled = isDepthPrePassDisabled;
     emit isDepthPrePassDisabledChanged(m_isDepthPrePassDisabled);
+    update();
 }
 
 QDemonRenderGraphObject *QDemonSceneEnvironment::updateSpatialNode(QDemonRenderGraphObject *node)
@@ -466,6 +492,7 @@ void QDemonSceneEnvironment::setTemporalAAEnabled(bool temporalAAEnabled)
 
     m_temporalAAEnabled = temporalAAEnabled;
     emit temporalAAEnabledChanged(m_temporalAAEnabled);
+    update();
 }
 
 void QDemonSceneEnvironment::qmlAppendEffect(QQmlListProperty<QDemonEffect> *list, QDemonEffect *effect)
