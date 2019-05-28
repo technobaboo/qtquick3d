@@ -27,7 +27,7 @@ class Q_QUICK3D_EXPORT QDemonView3D : public QQuickItem
     Q_PROPERTY(QDemonNode* scene READ scene WRITE setScene NOTIFY sceneChanged)
     Q_CLASSINFO("DefaultProperty", "data")
 public:
-    QDemonView3D(QQuickItem *parent = nullptr);
+    explicit QDemonView3D(QQuickItem *parent = nullptr);
     ~QDemonView3D() override;
 
     QQmlListProperty<QObject> data();
