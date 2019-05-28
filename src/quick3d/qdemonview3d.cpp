@@ -53,7 +53,7 @@ QDemonView3D::QDemonView3D(QQuickItem *parent)
 
 QDemonView3D::~QDemonView3D()
 {
-    for (auto connection : m_connections)
+    for (const auto &connection : qAsConst(m_connections))
         disconnect(connection);
 }
 
