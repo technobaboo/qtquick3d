@@ -198,11 +198,11 @@ QString QDemonModel::translateSource()
 {
     QString fragment;
     if (m_source.hasFragment()) {
-        // Check if this is an index, or primative
+        // Check if this is an index, or primitive
         bool isNumber = false;
         m_source.fragment().toInt(&isNumber);
         fragment = QStringLiteral("#") + m_source.fragment();
-        // If it wasn't an index, then it was a primative
+        // If it wasn't an index, then it was a primitive
         if (!isNumber)
             return fragment;
     }
