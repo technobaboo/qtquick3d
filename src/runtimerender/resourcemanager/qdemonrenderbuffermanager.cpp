@@ -330,7 +330,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString 
 QDemonMeshUtilities::MultiLoadResult QDemonBufferManager::loadPrimitive(const QString &inRelativePath) const
 {
     QByteArray theName = inRelativePath.toUtf8();
-    for (size_t idx = 0; idx < 5; ++idx) {
+    for (size_t idx = 0; idx < nPrimitives; ++idx) {
         if (primitives[idx].primitive == theName) {
             QString pathBuilder = QString::fromLatin1(primitivesDirectory);
             pathBuilder += QLatin1String(primitives[idx].file);
