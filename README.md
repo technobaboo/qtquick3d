@@ -1,5 +1,7 @@
 # Qt Quick 3D (code name: demon render)
 
+[![pipeline status](https://git.qt.io/annichol/qtdemonrender/badges/master/pipeline.svg)](https://git.qt.io/annichol/qtdemonrender/commits/master)
+
 This project contains everything necessary build Qt Quick 3D (against Qt 5.12 or greater)
 Qt Quick 3D is a high level 3D API for Qt Quick.  Unlike Qt3D, Qt Quick 3D enables anyone introduce 3D content into their Qt Quick applications.  Rather than requiring the end user to know advanced details of the graphics rendering pipeline (building framegraphs and materials), it is now possible to simply build up a 3D scene using high level primitives.
 
