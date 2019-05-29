@@ -658,8 +658,8 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
         renderableFlags |= QDemonRenderableObjectFlag::CompletelyTransparent;
     }
 
-    if (subsetOpacity > 1. - QDEMON_RENDER_MINIMUM_RENDER_OPACITY)
-        subsetOpacity = 1.;
+    if (subsetOpacity > 1.f - QDEMON_RENDER_MINIMUM_RENDER_OPACITY)
+        subsetOpacity = 1.f;
     else
         renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
 
@@ -693,8 +693,8 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
         renderableFlags |= QDemonRenderableObjectFlag::CompletelyTransparent;
     }
 
-    if (subsetOpacity > 1. - QDEMON_RENDER_MINIMUM_RENDER_OPACITY)
-        subsetOpacity = 1.;
+    if (subsetOpacity > 1.f - QDEMON_RENDER_MINIMUM_RENDER_OPACITY)
+        subsetOpacity = 1.f;
     else
         renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
 
