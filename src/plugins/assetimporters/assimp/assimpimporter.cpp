@@ -7,6 +7,13 @@
 
 #include <QtDemonAssetImport/private/qdemonmeshutilities_p.h>
 
+#include <QtGui/QImage>
+#include <QtGui/QImageReader>
+#include <QtGui/QImageWriter>
+
+#include <QtCore/QBuffer>
+#include <QtCore/QByteArray>
+
 QT_BEGIN_NAMESPACE
 
 AssimpImporter::AssimpImporter()
@@ -209,7 +216,38 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
         saveFile.close();
     }
 
-    // Generate Texture Sources
+    // Generate Embedded Texture Sources
+    for (uint i = 0; i < scene->mNumTextures; ++i) {
+        aiTexture *texture = scene->mTextures[i];
+        if (texture->mHeight == 0) {
+            // compressed format, try to load with Image Loader
+            QByteArray data(reinterpret_cast<char *>(texture->pcData), texture->mWidth);
+            QBuffer readBuffer(&data);
+            QByteArray format = texture->achFormatHint;
+            QImageReader imageReader(&readBuffer, format);
+            QImage image = imageReader.read();
+            if (image.isNull()) {
+                qWarning() << imageReader.errorString();
+                continue;
+            }
+
+            // ### maybe dont always use png
+            const QString saveFileName = savePath.absolutePath() +
+                    QDir::separator() + QStringLiteral("maps") +
+                    QDir::separator() + QString::number(i) +
+                    QStringLiteral(".png");
+            image.save(saveFileName);
+
+        } else {
+            // Raw format, just convert data to QImage
+            QImage rawImage(reinterpret_cast<uchar *>(texture->pcData), texture->mWidth, texture->mHeight, QImage::Format_RGBA8888);
+            const QString saveFileName = savePath.absolutePath() +
+                    QDir::separator() + QStringLiteral("maps") +
+                    QDir::separator() + QString::number(i) +
+                    QStringLiteral(".png");
+            rawImage.save(saveFileName);
+        }
+    }
 
     // Materials
 
