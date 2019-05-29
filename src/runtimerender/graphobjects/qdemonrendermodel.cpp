@@ -67,8 +67,9 @@ QDemonBounds3 QDemonRenderModel::getModelBounds(const QDemonRef<QDemonBufferMana
     retval.setEmpty();
     QDemonRenderMesh *theMesh = inManager->loadMesh(meshPath);
     if (theMesh) {
-        for (quint32 idx = 0, end = theMesh->subsets.size(); idx < end; ++idx)
-            retval.include(theMesh->subsets[idx].bounds);
+        const auto &subSets = theMesh->subsets;
+        for (const auto &subSet : subSets)
+            retval.include(subSet.bounds);
     }
     return retval;
 }
