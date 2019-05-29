@@ -898,7 +898,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
     QDemonStackPerfTimer perfTimer(renderer->demonContext()->performanceTimer(), Q_FUNC_INFO);
     viewProjection = inViewProjection;
     bool wasDataDirty = false;
-    for (quint32 idx = 0, end = renderableNodes.size(); idx < end; ++idx) {
+    for (qint32 idx = 0, end = renderableNodes.size(); idx < end; ++idx) {
         QDemonRenderableNodeEntry &theNodeEntry(renderableNodes[idx]);
         QDemonRenderNode *theNode = theNodeEntry.node;
         wasDataDirty = wasDataDirty || theNode->flags.testFlag(QDemonRenderNode::Flag::Dirty);
@@ -1108,7 +1108,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             sourceLightDirections.clear();
 
             // Cameras
-            for (quint32 idx = 0, end = cameras.size(); idx < end; ++idx) {
+            for (qint32 idx = 0, end = cameras.size(); idx < end; ++idx) {
                 QDemonRenderCamera *theCamera = cameras[idx];
                 wasDataDirty = wasDataDirty || theCamera->flags.testFlag(QDemonRenderNode::Flag::Dirty);
                 QDemonCameraGlobalCalculationResult theResult = thePrepResult.setupCameraForRender(*theCamera);
@@ -1124,7 +1124,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             }
 
             // Lights
-            for (quint32 idx = 0, end = lights.size(); idx < end; ++idx) {
+            for (qint32 idx = 0, end = lights.size(); idx < end; ++idx) {
                 QDemonRenderLight *theLight = lights[idx];
                 wasDataDirty = wasDataDirty || theLight->flags.testFlag(QDemonRenderNode::Flag::Dirty);
                 bool lightResult = theLight->calculateGlobalVariables();
@@ -1183,7 +1183,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             }
 
             if (theLightNodeMarkers.empty() == false) {
-                for (quint32 idx = 0, end = renderableNodes.size(); idx < end; ++idx) {
+                for (qint32 idx = 0, end = renderableNodes.size(); idx < end; ++idx) {
                     QDemonRenderableNodeEntry &theNodeEntry(renderableNodes[idx]);
                     quint32 nodeDFSIndex = theNodeEntry.node->dfsIndex;
                     for (quint32 markerIdx = 0, markerEnd = theLightNodeMarkers.size(); markerIdx < markerEnd; ++markerIdx) {
@@ -1228,8 +1228,8 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
             // Setup the light directions here.
 
-            for (quint32 lightIdx = 0, lightEnd = globalLights.size(); lightIdx < lightEnd; ++lightIdx) {
-                lightDirections.push_back(globalLights[lightIdx]->getScalingCorrectDirection());
+            for (qint32 lightIdx = 0, lightEnd = globalLights.size(); lightIdx < lightEnd; ++lightIdx) {
+                lightDirections.push_back(globalLights.at(lightIdx)->getScalingCorrectDirection());
             }
 
             modelContexts.clear();

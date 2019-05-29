@@ -845,11 +845,11 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         for (qint32 idx = 0; idx < m_currentFeatureSet.size(); ++idx) {
             const auto &name = m_currentFeatureSet.at(idx).name;
             if (name == QDemonShaderDefines::ssao())
-                enableSSAO = m_currentFeatureSet[idx].enabled;
+                enableSSAO = m_currentFeatureSet.at(idx).enabled;
             else if (name == QDemonShaderDefines::ssdo())
-                enableSSDO = m_currentFeatureSet[idx].enabled;
+                enableSSDO = m_currentFeatureSet.at(idx).enabled;
             else if (name == QDemonShaderDefines::ssm())
-                enableShadowMaps = m_currentFeatureSet[idx].enabled;
+                enableShadowMaps = m_currentFeatureSet.at(idx).enabled;
         }
 
         bool includeSSAOSSDOVars = enableSSAO || enableSSDO || enableShadowMaps;
