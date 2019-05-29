@@ -51,6 +51,16 @@ enum class ShaderCacheProgramFlagValues : quint32
 
 Q_DECLARE_FLAGS(QDemonShaderCacheProgramFlags, ShaderCacheProgramFlagValues)
 
+namespace QDemonShaderDefines
+{
+QByteArray lightProbe();
+QByteArray lightProbe2();
+QByteArray iblFov();
+QByteArray ssm();
+QByteArray ssao();
+QByteArray ssdo();
+QByteArray cgLighting();
+}
 
 // There are a number of macros used to turn on or off various features.  This allows those
 // features

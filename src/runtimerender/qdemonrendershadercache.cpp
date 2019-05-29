@@ -161,6 +161,14 @@ NullContext = 1 << 5,*/
 //}
 }
 
+QByteArray QDemonShaderDefines::lightProbe() { return QByteArrayLiteral("QDEMON_ENABLE_LIGHT_PROBE"); }
+QByteArray QDemonShaderDefines::lightProbe2() { return QByteArrayLiteral("QDEMON_ENABLE_LIGHT_PROBE_2"); }
+QByteArray QDemonShaderDefines::iblFov() { return QByteArrayLiteral("QDEMON_ENABLE_IBL_FOV"); }
+QByteArray QDemonShaderDefines::ssm() { return QByteArrayLiteral("QDEMON_ENABLE_SSM"); }
+QByteArray QDemonShaderDefines::ssao() { return QByteArrayLiteral("QDEMON_ENABLE_SSAO"); }
+QByteArray QDemonShaderDefines::ssdo() { return QByteArrayLiteral("QDEMON_ENABLE_SSDO"); }
+QByteArray QDemonShaderDefines::cgLighting() { return  QByteArrayLiteral("QDEMON_ENABLE_CG_LIGHTING"); }
+
 uint qHash(const QDemonShaderCacheKey &key)
 {
     return key.m_hashCode;
