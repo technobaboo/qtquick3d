@@ -61,7 +61,7 @@ public:
     QDemonRenderBackendShaderInputEntryGL *getEntryByName(const QByteArray &entryName) const
     {
         for (int idx = 0; idx != m_shaderInputEntries.size(); ++idx) {
-            if (m_shaderInputEntries[idx].m_attribName == entryName.toLocal8Bit())
+            if (m_shaderInputEntries[idx].m_attribName == entryName)
                 return &m_shaderInputEntries.mData[idx];
         }
         return nullptr;
