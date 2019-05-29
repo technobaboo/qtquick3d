@@ -33,6 +33,8 @@
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtCore/QString>
 
+#define QDEMON_DEBUG_ID 0
+
 QT_BEGIN_NAMESPACE
 
 // Types should be setup on construction.  Change the type
@@ -63,7 +65,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
 
     QAtomicInt ref;
     // Id's help debugging the object and are optionally set
-    QString id;
+#if QDEMON_DEBUG_ID
+    QByteArray id;
+#endif
     // Type is used for RTTI purposes down the road.
     Type type;
 

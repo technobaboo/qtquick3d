@@ -1513,7 +1513,9 @@ void QDemonRendererImpl::dumpGpuProfilerStats()
         if (theLayer->flags.testFlag(QDemonRenderLayer::Flag::Active) && theLayerRenderData->m_layerProfilerGpu) {
             const QVector<QString> &idList = theLayerRenderData->m_layerProfilerGpu->timerIDs();
             if (!idList.empty()) {
+#if QDEMON_DEBUG_ID
                 qDebug() << theLayer->id;
+#endif
                 auto theIdIter = idList.begin();
                 for (; theIdIter != idList.end(); theIdIter++) {
                     char messageLine[1024];
