@@ -324,7 +324,7 @@ static inline CurveType cubicDoublePoint(const QVector2D points[4], QVector<floa
     }
 }
 
-static inline QVector4D createVec4(QVector2D p1, QVector2D p2)
+inline QVector4D createVec4(QVector2D p1, QVector2D p2)
 {
     return QVector4D(p1.x(), p1.y(), p2.x(), p2.y());
 }

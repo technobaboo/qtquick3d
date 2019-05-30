@@ -1615,7 +1615,7 @@ static inline constexpr QVector2D halfDims(const QRectF &r)
 
 // Take coordinates in global space and move local space where 0,0 is the center
 // of the rect but return value in pixels, not in normalized -1,1 range
-static inline QVector2D toNormalizedRectRelative(const QRectF &r, QVector2D absoluteCoordinates)
+inline QVector2D toNormalizedRectRelative(const QRectF &r, QVector2D absoluteCoordinates)
 {
     // normalize them
     const QVector2D relativeCoords(toRectRelative(r, absoluteCoordinates));
@@ -1631,12 +1631,12 @@ static inline constexpr QVector2D relativeToNormalizedCoordinates(const QRectF &
 
 // Normalized coordinates are in the range of -1,1 where -1 is the left, bottom edges
 // and 1 is the top,right edges.
-static inline constexpr QVector2D absoluteToNormalizedCoordinates(const QRectF &r, const QVector2D &absoluteCoordinates)
+inline constexpr QVector2D absoluteToNormalizedCoordinates(const QRectF &r, const QVector2D &absoluteCoordinates)
 {
     return relativeToNormalizedCoordinates(r, toRectRelative(r, absoluteCoordinates));
 }
 
-static inline constexpr QVector2D toAbsoluteCoords(const QRectF &r, const QVector2D &inRelativeCoords)
+inline constexpr QVector2D toAbsoluteCoords(const QRectF &r, const QVector2D &inRelativeCoords)
 {
     return QVector2D(inRelativeCoords.x() + float(r.x()), inRelativeCoords.y() + float(r.y()));
 }
@@ -1957,7 +1957,7 @@ enum class QDemonRenderReadPixelFormat
     RGBA8
 };
 
-static inline int sizeofPixelFormat(QDemonRenderReadPixelFormat f)
+inline int sizeofPixelFormat(QDemonRenderReadPixelFormat f)
 {
     switch (f) {
     case QDemonRenderReadPixelFormat::Alpha8:

@@ -34,25 +34,6 @@
 
 QT_BEGIN_NAMESPACE
 
-static const char *lconstantnames[] = { "position",
-                                        "direction",
-                                        "up",
-                                        "right",
-                                        "diffuse",
-                                        "ambient",
-                                        "specular",
-                                        "spotExponent",
-                                        "spotCutoff",
-                                        "constantAttenuation",
-                                        "linearAttenuation",
-                                        "quadraticAttenuation",
-                                        "range",
-                                        "width",
-                                        "height",
-                                        "shadowControls",
-                                        "shadowView",
-                                        "shadowIdx",
-                                        "attenuation" };
 
 template<typename GeneratedShader>
 struct QDemonLightConstantProperties
@@ -78,6 +59,8 @@ struct QDemonLightConstantProperties
         QDemonRenderCachedShaderProperty<QMatrix4x4> shadowView;
         QDemonRenderCachedShaderProperty<qint32> shadowIdx;
         QDemonRenderCachedShaderProperty<QVector3D> attenuation;
+
+        static const char *lconstantnames[];
 
         LightConstants(const QByteArray &lightRef, QDemonRef<QDemonRenderShaderProgram> shader)
             : position(lightRef + lconstantnames[0], shader)
@@ -186,6 +169,28 @@ struct QDemonLightConstantProperties
     QDemonRenderCachedShaderProperty<qint32> m_lightCount;
     int m_lightCountInt;
 };
+
+
+template<typename GeneratedShader>
+const char * QDemonLightConstantProperties<GeneratedShader>::LightConstants::lconstantnames[] = { "position",
+                                        "direction",
+                                        "up",
+                                        "right",
+                                        "diffuse",
+                                        "ambient",
+                                        "specular",
+                                        "spotExponent",
+                                        "spotCutoff",
+                                        "constantAttenuation",
+                                        "linearAttenuation",
+                                        "quadraticAttenuation",
+                                        "range",
+                                        "width",
+                                        "height",
+                                        "shadowControls",
+                                        "shadowView",
+                                        "shadowIdx",
+                                        "attenuation" };
 
 QT_END_NAMESPACE
 
