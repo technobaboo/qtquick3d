@@ -10,14 +10,35 @@ before_script:
 after_script:
   - echo "Finished"
 
-build1:
+build_with_linux:
   stage: build
+  tags:
+    - linux
   script:
     - echo "Starting Build"
     - ~/Qt/5.12.3/gcc_64/bin/qmake
     - make
 
-test1:
+test_with_linux:
   stage: test
+  tags:
+    - linux
+  script:
+    - echo "No tests to run at this time... Please add some."
+
+build_with_windows:
+  stage: build
+  tags:
+    - windows
+  script:
+    - echo "Starting Build"
+    - "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
+    - C:\Qt\5.12.3\msvc2017_64\bin\qmake.exe
+    - C:\JOM\JOM.exe %MAKEFLAGS%
+
+test_with_windows:
+  stage: test
+  tags:
+    - windows
   script:
     - echo "No tests to run at this time... Please add some."
