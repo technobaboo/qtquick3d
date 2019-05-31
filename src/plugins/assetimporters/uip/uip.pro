@@ -18,7 +18,6 @@ HEADERS += \
     enummaps.h \
     datamodelparser.h \
     keyframegroupgenerator.h \
-    utils.h \
     propertymap.h
 
 SOURCES += \

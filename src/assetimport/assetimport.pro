@@ -9,10 +9,12 @@ SOURCES = \
     qdemonassetimporterfactory.cpp \
     qdemonassetimportmanager.cpp \
     qdemonmeshutilities.cpp \
+    qdemonqmlutilities.cpp \
     qdemonscenegraphtranslation.cpp \
     qdemonpathutilities.cpp
 
 HEADERS = \
+    qdemonqmlutilities_p.h \
     qtdemonassetimportglobal.h \
     qdemonassetimporter_p.h \
     qdemonassetimporterfactory_p.h \
