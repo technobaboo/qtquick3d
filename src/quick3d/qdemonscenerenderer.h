@@ -7,7 +7,7 @@
 #include <qsgtextureprovider.h>
 #include <QSGSimpleTextureNode>
 
-#include "qdemonview3d.h"
+#include <QtQuick3d/qdemonview3d.h>
 
 QT_BEGIN_NAMESPACE
 
