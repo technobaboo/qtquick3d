@@ -265,16 +265,11 @@ struct QDemonRenderCachedShaderProperty
     QDemonRef<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
 
     QDemonRenderCachedShaderProperty(const QByteArray &inConstantName, QDemonRef<QDemonRenderShaderProgram> inShader)
-        : QDemonRenderCachedShaderProperty(inConstantName.constData(), inShader)
-    {
-    }
-
-    QDemonRenderCachedShaderProperty(const char *inConstantName, QDemonRef<QDemonRenderShaderProgram> inShader)
-        : shader(inShader), constant(nullptr)
+        : shader(inShader)
     {
         QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inConstantName);
         if (theConstant) {
-            if (theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
+            if (Q_LIKELY(theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType())) {
                 constant = theConstant;
             } else {
                 // Property types do not match, this probably indicates that the shader changed
@@ -304,13 +299,8 @@ struct QDemonRenderCachedShaderPropertyArray
     QDemonRef<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
     TDataType m_array[size];
 
-    QDemonRenderCachedShaderPropertyArray(const QString &inConstantName, QDemonRef<QDemonRenderShaderProgram> inShader)
-        : QDemonRenderCachedShaderPropertyArray(qPrintable(inConstantName), inShader)
-    {
-    }
-
-    QDemonRenderCachedShaderPropertyArray(const char *inConstantName, QDemonRef<QDemonRenderShaderProgram> inShader)
-        : shader(inShader), constant(nullptr)
+    QDemonRenderCachedShaderPropertyArray(const QByteArray &inConstantName, QDemonRef<QDemonRenderShaderProgram> inShader)
+        : shader(inShader)
     {
         memset(m_array, 0, sizeof(m_array));
         QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inConstantName);
@@ -348,15 +338,14 @@ struct QDemonRenderCachedShaderBuffer
     QDemonRef<QDemonRenderShaderProgram> shader; ///< pointer to shader program
     QDemonRef<TDataType> shaderBuffer; ///< poiner to shader buffer object
 
-    QDemonRenderCachedShaderBuffer(const char *inShaderBufferName, QDemonRef<QDemonRenderShaderProgram> inShader)
-        : shader(inShader), shaderBuffer(nullptr)
+    QDemonRenderCachedShaderBuffer(const QByteArray &inShaderBufferName, QDemonRef<QDemonRenderShaderProgram> inShader)
+        : shader(inShader)
     {
         QDemonRef<TDataType> theShaderBuffer = static_cast<TDataType *>(inShader->shaderBuffer(inShaderBufferName).get());
-        if (theShaderBuffer) {
+        if (theShaderBuffer)
             shaderBuffer = theShaderBuffer;
-        }
     }
-    QDemonRenderCachedShaderBuffer() : shader(nullptr), shaderBuffer(nullptr) {}
+    QDemonRenderCachedShaderBuffer() = default;
 
     void set()
     {
