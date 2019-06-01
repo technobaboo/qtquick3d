@@ -95,127 +95,7 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
         return QString::fromLocal8Bit(m_importer->GetErrorString());
     }
 
-    // Generate Temp Mesh files
-    auto meshBuilder = QDemonMeshUtilities::QDemonMeshBuilder::createMeshBuilder();
-    for (unsigned int i = 0; i < m_scene->mNumMeshes; ++i) {
-        const aiMesh *mesh = m_scene->mMeshes[i];
-        meshBuilder->reset();
 
-        // Vertex Buffer
-        QVector<QDemonMeshUtilities::MeshBuilderVBufEntry> entries;
-
-        // Position (attr_pos)
-        if (mesh->HasPositions()) {
-            QByteArray vertexData(reinterpret_cast<char*>(mesh->mVertices), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
-            QDemonMeshUtilities::MeshBuilderVBufEntry positionAttribute( QDemonMeshUtilities::Mesh::getPositionAttrName(),
-                                                                         vertexData,
-                                                                         QDemonRenderComponentType::Float32,
-                                                                         3);
-            entries.append(positionAttribute);
-        }
-
-        // Normal (attr_norm)
-        if (mesh->HasNormals()) {
-            QByteArray vertexData(reinterpret_cast<char*>(mesh->mNormals), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
-            QDemonMeshUtilities::MeshBuilderVBufEntry normalAttribute( QDemonMeshUtilities::Mesh::getNormalAttrName(),
-                                                                         vertexData,
-                                                                         QDemonRenderComponentType::Float32,
-                                                                         3);
-            entries.append(normalAttribute);
-        }
-
-        // UV1 (attr_uv0)
-        if (mesh->HasTextureCoords(0)) {
-            uint components = mesh->mNumUVComponents[0];
-            QByteArray uv1Data(reinterpret_cast<char*>(mesh->mTextureCoords[0]), mesh->mNumVertices * components * getSizeOfType(QDemonRenderComponentType::Float32));
-            QDemonMeshUtilities::MeshBuilderVBufEntry uv1Attribute( QDemonMeshUtilities::Mesh::getUVAttrName(),
-                                                                         uv1Data,
-                                                                         QDemonRenderComponentType::Float32,
-                                                                         components);
-            entries.append(uv1Attribute);
-        }
-
-        // UV2 (attr_uv1)
-        if (mesh->HasTextureCoords(1)) {
-            uint components = mesh->mNumUVComponents[1];
-            QByteArray uv2Data(reinterpret_cast<char*>(mesh->mTextureCoords[1]), mesh->mNumVertices * components * getSizeOfType(QDemonRenderComponentType::Float32));
-            QDemonMeshUtilities::MeshBuilderVBufEntry uv2Attribute( QDemonMeshUtilities::Mesh::getUV2AttrName(),
-                                                                         uv2Data,
-                                                                         QDemonRenderComponentType::Float32,
-                                                                         components);
-            entries.append(uv2Attribute);
-        }
-
-        if (mesh->HasTangentsAndBitangents()) {
-
-            // Tangent (attr_textan)
-            QByteArray tangentData(reinterpret_cast<char*>(mesh->mTangents), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
-            QDemonMeshUtilities::MeshBuilderVBufEntry tangentsAttribute( QDemonMeshUtilities::Mesh::getTexTanAttrName(),
-                                                                         tangentData,
-                                                                         QDemonRenderComponentType::Float32,
-                                                                         3);
-            entries.append(tangentsAttribute);
-
-            // Binormal (attr_binormal)
-            // We have to calculate the binormal, because we only have bitangents calculated now
-            auto binormalVector = calculateBinormals(mesh);
-            QByteArray binormalData(reinterpret_cast<char*>(binormalVector.data()), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
-            QDemonMeshUtilities::MeshBuilderVBufEntry binormalAttribute( QDemonMeshUtilities::Mesh::getTexBinormalAttrName(),
-                                                                         binormalData,
-                                                                         QDemonRenderComponentType::Float32,
-                                                                         3);
-            entries.append(binormalAttribute);
-
-        }
-
-        // ### Handle Bone's for rigged animations
-        if (mesh->HasBones()) {
-            // Weight (attr_weight)
-
-            // BoneID (attr_boneid)
-        }
-
-        // Color (attr_color)
-        if (mesh->HasVertexColors(0)) {
-            QByteArray vertexColorData(reinterpret_cast<char*>(mesh->mColors[0]), mesh->mNumVertices * 4 * getSizeOfType(QDemonRenderComponentType::Float32));
-            QDemonMeshUtilities::MeshBuilderVBufEntry vertexColorAttribute( QDemonMeshUtilities::Mesh::getColorAttrName(),
-                                                                         vertexColorData,
-                                                                         QDemonRenderComponentType::Float32,
-                                                                         4);
-            entries.append(vertexColorAttribute);
-        }
-        meshBuilder->setVertexBuffer(entries);
-
-        // Index Buffer
-        QVector<quint16> indexes;
-        indexes.reserve(mesh->mNumFaces * 3);
-        for (int faceIndex = 0;faceIndex < mesh->mNumFaces; ++faceIndex) {
-            const auto face = mesh->mFaces[faceIndex];
-            // Faces should always have 3 indicides
-            Q_ASSERT(face.mNumIndices == 3);
-            // ### We need to split meshes so that indexes can never be over ushort max
-            indexes.append(quint16(face.mIndices[0]));
-            indexes.append(quint16(face.mIndices[1]));
-            indexes.append(quint16(face.mIndices[2]));
-        }
-        QByteArray indexBuffer(reinterpret_cast<const char *>(indexes.constData()), indexes.length() * sizeof(quint16));
-        meshBuilder->setIndexBuffer(indexBuffer, QDemonRenderComponentType::UnsignedInteger16);
-
-        // Subsets (in this case its everything in the index buffer)
-        QString meshName;
-        meshBuilder->addMeshSubset(reinterpret_cast<const char16_t *>(meshName.utf16()), indexes.count(), 0, 0);
-
-        auto &outputMesh = meshBuilder->getMesh();
-        const QString saveFileName = m_meshCache.path() + QString::number(i) + QStringLiteral(".mesh");
-        QFile saveFile(saveFileName);
-        if (!saveFile.open(QIODevice::WriteOnly)) {
-            qWarning() << "Can't write to file " << saveFileName;
-            continue;
-        }
-
-        outputMesh.saveMulti(saveFile, 0);
-        saveFile.close();
-    }
 
     // Generate Embedded Texture Sources
 
@@ -301,9 +181,6 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
             *generatedFiles += targetFileName;
     }
 
-    // Cleanup mesh cache
-    m_meshCache.setAutoRemove(true);
-
     return errorString;
 }
 
@@ -353,25 +230,22 @@ void AssimpImporter::generateModelProperties(aiNode *modelNode, QTextStream &out
 
     // source
     // Combine all the meshes referenced by this model into a single MultiMesh file
-    //QDemonMeshUtilities::Mesh *meshOutput = nullptr;
-    QString outputMeshFile = QStringLiteral("meshes") + QDir::separator() +
-            QString::fromUtf8(modelNode->mName.C_Str()) + QStringLiteral(".mesh");
-    QFile meshFile(m_savePath.absolutePath() + outputMeshFile);
-    if (!meshFile.open(QIODevice::ReadWrite)) {
-        qWarning() << "Could not open file " << outputMeshFile;
-        return;
-    }
+    QVector<aiMesh *> meshes;
+    QVector<aiMaterial *> materials;
     for (uint i = 0; i < modelNode->mNumMeshes; ++i) {
-        //aiMesh *mesh = m_scene->mMeshes[modelNode->mMeshes[i]];
-        //aiMaterial *material = m_scene->mMaterials[mesh->mMaterialIndex];
-        //aiString materialName = material->GetName();
-
-        QString meshFileName = m_meshCache.path() + QString::number(modelNode->mMeshes[i]) + QStringLiteral(".mesh");
-        auto loadResult = QDemonMeshUtilities::Mesh::loadMulti(meshFileName.toLocal8Bit(), 0);
-        loadResult.m_mesh->saveMulti(meshFile, i);
+        aiMesh *mesh = m_scene->mMeshes[modelNode->mMeshes[i]];
+        aiMaterial *material = m_scene->mMaterials[mesh->mMaterialIndex];
+        meshes.append(mesh);
+        materials.append(material);
     }
-    meshFile.close();
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << "source: " << outputMeshFile << endl;
+
+    QString outputMeshFile = QStringLiteral("meshes/") +
+            QString::fromUtf8(modelNode->mName.C_Str()) + QStringLiteral(".mesh");
+
+    QFile meshFile(m_savePath.absolutePath() + QDir::separator() + outputMeshFile);
+    generateMeshFile(meshFile, meshes);
+
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << "source: \"" << outputMeshFile << QStringLiteral("\"") << endl;
 
     // skeletonRoot
 
@@ -511,6 +385,190 @@ void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, i
 
     // visible
 
+}
+
+QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *> &meshes)
+{
+    if (!file.open(QIODevice::WriteOnly))
+        return QStringLiteral("Could not open device to write mesh file");
+
+
+    auto meshBuilder = QDemonMeshUtilities::QDemonMeshBuilder::createMeshBuilder();
+
+    struct SubsetEntryData {
+        QString name;
+        int indexLength;
+        int indexOffset;
+    };
+
+    // Check if we need placeholders in certain channels
+    bool needsPositionData = false;
+    bool needsNormalData = false;
+    bool needsUV1Data = false;
+    bool needsUV2Data = false;
+    bool needsTangentData = false;
+    bool needsVertexColorData = false;
+    unsigned uv1Components = 0;
+    unsigned uv2Components = 0;
+    unsigned totalVertices = 0;
+    for (const auto *mesh : meshes) {
+        totalVertices += mesh->mNumVertices;
+        uv1Components = qMax(mesh->mNumUVComponents[0], uv1Components);
+        uv2Components = qMax(mesh->mNumUVComponents[1], uv2Components);
+        needsPositionData |= mesh->HasPositions();
+        needsNormalData |= mesh->HasNormals();
+        needsUV1Data |= mesh->HasTextureCoords(0);
+        needsUV2Data |= mesh->HasTextureCoords(1);
+        needsTangentData |= mesh->HasTangentsAndBitangents();
+        needsVertexColorData |=mesh->HasVertexColors(0);
+    }
+
+    QByteArray positionData;
+    QByteArray normalData;
+    QByteArray uv1Data;
+    QByteArray uv2Data;
+    QByteArray tangentData;
+    QByteArray binormalData;
+    QByteArray vertexColorData;
+    QByteArray indexBufferData;
+    QVector<SubsetEntryData> subsetData;
+
+    for (const auto *mesh : meshes) {
+        // Position
+        if (mesh->HasPositions())
+            positionData += QByteArray(reinterpret_cast<char*>(mesh->mVertices), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
+        else if (needsPositionData)
+            positionData += QByteArray(mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+
+        // Normal
+        if (mesh->HasNormals())
+            normalData += QByteArray(reinterpret_cast<char*>(mesh->mNormals), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
+        else if (needsNormalData)
+            normalData += QByteArray(mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+
+        // UV1
+        if (mesh->HasTextureCoords(0))
+            uv1Data += QByteArray(reinterpret_cast<char*>(mesh->mTextureCoords[0]), mesh->mNumVertices * uv1Components * getSizeOfType(QDemonRenderComponentType::Float32));
+        else if (needsUV1Data)
+            uv1Data += QByteArray(mesh->mNumVertices * uv1Components * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+
+        // UV2
+        if (mesh->HasTextureCoords(1))
+            uv2Data += QByteArray(reinterpret_cast<char*>(mesh->mTextureCoords[1]), mesh->mNumVertices * uv2Components * getSizeOfType(QDemonRenderComponentType::Float32));
+        else if (needsUV2Data)
+            uv2Data += QByteArray(mesh->mNumVertices * uv2Components * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+
+        if (mesh->HasTangentsAndBitangents()) {
+            // Tangents
+            tangentData += QByteArray(reinterpret_cast<char*>(mesh->mTangents), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
+            // Binormals
+            auto binormalVector = calculateBinormals(mesh);
+            binormalData += QByteArray(reinterpret_cast<char*>(binormalVector.data()), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
+        } else if (needsTangentData) {
+            tangentData += QByteArray(mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+            binormalData += QByteArray(mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+        }
+        // ### Bones + Weights
+
+        // Color
+        if (mesh->HasVertexColors(0))
+            vertexColorData += QByteArray(reinterpret_cast<char*>(mesh->mColors[0]), mesh->mNumVertices * 4 * getSizeOfType(QDemonRenderComponentType::Float32));
+        else if (needsVertexColorData)
+            vertexColorData += QByteArray(mesh->mNumVertices * 4 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+        // Index Buffer
+        QVector<quint16> indexes;
+        indexes.reserve(mesh->mNumFaces * 3);
+        for (int faceIndex = 0;faceIndex < mesh->mNumFaces; ++faceIndex) {
+            const auto face = mesh->mFaces[faceIndex];
+            // Faces should always have 3 indicides
+            Q_ASSERT(face.mNumIndices == 3);
+            // ### We need to split meshes so that indexes can never be over ushort max
+            indexes.append(quint16(face.mIndices[0]));
+            indexes.append(quint16(face.mIndices[1]));
+            indexes.append(quint16(face.mIndices[2]));
+        }
+        SubsetEntryData subsetEntry;
+        subsetEntry.indexOffset = indexBufferData.length() / sizeof(quint16);
+        subsetEntry.indexLength = indexes.length() / sizeof(quint16);
+        indexBufferData += QByteArray(reinterpret_cast<const char *>(indexes.constData()), indexes.length() * sizeof(quint16));
+
+        // Subset
+        subsetEntry.name = QString::fromUtf8(m_scene->mMaterials[mesh->mMaterialIndex]->GetName().C_Str());
+        subsetData.append(subsetEntry);
+    }
+
+    // Vertex Buffer Entries
+    QVector<QDemonMeshUtilities::MeshBuilderVBufEntry> entries;
+    if (positionData.length() > 0) {
+        QDemonMeshUtilities::MeshBuilderVBufEntry positionAttribute( QDemonMeshUtilities::Mesh::getPositionAttrName(),
+                                                                     positionData,
+                                                                     QDemonRenderComponentType::Float32,
+                                                                     3);
+        entries.append(positionAttribute);
+    }
+    if (normalData.length() > 0) {
+        QDemonMeshUtilities::MeshBuilderVBufEntry normalAttribute( QDemonMeshUtilities::Mesh::getNormalAttrName(),
+                                                                   normalData,
+                                                                   QDemonRenderComponentType::Float32,
+                                                                   3);
+        entries.append(normalAttribute);
+    }
+    if (uv1Data.length() > 0) {
+        QDemonMeshUtilities::MeshBuilderVBufEntry uv1Attribute( QDemonMeshUtilities::Mesh::getUVAttrName(),
+                                                                uv1Data,
+                                                                QDemonRenderComponentType::Float32,
+                                                                uv1Components);
+        entries.append(uv1Attribute);
+    }
+    if (uv2Data.length() > 0) {
+        QDemonMeshUtilities::MeshBuilderVBufEntry uv2Attribute( QDemonMeshUtilities::Mesh::getUV2AttrName(),
+                                                                uv2Data,
+                                                                QDemonRenderComponentType::Float32,
+                                                                uv2Components);
+        entries.append(uv2Attribute);
+    }
+
+    if (tangentData.length() > 0) {
+        QDemonMeshUtilities::MeshBuilderVBufEntry tangentsAttribute( QDemonMeshUtilities::Mesh::getTexTanAttrName(),
+                                                                     tangentData,
+                                                                     QDemonRenderComponentType::Float32,
+                                                                     3);
+        entries.append(tangentsAttribute);
+    }
+
+    if (binormalData.length() > 0) {
+        QDemonMeshUtilities::MeshBuilderVBufEntry binormalAttribute( QDemonMeshUtilities::Mesh::getTexBinormalAttrName(),
+                                                                     binormalData,
+                                                                     QDemonRenderComponentType::Float32,
+                                                                     3);
+        entries.append(binormalAttribute);
+    }
+
+    if (vertexColorData.length() > 0) {
+        QDemonMeshUtilities::MeshBuilderVBufEntry vertexColorAttribute( QDemonMeshUtilities::Mesh::getColorAttrName(),
+                                                                        vertexColorData,
+                                                                        QDemonRenderComponentType::Float32,
+                                                                        4);
+        entries.append(vertexColorAttribute);
+    }
+
+    meshBuilder->setVertexBuffer(entries);
+    meshBuilder->setIndexBuffer(indexBufferData, QDemonRenderComponentType::UnsignedInteger16);
+
+    // Subsets
+    for (const auto &subset : subsetData)
+        meshBuilder->addMeshSubset(reinterpret_cast<const char16_t *>(subset.name.utf16()),
+                                   subset.indexLength,
+                                   subset.indexOffset,
+                                   0);
+
+
+
+    auto &outputMesh = meshBuilder->getMesh();
+    outputMesh.saveMulti(file, 0);
+
+    file.close();
+    return QString();
 }
 
 bool AssimpImporter::isModel(aiNode *node)

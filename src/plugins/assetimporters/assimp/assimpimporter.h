@@ -12,10 +12,12 @@ namespace Assimp {
 class Importer;
 }
 
-class aiNode;
-class aiCamera;
-class aiLight;
-class aiScene;
+struct aiNode;
+struct aiCamera;
+struct aiLight;
+struct aiScene;
+struct aiMesh;
+struct aiMaterial;
 
 QT_BEGIN_NAMESPACE
 
@@ -39,6 +41,7 @@ private:
     void generateLightProperties(aiNode *lightNode, QTextStream &output, int tabLevel);
     void generateCameraProperties(aiNode *cameraNode, QTextStream &output, int tabLevel);
     void generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel);
+    QString generateMeshFile(QIODevice &file, const QVector<aiMesh *> &meshes);
     bool isModel(aiNode *node);
     bool isLight(aiNode *node);
     bool isCamera(aiNode *node);
@@ -49,7 +52,6 @@ private:
     QHash<aiNode *, aiCamera *> m_cameras;
     QHash<aiNode *, aiLight *> m_lights;
 
-    QTemporaryDir m_meshCache;
     QDir m_savePath;
 };
 
