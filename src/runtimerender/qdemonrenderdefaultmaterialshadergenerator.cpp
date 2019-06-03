@@ -409,7 +409,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         }
     }
 
-    void OutputDiffuseAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader, const QByteArray &inPos, const QByteArray &inLightPrefix)
+    void outputDiffuseAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader, const QByteArray &inPos, const QByteArray &inLightPrefix)
     {
         m_normalizedDirection = inLightPrefix + "_areaDir";
         addLocalVariable(infragmentShader, m_normalizedDirection, "vec3");
@@ -417,7 +417,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                          << ".xyz, " << m_lightUp << ", " << m_lightRt << ", " << inPos << ", " << m_normalizedDirection << " );\n";
     }
 
-    void OutputSpecularAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader,
+    void outputSpecularAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader,
                                     const QByteArray &inPos,
                                     const QByteArray &inView,
                                     const QByteArray &inLightSpecColor)
@@ -1128,10 +1128,10 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                         vertexShader.generateViewVector();
                         if (m_lightsAsSeparateUniforms)
                             fragmentShader.addUniform(m_lightSpecularColor, "vec4");
-                        OutputSpecularAreaLighting(fragmentShader, "varWorldPos", "view_vector", m_lightSpecularColor);
+                        outputSpecularAreaLighting(fragmentShader, "varWorldPos", "view_vector", m_lightSpecularColor);
                     }
 
-                    OutputDiffuseAreaLighting(fragmentShader, "varWorldPos", tempStr);
+                    outputDiffuseAreaLighting(fragmentShader, "varWorldPos", tempStr);
                     fragmentShader << "    lightAttenuation *= shadowFac;"
                                    << "\n";
 
