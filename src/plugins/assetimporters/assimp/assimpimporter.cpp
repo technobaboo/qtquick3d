@@ -17,6 +17,8 @@
 #include <QtCore/QByteArray>
 #include <qmath.h>
 
+#include <algorithm>
+
 QT_BEGIN_NAMESPACE
 
 AssimpImporter::AssimpImporter()
@@ -59,29 +61,6 @@ const QString AssimpImporter::type() const
 const QVariantMap AssimpImporter::importOptions() const
 {
     return QVariantMap();
-}
-
-namespace {
-QVector<QVector3D> calculateBinormals(const aiMesh *mesh, bool isRightHanded = true) {
-    QVector<QVector3D> binormals;
-    binormals.reserve(mesh->mNumVertices);
-    for (uint i = 0; i < mesh->mNumVertices; ++i) {
-        QVector3D normal = QVector3D(mesh->mNormals[i].x,
-                                     mesh->mNormals[i].y,
-                                     mesh->mNormals[i].z).normalized();
-        QVector3D tanget = QVector3D(mesh->mTangents[i].x,
-                                     mesh->mTangents[i].y,
-                                     mesh->mTangents[i].z).normalized();
-        QVector3D binormal;
-        // B = N x T
-        if (isRightHanded)
-            binormal = QVector3D::crossProduct(normal, tanget);
-        else // B = T x N
-            binormal = QVector3D::crossProduct(tanget, normal);
-        binormals.append(binormal);
-    }
-    return binormals;
-}
 }
 
 const QString AssimpImporter::import(const QString &sourceFile, const QDir &savePath, const QVariantMap &options, QStringList *generatedFiles)
@@ -432,6 +411,7 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
     QByteArray vertexColorData;
     QByteArray indexBufferData;
     QVector<SubsetEntryData> subsetData;
+    quint16 baseIndex = 0;
 
     for (const auto *mesh : meshes) {
         // Position
@@ -461,9 +441,8 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
         if (mesh->HasTangentsAndBitangents()) {
             // Tangents
             tangentData += QByteArray(reinterpret_cast<char*>(mesh->mTangents), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
-            // Binormals
-            auto binormalVector = calculateBinormals(mesh);
-            binormalData += QByteArray(reinterpret_cast<char*>(binormalVector.data()), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
+            // Binormals (They are actually supposed to be Bitangents despite what they are called)
+            binormalData += QByteArray(reinterpret_cast<char*>(mesh->mBitangents), mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32));
         } else if (needsTangentData) {
             tangentData += QByteArray(mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
             binormalData += QByteArray(mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
@@ -478,18 +457,22 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
         // Index Buffer
         QVector<quint16> indexes;
         indexes.reserve(mesh->mNumFaces * 3);
+
         for (int faceIndex = 0;faceIndex < mesh->mNumFaces; ++faceIndex) {
             const auto face = mesh->mFaces[faceIndex];
             // Faces should always have 3 indicides
             Q_ASSERT(face.mNumIndices == 3);
             // ### We need to split meshes so that indexes can never be over ushort max
-            indexes.append(quint16(face.mIndices[0]));
-            indexes.append(quint16(face.mIndices[1]));
-            indexes.append(quint16(face.mIndices[2]));
+            indexes.append(quint16(face.mIndices[0]) + baseIndex);
+            indexes.append(quint16(face.mIndices[1]) + baseIndex);
+            indexes.append(quint16(face.mIndices[2]) + baseIndex);
         }
+        // Since we might be combining multiple meshes together, we also need to change the index offset
+        baseIndex = *std::max_element(indexes.constBegin(), indexes.constEnd()) + 1;
+
         SubsetEntryData subsetEntry;
-        subsetEntry.indexOffset = indexBufferData.length() / sizeof(quint16);
-        subsetEntry.indexLength = indexes.length() / sizeof(quint16);
+        subsetEntry.indexOffset = indexBufferData.length() / sizeof (quint16);;
+        subsetEntry.indexLength = indexes.length();
         indexBufferData += QByteArray(reinterpret_cast<const char *>(indexes.constData()), indexes.length() * sizeof(quint16));
 
         // Subset
