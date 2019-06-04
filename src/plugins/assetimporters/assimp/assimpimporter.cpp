@@ -68,7 +68,7 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
     QString errorString;
     m_savePath = savePath;
 
-    m_scene = m_importer->ReadFile(sourceFile.toStdString(), aiProcessPreset_TargetRealtime_Quality);
+    m_scene = m_importer->ReadFile(sourceFile.toStdString(), aiProcessPreset_TargetRealtime_Quality | aiProcess_MakeLeftHanded);
     if (!m_scene) {
         // Scene failed to load, use logger to get the reason
         return QString::fromLocal8Bit(m_importer->GetErrorString());
@@ -302,9 +302,25 @@ void AssimpImporter::generateLightProperties(aiNode *lightNode, QTextStream &out
 
 void AssimpImporter::generateCameraProperties(aiNode *cameraNode, QTextStream &output, int tabLevel)
 {
-    generateNodeProperties(cameraNode, output, tabLevel);
-
     aiCamera *camera = m_cameras.value(cameraNode);
+
+    // We assume these default forward and up vectors, so if this isn't
+    // the case we have to do additional transform
+    aiMatrix4x4 correctionMatrix;
+    if (camera->mLookAt != aiVector3D(0, 0, -1))
+    {
+        aiMatrix4x4 lookAtCorrection;
+        aiMatrix4x4::FromToMatrix(camera->mLookAt, aiVector3D(0, 0, -1), lookAtCorrection);
+        correctionMatrix *= lookAtCorrection;
+    }
+
+    if (camera->mUp != aiVector3D(0, 1, 0)) {
+        aiMatrix4x4 upCorrection;
+        aiMatrix4x4::FromToMatrix(camera->mUp, aiVector3D(0, 1, 0), upCorrection);
+        correctionMatrix *= upCorrection;
+    }
+
+    generateNodeProperties(cameraNode, output, tabLevel, correctionMatrix);
 
     // clipNear
     QDemonQmlUtilities::writeQmlPropertyHelper(output,tabLevel, QDemonQmlUtilities::PropertyMap::Camera, QStringLiteral("clipNear"), camera->mClipPlaneNear);
@@ -332,7 +348,7 @@ void AssimpImporter::generateCameraProperties(aiNode *cameraNode, QTextStream &o
 
 }
 
-void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel)
+void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel, const aiMatrix4x4 &transformCorrection)
 {
     // id
     QString name = QString::fromUtf8(node->mName.C_Str());
@@ -342,11 +358,16 @@ void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, i
                   QDemonQmlUtilities::sanitizeQmlId(name) << endl;
     }
 
+    // Apply correction if necessary
+    aiMatrix4x4 transformMatrix = node->mTransformation;
+    if (!transformCorrection.IsIdentity())
+        transformMatrix *= transformCorrection;
+
     // Decompose Transform Matrix to get properties
-    aiVector3t<ai_real> scaling;
-    aiVector3t<ai_real> rotation;
-    aiVector3t<ai_real> translation;
-    node->mTransformation.Decompose(scaling, rotation, translation);
+    aiVector3D scaling;
+    aiVector3D rotation;
+    aiVector3D translation;
+    transformMatrix.Decompose(scaling, rotation, translation);
 
     // translate
     QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("x"), translation.x);
@@ -369,6 +390,7 @@ void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, i
     // boneid
 
     // rotation order
+    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("rotationOrder"), QStringLiteral("DemonNode.XYZr"));
 
     // orientation
 
