@@ -57,16 +57,16 @@ PropertyMap::PropertyMap()
 {
     // Image
     PropertiesMap *image = new PropertiesMap;
-    image->insert(QStringLiteral("scaleu"), Property(QStringLiteral("scaleu"), Q3DS::Float, 1.0f));
-    image->insert(QStringLiteral("scalev"), Property(QStringLiteral("scalev"), Q3DS::Float, 1.0f));
-    image->insert(QStringLiteral("mappingmode"), Property(QStringLiteral("mappingmode"), Q3DS::Enum, QStringLiteral("DemonImage.Normal")));
-    image->insert(QStringLiteral("tilingmodehorz"), Property(QStringLiteral("tilingmodehorz"), Q3DS::Enum, QStringLiteral("DemonImage.ClampToEdge")));
-    image->insert(QStringLiteral("tilingmodevert"), Property(QStringLiteral("tilingmodevert"), Q3DS::Enum, QStringLiteral("DemonImage.ClampToEdge")));
-    image->insert(QStringLiteral("rotationuv"), Property(QStringLiteral("rotationuv"), Q3DS::Float, 0.0f));
-    image->insert(QStringLiteral("positionu"), Property(QStringLiteral("positionu"), Q3DS::Float, 0.0f));
-    image->insert(QStringLiteral("positionv"), Property(QStringLiteral("positionv"), Q3DS::Float, 0.0f));
-    image->insert(QStringLiteral("pivotu"), Property(QStringLiteral("pivotu"), Q3DS::Float, 0.0f));
-    image->insert(QStringLiteral("pivotv"), Property(QStringLiteral("pivotv"), Q3DS::Float, 0.0f));
+    image->insert(QStringLiteral("scaleu"), Property(QStringLiteral("scaleU"), Q3DS::Float, 1.0f));
+    image->insert(QStringLiteral("scalev"), Property(QStringLiteral("scaleV"), Q3DS::Float, 1.0f));
+    image->insert(QStringLiteral("mappingmode"), Property(QStringLiteral("mappingMode"), Q3DS::Enum, QStringLiteral("DemonImage.Normal")));
+    image->insert(QStringLiteral("tilingmodehorz"), Property(QStringLiteral("tilingModeHorizontal"), Q3DS::Enum, QStringLiteral("DemonImage.ClampToEdge")));
+    image->insert(QStringLiteral("tilingmodevert"), Property(QStringLiteral("tilingModeVertical"), Q3DS::Enum, QStringLiteral("DemonImage.ClampToEdge")));
+    image->insert(QStringLiteral("rotationuv"), Property(QStringLiteral("rotationUV"), Q3DS::Float, 0.0f));
+    image->insert(QStringLiteral("positionu"), Property(QStringLiteral("positionU"), Q3DS::Float, 0.0f));
+    image->insert(QStringLiteral("positionv"), Property(QStringLiteral("positionV"), Q3DS::Float, 0.0f));
+    image->insert(QStringLiteral("pivotu"), Property(QStringLiteral("pivotU"), Q3DS::Float, 0.0f));
+    image->insert(QStringLiteral("pivotv"), Property(QStringLiteral("pivotV"), Q3DS::Float, 0.0f));
     m_properties.insert(GraphObject::Image, image);
     // Group
     PropertiesMap *node = new PropertiesMap;;

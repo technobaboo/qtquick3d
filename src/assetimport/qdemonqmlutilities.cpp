@@ -195,16 +195,16 @@ PropertyMap::PropertyMap()
 
     // Image
     PropertiesMap *image = new PropertiesMap;
-    image->insert(QStringLiteral("scaleu"), 1.0f);
-    image->insert(QStringLiteral("scalev"), 1.0f);
-    image->insert(QStringLiteral("mappingmode"), QStringLiteral("DemonImage.Normal"));
-    image->insert(QStringLiteral("tilingmodehorz"), QStringLiteral("DemonImage.ClampToEdge"));
-    image->insert(QStringLiteral("tilingmodevert"), QStringLiteral("DemonImage.ClampToEdge"));
-    image->insert(QStringLiteral("rotationuv"), 0.0f);
-    image->insert(QStringLiteral("positionu"), 0.0f);
-    image->insert(QStringLiteral("positionv"), 0.0f);
-    image->insert(QStringLiteral("pivotu"), 0.0f);
-    image->insert(QStringLiteral("pivotv"), 0.0f);
+    image->insert(QStringLiteral("scaleU"), 1.0f);
+    image->insert(QStringLiteral("scaleV"), 1.0f);
+    image->insert(QStringLiteral("mappingMode"), QStringLiteral("DemonImage.Normal"));
+    image->insert(QStringLiteral("tilingModeHorizontal"), QStringLiteral("DemonImage.ClampToEdge"));
+    image->insert(QStringLiteral("tilingModeVertical"), QStringLiteral("DemonImage.ClampToEdge"));
+    image->insert(QStringLiteral("rotationUV"), 0.0f);
+    image->insert(QStringLiteral("positionU"), 0.0f);
+    image->insert(QStringLiteral("positionV"), 0.0f);
+    image->insert(QStringLiteral("pivotU"), 0.0f);
+    image->insert(QStringLiteral("pivotV"), 0.0f);
     m_properties.insert(Type::Image, image);
 }
 

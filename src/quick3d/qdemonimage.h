@@ -11,16 +11,16 @@ class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(float scaleu READ scaleU WRITE setScaleU NOTIFY scaleUChanged)
-    Q_PROPERTY(float scalev READ scaleV WRITE setScaleV NOTIFY scaleVChanged)
-    Q_PROPERTY(MappingMode mappingmode READ mappingMode WRITE setMappingMode NOTIFY mappingModeChanged)
-    Q_PROPERTY(TilingMode tilingmodehorz READ horizontalTiling WRITE setHorizontalTiling NOTIFY horizontalTilingChanged)
-    Q_PROPERTY(TilingMode tilingmodevert READ verticalTiling WRITE setVerticalTiling NOTIFY verticalTilingChanged)
-    Q_PROPERTY(float rotationuv READ rotationUV WRITE setRotationUV NOTIFY rotationUVChanged)
-    Q_PROPERTY(float positionu READ positionU WRITE setPositionU NOTIFY positionUChanged)
-    Q_PROPERTY(float positionv READ positionV WRITE setPositionV NOTIFY positionVChanged)
-    Q_PROPERTY(float pivotu READ pivotU WRITE setPivotU NOTIFY piviotUChanged)
-    Q_PROPERTY(float pivotv READ pivotV WRITE setPivotV NOTIFY piviotVChanged)
+    Q_PROPERTY(float scaleU READ scaleU WRITE setScaleU NOTIFY scaleUChanged)
+    Q_PROPERTY(float scaleV READ scaleV WRITE setScaleV NOTIFY scaleVChanged)
+    Q_PROPERTY(MappingMode mappingMode READ mappingMode WRITE setMappingMode NOTIFY mappingModeChanged)
+    Q_PROPERTY(TilingMode tilingModeHorizontal READ horizontalTiling WRITE setHorizontalTiling NOTIFY horizontalTilingChanged)
+    Q_PROPERTY(TilingMode tilingModeVertical READ verticalTiling WRITE setVerticalTiling NOTIFY verticalTilingChanged)
+    Q_PROPERTY(float rotationUV READ rotationUV WRITE setRotationUV NOTIFY rotationUVChanged)
+    Q_PROPERTY(float positionU READ positionU WRITE setPositionU NOTIFY positionUChanged)
+    Q_PROPERTY(float positionV READ positionV WRITE setPositionV NOTIFY positionVChanged)
+    Q_PROPERTY(float pivotU READ pivotU WRITE setPivotU NOTIFY piviotUChanged)
+    Q_PROPERTY(float pivotV READ pivotV WRITE setPivotV NOTIFY piviotVChanged)
 
 public:
     enum MappingMode
