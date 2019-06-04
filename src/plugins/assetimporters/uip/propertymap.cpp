@@ -46,7 +46,7 @@ void insertNodeProperties(PropertyMap::PropertiesMap *node)
     node->insert(QStringLiteral("scale"), PropertyMap::Property(QStringLiteral("scale"), Q3DS::Vector, QVector3D(1.f, 1.f, 1.f)));
     node->insert(QStringLiteral("pivot"), PropertyMap::Property(QStringLiteral("pivot"), Q3DS::Vector, QVector3D(0, 0, 0)));
     node->insert(QStringLiteral("opacity"), PropertyMap::Property(QStringLiteral("opacity"), Q3DS::Float, 1.0f));
-    node->insert(QStringLiteral("rotationorder"), PropertyMap::Property(QStringLiteral("rotationorder"), Q3DS::Enum, QStringLiteral("DemonNode.YXZ")));
+    node->insert(QStringLiteral("rotationorder"), PropertyMap::Property(QStringLiteral("rotationOrder"), Q3DS::Enum, QStringLiteral("DemonNode.YXZ")));
     node->insert(QStringLiteral("orientation"), PropertyMap::Property(QStringLiteral("orientation"), Q3DS::Enum, QStringLiteral("DemonNode.LeftHanded")));
     node->insert(QStringLiteral("visible"), PropertyMap::Property(QStringLiteral("visible"), Q3DS::Boolean, true));
 }

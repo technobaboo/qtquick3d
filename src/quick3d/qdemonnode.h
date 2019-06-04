@@ -20,8 +20,8 @@ class Q_QUICK3D_EXPORT QDemonNode : public QDemonObject
     Q_PROPERTY(QVector3D scale READ scale WRITE setScale NOTIFY scaleChanged)
     Q_PROPERTY(QVector3D pivot READ pivot WRITE setPivot NOTIFY pivotChanged)
     Q_PROPERTY(float opacity READ localOpacity WRITE setLocalOpacity NOTIFY localOpacityChanged)
-    Q_PROPERTY(qint32 boneid READ skeletonId WRITE setSkeletonId NOTIFY skeletonIdChanged)
-    Q_PROPERTY(RotationOrder rotationorder READ rotationOrder WRITE setRotationOrder NOTIFY rotationOrderChanged)
+    Q_PROPERTY(qint32 boneId READ skeletonId WRITE setSkeletonId NOTIFY skeletonIdChanged)
+    Q_PROPERTY(RotationOrder rotationOrder READ rotationOrder WRITE setRotationOrder NOTIFY rotationOrderChanged)
     Q_PROPERTY(Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
 

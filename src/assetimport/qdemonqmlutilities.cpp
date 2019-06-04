@@ -127,7 +127,7 @@ PropertyMap::PropertyMap()
     node->insert(QStringLiteral("scale"), QVector3D(1, 1, 1));
     node->insert(QStringLiteral("pivot"), QVector3D(0, 0, 0));
     node->insert(QStringLiteral("opacity"), 1.0);
-    node->insert(QStringLiteral("rotationorder"), QStringLiteral("DemonNode.YXZ"));
+    node->insert(QStringLiteral("rotationOrder"), QStringLiteral("DemonNode.YXZ"));
     node->insert(QStringLiteral("orientation"), QStringLiteral("DemonNode.LeftHanded"));
     node->insert(QStringLiteral("visible"), true);
     m_properties.insert(Type::Node, node);
