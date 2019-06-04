@@ -222,7 +222,8 @@ struct ByteWritingSerializer
     void streamify(const OffsetDataRef<TDataType> &data)
     {
         m_byteCounter.streamify(data);
-        int written = m_stream.write(reinterpret_cast<const char *>(data.begin(m_baseAddress)), data.size() * sizeof(TDataType));
+        const int written = m_stream.write(reinterpret_cast<const char *>(data.begin(m_baseAddress)), data.size() * sizeof(TDataType));
+        (void)written;
     }
     void streamify(const char *data)
     {
@@ -232,6 +233,7 @@ struct ByteWritingSerializer
         quint32 len = (quint32)strlen(data) + 1;
         int written = m_stream.write(reinterpret_cast<const char *>(&len), sizeof(quint32));
         written = m_stream.write(data, len);
+        (void)written;
     }
     void streamifyCharPointerOffset(quint32 inOffset)
     {
@@ -243,7 +245,8 @@ struct ByteWritingSerializer
     {
         if (m_byteCounter.needsAlignment()) {
             quint8 buffer[] = { 0, 0, 0, 0 };
-            int written = m_stream.write(reinterpret_cast<const char *>(buffer), m_byteCounter.getAlignmentAmount());
+            const int written = m_stream.write(reinterpret_cast<const char *>(buffer), m_byteCounter.getAlignmentAmount());
+            (void)written;
             m_byteCounter.align();
         }
     }
@@ -566,9 +569,9 @@ void Mesh::save(QIODevice &outStream) const
     quint32 meshDataSize = getMeshDataSize(mesh);
     quint32 numBytes = meshSize + meshDataSize;
     MeshDataHeader header(numBytes);
-    int written;
-    written = outStream.write(reinterpret_cast<const char *>(&header), sizeof(MeshDataHeader)); // 12 bytes
+    int written = outStream.write(reinterpret_cast<const char *>(&header), sizeof(MeshDataHeader)); // 12 bytes
     written = outStream.write(reinterpret_cast<const char *>(this), sizeof(Mesh));
+    (void)written;
     ByteWritingSerializer writer(outStream, baseAddress);
     serialize(writer, mesh);
 }
@@ -690,6 +693,7 @@ quint32 Mesh::saveMulti(QIODevice &inStream, quint32 inId) const
     written = inStream.write(reinterpret_cast<char *>(&newEntry), sizeof(MeshMultiEntry));
     theWriteHeader->m_entries.m_size++;
     written = inStream.write(reinterpret_cast<char *>(theWriteHeader), sizeof(MeshMultiHeader));
+    (void)written;
 
     return static_cast<quint32>(nextId);
 }
@@ -948,7 +952,7 @@ public:
         // Packed interleave the data
         for (quint32 idx = 0; idx < numItems; ++idx) {
             quint32 dataOffset = 0;
-            for (quint32 entryIdx = 0; entryIdx < entries.size(); ++entryIdx) {
+            for (qint32 entryIdx = 0; entryIdx < entries.size(); ++entryIdx) {
                 const MeshBuilderVBufEntry &entry(entries[entryIdx]);
                 // Ignore entries with no data.
                 if (entry.m_data.begin() == nullptr || entry.m_data.size() == 0)
