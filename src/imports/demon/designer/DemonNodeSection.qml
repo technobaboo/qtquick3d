@@ -146,7 +146,7 @@ Section {
                 Layout.fillWidth: true
                 scope: "DemonNode"
                 model: ["XYZ", "YZX", "ZXY", "XZY", "YXZ", "ZYX", "XYZr", "YZXr", "ZXYr", "XZYr", "YXZr", "ZYXr"]
-                backendValue: backendValues.rotationorder
+                backendValue: backendValues.rotationOrder
             }
         }
 

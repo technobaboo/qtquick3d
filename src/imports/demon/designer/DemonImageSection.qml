@@ -25,7 +25,7 @@ Section {
                 maximumValue: 999999
                 minimumValue: -999999
                 decimals: 0
-                backendValue: backendValues.scaleu
+                backendValue: backendValues.scaleU
                 Layout.fillWidth: true
             }
         }
@@ -39,7 +39,7 @@ Section {
                 maximumValue: 999999
                 minimumValue: -999999
                 decimals: 0
-                backendValue: backendValues.scalev
+                backendValue: backendValues.scaleV
                 Layout.fillWidth: true
             }
         }
@@ -52,7 +52,7 @@ Section {
             ComboBox {
                 scope: "DemonImage"
                 model: ["Normal", "Environment", "LightProbe"]
-                backendValue: backendValues.mappingmode
+                backendValue: backendValues.mappingMode
                 Layout.fillWidth: true
             }
         }
@@ -65,7 +65,7 @@ Section {
             ComboBox {
                 scope: "DemonImage"
                 model: ["Unknown", "ClampToEdge", "MirroredRepeat", "Repeat"]
-                backendValue: backendValues.tilingmodehorz
+                backendValue: backendValues.tilingModeHorizontal
                 Layout.fillWidth: true
             }
         }
@@ -78,7 +78,7 @@ Section {
             ComboBox {
                 scope: "DemonImage"
                 model: ["Unknown", "ClampToEdge", "MirroredRepeat", "Repeat"]
-                backendValue: backendValues.tilingmodevert
+                backendValue: backendValues.tilingModeVertical
                 Layout.fillWidth: true
             }
         }
@@ -92,7 +92,7 @@ Section {
                 maximumValue: 999999
                 minimumValue: -999999
                 decimals: 0
-                backendValue: backendValues.rotationuv
+                backendValue: backendValues.rotationUV
                 Layout.fillWidth: true
             }
         }
@@ -106,7 +106,7 @@ Section {
                 maximumValue: 999999
                 minimumValue: -999999
                 decimals: 0
-                backendValue: backendValues.positionu
+                backendValue: backendValues.positionU
                 Layout.fillWidth: true
             }
         }
@@ -120,7 +120,7 @@ Section {
                 maximumValue: 999999
                 minimumValue: -999999
                 decimals: 0
-                backendValue: backendValues.positionv
+                backendValue: backendValues.positionV
                 Layout.fillWidth: true
             }
         }
@@ -134,7 +134,7 @@ Section {
                 maximumValue: 999999
                 minimumValue: -999999
                 decimals: 0
-                backendValue: backendValues.pivotu
+                backendValue: backendValues.pivotU
                 Layout.fillWidth: true
             }
         }
@@ -148,7 +148,7 @@ Section {
                 maximumValue: 999999
                 minimumValue: -999999
                 decimals: 0
-                backendValue: backendValues.pivotv
+                backendValue: backendValues.pivotV
                 Layout.fillWidth: true
             }
         }
