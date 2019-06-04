@@ -244,9 +244,18 @@ void AssimpImporter::generateModelProperties(aiNode *modelNode, QTextStream &out
 
 void AssimpImporter::generateLightProperties(aiNode *lightNode, QTextStream &output, int tabLevel)
 {
-    generateNodeProperties(lightNode, output, tabLevel);
-
     aiLight *light = m_lights.value(lightNode);
+    // We assume that the direction vector for a light is (0, 0, -1)
+    // so if the direction vector is non-null, but not (0, 0, -1) we
+    // need to correct the translation
+    aiMatrix4x4 correctionMatrix;
+    if (light->mDirection != aiVector3D(0, 0, 0)) {
+        if (light->mDirection != aiVector3D(0, 0, -1)) {
+            aiMatrix4x4::FromToMatrix(light->mDirection, aiVector3D(0, 0, -1), correctionMatrix);
+        }
+    }
+
+    generateNodeProperties(lightNode, output, tabLevel, correctionMatrix);
 
     // lightType
     if (light->mType == aiLightSource_DIRECTIONAL || light->mType == aiLightSource_AMBIENT ) {
