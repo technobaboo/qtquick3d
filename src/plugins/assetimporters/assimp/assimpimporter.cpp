@@ -230,6 +230,16 @@ void AssimpImporter::generateModelProperties(aiNode *modelNode, QTextStream &out
 
     // materials
     // For each mesh, generate a material for this list
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << "materials: [" << endl;
+
+    for (int i = 0; i < materials.count(); ++i) {
+        generateMaterial(materials[i], output, tabLevel + 1);
+        if (i < materials.count() - 1)
+            output << QStringLiteral(",");
+        output << endl;
+    }
+
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << "]" << endl;
 }
 
 void AssimpImporter::generateLightProperties(aiNode *lightNode, QTextStream &output, int tabLevel)
@@ -552,6 +562,101 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
 
     file.close();
     return QString();
+}
+
+namespace {
+
+QColor aiColorToQColor(const aiColor3D &color)
+{
+    return QColor::fromRgbF(color.r, color.g, color.b);
+}
+}
+
+void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output, int tabLevel)
+{
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonDefaultMaterial {") << endl;
+
+    // id
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << QDemonQmlUtilities::sanitizeQmlId(material->GetName().C_Str()) << endl;
+
+    int shadingModel = 0;
+    material->Get(AI_MATKEY_SHADING_MODEL, shadingModel);
+    // lighting
+    if (shadingModel == aiShadingMode_NoShading)
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("lighting: DemonDefaultMaterial.NoLighting") << endl;
+
+    // blendMode AI_MATKEY_BLEND_FUNC
+//    int blendMode = 0;
+//    material->Get(AI_MATKEY_BLEND_FUNC, blendMode);
+
+    // diffuseColor AI_MATKEY_COLOR_DIFFUSE
+    aiColor3D diffuseColor;
+    material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::DefaultMaterial,
+                                               QStringLiteral("diffuseColor"),
+                                               aiColorToQColor(diffuseColor));
+
+    // diffuseMap aiTextureType_DIFFUSE 0
+
+    // diffuseMap2 aiTextureType_DIFFUSE 1
+
+    // diffuseMap3 aiTextureType_DIFFUSE 2
+
+    // emissivePower
+
+    // emissiveMap aiTextureType_EMISSIVE 0
+
+    // emissiveMap2 aiTextureType_EMISSIVE 1
+
+    // emissiveColor AI_MATKEY_COLOR_EMISSIVE
+    aiColor3D emissiveColor;
+    material->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
+
+    // specularReflectionMap
+
+    // specularMap aiTextureType_SPECULAR 0
+
+    // specularModel AI_MATKEY_SHADING_MODEL
+
+    // specularTint AI_MATKEY_COLOR_SPECULAR
+    aiColor3D specularTint;
+    material->Get(AI_MATKEY_COLOR_SPECULAR, specularTint);
+
+    // indexOfRefraction AI_MATKEY_REFRACTI
+
+    // fresnelPower
+
+    // specularAmount
+
+    // specularRoughness
+
+    // roughnessMap
+
+    // opacity AI_MATKEY_OPACITY
+
+    // opacityMap aiTextureType_OPACITY 0
+
+    // bumpMap aiTextureType_HEIGHT 0
+
+    // bumpAmount AI_MATKEY_BUMPSCALING
+
+    // normalMap aiTextureType_NORMALS 0
+
+    // translucencyMap
+
+    // translucentFalloff AI_MATKEY_TRANSPARENCYFACTOR
+
+    // diffuseLightWrap
+
+    // (enable) vertexColors
+
+    // displacementMap aiTextureType_DISPLACEMENT 0
+
+    // displacementAmount
+
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
 }
 
 bool AssimpImporter::isModel(aiNode *node)

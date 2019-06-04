@@ -42,6 +42,7 @@ private:
     void generateCameraProperties(aiNode *cameraNode, QTextStream &output, int tabLevel);
     void generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel);
     QString generateMeshFile(QIODevice &file, const QVector<aiMesh *> &meshes);
+    void generateMaterial(aiMaterial *material, QTextStream &output, int tabLevel);
     bool isModel(aiNode *node);
     bool isLight(aiNode *node);
     bool isCamera(aiNode *node);
