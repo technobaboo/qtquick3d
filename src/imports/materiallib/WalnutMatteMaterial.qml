@@ -21,8 +21,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Environment
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/spherical_checker.png"
         }
     }
@@ -30,8 +30,8 @@ DemonCustomMaterial {
             enabled: uShadowMappingEnabled
             type: DemonCustomMaterialTexture.LightmapShadow
             image: DemonImage {
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 id: shadowImage
                 source: "maps/shadow.png"
             }
@@ -40,8 +40,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Diffuse
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/walnut.png"
         }
     }
@@ -49,8 +49,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/walnut_bump.png"
         }
     }
@@ -58,8 +58,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Specular
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/walnut_spec.png"
         }
     }

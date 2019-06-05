@@ -23,8 +23,8 @@ DemonCustomMaterial {
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/spherical_checker.png"
             }
     }

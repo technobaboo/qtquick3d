@@ -41,8 +41,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/powdercoat_bump_01.png"
         }
     }

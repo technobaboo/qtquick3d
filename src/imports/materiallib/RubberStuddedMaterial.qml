@@ -40,8 +40,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: bumpTexture
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/studded_rubber_bump.png"
             }
     }

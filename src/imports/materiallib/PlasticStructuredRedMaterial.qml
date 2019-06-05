@@ -39,32 +39,32 @@ DemonCustomMaterial {
     property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Unknown; //Gradient
             image: DemonImage {
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/randomGradient1D.png"
             }
     }
     property DemonCustomMaterialTexture randomGradient2D: DemonCustomMaterialTexture {
             type: DemonCustomMaterialTexture.Unknown; //Gradient
             image: DemonImage {
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/randomGradient2D.png"
             }
     }
     property DemonCustomMaterialTexture randomGradient3D: DemonCustomMaterialTexture {
         type: DemonCustomMaterialTexture.Unknown; //Gradient
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/randomGradient3D.png"
         }
     }
     property DemonCustomMaterialTexture randomGradient4D: DemonCustomMaterialTexture {
         type: DemonCustomMaterialTexture.Unknown; //Gradient
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/randomGradient4D.png"
         }
     }

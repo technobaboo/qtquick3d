@@ -38,8 +38,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Diffuse
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/metal_mesh.png"
         }
     }
@@ -47,8 +47,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/metal_mesh_bump.png"
         }
     }
@@ -56,8 +56,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterial.Unknown // cutout
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/metal_mesh_spec.png"
         }
     }

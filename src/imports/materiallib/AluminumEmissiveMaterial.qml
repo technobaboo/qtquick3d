@@ -28,8 +28,8 @@ DemonCustomMaterial {
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/spherical_checker.png"
             }
     }
@@ -38,8 +38,8 @@ DemonCustomMaterial {
             enabled: uShadowMappingEnabled
             image: DemonImage {
                 id: shadowImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/shadow.png"
             }
     }
@@ -49,8 +49,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: reflectionTexture
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/grunge_b.png"
             }
     }
@@ -60,8 +60,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: roughnessTexture
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/grunge_d.png"
             }
     }
@@ -72,8 +72,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: emissiveImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/emissive.png"
             }
     }
@@ -84,8 +84,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: emissiveMaskImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/emissive_mask.png"
             }
     }
@@ -95,8 +95,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: bumpTexture
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/grunge_d.png"
             }
     }

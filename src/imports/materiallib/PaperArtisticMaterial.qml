@@ -40,8 +40,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Diffuse
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/paper_diffuse.png"
         }
     }
@@ -49,8 +49,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/art_paper_normal.png"
         }
     }
@@ -58,8 +58,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/art_paper_trans.png"
         }
     }

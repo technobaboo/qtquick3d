@@ -38,8 +38,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Diffuse
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/cyclone_mesh_fencing.png"
         }
     }
@@ -48,8 +48,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/cyclone_mesh_fencing_normal.png"
         }
     }

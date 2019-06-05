@@ -43,8 +43,8 @@ DemonCustomMaterial {
         type: DemonCustomMaterialTexture.Bump
         enabled: true
         image: DemonImage {
-            tilingmodehorz: DemonImage.Repeat
-            tilingmodevert: DemonImage.Repeat
+            tilingModeHorizontal: DemonImage.Repeat
+            tilingModeVertical: DemonImage.Repeat
             source: "maps/powdercoat_bump_01.png"
         }
     }
@@ -54,8 +54,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: emissiveImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/emissive.png"
             }
     }
@@ -65,8 +65,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: emissiveMaskImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/emissive_mask.png"
             }
     }

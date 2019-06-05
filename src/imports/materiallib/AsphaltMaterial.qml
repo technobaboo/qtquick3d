@@ -24,8 +24,8 @@ DemonCustomMaterial {
             enabled: uEnvironmentMappingEnabled
             image: DemonImage {
                 id: envImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/spherical_checker.png"
             }
     }
@@ -34,8 +34,8 @@ DemonCustomMaterial {
             enabled: uShadowMappingEnabled
             image: DemonImage {
                 id: shadowImage
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/shadow.png"
             }
     }
@@ -45,8 +45,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: reflectionTexture
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/asphalt_bump.png"
             }
     }
@@ -56,8 +56,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: bumpTexture
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/asphalt_bump.png"
             }
     }
@@ -67,8 +67,8 @@ DemonCustomMaterial {
             enabled: true
             image: DemonImage {
                 id: diffuseTexture
-                tilingmodehorz: DemonImage.Repeat
-                tilingmodevert: DemonImage.Repeat
+                tilingModeHorizontal: DemonImage.Repeat
+                tilingModeVertical: DemonImage.Repeat
                 source: "maps/asphalt.png"
             }
     }
