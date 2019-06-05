@@ -75,41 +75,40 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
         return QString::fromLocal8Bit(m_importer->GetErrorString());
     }
 
-
-
     // Generate Embedded Texture Sources
+    // This may be used in the future, but it's not supported with any of the formats
+    // we currently support
+//    for (uint i = 0; i < m_scene->mNumTextures; ++i) {
+//        aiTexture *texture = m_scene->mTextures[i];
+//        if (texture->mHeight == 0) {
+//            // compressed format, try to load with Image Loader
+//            QByteArray data(reinterpret_cast<char *>(texture->pcData), texture->mWidth);
+//            QBuffer readBuffer(&data);
+//            QByteArray format = texture->achFormatHint;
+//            QImageReader imageReader(&readBuffer, format);
+//            QImage image = imageReader.read();
+//            if (image.isNull()) {
+//                qWarning() << imageReader.errorString();
+//                continue;
+//            }
 
-    for (uint i = 0; i < m_scene->mNumTextures; ++i) {
-        aiTexture *texture = m_scene->mTextures[i];
-        if (texture->mHeight == 0) {
-            // compressed format, try to load with Image Loader
-            QByteArray data(reinterpret_cast<char *>(texture->pcData), texture->mWidth);
-            QBuffer readBuffer(&data);
-            QByteArray format = texture->achFormatHint;
-            QImageReader imageReader(&readBuffer, format);
-            QImage image = imageReader.read();
-            if (image.isNull()) {
-                qWarning() << imageReader.errorString();
-                continue;
-            }
+//            // ### maybe dont always use png
+//            const QString saveFileName = savePath.absolutePath() +
+//                    QDir::separator() + QStringLiteral("maps") +
+//                    QDir::separator() + QString::number(i) +
+//                    QStringLiteral(".png");
+//            image.save(saveFileName);
 
-            // ### maybe dont always use png
-            const QString saveFileName = savePath.absolutePath() +
-                    QDir::separator() + QStringLiteral("maps") +
-                    QDir::separator() + QString::number(i) +
-                    QStringLiteral(".png");
-            image.save(saveFileName);
-
-        } else {
-            // Raw format, just convert data to QImage
-            QImage rawImage(reinterpret_cast<uchar *>(texture->pcData), texture->mWidth, texture->mHeight, QImage::Format_RGBA8888);
-            const QString saveFileName = savePath.absolutePath() +
-                    QDir::separator() + QStringLiteral("maps") +
-                    QDir::separator() + QString::number(i) +
-                    QStringLiteral(".png");
-            rawImage.save(saveFileName);
-        }
-    }
+//        } else {
+//            // Raw format, just convert data to QImage
+//            QImage rawImage(reinterpret_cast<uchar *>(texture->pcData), texture->mWidth, texture->mHeight, QImage::Format_RGBA8888);
+//            const QString saveFileName = savePath.absolutePath() +
+//                    QDir::separator() + QStringLiteral("maps") +
+//                    QDir::separator() + QString::number(i) +
+//                    QStringLiteral(".png");
+//            rawImage.save(saveFileName);
+//        }
+//    }
 
     // Check for Cameras
     if (m_scene->HasCameras()) {
