@@ -67,6 +67,7 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
 {
     QString errorString;
     m_savePath = savePath;
+    m_sourceFile = QFileInfo(sourceFile);
 
     m_scene = m_importer->ReadFile(sourceFile.toStdString(), aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded);
     if (!m_scene) {
@@ -590,6 +591,7 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
 
 
     auto &outputMesh = meshBuilder->getMesh();
+    m_savePath.mkdir(QStringLiteral("./meshes"));
     outputMesh.saveMulti(file, 0);
 
     file.close();
@@ -630,17 +632,26 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
                                                QStringLiteral("diffuseColor"),
                                                aiColorToQColor(diffuseColor));
 
-    // diffuseMap aiTextureType_DIFFUSE 0
+    QString diffuseMapImage = generateImage(material, aiTextureType_DIFFUSE, 0, tabLevel + 1);
+    if (!diffuseMapImage.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("diffuseMap: ") << diffuseMapImage << endl;
 
-    // diffuseMap2 aiTextureType_DIFFUSE 1
+    QString diffuseMap2Image = generateImage(material, aiTextureType_DIFFUSE, 1, tabLevel + 1);
+    if (!diffuseMap2Image.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("diffuseMap2: ") << diffuseMap2Image << endl;
 
-    // diffuseMap3 aiTextureType_DIFFUSE 2
-
+    QString diffuseMap3Image = generateImage(material, aiTextureType_DIFFUSE, 2, tabLevel + 1);
+    if (!diffuseMap3Image.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("diffuseMap3: ") << diffuseMap3Image << endl;
     // emissivePower
 
-    // emissiveMap aiTextureType_EMISSIVE 0
+    QString emissiveMapImage = generateImage(material, aiTextureType_EMISSIVE, 0, tabLevel + 1);
+    if (!emissiveMapImage.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("emissiveMap: ") << emissiveMapImage << endl;
 
-    // emissiveMap2 aiTextureType_EMISSIVE 1
+    QString emissiveMap2Image = generateImage(material, aiTextureType_EMISSIVE, 0, tabLevel + 1);
+    if (!emissiveMap2Image.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("emissiveMap2: ") << emissiveMap2Image << endl;
 
     // emissiveColor AI_MATKEY_COLOR_EMISSIVE
     aiColor3D emissiveColor;
@@ -648,7 +659,9 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
 
     // specularReflectionMap
 
-    // specularMap aiTextureType_SPECULAR 0
+    QString specularMapImage = generateImage(material, aiTextureType_SPECULAR, 0, tabLevel + 1);
+    if (!specularMapImage.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("specularMap: ") << specularMapImage << endl;
 
     // specularModel AI_MATKEY_SHADING_MODEL
 
@@ -669,12 +682,21 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     // opacity AI_MATKEY_OPACITY
 
     // opacityMap aiTextureType_OPACITY 0
+    QString opacityMapImage = generateImage(material, aiTextureType_OPACITY, 0, tabLevel + 1);
+    if (!opacityMapImage.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("opacityMap: ") << opacityMapImage;
 
     // bumpMap aiTextureType_HEIGHT 0
+    QString bumpMapImage = generateImage(material, aiTextureType_HEIGHT, 0, tabLevel + 1);
+    if (!bumpMapImage.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("bumpMap: ") << bumpMapImage;
 
     // bumpAmount AI_MATKEY_BUMPSCALING
 
     // normalMap aiTextureType_NORMALS 0
+    QString normalMapImage = generateImage(material, aiTextureType_NORMALS, 0, tabLevel + 1);
+    if (!normalMapImage.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("normalMap: ") << normalMapImage;
 
     // translucencyMap
 
@@ -685,10 +707,49 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     // (enable) vertexColors
 
     // displacementMap aiTextureType_DISPLACEMENT 0
+    QString displacementMapImage = generateImage(material, aiTextureType_DISPLACEMENT, 0, tabLevel + 1);
+    if (!displacementMapImage.isNull())
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("displacementMap: ") << displacementMapImage;
 
     // displacementAmount
 
     output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
+}
+
+QString AssimpImporter::generateImage(aiMaterial *material, aiTextureType textureType, int index, int tabLevel)
+{
+    // Figure out if there is actually something to generate
+    aiString texturePath;
+    material->Get(AI_MATKEY_TEXTURE(textureType, index), texturePath);
+    // If there is no texture, then there is nothing to generate
+    if (texturePath.length == 0)
+        return QString();
+    QString texture = QString::fromUtf8(texturePath.C_Str());
+    // Check that this file exists
+    QFileInfo sourceFile(m_sourceFile.absolutePath() + QDir::separator() + texture);
+    // If it doesn't exist, there is nothing to generate
+    if (!sourceFile.exists()) {
+        qWarning() << sourceFile.absoluteFilePath() << "does not exist, skipping";
+        return QString();
+    }
+    QString targetFileName = QStringLiteral("maps/") + sourceFile.fileName();
+    // Copy the file to the maps directory
+    m_savePath.mkdir(QStringLiteral("./maps"));
+    QFileInfo targetFile = m_savePath.absolutePath() + QDir::separator() + targetFileName;
+    if (QFile::copy(sourceFile.absoluteFilePath(), targetFile.absoluteFilePath()))
+        m_generatedFiles += targetFile.absoluteFilePath();
+
+    // Start QML generation
+    QString outputString;
+    QTextStream output(&outputString, QIODevice::WriteOnly);
+    output << QStringLiteral("DemonImage {") << endl;
+
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("source: \"") << targetFileName << QStringLiteral("\"") << endl;
+
+
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
+
+    return outputString;
 }
 
 bool AssimpImporter::isModel(aiNode *node)

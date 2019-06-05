@@ -9,6 +9,7 @@
 #include <QtCore/QTemporaryDir>
 
 #include <assimp/matrix4x4.h>
+#include <assimp/material.h>
 
 namespace Assimp {
 class Importer;
@@ -19,7 +20,6 @@ struct aiCamera;
 struct aiLight;
 struct aiScene;
 struct aiMesh;
-struct aiMaterial;
 
 QT_BEGIN_NAMESPACE
 
@@ -45,6 +45,7 @@ private:
     void generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel, const aiMatrix4x4 &transformCorrection = aiMatrix4x4(), bool skipScaling = false);
     QString generateMeshFile(QIODevice &file, const QVector<aiMesh *> &meshes);
     void generateMaterial(aiMaterial *material, QTextStream &output, int tabLevel);
+    QString generateImage(aiMaterial *material, aiTextureType textureType, int index, int tabLevel);
     bool isModel(aiNode *node);
     bool isLight(aiNode *node);
     bool isCamera(aiNode *node);
@@ -56,6 +57,8 @@ private:
     QHash<aiNode *, aiLight *> m_lights;
 
     QDir m_savePath;
+    QFileInfo m_sourceFile;
+    QStringList m_generatedFiles;
 };
 
 QT_END_NAMESPACE
