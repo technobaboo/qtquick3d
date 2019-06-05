@@ -716,7 +716,18 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
 }
 
-QString AssimpImporter::generateImage(aiMaterial *material, aiTextureType textureType, int index, int tabLevel)
+namespace  {
+QString aiTilingMode(int tilingMode) {
+    if (tilingMode == aiTextureMapMode_Wrap)
+        return QStringLiteral("DemonImage.Repeat");
+    if (tilingMode == aiTextureMapMode_Mirror)
+        return QStringLiteral("DemonImage.Mirror");
+
+    return QStringLiteral("DemonImage.ClampToEdge");
+}
+}
+
+QString AssimpImporter::generateImage(aiMaterial *material, aiTextureType textureType, unsigned index, int tabLevel)
 {
     // Figure out if there is actually something to generate
     aiString texturePath;
@@ -746,6 +757,84 @@ QString AssimpImporter::generateImage(aiMaterial *material, aiTextureType textur
 
     output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("source: \"") << targetFileName << QStringLiteral("\"") << endl;
 
+    // mapping
+    int textureMapping;
+    material->Get(AI_MATKEY_MAPPING(textureType, index), textureMapping);
+    if (textureMapping == aiTextureMapping_UV) {
+        // So we should be able to always hit this case by passing the right flags
+        // at import.
+        QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                                   tabLevel + 1,
+                                                   QDemonQmlUtilities::PropertyMap::Image,
+                                                   QStringLiteral("mappingMode"),
+                                                   QStringLiteral("DemonImage.Normal"));
+        // It would be possible to use another channel than UV0 to map image data
+        // but for now we force everything to use UV0
+        //int uvSource;
+        //material->Get(AI_MATKEY_UVWSRC(textureType, index), uvSource);
+    } else if (textureMapping == aiTextureMapping_SPHERE) {
+        // (not supported)
+    } else if (textureMapping == aiTextureMapping_CYLINDER) {
+        // (not supported)
+    } else if (textureMapping == aiTextureMapping_BOX) {
+        // (not supported)
+    } else if (textureMapping == aiTextureMapping_PLANE) {
+        // (not supported)
+    } else {
+        // other... (not supported)
+    }
+
+    // mapping mode U
+    int mappingModeU;
+    material->Get(AI_MATKEY_MAPPINGMODE_U(textureType, index), mappingModeU);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::Image,
+                                               QStringLiteral("tilingModeHorizontal"),
+                                               aiTilingMode(mappingModeU));
+
+    // mapping mode V
+    int mappingModeV;
+    material->Get(AI_MATKEY_MAPPINGMODE_V(textureType, index), mappingModeV);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::Image,
+                                               QStringLiteral("tilingModeVertical"),
+                                               aiTilingMode(mappingModeV));
+
+    aiUVTransform transforms;
+    material->Get(AI_MATKEY_UVTRANSFORM(textureType, index), transforms);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::Image,
+                                               QStringLiteral("rotationUV"),
+                                               transforms.mRotation);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::Image,
+                                               QStringLiteral("positionU"),
+                                               transforms.mTranslation.x);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::Image,
+                                               QStringLiteral("positionV"),
+                                               transforms.mTranslation.y);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::Image,
+                                               QStringLiteral("scaleU"),
+                                               transforms.mScaling.x);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::Image,
+                                               QStringLiteral("scaleV"),
+                                               transforms.mScaling.y);
+
+    // We don't make use of the data here, but there are additional flags
+    // available for example the usage of the alpha channel
+    // texture flags
+    //int textureFlags;
+    //material->Get(AI_MATKEY_TEXFLAGS(textureType, index), textureFlags);
 
     output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
 

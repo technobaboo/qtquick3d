@@ -45,7 +45,7 @@ private:
     void generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel, const aiMatrix4x4 &transformCorrection = aiMatrix4x4(), bool skipScaling = false);
     QString generateMeshFile(QIODevice &file, const QVector<aiMesh *> &meshes);
     void generateMaterial(aiMaterial *material, QTextStream &output, int tabLevel);
-    QString generateImage(aiMaterial *material, aiTextureType textureType, int index, int tabLevel);
+    QString generateImage(aiMaterial *material, aiTextureType textureType, unsigned index, int tabLevel);
     bool isModel(aiNode *node);
     bool isLight(aiNode *node);
     bool isCamera(aiNode *node);
