@@ -42,7 +42,7 @@ private:
     void generateModelProperties(aiNode *modelNode, QTextStream &output, int tabLevel);
     void generateLightProperties(aiNode *lightNode, QTextStream &output, int tabLevel);
     void generateCameraProperties(aiNode *cameraNode, QTextStream &output, int tabLevel);
-    void generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel, const aiMatrix4x4 &transformCorrection = aiMatrix4x4());
+    void generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel, const aiMatrix4x4 &transformCorrection = aiMatrix4x4(), bool skipScaling = false);
     QString generateMeshFile(QIODevice &file, const QVector<aiMesh *> &meshes);
     void generateMaterial(aiMaterial *material, QTextStream &output, int tabLevel);
     bool isModel(aiNode *node);

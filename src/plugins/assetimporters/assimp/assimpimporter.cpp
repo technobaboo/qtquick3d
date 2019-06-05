@@ -255,7 +255,7 @@ void AssimpImporter::generateLightProperties(aiNode *lightNode, QTextStream &out
         }
     }
 
-    generateNodeProperties(lightNode, output, tabLevel, correctionMatrix);
+    generateNodeProperties(lightNode, output, tabLevel, correctionMatrix, true);
 
     // lightType
     if (light->mType == aiLightSource_DIRECTIONAL || light->mType == aiLightSource_AMBIENT ) {
@@ -329,7 +329,7 @@ void AssimpImporter::generateCameraProperties(aiNode *cameraNode, QTextStream &o
         correctionMatrix *= upCorrection;
     }
 
-    generateNodeProperties(cameraNode, output, tabLevel, correctionMatrix);
+    generateNodeProperties(cameraNode, output, tabLevel, correctionMatrix, true);
 
     // clipNear
     QDemonQmlUtilities::writeQmlPropertyHelper(output,tabLevel, QDemonQmlUtilities::PropertyMap::Camera, QStringLiteral("clipNear"), camera->mClipPlaneNear);
@@ -357,7 +357,7 @@ void AssimpImporter::generateCameraProperties(aiNode *cameraNode, QTextStream &o
 
 }
 
-void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel, const aiMatrix4x4 &transformCorrection)
+void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, int tabLevel, const aiMatrix4x4 &transformCorrection, bool skipScaling)
 {
     // id
     QString name = QString::fromUtf8(node->mName.C_Str());
@@ -390,7 +390,8 @@ void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, i
     QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("rotation"), rotationAngles);
 
     // scale
-    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("scale"), QVector3D(scaling.x, scaling.y, scaling.z));
+    if (!skipScaling)
+        QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("scale"), QVector3D(scaling.x, scaling.y, scaling.z));
 
     // pivot
 
