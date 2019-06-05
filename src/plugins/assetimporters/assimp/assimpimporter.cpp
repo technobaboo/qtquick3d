@@ -68,7 +68,7 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
     QString errorString;
     m_savePath = savePath;
 
-    m_scene = m_importer->ReadFile(sourceFile.toStdString(), aiProcessPreset_TargetRealtime_Quality | aiProcess_MakeLeftHanded);
+    m_scene = m_importer->ReadFile(sourceFile.toStdString(), aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded);
     if (!m_scene) {
         // Scene failed to load, use logger to get the reason
         return QString::fromLocal8Bit(m_importer->GetErrorString());
