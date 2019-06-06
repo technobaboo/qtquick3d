@@ -232,6 +232,11 @@ QDemonRenderGraphObject *QDemonNode::updateSpatialNode(QDemonRenderGraphObject *
     spacialNode->localOpacity = m_opacity;
     spacialNode->skeletonId = m_boneid;
 
+    if (m_orientation == LeftHanded)
+        spacialNode->flags.setFlag(QDemonRenderNode::Flag::LeftHanded, true);
+    else
+        spacialNode->flags.setFlag(QDemonRenderNode::Flag::LeftHanded, false);
+
     if (transformIsDirty)
         spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformIsDirty);
     else
