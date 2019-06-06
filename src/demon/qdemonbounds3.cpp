@@ -5,14 +5,12 @@ QT_BEGIN_NAMESPACE
 
 void QDemonBounds3::include(const QVector3D &v)
 {
-    Q_ASSERT(isFinite());
     minimum = vec3::minimum(minimum, v);
     maximum = vec3::maximum(maximum, v);
 }
 
 void QDemonBounds3::include(const QDemonBounds3 &b)
 {
-    Q_ASSERT(isFinite());
     minimum = vec3::minimum(minimum, b.minimum);
     maximum = vec3::maximum(maximum, b.maximum);
 }
@@ -46,7 +44,6 @@ QDemonBounds3 QDemonBounds3::basisExtent(const QVector3D &center, const QMatrix3
 
 QDemonBounds3 QDemonBounds3::transform(const QMatrix3x3 &matrix, const QDemonBounds3 &bounds)
 {
-    Q_ASSERT(bounds.isFinite());
     return bounds.isEmpty()
             ? bounds
             : QDemonBounds3::basisExtent(mat33::transform(matrix, bounds.center()), matrix, bounds.extents());
