@@ -602,9 +602,9 @@ protected:
     void checkGLError() const
     {
 #ifdef QT_DEBUG
-        GLenum error = m_glFunctions->glGetError();
+        const GLenum error = m_glFunctions->glGetError();
         if (error != GL_NO_ERROR)
-            qCCritical(GL_ERROR) << GLConversion::processGLError(error);
+            qCCritical(GL_ERROR, "GL Error: %s", GLConversion::processGLError(error));
 #endif
     }
 #endif
