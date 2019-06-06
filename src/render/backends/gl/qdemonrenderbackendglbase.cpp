@@ -2228,23 +2228,4 @@ void QDemonRenderBackendGLBase::setAndInspectHardwareCaps()
     }
 }
 
-#ifdef RENDER_BACKEND_LOG_GL_ERRORS
-void QDemonRenderBackendGLBase::checkGLError(const char *function, const char *file, const unsigned int line) const
-{
-    GLenum error = m_glFunctions->glGetError();
-    if (error != GL_NO_ERROR) {
-        qCCritical(GL_ERROR) << GLConversion::processGLError(error) << " " << function << " " << file << " " << line;
-    }
-}
-#else
-void QDemonRenderBackendGLBase::checkGLError() const
-{
-#if !defined(NDEBUG) || defined(_DEBUG)
-    GLenum error = m_glFunctions->glGetError();
-    if (error != GL_NO_ERROR)
-        qCCritical(GL_ERROR) << GLConversion::processGLError(error);
-#endif
-}
-#endif
-
 QT_END_NAMESPACE

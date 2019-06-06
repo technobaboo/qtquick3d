@@ -591,9 +591,22 @@ protected:
     QDemonRenderBackendDepthStencilStateGL *m_currentDepthStencilState = nullptr; ///< this holds the current depth stencil state
 
 #ifdef RENDER_BACKEND_LOG_GL_ERRORS
-    void checkGLError(const char *function, const char *file, const unsigned int line) const;
+    void checkGLError(const char *function, const char *file, const unsigned int line) const
+    {
+        GLenum error = m_glFunctions->glGetError();
+        if (error != GL_NO_ERROR) {
+            qCCritical(GL_ERROR) << GLConversion::processGLError(error) << " " << function << " " << file << " " << line;
+        }
+    }
 #else
-    void checkGLError() const;
+    void checkGLError() const
+    {
+#ifdef QT_DEBUG
+        GLenum error = m_glFunctions->glGetError();
+        if (error != GL_NO_ERROR)
+            qCCritical(GL_ERROR) << GLConversion::processGLError(error);
+#endif
+    }
 #endif
     QOpenGLFunctions *m_glFunctions = nullptr;
     QOpenGLExtraFunctions *m_glExtraFunctions = nullptr;
