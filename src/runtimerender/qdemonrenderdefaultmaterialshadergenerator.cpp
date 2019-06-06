@@ -47,6 +47,8 @@
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendererimplshaders.h>
 
+#include <QtCore/QByteArray>
+
 QT_BEGIN_NAMESPACE
 
 namespace {
@@ -666,7 +668,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         if (!inLightCount || !theContext->supportsConstantBuffer())
             return nullptr;
 
-        const char *theName = "cbBufferLights";
+        static const QByteArray theName = QByteArrayLiteral("cbBufferLights");
         QDemonRef<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(theName);
 
         if (!pCB) {
