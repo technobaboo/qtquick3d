@@ -24,6 +24,8 @@ QT_BEGIN_NAMESPACE
 AssimpImporter::AssimpImporter()
 {
     m_importer = new Assimp::Importer();
+    // Remove primatives that are not Triangles
+    m_importer->SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_POINT | aiPrimitiveType_LINE);
 }
 
 AssimpImporter::~AssimpImporter()
@@ -63,13 +65,49 @@ const QVariantMap AssimpImporter::importOptions() const
     return QVariantMap();
 }
 
+#define demonPostProcessPresets_original ( \
+    aiProcess_CalcTangentSpace              |  \
+    aiProcess_GenSmoothNormals              |  \
+    aiProcess_JoinIdenticalVertices         |  \
+    aiProcess_ImproveCacheLocality          |  \
+    aiProcess_LimitBoneWeights              |  \
+    aiProcess_RemoveRedundantMaterials      |  \
+    aiProcess_SplitLargeMeshes              |  \
+    aiProcess_Triangulate                   |  \
+    aiProcess_GenUVCoords                   |  \
+    aiProcess_SortByPType                   |  \
+    aiProcess_FindDegenerates               |  \
+    aiProcess_FindInvalidData               |  \
+    aiProcess_MakeLeftHanded     | \
+    aiProcess_FlipUVs            | \
+    aiProcess_FlipWindingOrder | \
+    0 )
+
+#define demonPostProcessPresets ( \
+    aiProcess_CalcTangentSpace              |  \
+    aiProcess_GenSmoothNormals              |  \
+    aiProcess_JoinIdenticalVertices         |  \
+    aiProcess_ImproveCacheLocality          |  \
+    aiProcess_LimitBoneWeights              |  \
+    aiProcess_RemoveRedundantMaterials      |  \
+    aiProcess_SplitLargeMeshes              |  \
+    aiProcess_Triangulate                   |  \
+    aiProcess_GenUVCoords                   |  \
+    aiProcess_SortByPType                   |  \
+    aiProcess_FindDegenerates               |  \
+    aiProcess_FindInvalidData               |  \
+    aiProcess_MakeLeftHanded                | \
+    aiProcess_FlipUVs                       | \
+    aiProcess_FlipWindingOrder              | \
+    0 )
+
 const QString AssimpImporter::import(const QString &sourceFile, const QDir &savePath, const QVariantMap &options, QStringList *generatedFiles)
 {
     QString errorString;
     m_savePath = savePath;
     m_sourceFile = QFileInfo(sourceFile);
 
-    m_scene = m_importer->ReadFile(sourceFile.toStdString(), aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded);
+    m_scene = m_importer->ReadFile(sourceFile.toStdString(), demonPostProcessPresets);
     if (!m_scene) {
         // Scene failed to load, use logger to get the reason
         return QString::fromLocal8Bit(m_importer->GetErrorString());
