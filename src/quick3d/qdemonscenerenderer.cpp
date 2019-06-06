@@ -145,6 +145,7 @@ QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
 
 QDemonSceneRenderer::~QDemonSceneRenderer()
 {
+    delete m_layer;
 }
 
 GLuint QDemonSceneRenderer::render()
