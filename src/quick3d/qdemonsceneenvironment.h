@@ -59,7 +59,8 @@ public:
     enum QDemonEnvironmentBackgroundTypes {
         Transparent = 0,
         Unspecified,
-        Color
+        Color,
+        SkyBox
     };
     Q_ENUM(QDemonEnvironmentBackgroundTypes)
 

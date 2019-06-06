@@ -132,6 +132,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessLinearPrepassShaderDisplaced;
     QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessPhongPrepassShader;
     QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessNPatchPrepassShader;
+    QDemonRef<QDemonSkyBoxShader> m_skyBoxShader;
     QDemonRef<QDemonDefaultAoPassShader> m_defaultAoPassShader;
     QDemonRef<QDemonDefaultAoPassShader> m_fakeDepthShader;
     QDemonRef<QDemonDefaultAoPassShader> m_fakeCubemapDepthShader;
@@ -295,6 +296,7 @@ public:
     QDemonRef<QDemonShaderGeneratorGeneratedShader> getShader(QDemonSubsetRenderable &inRenderable,
                                                               const TShaderFeatureSet &inFeatureSet);
 
+    QDemonRef<QDemonSkyBoxShader> getSkyBoxShader();
     QDemonRef<QDemonDefaultAoPassShader> getDefaultAoPassShader(TShaderFeatureSet inFeatureSet);
     QDemonRef<QDemonDefaultAoPassShader> getFakeDepthShader(TShaderFeatureSet inFeatureSet);
     QDemonRef<QDemonDefaultAoPassShader> getFakeCubeDepthShader(TShaderFeatureSet inFeatureSet);

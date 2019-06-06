@@ -104,6 +104,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 
     // Render this layer assuming viewport and RT are setup.  Just renders exactly this item
     // no effects.
+    void renderClearPass();
     void renderDepthPass(bool inEnableTransparentDepthWrite = false);
     void renderAoPass();
     void renderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex, QDemonRenderTextureCube *theDepthCube);

@@ -180,6 +180,25 @@ struct QDemonRenderableDepthPrepassShader
     ~QDemonRenderableDepthPrepassShader() {}
 };
 
+struct QDemonSkyBoxShader
+{
+    QAtomicInt ref;
+    QDemonRef<QDemonRenderShaderProgram> shader;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> viewMatrix;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> projection;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> skyboxTexture;
+
+    QDemonSkyBoxShader(QDemonRef<QDemonRenderShaderProgram> inShader, QDemonRef<QDemonRenderContext> inContext)
+        : shader(inShader)
+        , viewMatrix("view_matrix", inShader)
+        , projection("projection", inShader)
+        , skyboxTexture("skybox_image", inShader)
+    {
+        Q_UNUSED(inContext)
+    }
+    ~QDemonSkyBoxShader() = default;
+};
+
 struct QDemonDefaultAoPassShader
 {
     QAtomicInt ref;

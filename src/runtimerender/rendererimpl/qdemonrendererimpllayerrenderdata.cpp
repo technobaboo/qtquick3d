@@ -212,6 +212,57 @@ QDemonRenderFrameBufferAttachment QDemonLayerRenderData::getFramebufferDepthAtta
     return fmt;
 }
 
+void QDemonLayerRenderData::renderClearPass()
+{
+    QDemonStackPerfTimer ___timer(renderer->demonContext()->performanceTimer(), Q_FUNC_INFO);
+    if (camera == nullptr)
+        return;
+
+    renderer->beginLayerRender(*this);
+
+    auto theContext = renderer->context();
+    if (layer.background == QDemonRenderLayer::Background::SkyBox) {
+        theContext->setDepthTestEnabled(false); // Draw to every pixel
+        theContext->setDepthWriteEnabled(false); // Depth will be cleared in a separate step
+        QDemonRef<QDemonSkyBoxShader> shader = renderer->getSkyBoxShader();
+        theContext->setActiveShader(shader->shader);
+        // Setup constants
+        shader->projection.set(camera->projection);
+        shader->viewMatrix.set(camera->globalTransform);
+        shader->skyboxTexture.set(layer.lightProbe->m_textureData.m_texture.data());
+        renderer->renderQuad();
+    }
+
+    QDemonRenderClearFlags clearFlags = 0;
+    if (!layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthPrePass)) {
+        clearFlags |= QDemonRenderClearValues::Depth;
+        clearFlags |= QDemonRenderClearValues::Stencil;
+        // Enable depth write for the clear below
+        theContext->setDepthWriteEnabled(true);
+    }
+
+    if (layer.background == QDemonRenderLayer::Background::SkyBox) {
+        theContext->clear(clearFlags);
+    } else if (layer.background == QDemonRenderLayer::Background::Color) {
+        clearFlags |= QDemonRenderClearValues::Color;
+        QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
+                                                                  &QDemonRenderContext::clearColor,
+                                                                  &QDemonRenderContext::setClearColor,
+                                                                  QVector4D(layer.clearColor, 1.0f));
+        theContext->clear(clearFlags);
+    } else {
+        if (layerPrepResult->flags.requiresTransparentClear()) {
+            clearFlags |= QDemonRenderClearValues::Color;
+            QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
+                                                                      &QDemonRenderContext::clearColor,
+                                                                      &QDemonRenderContext::setClearColor,
+                                                                      QVector4D(0.0, 0.0, 0.0, 0.0f));
+            theContext->clear(clearFlags);
+        }
+    }
+    renderer->endLayerRender();
+}
+
 void QDemonLayerRenderData::renderAoPass()
 {
     renderer->beginLayerDepthPassRender(*this);
@@ -1122,6 +1173,9 @@ void QDemonLayerRenderData::renderToViewport()
                                                    &layer);
             }
         } else {
+            startProfiling("Clear pass", false);
+            renderClearPass();
+            endProfiling("Clear pass");
 
             if (layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthPrePass)) {
                 startProfiling("Depth pass", false);
@@ -1630,7 +1684,9 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
     // Then we can't possible affect the resulting render target.
     bool needsToRender = layer.firstEffect != nullptr || opaqueObjects.empty() == false
             || anyCompletelyNonTransparentObjects(transparentObjects) || usesOffscreenRenderer()
-            || m_layerWidgetTexture.getTexture() || m_boundingRectColor.hasValue() || layer.background == QDemonRenderLayer::Background::Color;
+            || m_layerWidgetTexture.getTexture() || m_boundingRectColor.hasValue()
+            || layer.background == QDemonRenderLayer::Background::Color
+            || layer.background == QDemonRenderLayer::Background::SkyBox;
 
     if (needsToRender == false)
         return;
@@ -1657,29 +1713,6 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
         theContext->setViewport(layerPrepResult->viewport().toRect());
         theContext->setScissorTestEnabled(true);
         theContext->setScissorRect(layerPrepResult->scissor().toRect());
-
-        QDemonRenderClearFlags clearFlags = QDemonRenderClearValues::Color;
-        if (!layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthPrePass)) {
-                        clearFlags |= (QDemonRenderClearValues::Depth);
-                        clearFlags |= (QDemonRenderClearValues::Stencil);
-                        // enable depth write for the clear below
-                        theContext->setDepthWriteEnabled(true);
-        }
-        if (layer.background == QDemonRenderLayer::Background::Color) {
-            QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
-                                                                      &QDemonRenderContext::clearColor,
-                                                                      &QDemonRenderContext::setClearColor,
-                                                                      QVector4D(layer.clearColor, 1.0f));
-            theContext->clear(clearFlags);
-        } else {
-            if (thePrepResult.flags.requiresTransparentClear()) {
-                QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
-                                                                          &QDemonRenderContext::clearColor,
-                                                                          &QDemonRenderContext::setClearColor,
-                                                                          QVector4D(0.0, 0.0, 0.0, 0.0f));
-                theContext->clear(clearFlags);
-            }
-        }
         renderToViewport();
     } else {
         // First, render the layer along with whatever progressive AA is appropriate.

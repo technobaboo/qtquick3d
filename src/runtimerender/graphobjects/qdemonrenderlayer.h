@@ -77,7 +77,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonRenderNode
     enum class Background : quint8
     {
         Transparent = 0,
-        Unspecified, Color
+        Unspecified,
+        Color,
+        SkyBox
     };
 
     enum class BlendMode : quint8

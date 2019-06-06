@@ -1545,6 +1545,76 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessNP
     return m_depthTessNPatchPrepassShader;
 }
 
+QDemonRef<QDemonSkyBoxShader> QDemonRendererImpl::getSkyBoxShader()
+{
+    if (!m_skyBoxShader) {
+        QDemonRef<QDemonShaderCache> theCache = m_demonContext->shaderCache();
+        QByteArray name = "fullscreen skybox shader";
+        QDemonRef<QDemonRenderShaderProgram> skyBoxShaderProgram = theCache->getProgram(name, TShaderFeatureSet());
+        if (!skyBoxShaderProgram) {
+            QDemonRef<QDemonShaderProgramGeneratorInterface> theGenerator(getProgramGenerator());
+            theGenerator->beginProgram();
+            QDemonShaderStageGeneratorInterface &vertexGenerator(*theGenerator->getStage(QDemonShaderGeneratorStage::Vertex));
+            QDemonShaderStageGeneratorInterface &fragmentGenerator(*theGenerator->getStage(QDemonShaderGeneratorStage::Fragment));
+
+            vertexGenerator.addIncoming("attr_pos", "vec3");
+
+            vertexGenerator.addOutgoing("eye_direction", "vec3");
+
+            vertexGenerator.addUniform("view_matrix", "mat4");
+            vertexGenerator.addUniform("projection", "mat4");
+
+            vertexGenerator.append("void main() {");
+            vertexGenerator.append("\tgl_Position = vec4(attr_pos, 1.0);");
+            vertexGenerator.append("\tmat4 inverseProjection = inverse(projection);");
+            vertexGenerator.append("\tvec3 unprojected = (inverseProjection * gl_Position).xyz;");
+            vertexGenerator.append("\teye_direction = normalize(mat3(view_matrix) * unprojected);");
+            vertexGenerator.append("}");
+
+            fragmentGenerator.addInclude("customMaterial.glsllib"); // Needed for PI, PI_TWO
+
+            fragmentGenerator.addUniform("skybox_image", "sampler2D");
+            fragmentGenerator.addUniform("output_color", "vec3");
+
+            fragmentGenerator.append("void main() {");
+
+            // Ideally, we would just reuse getProbeSampleUV like this, but that leads to issues
+            // with incorrect texture gradients because we're drawing on a quad and not a sphere.
+            // See explanation below.
+            // fragmentGenerator.addInclude("sampleProbe.glsllib");
+            // fragmentGenerator.append("\tgl_FragColor = texture2D(skybox_image, getProbeSampleUV(eye, vec4(1.0, 0.0, 0.0, 1.0), vec2(0,0)));");
+
+            // nlerp direction vector, not entirely correct, but simple/efficient
+            fragmentGenerator.append("\tvec3 eye = normalize(eye_direction);");
+
+            // Equirectangular textures project longitude and latitude to the xy plane
+            fragmentGenerator.append("\tfloat longitude = atan(eye.x, eye.z) / PI_TWO + 0.5;");
+            fragmentGenerator.append("\tfloat latitude = asin(eye.y) / PI + 0.5;");
+            fragmentGenerator.append("\tvec2 uv = vec2(longitude, latitude);");
+
+            // Because of the non-standard projection, the texture lookup for normal texture
+            // filtering is messed up. Make this somewhat better by manually setting the gradients.
+            // Right now, they're set to 0,0, but ideally, we would derive the correct gradient
+            // function mathematically.
+            // TODO: Alternatively, we could check if it's possible to disable some of the texture
+            // filtering just for the skybox part.
+            fragmentGenerator.append("\tgl_FragColor = textureGrad(skybox_image, uv, vec2(0), vec2(0));");
+            fragmentGenerator.append("}");
+
+            // No flags enabled
+            skyBoxShaderProgram = theGenerator->compileGeneratedShader(name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
+        }
+
+        if (skyBoxShaderProgram) {
+            m_skyBoxShader = QDemonRef<QDemonSkyBoxShader>(
+                        new QDemonSkyBoxShader(skyBoxShaderProgram, context()));
+        } else {
+            m_skyBoxShader = QDemonRef<QDemonSkyBoxShader>();
+        }
+    }
+    return m_skyBoxShader;
+}
+
 QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassShader(TShaderFeatureSet inFeatureSet)
 {
     if (m_defaultAoPassShader.isNull()) {
