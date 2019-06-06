@@ -201,12 +201,11 @@ void QDemonRenderConstantBuffer::update()
 {
     // we only update the buffer if the buffer is already on hardware
     // and if it is dirty
-    if (m_rangeStart < m_rangeEnd && m_hwBufferInitialized) {
-    if (m_hwBufferInitialized)
-        if (m_rangeStart == 0 && m_rangeEnd >= m_shadowCopy.size()) {
+    if (m_hwBufferInitialized && (m_rangeStart < m_rangeEnd)) {
+        if (m_rangeStart == 0 && m_rangeEnd >= quint32(m_shadowCopy.size())) {
             m_backend->updateBuffer(m_handle, m_type, m_usageType, toByteView(m_shadowCopy));
         } else {
-            Q_ASSERT(m_rangeStart < m_rangeEnd && m_rangeEnd <= m_shadowCopy.size());
+            Q_ASSERT(m_rangeStart < m_rangeEnd && m_rangeEnd <= quint32(m_shadowCopy.size()));
             m_backend->updateBufferRange(m_handle,
                                          m_type,
                                          m_rangeStart,
