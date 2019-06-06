@@ -1,5 +1,8 @@
 #include "qdemonqmlutilities_p.h"
 
+#include <QVector3D>
+#include <QDebug>
+
 QT_BEGIN_NAMESPACE
 
 namespace QDemonQmlUtilities {
