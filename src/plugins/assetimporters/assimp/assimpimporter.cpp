@@ -678,18 +678,7 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     if (shadingModel == aiShadingMode_NoShading)
         output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("lighting: DemonDefaultMaterial.NoLighting") << endl;
 
-    // blendMode AI_MATKEY_BLEND_FUNC
-//    int blendMode = 0;
-//    material->Get(AI_MATKEY_BLEND_FUNC, blendMode);
 
-    // diffuseColor AI_MATKEY_COLOR_DIFFUSE
-    aiColor3D diffuseColor;
-    material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-    QDemonQmlUtilities::writeQmlPropertyHelper(output,
-                                               tabLevel + 1,
-                                               QDemonQmlUtilities::PropertyMap::DefaultMaterial,
-                                               QStringLiteral("diffuseColor"),
-                                               aiColorToQColor(diffuseColor));
 
     QString diffuseMapImage = generateImage(material, aiTextureType_DIFFUSE, 0, tabLevel + 1);
     if (!diffuseMapImage.isNull())
@@ -702,6 +691,19 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     QString diffuseMap3Image = generateImage(material, aiTextureType_DIFFUSE, 2, tabLevel + 1);
     if (!diffuseMap3Image.isNull())
         output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("diffuseMap3: ") << diffuseMap3Image << endl;
+
+    // For some reason the normal behavior is that either you have a diffuseMap[s] or a diffuse color
+    // but no a mix of both... So only set the diffuse color if none of the diffuse maps are set:
+    if (diffuseMapImage.isNull() && diffuseMap2Image.isNull() && diffuseMap3Image.isNull()) {
+        aiColor3D diffuseColor;
+        material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
+        QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                                   tabLevel + 1,
+                                                   QDemonQmlUtilities::PropertyMap::DefaultMaterial,
+                                                   QStringLiteral("diffuseColor"),
+                                                   aiColorToQColor(diffuseColor));
+    }
+
     // emissivePower
 
     QString emissiveMapImage = generateImage(material, aiTextureType_EMISSIVE, 0, tabLevel + 1);
