@@ -507,16 +507,38 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
             normalData += QByteArray(mesh->mNumVertices * 3 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
 
         // UV1
-        if (mesh->HasTextureCoords(0))
-            uv1Data += QByteArray(reinterpret_cast<char*>(mesh->mTextureCoords[0]), mesh->mNumVertices * uv1Components * getSizeOfType(QDemonRenderComponentType::Float32));
-        else if (needsUV1Data)
+        if (mesh->HasTextureCoords(0)) {
+            QVector<float> uvCoords;
+            uvCoords.resize(uv1Components * mesh->mNumVertices);
+            for (uint i = 0; i < mesh->mNumVertices; ++i) {
+                int offset = i * uv1Components;
+                aiVector3D *textureCoords = mesh->mTextureCoords[0];
+                uvCoords[offset] = textureCoords[i].x;
+                uvCoords[offset + 1] = textureCoords[i].y;
+                if (uv1Components == 3)
+                    uvCoords[offset + 2] = textureCoords[i].z;
+            }
+            uv1Data += QByteArray(reinterpret_cast<const char*>(uvCoords.constData()), uvCoords.size() * sizeof(float));
+        } else {
             uv1Data += QByteArray(mesh->mNumVertices * uv1Components * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+        }
 
         // UV2
-        if (mesh->HasTextureCoords(1))
-            uv2Data += QByteArray(reinterpret_cast<char*>(mesh->mTextureCoords[1]), mesh->mNumVertices * uv2Components * getSizeOfType(QDemonRenderComponentType::Float32));
-        else if (needsUV2Data)
+        if (mesh->HasTextureCoords(1)) {
+            QVector<float> uvCoords;
+            uvCoords.resize(uv2Components * mesh->mNumVertices);
+            for (uint i = 0; i < mesh->mNumVertices; ++i) {
+                int offset = i * uv2Components;
+                aiVector3D *textureCoords = mesh->mTextureCoords[1];
+                uvCoords[offset] = textureCoords[i].x;
+                uvCoords[offset + 1] = textureCoords[i].y;
+                if (uv2Components == 3)
+                    uvCoords[offset + 2] = textureCoords[i].z;
+            }
+            uv2Data += QByteArray(reinterpret_cast<const char*>(uvCoords.constData()), uvCoords.size() * sizeof(float));
+        } else {
             uv2Data += QByteArray(mesh->mNumVertices * uv2Components * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
+        }
 
         if (mesh->HasTangentsAndBitangents()) {
             // Tangents
