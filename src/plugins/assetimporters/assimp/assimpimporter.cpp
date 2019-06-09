@@ -96,9 +96,6 @@ const QVariantMap AssimpImporter::importOptions() const
     aiProcess_SortByPType                   |  \
     aiProcess_FindDegenerates               |  \
     aiProcess_FindInvalidData               |  \
-    aiProcess_MakeLeftHanded                | \
-    aiProcess_FlipUVs                       | \
-    aiProcess_FlipWindingOrder              | \
     0 )
 
 const QString AssimpImporter::import(const QString &sourceFile, const QDir &savePath, const QVariantMap &options, QStringList *generatedFiles)
@@ -283,13 +280,13 @@ void AssimpImporter::generateModelProperties(aiNode *modelNode, QTextStream &out
 void AssimpImporter::generateLightProperties(aiNode *lightNode, QTextStream &output, int tabLevel)
 {
     aiLight *light = m_lights.value(lightNode);
-    // We assume that the direction vector for a light is (0, 0, -1)
-    // so if the direction vector is non-null, but not (0, 0, -1) we
+    // We assume that the direction vector for a light is (0, 0, 1)
+    // so if the direction vector is non-null, but not (0, 0, 1) we
     // need to correct the translation
     aiMatrix4x4 correctionMatrix;
     if (light->mDirection != aiVector3D(0, 0, 0)) {
-        if (light->mDirection != aiVector3D(0, 0, -1)) {
-            aiMatrix4x4::FromToMatrix(light->mDirection, aiVector3D(0, 0, -1), correctionMatrix);
+        if (light->mDirection != aiVector3D(0, 0, 1)) {
+            aiMatrix4x4::FromToMatrix(light->mDirection, aiVector3D(0, 0, 1), correctionMatrix);
         }
     }
 
@@ -354,10 +351,10 @@ void AssimpImporter::generateCameraProperties(aiNode *cameraNode, QTextStream &o
     // We assume these default forward and up vectors, so if this isn't
     // the case we have to do additional transform
     aiMatrix4x4 correctionMatrix;
-    if (camera->mLookAt != aiVector3D(0, 0, -1))
+    if (camera->mLookAt != aiVector3D(0, 0, 1))
     {
         aiMatrix4x4 lookAtCorrection;
-        aiMatrix4x4::FromToMatrix(camera->mLookAt, aiVector3D(0, 0, -1), lookAtCorrection);
+        aiMatrix4x4::FromToMatrix(camera->mLookAt, aiVector3D(0, 0, 1), lookAtCorrection);
         correctionMatrix *= lookAtCorrection;
     }
 
@@ -419,7 +416,7 @@ void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, i
     // translate
     QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("x"), translation.x);
     QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("y"), translation.y);
-    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("z"), translation.z);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("z"), -translation.z);
 
     // rotation
     QVector3D rotationAngles(qRadiansToDegrees(rotation.x),
@@ -441,6 +438,7 @@ void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, i
     QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("rotationOrder"), QStringLiteral("DemonNode.XYZr"));
 
     // orientation
+    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("orientation"), QStringLiteral("DemonNode.RightHanded"));
 
     // visible
 
