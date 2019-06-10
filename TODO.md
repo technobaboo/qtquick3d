@@ -13,10 +13,10 @@ Move the blend mode's out of SceneEnvironment/View3D.  Instead these are a speci
 Add support for picking
 Add skybox mode for backround
 
-## Import API
-Add QML helpers
-Use libassimp to impliment to support general importing of assets (shortcut)
-GLTF2 Support (either as native mesh, or convert to QML component)
+## Assimp Plugin
+Handle non-unique id names case
+Import Keyframe animations
+GLTF2 Support: Add additional materials/texture import code and test
 
 ## Rendering
 Get direction shadows working better.
