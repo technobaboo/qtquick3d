@@ -739,6 +739,13 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     // roughnessMap
 
     // opacity AI_MATKEY_OPACITY
+    ai_real opacity;
+    material->Get(AI_MATKEY_OPACITY, opacity);
+    QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                               tabLevel + 1,
+                                               QDemonQmlUtilities::PropertyMap::DefaultMaterial,
+                                               QStringLiteral("opacity"),
+                                               opacity);
 
     // opacityMap aiTextureType_OPACITY 0
     QString opacityMapImage = generateImage(material, aiTextureType_OPACITY, 0, tabLevel + 1);
