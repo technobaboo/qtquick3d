@@ -68,7 +68,8 @@ QString sanitizeQmlId(const QString &id)
             idCopy == "alias" ||
             idCopy == "readonly" ||
             idCopy == "property" ||
-            idCopy == "signal") {
+            idCopy == "signal"||
+            idCopy == "int") {
         idCopy += "_";
     }
 

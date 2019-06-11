@@ -667,8 +667,8 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
 {
     output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonDefaultMaterial {") << endl;
 
-    // id
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << QDemonQmlUtilities::sanitizeQmlId(material->GetName().C_Str()) << endl;
+    // id (### Re-add later when using referencing)
+    //output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << QDemonQmlUtilities::sanitizeQmlId(material->GetName().C_Str()) << endl;
 
     int shadingModel = 0;
     material->Get(AI_MATKEY_SHADING_MODEL, shadingModel);
