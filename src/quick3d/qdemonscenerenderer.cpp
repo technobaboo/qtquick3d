@@ -326,14 +326,32 @@ QSGRenderNode::StateFlags QDemonSGRenderNode::changedStates() const
     return BlendState | StencilState | DepthState | ScissorState | ColorState | CullState | ViewportState | RenderTargetState;
 }
 
+namespace {
+QRect convertQtRectToGLViewport(const QRectF &rect, const QSize surfaceSize) {
+    //
+    const int x = int(rect.x());
+    const int y = surfaceSize.height() - (int(rect.y()) + int(rect.height()));
+    const int width = int(rect.width());
+    const int height = int(rect.height());
+    return QRect(x, y, width, height);
+}
+}
+
 void QDemonSGRenderNode::render(const QSGRenderNode::RenderState *state)
 {
     // calculate viewport
-    QRect viewport = matrix()->mapRect(QRect(QPoint(0, 0), renderer->surfaceSize()));
+    const double dpr = renderer->m_window->devicePixelRatio();
+    const QSizeF itemSize = renderer->surfaceSize() / dpr;
+
+    QRectF viewport = matrix()->mapRect(QRectF(QPoint(0, 0), itemSize));
+    viewport = QRectF(viewport.topLeft() * dpr, viewport.size() * dpr);
 
     // render
-    renderer->render(viewport);
+    renderer->render(convertQtRectToGLViewport(viewport, window->size() * dpr));
     markDirty(QSGNode::DirtyMaterial);
+
+    // reset some state
+    window->resetOpenGLState();
 }
 
 void QDemonSGRenderNode::releaseResources()
@@ -369,17 +387,6 @@ void QDemonSGDirectRenderer::setViewport(const QRectF &viewport)
 void QDemonSGDirectRenderer::requestRender()
 {
     m_window->update();
-}
-
-namespace {
-QRect convertQtRectToGLViewport(const QRectF &rect, const QSize surfaceSize) {
-    //
-    const int x = int(rect.x());
-    const int y = surfaceSize.height() - (int(rect.y()) + int(rect.height()));
-    const int width = int(rect.width());
-    const int height = int(rect.height());
-    return QRect(x, y, width, height);
-}
 }
 
 void QDemonSGDirectRenderer::render()
