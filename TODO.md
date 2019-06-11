@@ -7,6 +7,10 @@ See if it's possible to translate known custom materials
 ## Effects
 Add support for Post Processing Effects (applied to View3D ouput)
 
+## Quick
+Make sure it is possible to have QQuickItems inside of View3D Item (normally this is the scene, but you may want to stack items on top as well).
+QML Inside of Scene as DemonImage texture source
+
 ## View3D
 Add flag for rendering directly to the window 
 Move the blend mode's out of SceneEnvironment/View3D.  Instead these are a special kind of shader effect applied between Qt Quick Items, add examples
