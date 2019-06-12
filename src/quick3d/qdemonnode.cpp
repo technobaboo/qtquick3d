@@ -242,6 +242,8 @@ QDemonRenderGraphObject *QDemonNode::updateSpatialNode(QDemonRenderGraphObject *
     else
         spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
 
+    spacialNode->flags.setFlag(QDemonRenderNode::Flag::Active, m_visible);
+
     return spacialNode;
 }
 
