@@ -1122,8 +1122,15 @@ void QDemonLayerRenderData::renderToViewport()
                                                    &layer);
             }
         } else {
-            renderDepthPass(false);
+
+            if (layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthPrePass)) {
+                startProfiling("Depth pass", false);
+                renderDepthPass(false);
+                endProfiling("Depth pass");
+            }
+            startProfiling("Render pass", false);
             render();
+            endProfiling("Render pass");
             renderRenderWidgets();
         }
     }
@@ -1650,19 +1657,27 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
         theContext->setViewport(layerPrepResult->viewport().toRect());
         theContext->setScissorTestEnabled(true);
         theContext->setScissorRect(layerPrepResult->scissor().toRect());
+
+        QDemonRenderClearFlags clearFlags = QDemonRenderClearValues::Color;
+        if (!layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthPrePass)) {
+                        clearFlags |= (QDemonRenderClearValues::Depth);
+                        clearFlags |= (QDemonRenderClearValues::Stencil);
+                        // enable depth write for the clear below
+                        theContext->setDepthWriteEnabled(true);
+        }
         if (layer.background == QDemonRenderLayer::Background::Color) {
             QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
                                                                       &QDemonRenderContext::clearColor,
                                                                       &QDemonRenderContext::setClearColor,
                                                                       QVector4D(layer.clearColor, 1.0f));
-            theContext->clear(QDemonRenderClearValues::Color);
+            theContext->clear(clearFlags);
         } else {
             if (thePrepResult.flags.requiresTransparentClear()) {
                 QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
                                                                           &QDemonRenderContext::clearColor,
                                                                           &QDemonRenderContext::setClearColor,
                                                                           QVector4D(0.0, 0.0, 0.0, 0.0f));
-                theContext->clear(QDemonRenderClearValues::Color);
+                theContext->clear(clearFlags);
             }
         }
         renderToViewport();
