@@ -422,7 +422,12 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
         QString id = material->m_referencedMaterial_unresolved;
         if (id.startsWith("#"))
             id.remove(0, 1);
-        generateMaterialComponent(presentation->object(id.toUtf8()));
+        auto obj = presentation->object(id.toUtf8());
+        if (!obj) {
+            qWarning("Couldn't find object with id: %s", qPrintable(id));
+            continue;
+        }
+        generateMaterialComponent(obj);
     }
 
     for (auto alias : m_aliasNodes) {
