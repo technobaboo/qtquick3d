@@ -112,15 +112,12 @@ void QDemonRenderImage::calculateTextureTransform()
     QMatrix4x4 rotation;
     QMatrix4x4 scale;
 
-    translation(3, 0) = m_position.x();
-    translation(3, 1) = m_position.y();
-    scale(0, 0) = m_scale.x();
-    scale(1, 1) = m_scale.y();
+    translation.translate(m_position.x(), m_position.y());
+    scale.scale(m_scale.x(), m_scale.y());
     rotation.rotate(m_rotation, QVector3D(0, 0, 1));
 
     // Setup the pivot.
-    m_textureTransform(3, 0) = m_pivot.x();
-    m_textureTransform(3, 1) = m_pivot.y();
+    m_textureTransform.translate(m_pivot.x(), m_pivot.y());
     m_textureTransform = m_textureTransform * rotation;
     m_textureTransform = m_textureTransform * scale;
     m_textureTransform = m_textureTransform * translation;
