@@ -256,6 +256,7 @@ void AssimpImporter::generateModelProperties(aiNode *modelNode, QTextStream &out
     QString outputMeshFile = QStringLiteral("meshes/") +
             QString::fromUtf8(modelNode->mName.C_Str()) + QStringLiteral(".mesh");
 
+    m_savePath.mkdir(QStringLiteral("./meshes"));
     QFile meshFile(m_savePath.absolutePath() + QDir::separator() + outputMeshFile);
     generateMeshFile(meshFile, meshes);
 
@@ -648,7 +649,6 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
 
 
     auto &outputMesh = meshBuilder->getMesh();
-    m_savePath.mkdir(QStringLiteral("./meshes"));
     outputMesh.saveMulti(file, 0);
 
     file.close();
