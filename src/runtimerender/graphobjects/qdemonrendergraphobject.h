@@ -111,9 +111,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
                type == QDemonRenderGraphObject::Type::ReferencedMaterial;
     }
 
-    QDemonRenderGraphObject *nextMaterialSibling();
-    void setNextMaterialSibling(QDemonRenderGraphObject *sibling);
-
 };
 
 QT_END_NAMESPACE

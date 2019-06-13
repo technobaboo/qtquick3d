@@ -34,6 +34,7 @@
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
 
 #include <QtDemon/QDemonBounds3>
+#include <QtCore/QVector>
 
 QT_BEGIN_NAMESPACE
 
@@ -45,16 +46,14 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonRenderNode
     // Complete path to the file;
     //*not* relative to the presentation directory
     QString meshPath;
-    QDemonRenderGraphObject *firstMaterial;
     qint32 skeletonRoot;
     TessModeValues tessellationMode;
     float edgeTess;
     float innerTess;
     bool wireframeMode;
+    QVector<QDemonRenderGraphObject *> materials;
 
     QDemonRenderModel();
-
-    void addMaterial(QDemonRenderGraphObject &inMaterial);
 
     QDemonBounds3 getModelBounds(const QDemonRef<QDemonBufferManager> &inManager) const;
 };

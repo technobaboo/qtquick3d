@@ -216,5 +216,5 @@ void RenderWindow::buildTestScene()
 
     // Default Material
     auto material = new QDemonRenderDefaultMaterial();
-    m_cube->addMaterial(*material);
+    m_cube->materials.append(material);
 }

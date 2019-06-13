@@ -144,47 +144,26 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
 
     // ### TODO: Make sure materials are setup
     if (!m_materials.isEmpty()) {
-        if (modelNode->firstMaterial == nullptr) {
+        if (modelNode->materials.isEmpty()) {
             // Easy mode, just add each material
             for (auto material : m_materials) {
                 QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(material);
                 if (graphObject)
-                    modelNode->addMaterial(*graphObject);
+                    modelNode->materials.append(graphObject);
             }
         } else {
             // Hard mode, go through each material and see if they match
-            QDemonRenderGraphObject *material = modelNode->firstMaterial;
-            QDemonRenderGraphObject *previousMaterial = nullptr;
-            int index = 0;
-            while (material) {
-                if (index > m_materials.count()) {
-                    // Materials have been removed!!
-                    previousMaterial->setNextMaterialSibling(nullptr);
-                    break;
-                }
-
-                auto newMaterial = getMaterialNodeFromQDemonMaterial(m_materials.at(index));
-
-                if (material != newMaterial) {
-                    // materials are not the same
-                    if (index == 0) {
-                        // new first
-                        modelNode->firstMaterial = newMaterial;
-                    } else {
-                        previousMaterial->setNextMaterialSibling(newMaterial);
-                    }
-                    previousMaterial = newMaterial;
-                } else {
-                    previousMaterial = material;
-                }
-
-                material = material->nextMaterialSibling();
-                index++;
+            if (modelNode->materials.size() != m_materials.size())
+                modelNode->materials.resize(m_materials.size());
+            for (int i = 0; i < m_materials.size(); ++i) {
+                QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(m_materials[i]);
+                if (modelNode->materials[i] != graphObject)
+                    modelNode->materials[i] = graphObject;
             }
         }
     } else {
         // No materials
-        modelNode->firstMaterial = nullptr;
+        modelNode->materials.clear();
     }
 
     return modelNode;

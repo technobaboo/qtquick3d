@@ -729,7 +729,6 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
     if (theMesh == nullptr)
         return false;
 
-    QDemonRenderGraphObject *theSourceMaterialObject = inModel.firstMaterial;
     QDemonModelContext &theModelContext = *RENDER_FRAME_NEW(QDemonModelContext)(inModel, inViewProjection);
     modelContexts.push_back(&theModelContext);
 
@@ -737,8 +736,15 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
 
     const QDemonScopedLightsListScope lightsScope(globalLights, lightDirections, sourceLightDirections, inScopedLights);
     setShaderFeature(QDemonShaderDefines::cgLighting(), !globalLights.empty());
-    for (int idx = 0, end = theMesh->subsets.size(); idx < end && theSourceMaterialObject;
-         ++idx, theSourceMaterialObject = theSourceMaterialObject->nextMaterialSibling()) {
+    for (int idx = 0; idx < theMesh->subsets.size(); ++idx) {
+        // If the materials list < size of subsets, then use the last material for the rest
+        QDemonRenderGraphObject *theSourceMaterialObject = nullptr;
+        if (inModel.materials.isEmpty())
+            break;
+        if (idx + 1 > inModel.materials.count())
+            theSourceMaterialObject = inModel.materials.last();
+        else
+            theSourceMaterialObject = inModel.materials.at(idx);
         QDemonRenderSubset &theOuterSubset(theMesh->subsets[idx]);
         {
             QDemonRenderSubset &theSubset(theOuterSubset);

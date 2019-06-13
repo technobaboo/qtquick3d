@@ -36,29 +36,12 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderModel::QDemonRenderModel()
     : QDemonRenderNode(QDemonRenderGraphObject::Type::Model)
-    , firstMaterial(nullptr)
     , skeletonRoot(-1)
     , tessellationMode(TessModeValues::NoTess)
     , edgeTess(1.0)
     , innerTess(1.0)
     , wireframeMode(false)
 {
-}
-
-void QDemonRenderModel::addMaterial(QDemonRenderGraphObject &inMaterial)
-{
-    if (firstMaterial == nullptr) {
-        firstMaterial = &inMaterial;
-    } else {
-        QDemonRenderGraphObject *lastMaterial = firstMaterial;
-        // empty loop intentional
-        while (QDemonRenderGraphObject *next = lastMaterial->nextMaterialSibling())
-             lastMaterial = next;
-        lastMaterial->setNextMaterialSibling(&inMaterial);
-    }
-    // ### I don't think reparenting is necessary here (I tested without it at least)
-    if (inMaterial.type == QDemonRenderGraphObject::Type::DefaultMaterial)
-        static_cast<QDemonRenderDefaultMaterial &>(inMaterial).parent = this;
 }
 
 QDemonBounds3 QDemonRenderModel::getModelBounds(const QDemonRef<QDemonBufferManager> &inManager) const
