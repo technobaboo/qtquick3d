@@ -65,24 +65,6 @@ const QVariantMap AssimpImporter::importOptions() const
     return QVariantMap();
 }
 
-#define demonPostProcessPresets_original ( \
-    aiProcess_CalcTangentSpace              |  \
-    aiProcess_GenSmoothNormals              |  \
-    aiProcess_JoinIdenticalVertices         |  \
-    aiProcess_ImproveCacheLocality          |  \
-    aiProcess_LimitBoneWeights              |  \
-    aiProcess_RemoveRedundantMaterials      |  \
-    aiProcess_SplitLargeMeshes              |  \
-    aiProcess_Triangulate                   |  \
-    aiProcess_GenUVCoords                   |  \
-    aiProcess_SortByPType                   |  \
-    aiProcess_FindDegenerates               |  \
-    aiProcess_FindInvalidData               |  \
-    aiProcess_MakeLeftHanded     | \
-    aiProcess_FlipUVs            | \
-    aiProcess_FlipWindingOrder | \
-    0 )
-
 #define demonPostProcessPresets ( \
     aiProcess_CalcTangentSpace              |  \
     aiProcess_GenSmoothNormals              |  \
@@ -224,7 +206,7 @@ void AssimpImporter::processNode(aiNode *node, QTextStream &output, int tabLevel
             output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonCamera {") << endl;
             generateCameraProperties(currentNode, output, tabLevel + 1);
         } else {
-            // Transform Node
+            // Transform Node           
             output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonNode {") << endl;
             generateNodeProperties(currentNode, output, tabLevel + 1);
         }
@@ -265,16 +247,22 @@ void AssimpImporter::generateModelProperties(aiNode *modelNode, QTextStream &out
     // skeletonRoot
 
     // materials
-    // For each mesh, generate a material for this list
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << "materials: [" << endl;
-
+    // If there are any new materials, add them as children of the Model first
     for (int i = 0; i < materials.count(); ++i) {
-        generateMaterial(materials[i], output, tabLevel + 1);
+        if (!m_materialIdMap.contains(materials[i])) {
+            generateMaterial(materials[i], output, tabLevel);
+            output << endl;
+        }
+    }
+
+    // For each sub-mesh, generate a material reference for this list
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << "materials: [" << endl;
+    for (int i = 0; i < materials.count(); ++i) {
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << m_materialIdMap[materials[i]];
         if (i < materials.count() - 1)
             output << QStringLiteral(",");
         output << endl;
     }
-
     output << QDemonQmlUtilities::insertTabs(tabLevel) << "]" << endl;
 }
 
@@ -399,8 +387,8 @@ void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, i
     QString name = QString::fromUtf8(node->mName.C_Str());
     if (!name.isEmpty()) {
         // ### we may need to account of non-unique and empty names
-        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("id: ") <<
-                  QDemonQmlUtilities::sanitizeQmlId(name) << endl;
+        QString id = generateUniqueId(QDemonQmlUtilities::sanitizeQmlId(name));
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("id: ") << id << endl;
     }
 
     // Apply correction if necessary
@@ -667,8 +655,10 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
 {
     output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonDefaultMaterial {") << endl;
 
-    // id (### Re-add later when using referencing)
-    //output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << QDemonQmlUtilities::sanitizeQmlId(material->GetName().C_Str()) << endl;
+    // id
+    QString id = generateUniqueId(QDemonQmlUtilities::sanitizeQmlId(material->GetName().C_Str() + QStringLiteral("_material")));
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << id << endl;
+    m_materialIdMap.insert(material, id);
 
     int shadingModel = 0;
     material->Get(AI_MATKEY_SHADING_MODEL, shadingModel);
@@ -920,6 +910,16 @@ bool AssimpImporter::isLight(aiNode *node)
 bool AssimpImporter::isCamera(aiNode *node)
 {
     return node && m_cameras.contains(node);
+}
+
+QString AssimpImporter::generateUniqueId(const QString &id)
+{
+    int index = 0;
+    QString uniqueID = id;
+    while (m_uniqueIds.contains(uniqueID))
+        uniqueID = id + QStringLiteral("_") + QString::number(++index);
+    m_uniqueIds.insert(uniqueID);
+    return uniqueID;
 }
 
 QT_END_NAMESPACE

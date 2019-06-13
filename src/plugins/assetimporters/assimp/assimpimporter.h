@@ -7,6 +7,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QHash>
 #include <QtCore/QTemporaryDir>
+#include <QtCore/QSet>
 
 #include <assimp/matrix4x4.h>
 #include <assimp/material.h>
@@ -49,12 +50,15 @@ private:
     bool isModel(aiNode *node);
     bool isLight(aiNode *node);
     bool isCamera(aiNode *node);
+    QString generateUniqueId(const QString &id);
 
     Assimp::Importer *m_importer = nullptr;
     const aiScene *m_scene = nullptr;
 
     QHash<aiNode *, aiCamera *> m_cameras;
     QHash<aiNode *, aiLight *> m_lights;
+    QHash<aiMaterial *, QString> m_materialIdMap;
+    QSet<QString> m_uniqueIds;
 
     QDir m_savePath;
     QFileInfo m_sourceFile;

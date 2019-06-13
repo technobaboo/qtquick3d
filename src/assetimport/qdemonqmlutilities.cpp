@@ -41,7 +41,12 @@ QString sanitizeQmlId(const QString &id)
 
     if (id.isEmpty())
         return QString();
+
     QString idCopy = id;
+    // If the id starts with a number...
+    if (idCopy.at(0).isNumber())
+        idCopy.prepend(QStringLiteral("node"));
+
     // sometimes first letter is a #
     if (idCopy.startsWith("#"))
         idCopy.remove(0, 1);
@@ -51,13 +56,16 @@ QString sanitizeQmlId(const QString &id)
     idCopy.remove('>');
 
     // replace "."s with _
-    idCopy.replace(".", "_");
+    idCopy.replace('.', '_');
 
     // You can even have " " (space) characters in uip files...
-    idCopy.replace(" ", "_");
+    idCopy.replace(' ', '_');
 
     // Materials sometimes use directory stuff in their name...
-    idCopy.replace("/", "_");
+    idCopy.replace('/', '_');
+
+    // - is an operator in QML
+    idCopy.replace('-', '_');
 
     // first letter of id can not be upper case
     if (idCopy[0].isUpper())
@@ -72,6 +80,10 @@ QString sanitizeQmlId(const QString &id)
             idCopy == "int") {
         idCopy += "_";
     }
+
+    // We may have removed all the characters by now
+    if (idCopy.isEmpty())
+        idCopy = QStringLiteral("node");
 
     return idCopy;
 }
