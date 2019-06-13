@@ -670,12 +670,15 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << id << endl;
     m_materialIdMap.insert(material, id);
 
-    int shadingModel = 0;
-    material->Get(AI_MATKEY_SHADING_MODEL, shadingModel);
-    // lighting
-    if (shadingModel == aiShadingMode_NoShading)
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("lighting: DemonDefaultMaterial.NoLighting") << endl;
+    aiReturn result;
 
+    int shadingModel = 0;
+    result = material->Get(AI_MATKEY_SHADING_MODEL, shadingModel);
+    // lighting
+    if (result == aiReturn_SUCCESS) {
+        if (shadingModel == aiShadingMode_NoShading)
+            output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("lighting: DemonDefaultMaterial.NoLighting") << endl;
+    }
 
 
     QString diffuseMapImage = generateImage(material, aiTextureType_DIFFUSE, 0, tabLevel + 1);
@@ -694,12 +697,14 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     // but no a mix of both... So only set the diffuse color if none of the diffuse maps are set:
     if (diffuseMapImage.isNull() && diffuseMap2Image.isNull() && diffuseMap3Image.isNull()) {
         aiColor3D diffuseColor;
-        material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-        QDemonQmlUtilities::writeQmlPropertyHelper(output,
-                                                   tabLevel + 1,
-                                                   QDemonQmlUtilities::PropertyMap::DefaultMaterial,
-                                                   QStringLiteral("diffuseColor"),
-                                                   aiColorToQColor(diffuseColor));
+        result = material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
+        if (result == aiReturn_SUCCESS) {
+            QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                                       tabLevel + 1,
+                                                       QDemonQmlUtilities::PropertyMap::DefaultMaterial,
+                                                       QStringLiteral("diffuseColor"),
+                                                       aiColorToQColor(diffuseColor));
+        }
     }
 
     // emissivePower
@@ -714,8 +719,10 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
 
     // emissiveColor AI_MATKEY_COLOR_EMISSIVE
     aiColor3D emissiveColor;
-    material->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
-
+    result = material->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
+    if (result == aiReturn_SUCCESS) {
+        // ### set emissive color
+    }
     // specularReflectionMap
 
     QString specularMapImage = generateImage(material, aiTextureType_SPECULAR, 0, tabLevel + 1);
@@ -726,7 +733,10 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
 
     // specularTint AI_MATKEY_COLOR_SPECULAR
     aiColor3D specularTint;
-    material->Get(AI_MATKEY_COLOR_SPECULAR, specularTint);
+    result = material->Get(AI_MATKEY_COLOR_SPECULAR, specularTint);
+    if (result == aiReturn_SUCCESS) {
+        // ### set specular color
+    }
 
     // indexOfRefraction AI_MATKEY_REFRACTI
 
@@ -740,12 +750,14 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
 
     // opacity AI_MATKEY_OPACITY
     ai_real opacity;
-    material->Get(AI_MATKEY_OPACITY, opacity);
-    QDemonQmlUtilities::writeQmlPropertyHelper(output,
-                                               tabLevel + 1,
-                                               QDemonQmlUtilities::PropertyMap::DefaultMaterial,
-                                               QStringLiteral("opacity"),
-                                               opacity);
+    result = material->Get(AI_MATKEY_OPACITY, opacity);
+    if (result == aiReturn_SUCCESS) {
+        QDemonQmlUtilities::writeQmlPropertyHelper(output,
+                                                   tabLevel + 1,
+                                                   QDemonQmlUtilities::PropertyMap::DefaultMaterial,
+                                                   QStringLiteral("opacity"),
+                                                   opacity);
+    }
 
     // opacityMap aiTextureType_OPACITY 0
     QString opacityMapImage = generateImage(material, aiTextureType_OPACITY, 0, tabLevel + 1);
