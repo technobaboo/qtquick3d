@@ -86,6 +86,9 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
     m_savePath = savePath;
     m_sourceFile = QFileInfo(sourceFile);
 
+    // Create savePath if it doesn't exist already
+    m_savePath.mkdir(".");
+
     m_scene = m_importer->ReadFile(sourceFile.toStdString(), demonPostProcessPresets);
     if (!m_scene) {
         // Scene failed to load, use logger to get the reason
@@ -206,7 +209,14 @@ void AssimpImporter::processNode(aiNode *node, QTextStream &output, int tabLevel
             output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonCamera {") << endl;
             generateCameraProperties(currentNode, output, tabLevel + 1);
         } else {
-            // Transform Node           
+            // Transform Node
+
+            // ### Make empty transform node removal optional
+            // Check if the node actually does something before generating it
+            // and return early without processing the rest of the branch
+            if (!containsNodesOfConsequence(node))
+                return;
+
             output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonNode {") << endl;
             generateNodeProperties(currentNode, output, tabLevel + 1);
         }
@@ -920,6 +930,28 @@ QString AssimpImporter::generateUniqueId(const QString &id)
         uniqueID = id + QStringLiteral("_") + QString::number(++index);
     m_uniqueIds.insert(uniqueID);
     return uniqueID;
+}
+
+// This method is used to walk a subtree to see if any of the nodes actually
+// add any state to the scene.  A branch of empty transform nodes would only be
+// useful if they were being used somewhere else (like where to aim a camera),
+// but the general case is that they can be safely culled
+bool AssimpImporter::containsNodesOfConsequence(aiNode *node)
+{
+    bool isUseful = false;
+
+    isUseful |= isLight(node);
+    isUseful |= isModel(node);
+    isUseful |= isCamera(node);
+
+    // Return early if we know already
+    if (isUseful)
+        return true;
+
+    for (uint i = 0; i < node->mNumChildren; ++i)
+        isUseful |= containsNodesOfConsequence(node->mChildren[i]);
+
+    return isUseful;
 }
 
 QT_END_NAMESPACE

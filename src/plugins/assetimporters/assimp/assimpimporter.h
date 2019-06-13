@@ -51,6 +51,7 @@ private:
     bool isLight(aiNode *node);
     bool isCamera(aiNode *node);
     QString generateUniqueId(const QString &id);
+    bool containsNodesOfConsequence(aiNode *node);
 
     Assimp::Importer *m_importer = nullptr;
     const aiScene *m_scene = nullptr;

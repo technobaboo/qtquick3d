@@ -20,6 +20,8 @@ QString qmlComponentName(const QString &name) {
     if (nameCopy.isEmpty())
         return QStringLiteral("Presentation");
 
+    nameCopy = sanitizeQmlId(nameCopy);
+
     if (nameCopy[0].isLower())
         nameCopy[0] = nameCopy[0].toUpper();
 
