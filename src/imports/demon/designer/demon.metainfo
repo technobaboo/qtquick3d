@@ -26,6 +26,7 @@ MetaInfo {
             visibleInNavigator: true
             canBeDroppedInNavigator: true
             canBeDroppedInFormEditor: false
+            forceNonDefaultProperty: "materials"
         }
 
         ItemLibraryEntry {
@@ -44,6 +45,7 @@ MetaInfo {
             visibleInNavigator: true
             canBeDroppedInNavigator: true
             canBeDroppedInFormEditor: false
+            forceNonDefaultProperty: "materials"
         }
 
         ItemLibraryEntry {
@@ -100,6 +102,7 @@ MetaInfo {
             visibleInNavigator: true
             canBeDroppedInNavigator: true
             canBeDroppedInFormEditor: false
+            visibleNonDefaultProperties: "materials"
         }
 
         ItemLibraryEntry {
