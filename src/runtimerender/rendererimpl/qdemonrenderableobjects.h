@@ -106,10 +106,10 @@ struct QDemonRenderableObjectFlags : public QFlags<QDemonRenderableObjectFlag>
 struct QDemonNodeLightEntry
 {
     QDemonRenderLight *light = nullptr;
-    quint32 lightIndex;
+    qint32 lightIndex;
     QDemonNodeLightEntry *nextNode = nullptr;
     QDemonNodeLightEntry() = default;
-    QDemonNodeLightEntry(QDemonRenderLight *inLight, quint32 inLightIndex)
+    QDemonNodeLightEntry(QDemonRenderLight *inLight, qint32 inLightIndex)
         : light(inLight), lightIndex(inLightIndex), nextNode(nullptr)
     {
     }

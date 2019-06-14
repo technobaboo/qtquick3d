@@ -234,7 +234,7 @@ public:
     qint32 m_size; ///< buffer size
 
 public:
-    QDemonRenderShaderBufferBase(QDemonRef<QDemonRenderContext> context, const QByteArray &name, qint32 location, qint32 binding, qint32 size)
+    QDemonRenderShaderBufferBase(const QDemonRef<QDemonRenderContext> &context, const QByteArray &name, qint32 location, qint32 binding, qint32 size)
         : m_context(context), m_name(name), m_location(location), m_binding(binding), m_size(size)
     {
     }
@@ -243,8 +243,8 @@ public:
 
     virtual void release() = 0;
 
-    virtual void validate(QDemonRef<QDemonRenderShaderProgram> inShader) = 0;
-    virtual void bindToProgram(QDemonRef<QDemonRenderShaderProgram> inShader) = 0;
+    virtual void validate(const QDemonRef<QDemonRenderShaderProgram> &inShader) = 0;
+    virtual void bindToProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader) = 0;
     virtual void update() = 0;
 };
 
@@ -255,7 +255,7 @@ public:
     QDemonRef<QDemonRenderConstantBuffer> m_constBuffer; ///< pointer to constant buffer
 
 public:
-    QDemonRenderShaderConstantBuffer(QDemonRef<QDemonRenderContext> context,
+    QDemonRenderShaderConstantBuffer(const QDemonRef<QDemonRenderContext> &context,
                                      const QByteArray &name,
                                      quint32 location,
                                      qint32 binding,
@@ -268,7 +268,7 @@ public:
 
     void release() override {}
 
-    void validate(QDemonRef<QDemonRenderShaderProgram> inShader) override;
+    void validate(const QDemonRef<QDemonRenderShaderProgram> &inShader) override;
 
     void update() override
     {
@@ -276,7 +276,7 @@ public:
             m_constBuffer->update();
     }
 
-    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> inShader) override;
+    void bindToProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader) override;
 };
 
 class QDemonRenderShaderStorageBuffer : public QDemonRenderShaderBufferBase
@@ -286,7 +286,7 @@ public:
     QDemonRef<QDemonRenderStorageBuffer> m_storageBuffer; ///< pointer to storage buffer
 
 public:
-    QDemonRenderShaderStorageBuffer(QDemonRef<QDemonRenderContext> context,
+    QDemonRenderShaderStorageBuffer(const QDemonRef<QDemonRenderContext> &context,
                                     const QByteArray &name,
                                     quint32 location,
                                     qint32 binding,
@@ -299,7 +299,7 @@ public:
 
     void release() override {}
 
-    void validate(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
+    void validate(const QDemonRef<QDemonRenderShaderProgram> &/*inShader*/) override;
 
     void update() override
     {
@@ -307,7 +307,7 @@ public:
             m_storageBuffer->update();
     }
 
-    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
+    void bindToProgram(const QDemonRef<QDemonRenderShaderProgram> &/*inShader*/) override;
 };
 
 class QDemonRenderShaderAtomicCounterBuffer : public QDemonRenderShaderBufferBase
@@ -317,7 +317,7 @@ public:
     QDemonRef<QDemonRenderAtomicCounterBuffer> m_atomicCounterBuffer; ///< pointer to atomic counter buffer
 
 public:
-    QDemonRenderShaderAtomicCounterBuffer(QDemonRef<QDemonRenderContext> context,
+    QDemonRenderShaderAtomicCounterBuffer(const QDemonRef<QDemonRenderContext> &context,
                                           const QByteArray &name,
                                           quint32 location,
                                           qint32 binding,
@@ -330,7 +330,7 @@ public:
 
     void release() override {}
 
-    void validate(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
+    void validate(const QDemonRef<QDemonRenderShaderProgram> &/*inShader*/) override;
 
     void update() override
     {
@@ -338,7 +338,7 @@ public:
             m_atomicCounterBuffer->update();
     }
 
-    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
+    void bindToProgram(const QDemonRef<QDemonRenderShaderProgram> &/*inShader*/) override;
 };
 
 QT_END_NAMESPACE

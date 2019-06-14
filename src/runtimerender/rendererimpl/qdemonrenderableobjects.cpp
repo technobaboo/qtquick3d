@@ -129,24 +129,19 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
 void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec, QDemonRenderableImage *inDisplacementImage, float inDisplacementAmount)
 {
     auto context = generator->context();
-    QDemonRef<QDemonRenderableDepthPrepassShader> shader = nullptr;
-    QDemonRef<QDemonRenderInputAssembler> pIA = nullptr;
     QDemonRenderableImage *displacementImage = inDisplacementImage;
 
-    if (subset.primitiveType != QDemonRenderDrawMode::Patches)
-        shader = generator->getDepthPrepassShader(displacementImage != nullptr);
-    else
-        shader = generator->getDepthTessPrepassShader(tessellationMode, displacementImage != nullptr);
+    const auto &shader = (subset.primitiveType != QDemonRenderDrawMode::Patches) ? generator->getDepthPrepassShader(displacementImage != nullptr)
+                                                                                 : generator->getDepthTessPrepassShader(tessellationMode, displacementImage != nullptr);
 
-    if (shader == nullptr)
+    if (shader.isNull())
         return;
 
     // for phong and npatch tesselleation or displacement mapping we need the normals (and uv's)
     // too
-    if ((tessellationMode == TessModeValues::NoTess || tessellationMode == TessModeValues::TessLinear) && !displacementImage)
-        pIA = subset.inputAssemblerDepth;
-    else
-        pIA = subset.inputAssembler;
+    const auto &pIA = ((tessellationMode == TessModeValues::NoTess || tessellationMode == TessModeValues::TessLinear) && !displacementImage)
+            ? subset.inputAssemblerDepth
+            : subset.inputAssembler;
 
     context->setActiveShader(shader->shader);
     context->setCullingEnabled(true);

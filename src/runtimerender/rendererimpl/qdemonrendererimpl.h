@@ -321,11 +321,11 @@ private:
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthTessNPatchShader();
 
 public:
-    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthPrepassShader(bool inDisplaced);
-    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPrepassShader(TessModeValues inTessMode, bool inDisplaced);
-    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessLinearPrepassShader(bool inDisplaced);
-    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPhongPrepassShader();
-    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessNPatchPrepassShader();
+    const QDemonRef<QDemonRenderableDepthPrepassShader> &getDepthPrepassShader(bool inDisplaced);
+    const QDemonRef<QDemonRenderableDepthPrepassShader> &getDepthTessPrepassShader(TessModeValues inTessMode, bool inDisplaced);
+    const QDemonRef<QDemonRenderableDepthPrepassShader> &getDepthTessLinearPrepassShader(bool inDisplaced);
+    const QDemonRef<QDemonRenderableDepthPrepassShader> &getDepthTessPhongPrepassShader();
+    const QDemonRef<QDemonRenderableDepthPrepassShader> &getDepthTessNPatchPrepassShader();
     QDemonRef<QDemonLayerSceneShader> getSceneLayerShader();
     QDemonRef<QDemonRenderShaderProgram> getTextAtlasEntryShader();
     void generateXYQuad();
@@ -350,7 +350,7 @@ public:
 
     QDemonRef<QDemonRenderContext> context() { return m_context; }
 
-    QDemonRef<QDemonRenderContextInterface> demonContext() { return m_demonContext; }
+    const QDemonRef<QDemonRenderContextInterface> &demonContext() { return m_demonContext; }
 
     void drawScreenRect(QRectF inRect, const QVector3D &inColor);
     // Binds an offscreen texture.  Widgets are rendered last.

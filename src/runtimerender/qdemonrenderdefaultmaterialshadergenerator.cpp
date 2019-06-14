@@ -659,7 +659,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     ///< get the light constant buffer and generate if necessary
     QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(quint32 inLightCount)
     {
-        QDemonRef<QDemonRenderContext> theContext(m_renderContext->renderContext());
+        const QDemonRef<QDemonRenderContext> &theContext = m_renderContext->renderContext();
 
         // we assume constant buffer support
         Q_ASSERT(theContext->supportsConstantBuffer());
@@ -1388,7 +1388,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         return generateMaterialShader(inVertexPipelineName);
     }
 
-    QDemonRef<QDemonShaderGeneratorGeneratedShader> getShaderForProgram(const QDemonRef<QDemonRenderShaderProgram> &inProgram)
+    const QDemonRef<QDemonShaderGeneratorGeneratedShader> &getShaderForProgram(const QDemonRef<QDemonRenderShaderProgram> &inProgram)
     {
         auto inserter = m_programToShaderMap.constFind(inProgram);
         if (inserter == m_programToShaderMap.constEnd())
@@ -1408,7 +1408,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                              const QVector<QVector3D> &inLightDirections,
                              const QDemonRef<QDemonRenderShadowMap> &inShadowMapManager)
     {
-        QDemonRef<QDemonShaderGeneratorGeneratedShader> shader(getShaderForProgram(inProgram));
+        const auto &shader = getShaderForProgram(inProgram);
         m_renderContext->renderContext()->setActiveShader(inProgram);
 
         m_shadowMapManager = inShadowMapManager;
@@ -1528,8 +1528,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                float inProbeFOV)
     {
 
-        QDemonRef<QDemonRenderContext> context(m_renderContext->renderContext());
-        QDemonRef<QDemonShaderGeneratorGeneratedShader> shader(getShaderForProgram(inProgram));
+        const QDemonRef<QDemonRenderContext> &context = m_renderContext->renderContext();
+        const QDemonRef<QDemonShaderGeneratorGeneratedShader> &shader = getShaderForProgram(inProgram);
         shader->m_mvp.set(inModelViewProjection);
         shader->m_normalMatrix.set(inNormalMatrix);
         shader->m_globalTransform.set(inGlobalTransform);
@@ -1541,9 +1541,10 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         QDemonRenderImage *theLightProbe2 = inLightProbe2;
 
         // If the material has its own IBL Override, we should use that image instead.
-        if ((inMaterial.iblProbe) && (inMaterial.iblProbe->m_textureData.m_texture)) {
+        const bool hasIblProbe = inMaterial.iblProbe != nullptr;
+        const bool useMaterialIbl = hasIblProbe ? (inMaterial.iblProbe->m_textureData.m_texture != nullptr) : false;
+        if (useMaterialIbl)
             theLightProbe = inMaterial.iblProbe;
-        }
 
         if (theLightProbe) {
             if (theLightProbe->m_textureData.m_texture) {

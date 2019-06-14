@@ -181,7 +181,7 @@ QDemonRef<QDemonBufferManager> QDemonRenderContextInterface::bufferManager() { r
 
 QDemonRef<QDemonResourceManager> QDemonRenderContextInterface::resourceManager() { return m_resourceManager; }
 
-QDemonRef<QDemonRenderContext> QDemonRenderContextInterface::renderContext() { return m_renderContext; }
+const QDemonRef<QDemonRenderContext> &QDemonRenderContextInterface::renderContext() { return m_renderContext; }
 
 QDemonRef<QDemonOffscreenRenderManager> QDemonRenderContextInterface::offscreenRenderManager()
 {

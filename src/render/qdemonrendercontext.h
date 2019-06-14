@@ -252,7 +252,7 @@ protected:
     void doSetActiveShader(const QDemonRef<QDemonRenderShaderProgram> &inShader);
     void doSetActiveProgramPipeline(const QDemonRef<QDemonRenderProgramPipeline> &inProgramPipeline);
 
-    void doSetInputAssembler(QDemonRef<QDemonRenderInputAssembler> inAssembler)
+    void doSetInputAssembler(const QDemonRef<QDemonRenderInputAssembler> &inAssembler)
     {
         m_hardwarePropertyContext.m_inputAssembler = inAssembler;
         m_dirtyFlags |= QDemonRenderContextDirtyValues::InputAssembler;
@@ -428,7 +428,7 @@ public:
     void setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState);
 
     void registerConstantBuffer(QDemonRenderConstantBuffer *buffer);
-    QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName);
+    QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName) const;
     void bufferDestroyed(QDemonRenderConstantBuffer *buffer);
 
     qint32 nextConstantBufferUnit();
@@ -454,7 +454,7 @@ public:
                                                                QDemonDataView<quint32> offsets,
                                                                QDemonRenderDrawMode primType = QDemonRenderDrawMode::Triangles,
                                                                quint32 patchVertexCount = 1);
-    void setInputAssembler(QDemonRef<QDemonRenderInputAssembler> inputAssembler);
+    void setInputAssembler(const QDemonRef<QDemonRenderInputAssembler> &inputAssembler);
 
     QDemonRenderVertFragCompilationResult compileSource(
             const char *shaderName,
@@ -537,7 +537,7 @@ public:
     void setMultisampleEnabled(bool inEnabled);
     bool isMultisampleEnabled() const { return m_hardwarePropertyContext.m_multisampleEnabled; }
 
-    void setActiveShader(QDemonRef<QDemonRenderShaderProgram> inShader);
+    void setActiveShader(const QDemonRef<QDemonRenderShaderProgram> &inShader);
     QDemonRef<QDemonRenderShaderProgram> activeShader() const;
 
     void setActiveProgramPipeline(QDemonRef<QDemonRenderProgramPipeline> inProgramPipeline);

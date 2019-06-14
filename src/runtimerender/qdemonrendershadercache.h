@@ -167,7 +167,7 @@ public:
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     QDemonRef<QDemonRenderShaderProgram> getProgram(const QByteArray &inKey,
-                                                            const QVector<QDemonShaderPreprocessorFeature> &inFeatures);
+                                                    const QVector<QDemonShaderPreprocessorFeature> &inFeatures);
 
     // Replace an existing program in the cache for the same key with this program.
     // The shaders returned by *CompileProgram functions can be released by this object

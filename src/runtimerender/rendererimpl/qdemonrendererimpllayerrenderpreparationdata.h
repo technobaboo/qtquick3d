@@ -180,7 +180,7 @@ struct QDemonScopedLightsListScope
 {
     QVector<QDemonRenderLight *> &lightsList;
     QVector<QVector3D> &lightDirList;
-    quint32 listOriginalSize;
+    qint32 listOriginalSize;
     QDemonScopedLightsListScope(QVector<QDemonRenderLight *> &inLights,
                                 QVector<QVector3D> &inDestLightDirList,
                                 QVector<QVector3D> &inSrcLightDirList,

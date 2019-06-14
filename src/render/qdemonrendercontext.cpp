@@ -112,10 +112,10 @@ void QDemonRenderContext::registerConstantBuffer(QDemonRenderConstantBuffer *buf
     m_constantToImpMap.insert(buffer->name(), buffer);
 }
 
-QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::getConstantBuffer(const QByteArray &bufferName)
+QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::getConstantBuffer(const QByteArray &bufferName) const
 {
-    TContextConstantBufferMap::iterator entry = m_constantToImpMap.find(bufferName);
-    if (entry != m_constantToImpMap.end())
+    const auto entry = m_constantToImpMap.constFind(bufferName);
+    if (entry != m_constantToImpMap.cend())
         return QDemonRef<QDemonRenderConstantBuffer>(entry.value());
     return nullptr;
 }
@@ -223,7 +223,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderContext::createInputAssembler(
             new QDemonRenderInputAssembler(this, attribLayout, buffers, indexBuffer, strides, offsets, primType, patchVertexCount));
 }
 
-void QDemonRenderContext::setInputAssembler(QDemonRef<QDemonRenderInputAssembler> inputAssembler)
+void QDemonRenderContext::setInputAssembler(const QDemonRef<QDemonRenderInputAssembler> &inputAssembler)
 {
     if (m_hardwarePropertyContext.m_inputAssembler != inputAssembler)
         doSetInputAssembler(inputAssembler);
@@ -426,7 +426,7 @@ void QDemonRenderContext::setViewport(QRect inViewport)
     }
 }
 
-void QDemonRenderContext::setActiveShader(QDemonRef<QDemonRenderShaderProgram> inShader)
+void QDemonRenderContext::setActiveShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
     if (inShader != m_hardwarePropertyContext.m_activeShader)
         doSetActiveShader(inShader);
@@ -615,7 +615,7 @@ void QDemonRenderContext::draw(QDemonRenderDrawMode drawMode, quint32 count, qui
     if (!applyPreDrawProperties())
         return;
 
-    QDemonRef<QDemonRenderIndexBuffer> theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->indexBuffer();
+    const QDemonRef<QDemonRenderIndexBuffer> &theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->indexBuffer();
     if (theIndexBuffer == nullptr)
         m_backend->draw(drawMode, offset, count);
     else
@@ -629,7 +629,7 @@ void QDemonRenderContext::drawIndirect(QDemonRenderDrawMode drawMode, quint32 of
     if (!applyPreDrawProperties())
         return;
 
-    QDemonRef<QDemonRenderIndexBuffer> theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->indexBuffer();
+    const QDemonRef<QDemonRenderIndexBuffer> &theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->indexBuffer();
     if (theIndexBuffer == nullptr)
         m_backend->drawIndirect(drawMode, reinterpret_cast<const void *>(offset));
     else

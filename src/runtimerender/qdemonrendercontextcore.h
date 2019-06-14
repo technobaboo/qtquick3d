@@ -167,7 +167,7 @@ public:
     QDemonRef<QDemonRendererImpl> renderWidgetContext();
     QDemonRef<QDemonBufferManager> bufferManager();
     QDemonRef<QDemonResourceManager> resourceManager();
-    QDemonRef<QDemonRenderContext> renderContext();
+    const QDemonRef<QDemonRenderContext> &renderContext();
     QDemonRef<QDemonOffscreenRenderManager> offscreenRenderManager();
     QDemonRef<QDemonInputStreamFactory> inputStreamFactory();
     QDemonRef<QDemonEffectSystem> effectSystem();

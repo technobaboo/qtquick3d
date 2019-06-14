@@ -89,7 +89,7 @@ QDemonRenderInputAssembler::~QDemonRenderInputAssembler()
     ::free(const_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(m_vertexbufferHandles.mData));
 }
 
-const QDemonRef<QDemonRenderIndexBuffer> QDemonRenderInputAssembler::indexBuffer()
+const QDemonRef<QDemonRenderIndexBuffer> &QDemonRenderInputAssembler::indexBuffer()
 {
     return m_indexBuffer;
 }

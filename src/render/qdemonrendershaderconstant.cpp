@@ -4,7 +4,7 @@
 
 QT_BEGIN_NAMESPACE
 
-void QDemonRenderShaderConstantBuffer::validate(QDemonRef<QDemonRenderShaderProgram> inShader)
+void QDemonRenderShaderConstantBuffer::validate(const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
     // A constant buffer might not be set at first call
     // due to the fact that they are compiled from a cache file
@@ -22,13 +22,13 @@ void QDemonRenderShaderConstantBuffer::validate(QDemonRef<QDemonRenderShaderProg
     }
 }
 
-void QDemonRenderShaderConstantBuffer::bindToProgram(QDemonRef<QDemonRenderShaderProgram> inShader)
+void QDemonRenderShaderConstantBuffer::bindToProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
     if (m_constBuffer)
         m_constBuffer->bindToShaderProgram(inShader, m_location, m_binding);
 }
 
-void QDemonRenderShaderStorageBuffer::validate(QDemonRef<QDemonRenderShaderProgram>)
+void QDemonRenderShaderStorageBuffer::validate(const QDemonRef<QDemonRenderShaderProgram> &)
 {
     // A constant buffer might not be set at first call
     // due to the fact that they are compile from a cache file
@@ -44,13 +44,13 @@ void QDemonRenderShaderStorageBuffer::validate(QDemonRef<QDemonRenderShaderProgr
     }
 }
 
-void QDemonRenderShaderStorageBuffer::bindToProgram(QDemonRef<QDemonRenderShaderProgram>)
+void QDemonRenderShaderStorageBuffer::bindToProgram(const QDemonRef<QDemonRenderShaderProgram> &)
 {
     if (m_storageBuffer)
         m_storageBuffer->bindToShaderProgram(m_location);
 }
 
-void QDemonRenderShaderAtomicCounterBuffer::validate(QDemonRef<QDemonRenderShaderProgram>)
+void QDemonRenderShaderAtomicCounterBuffer::validate(const QDemonRef<QDemonRenderShaderProgram> &)
 {
     // A constant buffer might not be set at first call
     // due to the fact that they are compile from a cache file
@@ -66,7 +66,7 @@ void QDemonRenderShaderAtomicCounterBuffer::validate(QDemonRef<QDemonRenderShade
     }
 }
 
-void QDemonRenderShaderAtomicCounterBuffer::bindToProgram(QDemonRef<QDemonRenderShaderProgram>)
+void QDemonRenderShaderAtomicCounterBuffer::bindToProgram(const QDemonRef<QDemonRenderShaderProgram> &)
 {
     if (m_atomicCounterBuffer)
         m_atomicCounterBuffer->bindToShaderProgram(m_location);

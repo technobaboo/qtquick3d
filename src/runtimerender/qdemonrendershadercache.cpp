@@ -218,8 +218,8 @@ QDemonRef<QDemonRenderShaderProgram> QDemonShaderCache::getProgram(const QByteAr
     m_tempKey.m_key = inKey;
     m_tempKey.m_features = inFeatures;
     m_tempKey.generateHashCode();
-    TShaderMap::iterator theIter = m_shaders.find(m_tempKey);
-    if (theIter != m_shaders.end())
+    const auto theIter = m_shaders.constFind(m_tempKey);
+    if (theIter != m_shaders.cend())
         return theIter.value();
     return nullptr;
 }

@@ -1211,7 +1211,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographi
 
 // ---------------------------------
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthPrepassShader(bool inDisplaced)
+const QDemonRef<QDemonRenderableDepthPrepassShader> &QDemonRendererImpl::getDepthPrepassShader(bool inDisplaced)
 {
     QDemonRef<QDemonRenderableDepthPrepassShader> &theDepthPrePassShader = (!inDisplaced)
             ? m_depthPrepassShader
@@ -1260,7 +1260,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthPrepas
     return theDepthPrePassShader;
 }
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPrepassShader(TessModeValues inTessMode, bool inDisplaced)
+const QDemonRef<QDemonRenderableDepthPrepassShader> &QDemonRendererImpl::getDepthTessPrepassShader(TessModeValues inTessMode, bool inDisplaced)
 {
     if (!m_demonContext->renderContext()->supportsTessellation() || inTessMode == TessModeValues::NoTess) {
         return getDepthPrepassShader(inDisplaced);
@@ -1275,7 +1275,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPr
     return getDepthPrepassShader(inDisplaced);
 }
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessLinearPrepassShader(bool inDisplaced)
+const QDemonRef<QDemonRenderableDepthPrepassShader> &QDemonRendererImpl::getDepthTessLinearPrepassShader(bool inDisplaced)
 {
     QDemonRef<QDemonRenderableDepthPrepassShader> &theDepthPrePassShader = (!inDisplaced)
             ? m_depthTessLinearPrepassShader
@@ -1399,7 +1399,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessLi
     return theDepthPrePassShader;
 }
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPhongPrepassShader()
+const QDemonRef<QDemonRenderableDepthPrepassShader> &QDemonRendererImpl::getDepthTessPhongPrepassShader()
 {
     if (m_depthTessPhongPrepassShader.isNull()) {
         QDemonRef<QDemonShaderCache> theCache = m_demonContext->shaderCache();
@@ -1469,7 +1469,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPh
     return m_depthTessPhongPrepassShader;
 }
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessNPatchPrepassShader()
+const QDemonRef<QDemonRenderableDepthPrepassShader> &QDemonRendererImpl::getDepthTessNPatchPrepassShader()
 {
     if (m_depthTessNPatchPrepassShader.isNull()) {
         QDemonRef<QDemonShaderCache> theCache = m_demonContext->shaderCache();

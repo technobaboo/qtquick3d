@@ -90,7 +90,7 @@ public:
      *
      * @return the index buffer
      */
-    const QDemonRef<QDemonRenderIndexBuffer> indexBuffer();
+    const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer();
 
     /**
      * @brief get the index count of the attached index buffer (if any)
