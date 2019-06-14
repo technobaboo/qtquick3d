@@ -703,8 +703,6 @@ struct GLConversion
 
     static QDemonRenderBufferType fromGLToBindBufferFlags(GLenum value)
     {
-        QDemonRenderBufferType retval;
-
         if (value == GL_ARRAY_BUFFER)
             return QDemonRenderBufferType::Vertex;
         else if (value == GL_ELEMENT_ARRAY_BUFFER)
@@ -720,7 +718,7 @@ struct GLConversion
         else
             Q_ASSERT(false);
 
-        return retval;
+        return QDemonRenderBufferType(0);
     }
 
     static QDemonRenderBufferUsageType fromGLToBufferUsageType(GLenum value)
