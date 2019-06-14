@@ -52,7 +52,7 @@ MetaInfo {
             libraryIcon: "images/dummy.png"
             version: "1.0"
             requiredImport: "QtDemon"
-            Property { name: "diffuseColor"; type: "color"; value: "#green"; }
+            Property { name: "diffuseColor"; type: "color"; value: "green"; }
         }
     }
     Type {
