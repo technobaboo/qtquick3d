@@ -105,7 +105,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.rotation_x
                         Layout.fillWidth: true
                     }
@@ -117,7 +117,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.rotation_y
                         Layout.fillWidth: true
                     }
@@ -129,7 +129,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.rotation_z
                         Layout.fillWidth: true
                     }
@@ -164,7 +164,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.scale_x
                         Layout.fillWidth: true
                     }
@@ -176,7 +176,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.scale_y
                         Layout.fillWidth: true
                     }
@@ -188,7 +188,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.scale_z
                         Layout.fillWidth: true
                     }
@@ -208,7 +208,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.pivot_x
                         Layout.fillWidth: true
                     }
@@ -220,7 +220,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.pivot_y
                         Layout.fillWidth: true
                     }
@@ -232,7 +232,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.pivot_z
                         Layout.fillWidth: true
                     }
