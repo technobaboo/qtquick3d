@@ -8,4 +8,7 @@ Column {
     DemonCameraSection {
         width: parent.width
     }
+     DemonNodeSection {
+        width: parent.width
+    }
 }
