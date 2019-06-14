@@ -45,6 +45,9 @@ QT_BEGIN_NAMESPACE
 #define QDEMON_MAX_NUM_LIGHTS 16
 #define QDEMON_MAX_NUM_SHADOWS 8
 
+// You can't trust the C Struct sizeof(...) to give you the size expected by GL
+#define QDEMON_LIGHT_SOURCE_SHADER_STRUCT_SIZE 240
+
 // note this struct must exactly match the memory layout of the
 // struct sampleLight.glsllib and sampleArea.glsllib. If you make changes here you need
 // to adjust the code in sampleLight.glsllib and sampleArea.glsllib as well
