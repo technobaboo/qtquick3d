@@ -60,7 +60,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.x
                         Layout.fillWidth: true
                     }
@@ -72,7 +72,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.y
                         Layout.fillWidth: true
                     }
@@ -84,7 +84,7 @@ Section {
                     SpinBox {
                         maximumValue: 9999999
                         minimumValue: -9999999
-                        decimals: 5
+                        decimals: 2
                         backendValue: backendValues.z
                         Layout.fillWidth: true
                     }

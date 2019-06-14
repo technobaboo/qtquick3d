@@ -151,7 +151,7 @@ Column {
                 SpinBox {
                     maximumValue: 1
                     minimumValue: 0.001
-                    decimals: 4
+                    decimals: 2
                     backendValue: backendValues.specularRoughness
                     Layout.fillWidth: true
                 }
@@ -172,7 +172,7 @@ Column {
                 SpinBox {
                     maximumValue: 1
                     minimumValue: 0
-                    decimals: 4
+                    decimals: 2
                     backendValue: backendValues.opacity
                     Layout.fillWidth: true
                 }
@@ -236,7 +236,7 @@ Column {
                 SpinBox {
                     maximumValue: 1
                     minimumValue: 0
-                    decimals: 4
+                    decimals: 2
                     backendValue: backendValues.diffuseLightWrap
                     Layout.fillWidth: true
                 }
