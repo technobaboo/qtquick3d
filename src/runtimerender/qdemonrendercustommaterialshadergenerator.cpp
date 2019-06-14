@@ -107,9 +107,9 @@ struct QDemonShaderLightProperties
         }
 
         if (m_lightType == QDemonRenderLight::Type::Point) {
-            m_lightData.shadowView = QMatrix4x4();
+            memcpy(m_lightData.shadowView, QMatrix4x4().constData(), 16 * sizeof(float));
         } else {
-            m_lightData.shadowView = inLight->globalTransform;
+            memcpy(m_lightData.shadowView, inLight->globalTransform.constData(), 16 * sizeof(float));
         }
     }
 
@@ -367,7 +367,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
         if (!pCB) {
             // create with size of all structures + int for light count
-            const size_t size = QDEMON_LIGHT_SOURCE_SHADER_STRUCT_SIZE * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
+            const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
             quint8 stackData[size];
             memset(stackData, 0, 4 * sizeof(qint32));
             new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
@@ -535,7 +535,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                                                                         inCamera.clipFar);
 
                     if (theAreaLightEntry && pAreaLightCb) {
-                        pAreaLightCb->updateRaw(areaLights * QDEMON_LIGHT_SOURCE_SHADER_STRUCT_SIZE + (4 * sizeof(qint32)),
+                        pAreaLightCb->updateRaw(areaLights * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
                                                 toByteView(theAreaLightEntry->m_lightData));
                     }
 
@@ -550,7 +550,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                                                                     inCamera.clipFar);
 
                     if (theLightEntry && pLightCb) {
-                        pLightCb->updateRaw(cgLights * QDEMON_LIGHT_SOURCE_SHADER_STRUCT_SIZE + (4 * sizeof(qint32)),
+                        pLightCb->updateRaw(cgLights * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
                                             toByteView(theLightEntry->m_lightData));
                     }
 

@@ -673,7 +673,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
         if (!pCB) {
             // create
-            const size_t size = QDEMON_LIGHT_SOURCE_SHADER_STRUCT_SIZE * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
+            const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
             quint8 stackData[size];
             memset(stackData, 0, 4 * sizeof(qint32));
 //            QDemonLightSourceShader *s = new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
@@ -1633,7 +1633,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                                        1.0);
 
                 // this is our final change update memory
-                pLightCb->updateRaw(idx * QDEMON_LIGHT_SOURCE_SHADER_STRUCT_SIZE + (4 * sizeof(qint32)),
+                pLightCb->updateRaw(idx * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
                                     toByteView(shader->m_lights[idx].lightData));
             }
             // update light buffer to hardware

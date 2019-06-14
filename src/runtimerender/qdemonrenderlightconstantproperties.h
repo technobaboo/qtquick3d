@@ -104,7 +104,7 @@ struct QDemonLightConstantProperties
             width.set(props.width);
             height.set(props.height);
             shadowControls.set(props.shadowControls);
-            shadowView.set(props.shadowView);
+            shadowView.set(QMatrix4x4(props.shadowView));
             shadowIdx.set(props.shadowIdx);
             attenuation.set(QVector3D(props.constantAttenuation, props.linearAttenuation, props.quadraticAttenuation));
         }
