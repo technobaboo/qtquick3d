@@ -272,6 +272,8 @@ QDemonRenderGraphObject *QDemonNode::updateSpatialNode(QDemonRenderGraphObject *
         if (m_orientation == LeftHanded)
             spacialNode->flipCoordinateSystem(m_globalTransform);
         emit transformPropertiesDirty();
+        // Still needs to be marked dirty if it will show up correctly in the backend
+        spacialNode->flags.setFlag(QDemonRenderNode::Flag::Dirty, true);
     } else {
         spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
     }
