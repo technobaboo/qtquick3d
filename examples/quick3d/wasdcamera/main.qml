@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtDemon 1.0
+import QtDemonHelpers 1.0
 
 Window {
     id: window
@@ -36,6 +37,14 @@ Window {
             case Qt.Key_Right:
                 wasdController.rightPressed();
                 break;
+            case Qt.Key_R:
+            case Qt.Key_PageUp:
+                wasdController.upPressed();
+                break;
+            case Qt.Key_F:
+            case Qt.Key_PageDown:
+                wasdController.downPressed();
+                break;
             }
         }
 
@@ -57,7 +66,22 @@ Window {
             case Qt.Key_Right:
                 wasdController.rightReleased();
                 break;
+            case Qt.Key_R:
+            case Qt.Key_PageUp:
+                wasdController.upReleased();
+                break;
+            case Qt.Key_F:
+            case Qt.Key_PageDown:
+                wasdController.downReleased();
+                break;
             }
+        }
+
+        AxisHelper {
+            enableAxisLines: true
+            enableXZGrid: false
+            enableYZGrid: false
+            enableXYGrid: true
         }
 
         WasdController {

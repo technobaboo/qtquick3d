@@ -12,6 +12,13 @@ DemonNode {
 
     DemonLight {
         id: light
+        rotation: Qt.vector3d(0, 0, 0)
+    }
+
+    DemonLight {
+        lightType: DemonLight.Point
+
+        z: 200
     }
 
     DemonNode {
@@ -19,41 +26,16 @@ DemonNode {
         rotation: Qt.vector3d(90, 0, 0)
 
 
-    DemonModel {
-        id: cone
-        source: "#Cone"
-        materials: [
-            DemonDefaultMaterial {
-                id: coneMaterial
-                diffuseColor: "pink"
-            }
-        ]
-
-
-        NumberAnimation {
-            target: cone
-            property: "y"
-            duration: 2000
-            easing.type: Easing.InOutQuad
-            from: 0
-            to: 500
-            running: true
+        DemonModel {
+            id: cone
+            source: "#Cone"
+            materials: [
+                DemonDefaultMaterial {
+                    id: coneMaterial
+                    diffuseColor: "pink"
+                }
+            ]
 
         }
-
-        onForwardChanged: {
-            console.log("forward: " + forward);
-        }
-        onUpChanged: {
-            console.log("up: " + up);
-        }
-        onRightChanged: {
-            console.log("right: " + right);
-        }
-
-        onGlobalPositionChanged: {
-            console.log("globalPos: " + globalPosition)
-        }
-    }
     }
 }

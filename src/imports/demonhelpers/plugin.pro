@@ -5,7 +5,8 @@ QT += quick qml
 IMPORT_VERSION = 1.0
 
 QML_FILES = \
-    AxisHelper.qml
+    AxisHelper.qml \
+    WasdController.qml
 
 MESH_FILES = \
     meshes/axisGrid.mesh

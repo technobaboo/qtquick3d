@@ -1,4 +1,4 @@
-import QtQuick 2.12
+﻿import QtQuick 2.12
 import QtDemon 1.0
 
 Item {
@@ -8,13 +8,16 @@ Item {
     property real backSpeed: 5
     property real rightSpeed: 5
     property real leftSpeed: 5
-    property real xSpeed: 0.05
-    property real ySpeed: 0.05
+    property real upSpeed: 5
+    property real downSpeed: 5
+    property real xSpeed: 0.1
+    property real ySpeed: 0.1
 
     property bool xInvert: false
     property bool yInvert: true
 
     function mousePressed(mouse) {
+        status.currentPos = Qt.vector2d(mouse.x, mouse.y)
         status.lastPos = Qt.vector2d(mouse.x, mouse.y)
         status.useMouse = true;
     }
@@ -25,7 +28,6 @@ Item {
 
     function mouseMoved(newPos) {
         status.currentPos = newPos;
-        console.log(newPos)
     }
 
     function forwardPressed() {
@@ -60,6 +62,21 @@ Item {
         status.moveLeft--
     }
 
+    function upPressed() {
+        status.moveUp++
+    }
+
+    function upReleased() {
+        status.moveUp--
+    }
+
+    function downPressed() {
+        status.moveDown++
+    }
+
+    function downReleased() {
+        status.moveDown--
+    }
 
     Item {
         id: status
@@ -68,9 +85,11 @@ Item {
         property int moveBack: 0
         property int moveLeft: 0
         property int moveRight: 0
+        property int moveUp: 0
+        property int moveDown: 0
         property bool useMouse: false
-        property vector2d lastPos: undefined
-        property vector2d currentPos: undefined
+        property vector2d lastPos: Qt.vector2d(0, 0)
+        property vector2d currentPos: Qt.vector2d(0, 0)
 
         function updatePosition(vector, speed, position)
         {
@@ -99,6 +118,10 @@ Item {
                 updatePosition(controlledObject.right, rightSpeed, controlledObject.position);
             if (moveLeft)
                 updatePosition(negate(controlledObject.right), leftSpeed, controlledObject.position);
+            if (moveDown)
+                updatePosition(negate(controlledObject.up), downSpeed, controlledObject.position);
+            if (moveUp)
+                updatePosition(controlledObject.up, upSpeed, controlledObject.position);
 
             if (useMouse) {
                 // Get the delta
@@ -118,7 +141,6 @@ Item {
                 rotationVector.x += rotateY;
                 controlledObject.setRotation(rotationVector);
                 lastPos = currentPos;
-                console.log(controlledObject.forward)
             }
         }
 
