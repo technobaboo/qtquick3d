@@ -18,6 +18,7 @@
 #include <qmath.h>
 
 #include <algorithm>
+#include <limits>
 
 QT_BEGIN_NAMESPACE
 
@@ -488,7 +489,10 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
     QByteArray vertexColorData;
     QByteArray indexBufferData;
     QVector<SubsetEntryData> subsetData;
-    quint16 baseIndex = 0;
+    quint32 baseIndex = 0;
+    QDemonRenderComponentType indexType = QDemonRenderComponentType::UnsignedInteger32;
+    if ((totalVertices / 3) > std::numeric_limits<quint16>::max())
+        indexType = QDemonRenderComponentType::UnsignedInteger32;
 
     for (const auto *mesh : meshes) {
         // Position
@@ -554,25 +558,33 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
         else if (needsVertexColorData)
             vertexColorData += QByteArray(mesh->mNumVertices * 4 * getSizeOfType(QDemonRenderComponentType::Float32), '\0');
         // Index Buffer
-        QVector<quint16> indexes;
+        QVector<quint32> indexes;
         indexes.reserve(mesh->mNumFaces * 3);
 
         for (int faceIndex = 0;faceIndex < mesh->mNumFaces; ++faceIndex) {
             const auto face = mesh->mFaces[faceIndex];
             // Faces should always have 3 indicides
             Q_ASSERT(face.mNumIndices == 3);
-            // ### We need to split meshes so that indexes can never be over ushort max
-            indexes.append(quint16(face.mIndices[0]) + baseIndex);
-            indexes.append(quint16(face.mIndices[1]) + baseIndex);
-            indexes.append(quint16(face.mIndices[2]) + baseIndex);
+            indexes.append(quint32(face.mIndices[0]) + baseIndex);
+            indexes.append(quint32(face.mIndices[1]) + baseIndex);
+            indexes.append(quint32(face.mIndices[2]) + baseIndex);
         }
         // Since we might be combining multiple meshes together, we also need to change the index offset
         baseIndex = *std::max_element(indexes.constBegin(), indexes.constEnd()) + 1;
 
         SubsetEntryData subsetEntry;
-        subsetEntry.indexOffset = indexBufferData.length() / sizeof (quint16);;
+        subsetEntry.indexOffset = indexBufferData.length() / getSizeOfType(indexType);
         subsetEntry.indexLength = indexes.length();
-        indexBufferData += QByteArray(reinterpret_cast<const char *>(indexes.constData()), indexes.length() * sizeof(quint16));
+        if (indexType == QDemonRenderComponentType::UnsignedInteger32) {
+            indexBufferData += QByteArray(reinterpret_cast<const char *>(indexes.constData()), indexes.length() * getSizeOfType(indexType));
+        } else {
+            // convert data to quint16
+            QVector<quint16> shortIndexes;
+            shortIndexes.resize(indexes.length());
+            for (int i = 0; i < shortIndexes.length(); ++i)
+                shortIndexes[i] = quint16(indexes[i]);
+            indexBufferData += QByteArray(reinterpret_cast<const char *>(shortIndexes.constData()), shortIndexes.length() * getSizeOfType(indexType));
+        }
 
         // Subset
         subsetEntry.name = QString::fromUtf8(m_scene->mMaterials[mesh->mMaterialIndex]->GetName().C_Str());
@@ -635,7 +647,7 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
     }
 
     meshBuilder->setVertexBuffer(entries);
-    meshBuilder->setIndexBuffer(indexBufferData, QDemonRenderComponentType::UnsignedInteger16);
+    meshBuilder->setIndexBuffer(indexBufferData, indexType);
 
     // Subsets
     for (const auto &subset : subsetData)
