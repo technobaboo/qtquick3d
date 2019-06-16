@@ -59,7 +59,7 @@ DemonNode {
 
     DemonModel {
         id: gridXZ
-        source: "meshes/AxisGrid_axisGrid.mesh"
+        source: "meshes/axisGrid.mesh"
         scale: Qt.vector3d(100, 100, 100)
         materials: [
             gridMaterial
@@ -69,7 +69,7 @@ DemonNode {
     DemonModel {
         id: gridXY
         visible: false
-        source: "meshes/AxisGrid_axisGrid.mesh"
+        source: "meshes/axisGrid.mesh"
         scale: Qt.vector3d(100, 100, 100)
         rotation: Qt.vector3d(90, 0, 0)
         materials: [
@@ -80,7 +80,7 @@ DemonNode {
     DemonModel {
         id: gridYZ
         visible: false
-        source: "meshes/AxisGrid_axisGrid.mesh"
+        source: "meshes/axisGrid.mesh"
         scale: Qt.vector3d(100, 100, 100)
         rotation: Qt.vector3d(0, 0, 90)
         materials: [

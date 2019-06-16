@@ -1,2 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS = demon materiallib
+SUBDIRS = \
+    demon \
+    materiallib \
+    demonhelpers
