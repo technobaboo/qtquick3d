@@ -268,6 +268,9 @@ QDemonRenderGraphObject *QDemonNode::updateSpatialNode(QDemonRenderGraphObject *
         spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformIsDirty);
         spacialNode->calculateGlobalVariables();
         m_globalTransform = spacialNode->globalTransform;
+        // Might need to switch it regardless because it is always in right hand coordinates
+        if (m_orientation == LeftHanded)
+            spacialNode->flipCoordinateSystem(m_globalTransform);
         emit transformPropertiesDirty();
     } else {
         spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
@@ -282,7 +285,7 @@ void QDemonNode::updateTransformProperties()
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
 
     // front
-    const QVector3D frontVector(0, 0, -1);
+    const QVector3D frontVector(0, 0, 1);
     const QVector3D front = mat33::transform(theDirMatrix, frontVector).normalized();
     if (front != m_front) {
         m_front = front;
@@ -306,7 +309,7 @@ void QDemonNode::updateTransformProperties()
     }
 
     // globalPosition
-    const QVector3D globalPos(m_globalTransform(0, 3), m_globalTransform(1, 3), m_globalTransform(2, 3) * -1);
+    const QVector3D globalPos(m_globalTransform(0, 3), m_globalTransform(1, 3), m_globalTransform(2, 3));
     if (m_globalPosition != globalPos) {
         m_globalPosition= globalPos;
         emit globalPositionChanged(globalPos);

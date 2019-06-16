@@ -9,7 +9,7 @@
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
 QT_BEGIN_NAMESPACE
-class QDemonRenderNode;
+struct QDemonRenderNode;
 class Q_QUICK3D_EXPORT QDemonNode : public QDemonObject
 {
     Q_OBJECT
@@ -124,7 +124,7 @@ private:
     Orientation m_orientation = LeftHanded;
     bool m_visible = true;
     QMatrix4x4 m_globalTransform;
-    QVector3D m_front{ 0.0f, 0.0f, -1.0f};
+    QVector3D m_front{ 0.0f, 0.0f, 1.0f};
     QVector3D m_up {0.0f, 1.0f, 0.0f};
     QVector3D m_right {1.0f, 0.0f, 0.0f};
     QVector3D m_globalPosition;
