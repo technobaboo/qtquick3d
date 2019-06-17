@@ -31,63 +31,71 @@ Item {
     }
 
     function forwardPressed() {
-        status.moveForward++
+        status.moveForward = true
+        status.moveBack = false
     }
 
     function forwardReleased() {
-        status.moveForward--
+        status.moveForward = false
     }
 
     function backPressed() {
-        status.moveBack++
+        status.moveBack = true
+        status.moveForward = false
     }
 
     function backReleased() {
-        status.moveBack--
+        status.moveBack = false
     }
 
     function rightPressed() {
-        status.moveRight++
+        status.moveRight = true
+        status.moveLeft = false
     }
 
     function rightReleased() {
-        status.moveRight--
+        status.moveRight = false
     }
 
     function leftPressed() {
-        status.moveLeft++
+        status.moveLeft = true
+        status.moveRight = false
     }
 
     function leftReleased() {
-        status.moveLeft--
+        status.moveLeft = false
     }
 
     function upPressed() {
-        status.moveUp++
+        status.moveUp = true
+        status.moveDown = false
     }
 
     function upReleased() {
-        status.moveUp--
+        status.moveUp = false
     }
 
     function downPressed() {
-        status.moveDown++
+        status.moveDown = true
+        status.moveUp = false
     }
 
     function downReleased() {
-        status.moveDown--
+        status.moveDown = false
     }
 
     Item {
         id: status
 
-        property int moveForward: 0
-        property int moveBack: 0
-        property int moveLeft: 0
-        property int moveRight: 0
-        property int moveUp: 0
-        property int moveDown: 0
+        property bool moveForward: false
+        property bool moveBack: false
+        property bool moveLeft: false
+        property bool moveRight: false
+        property bool moveUp: false
+        property bool moveDown: false
         property bool useMouse: false
+        property bool moving: moveForward | moveBack | moveLeft | moveRight | moveUp | moveDown | useMouse
+
         property vector2d lastPos: Qt.vector2d(0, 0)
         property vector2d currentPos: Qt.vector2d(0, 0)
 
@@ -112,15 +120,17 @@ Item {
 
             if (moveForward)
                 updatePosition(controlledObject.forward, forwardSpeed, controlledObject.position);
-            if (moveBack)
+            else if (moveBack)
                 updatePosition(negate(controlledObject.forward), backSpeed, controlledObject.position);
+
             if (moveRight)
                 updatePosition(controlledObject.right, rightSpeed, controlledObject.position);
-            if (moveLeft)
+            else if (moveLeft)
                 updatePosition(negate(controlledObject.right), leftSpeed, controlledObject.position);
+
             if (moveDown)
                 updatePosition(negate(controlledObject.up), downSpeed, controlledObject.position);
-            if (moveUp)
+            else if (moveUp)
                 updatePosition(controlledObject.up, upSpeed, controlledObject.position);
 
             if (useMouse) {
@@ -148,10 +158,8 @@ Item {
             id: updateTimer
             interval: 16
             repeat: true
-            running: true
-            onTriggered: {
-                status.updateInput();
-            }
+            running: status.moving
+            onTriggered: status.updateInput();
         }
     }
 
