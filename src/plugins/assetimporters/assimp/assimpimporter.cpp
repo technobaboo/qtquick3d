@@ -561,7 +561,7 @@ QString AssimpImporter::generateMeshFile(QIODevice &file, const QVector<aiMesh *
         QVector<quint32> indexes;
         indexes.reserve(mesh->mNumFaces * 3);
 
-        for (int faceIndex = 0;faceIndex < mesh->mNumFaces; ++faceIndex) {
+        for (unsigned int faceIndex = 0;faceIndex < mesh->mNumFaces; ++faceIndex) {
             const auto face = mesh->mFaces[faceIndex];
             // Faces should always have 3 indicides
             Q_ASSERT(face.mNumIndices == 3);
