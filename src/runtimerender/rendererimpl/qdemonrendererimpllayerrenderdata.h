@@ -130,7 +130,6 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     void endProfiling(const char *nameID);
     void addVertexCount(quint32 count);
 
-    void renderToViewport();
     // Render this layer's data to a texture.  Required if we have any effects,
     // prog AA, or if forced.
     void renderToTexture();

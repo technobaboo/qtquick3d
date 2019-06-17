@@ -140,7 +140,7 @@ void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions, 
 
     // Clean up the texture cache if layer dimensions changed
     if (inViewportDimensions.width() != m_previousDimensions.width()
-        || inViewportDimensions.height() != m_previousDimensions.height()) {
+            || inViewportDimensions.height() != m_previousDimensions.height()) {
         m_layerTexture.releaseTexture();
         m_layerDepthTexture.releaseTexture();
         m_layerSsaoTexture.releaseTexture();
@@ -284,7 +284,7 @@ void QDemonLayerRenderData::renderAoPass()
 
     shader->depthTexture.set(m_layerDepthTexture.getTexture().data());
     shader->depthSamplerSize.set(
-            QVector2D(m_layerDepthTexture->textureDetails().width, m_layerDepthTexture->textureDetails().height));
+                QVector2D(m_layerDepthTexture->textureDetails().width, m_layerDepthTexture->textureDetails().height));
 
     // Important uniforms for AO calculations
     QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
@@ -817,7 +817,7 @@ void QDemonLayerRenderData::renderDepthPass(bool inEnableTransparentDepthWrite)
 
     // Avoid running this method if possible.
     if ((inEnableTransparentDepthWrite == false && (opaqueObjects.size() == 0 || !layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthPrePass)))
-        || !layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthTest))
+            || !layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthTest))
         return;
 
     renderer->beginLayerDepthPassRender(*this);
@@ -1156,39 +1156,6 @@ void QDemonLayerRenderData::blendAdvancedToFB(QDemonRenderDefaultMaterial::Mater
 }
 #endif
 
-void QDemonLayerRenderData::renderToViewport()
-{
-    if (layerPrepResult->isLayerVisible()) {
-        if (usesOffscreenRenderer()) {
-            if (layer.background == QDemonRenderLayer::Background::Color) {
-                lastFrameOffscreenRenderer->renderWithClear(createOffscreenRenderEnvironment(),
-                                                            *renderer->context(),
-                                                            renderer->demonContext()->presentationScaleFactor(),
-                                                            layer.clearColor,
-                                                            &layer);
-            } else {
-                lastFrameOffscreenRenderer->render(createOffscreenRenderEnvironment(),
-                                                   *renderer->context(),
-                                                   renderer->demonContext()->presentationScaleFactor(),
-                                                   &layer);
-            }
-        } else {
-            startProfiling("Clear pass", false);
-            renderClearPass();
-            endProfiling("Clear pass");
-
-            if (layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthPrePass)) {
-                startProfiling("Depth pass", false);
-                renderDepthPass(false);
-                endProfiling("Depth pass");
-            }
-            startProfiling("Render pass", false);
-            render();
-            endProfiling("Render pass");
-            renderRenderWidgets();
-        }
-    }
-}
 // These are meant to be pixel offsets, so you need to divide them by the width/height
 // of the layer respectively.
 const QVector2D s_VertexOffsets[QDemonLayerRenderPreparationData::MAX_AA_LEVELS] = {
@@ -1257,7 +1224,7 @@ void QDemonLayerRenderData::renderToTexture()
     // If the user has disabled all layer caching this has the side effect of disabling the
     // progressive AA algorithm.
     if (thePrepResult.flags.wasLayerDataDirty() || thePrepResult.flags.wasDirty()
-        || renderer->isLayerCachingEnabled() == false || thePrepResult.flags.shouldRenderToTexture()) {
+            || renderer->isLayerCachingEnabled() == false || thePrepResult.flags.shouldRenderToTexture()) {
         m_progressiveAAPassIndex = 0;
         m_nonDirtyTemporalAAPassIndex = 0;
         needsRender = true;
@@ -1280,10 +1247,10 @@ void QDemonLayerRenderData::renderToTexture()
 
     // If all the dimensions match then we do not have to re-render the layer.
     if (m_layerTexture.textureMatches(theLayerTextureDimensions.width(), theLayerTextureDimensions.height(), ColorTextureFormat)
-        && (!thePrepResult.flags.requiresDepthTexture()
-            || m_layerDepthTexture.textureMatches(theLayerTextureDimensions.width(), theLayerTextureDimensions.height(), DepthTextureFormat))
-        && m_progressiveAAPassIndex >= thePrepResult.maxAAPassIndex
-        && m_nonDirtyTemporalAAPassIndex >= maxTemporalPassIndex && needsRender == false) {
+            && (!thePrepResult.flags.requiresDepthTexture()
+                || m_layerDepthTexture.textureMatches(theLayerTextureDimensions.width(), theLayerTextureDimensions.height(), DepthTextureFormat))
+            && m_progressiveAAPassIndex >= thePrepResult.maxAAPassIndex
+            && m_nonDirtyTemporalAAPassIndex >= maxTemporalPassIndex && needsRender == false) {
         return;
     }
 
@@ -1560,7 +1527,7 @@ void QDemonLayerRenderData::renderToTexture()
 
         if (theLastLayerTexture.getTexture() != nullptr && (isProgressiveAABlendPass || isTemporalAABlendPass)) {
             theRenderContext->setViewport(
-                    QRect(0, 0, theLayerOriginalTextureDimensions.width(), theLayerOriginalTextureDimensions.height()));
+                        QRect(0, 0, theLayerOriginalTextureDimensions.width(), theLayerOriginalTextureDimensions.height()));
             QDemonResourceTexture2D targetTexture(theResourceManager,
                                                   theLayerOriginalTextureDimensions.width(),
                                                   theLayerOriginalTextureDimensions.height(),
@@ -1595,7 +1562,7 @@ void QDemonLayerRenderData::renderToTexture()
         if (m_progressiveAAPassIndex < thePrepResult.maxAAPassIndex && needsWidgetTexture() == false)
             ++m_progressiveAAPassIndex;
 
-            // now we render all post effects
+        // now we render all post effects
 #ifdef QDEMON_CACHED_POST_EFFECT
         applyLayerPostEffects();
 #endif
@@ -1633,11 +1600,11 @@ void QDemonLayerRenderData::applyLayerPostEffects()
             startProfiling(theEffect->className, false);
 
             QDemonRef<QDemonRenderTexture2D> theRenderedEffect = theEffectSystem->renderEffect(
-                    QDemonEffectRenderArgument(theEffect,
-                                               theCurrentTexture,
-                                               QVector2D(camera->clipNear, camera->clipFar),
-                                               theLayerDepthTexture,
-                                               m_layerPrepassDepthTexture));
+                        QDemonEffectRenderArgument(theEffect,
+                                                   theCurrentTexture,
+                                                   QVector2D(camera->clipNear, camera->clipFar),
+                                                   theLayerDepthTexture,
+                                                   m_layerPrepassDepthTexture));
 
             endProfiling(theEffect->className);
 
@@ -1651,7 +1618,7 @@ void QDemonLayerRenderData::applyLayerPostEffects()
             if (!theRenderedEffect) {
                 QString errorMsg = QObject::tr("Failed to compile \"%1\" effect.\nConsider"
                                                " removing it from the presentation.")
-                                           .arg(QString::fromLatin1(theEffect->className));
+                        .arg(QString::fromLatin1(theEffect->className));
                 qFatal("%s", errorMsg.toUtf8().constData());
                 break;
             }
@@ -1710,10 +1677,113 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
 
     bool blendingEnabled = layer.background == QDemonRenderLayer::Background::Transparent;
     if (!thePrepResult.flags.shouldRenderToTexture()) {
+        qint32 sampleCount = 1;
+        // check multsample mode and MSAA texture support
+        if (layer.multisampleAAMode != QDemonRenderLayer::AAMode::NoAA && theContext->supportsMultisampleTextures())
+            sampleCount = qint32(layer.multisampleAAMode);
+
+        // Shadows and SSAO require an FBO, so create one if we are using those
+        if (thePrepResult.flags.requiresSsaoPass() || thePrepResult.flags.requiresShadowMapPass()) {
+            QSize theLayerTextureDimensions = thePrepResult.textureDimensions();
+            QDemonRef<QDemonResourceManager> theResourceManager = renderer->demonContext()->resourceManager();
+            QDemonResourceFrameBuffer theFBO(theResourceManager);
+            // Allocates the frame buffer which has the side effect of setting the current render target
+            // to that frame buffer.
+            theFBO.ensureFrameBuffer();
+
+            if (thePrepResult.flags.requiresSsaoPass()) {
+                if (m_layerSsaoTexture.ensureTexture(theLayerTextureDimensions.width(), theLayerTextureDimensions.height(), QDemonRenderTextureFormat::RGBA8)) {
+                    m_layerSsaoTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+                    m_layerSsaoTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+                    m_progressiveAAPassIndex = 0;
+                    m_nonDirtyTemporalAAPassIndex = 0;
+                }
+            }
+
+            if (thePrepResult.flags.requiresDepthTexture()) {
+                // The depth texture doesn't need to be multisample, the prepass depth does.
+                if (m_layerDepthTexture.ensureTexture(theLayerTextureDimensions.width(), theLayerTextureDimensions.height(), QDemonRenderTextureFormat::Depth24Stencil8)) {
+                    // Depth textures are generally not bilinear filtered.
+                    m_layerDepthTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Nearest);
+                    m_layerDepthTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Nearest);
+                    m_progressiveAAPassIndex = 0;
+                    m_nonDirtyTemporalAAPassIndex = 0;
+                }
+            }
+
+            QRect theNewViewport(0, 0, theLayerTextureDimensions.width(), theLayerTextureDimensions.height());
+            {
+                theContext->setRenderTarget(theFBO);
+                QDemonRenderContextScopedProperty<QRect> __viewport(*theContext,
+                                                                    &QDemonRenderContext::viewport,
+                                                                    &QDemonRenderContext::setViewport,
+                                                                    theNewViewport);
+
+                // Depth Prepass with transparent and opaque renderables (for SSAO)
+                if (thePrepResult.flags.requiresDepthTexture() && m_progressiveAAPassIndex == 0) {
+                    // Setup FBO with single depth buffer target.
+                    // Note this does not use multisample.
+                    QDemonRenderFrameBufferAttachment theAttachment = getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormat::Depth24Stencil8);
+                    theFBO->attach(theAttachment, m_layerDepthTexture.getTexture());
+
+                    // In this case transparent objects also may write their depth.
+                    renderDepthPass(true);
+                    theFBO->attach(theAttachment, QDemonRenderTextureOrRenderBuffer());
+                }
+
+                // SSAO
+                if (thePrepResult.flags.requiresSsaoPass() && m_progressiveAAPassIndex == 0 && camera != nullptr) {
+                    startProfiling("AO pass", false);
+                    // Setup FBO with single color buffer target
+                    theFBO->attach(QDemonRenderFrameBufferAttachment::Color0, m_layerSsaoTexture.getTexture());
+                    QDemonRenderFrameBufferAttachment theAttachment = getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormat::Depth24Stencil8);
+                    theFBO->attach(theAttachment, m_layerDepthTexture.getTexture());
+                    theContext->clear(QDemonRenderClearValues::Color);
+                    renderAoPass();
+                    theFBO->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
+                    endProfiling("AO pass");
+                }
+
+                // Shadow
+                if (thePrepResult.flags.requiresShadowMapPass() && m_progressiveAAPassIndex == 0) {
+                    // shadow map path
+                    renderShadowMapPass(&theFBO);
+                }
+            }
+        }
+
+        theContext->setRenderTarget(theFB);
+
+        // Multisampling
+        if (sampleCount > 1) {
+            theContext->setMultisampleEnabled(true);
+        }
+
+        // Start Operations on Viewport
         theContext->setViewport(layerPrepResult->viewport().toRect());
         theContext->setScissorTestEnabled(true);
         theContext->setScissorRect(layerPrepResult->scissor().toRect());
-        renderToViewport();
+
+        // Viewport Clear
+        startProfiling("Clear pass", false);
+        renderClearPass();
+        endProfiling("Clear pass");
+
+        // Depth Pre-pass
+        if (layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthPrePass)) {
+            startProfiling("Depth pass", false);
+            renderDepthPass(false);
+            endProfiling("Depth pass");
+        }
+
+        // Render pass
+        startProfiling("Render pass", false);
+        render();
+        endProfiling("Render pass");
+
+        // Widget pass
+        renderRenderWidgets();
+
     } else {
         // First, render the layer along with whatever progressive AA is appropriate.
         // The render graph should have taken care of the render to texture step.
@@ -1734,11 +1804,11 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                 StartProfiling(theEffect->m_ClassName, false);
 
                 QDemonRenderTexture2D *theRenderedEffect = theEffectSystem.RenderEffect(
-                        SEffectRenderArgument(*theEffect,
-                                              *theCurrentTexture,
-                                              QVector2D(m_Camera->m_ClipNear, m_Camera->m_ClipFar),
-                                              theLayerDepthTexture,
-                                              m_LayerPrepassDepthTexture));
+                            SEffectRenderArgument(*theEffect,
+                                                  *theCurrentTexture,
+                                                  QVector2D(m_Camera->m_ClipNear, m_Camera->m_ClipFar),
+                                                  theLayerDepthTexture,
+                                                  m_LayerPrepassDepthTexture));
 
                 EndProfiling(theEffect->m_ClassName);
 
@@ -1894,8 +1964,8 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                     // Blending is enabled only if layer background has been chosen transparent
                     // Layers with advanced blending modes
                     if (blendingEnabled
-                        && (layer.blendType == QDemonRenderLayer::BlendMode::Overlay || layer.blendType == QDemonRenderLayer::BlendMode::ColorBurn
-                            || layer.blendType == QDemonRenderLayer::BlendMode::ColorDodge)) {
+                            && (layer.blendType == QDemonRenderLayer::BlendMode::Overlay || layer.blendType == QDemonRenderLayer::BlendMode::ColorBurn
+                                || layer.blendType == QDemonRenderLayer::BlendMode::ColorDodge)) {
                         theContext->setScissorTestEnabled(false);
                         theContext->setBlendingEnabled(false);
 
