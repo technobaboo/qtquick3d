@@ -5,7 +5,11 @@
 #include <QtMath>
 
 QT_BEGIN_NAMESPACE
-
+/*!
+    \qmltype DemonCamera
+    \inqmlmodule QtDemon
+    \brief Lets you add a camera to view the 3D content
+*/
 QDemonCamera::QDemonCamera() {}
 
 float QDemonCamera::clipNear() const

@@ -7,6 +7,11 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype DemonNode
+    \inqmlmodule QtDemon
+    \brief Lets you define a 3D item with necessary properties
+*/
 QDemonNode::QDemonNode()
 {
     // Update global transform properties from backend

@@ -5,7 +5,11 @@
 #include "qdemonobject_p.h"
 
 QT_BEGIN_NAMESPACE
-
+/*!
+    \qmltype DemonImage
+    \inqmlmodule QtDemon
+    \brief Lets you add a texture image to the material
+*/
 QDemonImage::QDemonImage() {}
 
 QDemonImage::~QDemonImage() {}
