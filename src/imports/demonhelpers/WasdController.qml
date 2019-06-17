@@ -3,6 +3,7 @@ import QtDemon 1.0
 
 Item {
     property DemonNode controlledObject: undefined
+    property DemonView3D view: undefined
 
     property real forwardSpeed: 5
     property real backSpeed: 5
@@ -15,6 +16,17 @@ Item {
 
     property bool xInvert: false
     property bool yInvert: true
+
+    Component.onCompleted: {
+        if (!view)
+            return;
+
+        view.focus = true
+        view.Keys.onPressed.connect(handleKeyPress)
+        view.Keys.onReleased.connect(handleKeyRelease)
+
+        mouseAreaComponent.createObject(view);
+    }
 
     function mousePressed(mouse) {
         status.currentPos = Qt.vector2d(mouse.x, mouse.y)
@@ -220,6 +232,16 @@ Item {
             repeat: true
             running: status.moving
             onTriggered: status.updateInput();
+        }
+    }
+
+    Component {
+        id: mouseAreaComponent
+        MouseArea {
+            anchors.fill: parent
+            onPressed: mousePressed(mouse);
+            onReleased: mouseReleased(mouse);
+            onPositionChanged: mouseMoved(Qt.vector2d(mouse.x, mouse.y));
         }
     }
 
