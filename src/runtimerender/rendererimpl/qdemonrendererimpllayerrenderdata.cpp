@@ -436,7 +436,7 @@ void setupCameraForShadowMap(const QVector2D &/*inCameraVec*/,
         theCamera.clipFar = std::abs(maxDistanceZ - minDistanceZ);
     }
 
-    theCamera.flags.setFlag(QDemonRenderCamera::Flag::LeftHanded);
+    theCamera.flags.setFlag(QDemonRenderCamera::Flag::LeftHanded, false);
 
     theCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic, inLight->m_lightType == QDemonRenderLight::Type::Directional);
     theCamera.parent = nullptr;
@@ -1690,6 +1690,8 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
             // Allocates the frame buffer which has the side effect of setting the current render target
             // to that frame buffer.
             theFBO.ensureFrameBuffer();
+
+            theContext->setScissorTestEnabled(false);
 
             if (thePrepResult.flags.requiresSsaoPass()) {
                 if (m_layerSsaoTexture.ensureTexture(theLayerTextureDimensions.width(), theLayerTextureDimensions.height(), QDemonRenderTextureFormat::RGBA8)) {

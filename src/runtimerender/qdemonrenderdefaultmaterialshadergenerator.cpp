@@ -1467,7 +1467,10 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 QDemonShadowMapEntry *pEntry = inShadowMapManager->getShadowMapEntry(lightIdx);
                 if (pEntry) {
                     // add fixed scale bias matrix
-                    QMatrix4x4 bias = { 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0 };
+                    QMatrix4x4 bias = { 0.5, 0.0, 0.0, 0.5,
+                                        0.0, 0.5, 0.0, 0.5,
+                                        0.0, 0.0, 0.5, 0.5,
+                                        0.0, 0.0, 0.0, 1.0 };
 
                     if (theLight->m_lightType != QDemonRenderLight::Type::Directional) {
                         theShadowMapProperties.m_shadowCubeTexture.set(pEntry->m_depthCube.data());

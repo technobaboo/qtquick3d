@@ -296,8 +296,10 @@ QMatrix3x3 QDemonRenderCamera::getLookAtMatrix(const QVector3D &inUpDir, const Q
         multiplier = -1.0f;
 
     theDirection *= multiplier;
-    float matrixData[9] = { theCrossDir.x(), theCrossDir.y(),  theCrossDir.z(),  theFinalDir.x(), theFinalDir.y(),
-                            theFinalDir.z(), theDirection.x(), theDirection.y(), theDirection.z() };
+    float matrixData[9] = { theCrossDir.x(), theFinalDir.x(), theDirection.x(),
+                            theCrossDir.y(), theFinalDir.y(), theDirection.y(),
+                            theCrossDir.z(), theFinalDir.z(), theDirection.z()
+                          };
 
     QMatrix3x3 theResultMatrix(matrixData);
     return theResultMatrix;
