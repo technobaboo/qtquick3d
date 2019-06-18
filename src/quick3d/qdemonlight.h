@@ -103,8 +103,8 @@ private:
     float m_brightness = 100.0f;
     float m_linearFade = 0.0f;
     float m_exponentialFade = 0.0f;
-    float m_areaWidth = 0.0f;
-    float m_areaHeight = 0.0f;
+    float m_areaWidth = 100.0f;
+    float m_areaHeight = 100.0f;
     bool m_castShadow = false;
     float m_shadowBias = 0.0f;
     float m_shadowFactor = 5.0f;
