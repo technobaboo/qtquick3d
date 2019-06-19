@@ -10,7 +10,7 @@ Qt Quick scenegraph for spatial content, and a renderer for that extended
 scenegraph. When using the Spatial scenegraph it is also be possible to mix
 Qt Quick 2D content with 3D content.
 
-\image demoRender.png
+\image demonRender.png
 
 \section1 Related information
 
