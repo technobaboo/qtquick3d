@@ -12,18 +12,14 @@ Make sure it is possible to have QQuickItems inside of View3D Item (normally thi
 QML Inside of Scene as DemonImage texture source
 
 ## View3D
-Add flag for rendering directly to the window 
 Move the blend mode's out of SceneEnvironment/View3D.  Instead these are a special kind of shader effect applied between Qt Quick Items, add examples
 Add support for picking
-Add skybox mode for backround
 
 ## Assimp Plugin
-Handle non-unique id names case
 Import Keyframe animations
 GLTF2 Support: Add additional materials/texture import code and test
 
 ## Rendering
-Get direction shadows working better.
 Dynamic Geometry
 Add flag for marking models static (needed for batching)
 Support Static mesh batching
