@@ -5,7 +5,7 @@ Add Support for translateing Slides -> States
 See if it's possible to translate known custom materials
 
 ## Effects
-Add support for Post Processing Effects (applied to View3D ouput)
+Add support for Post Processing Effects (applied to View3D ouput, and requires FBO)
 
 ## Quick
 Make sure it is possible to have QQuickItems inside of View3D Item (normally this is the scene, but you may want to stack items on top as well).
@@ -20,6 +20,9 @@ Import Keyframe animations
 GLTF2 Support: Add additional materials/texture import code and test
 
 ## Rendering
+Check multisampling support (some modes require FBO's)
+Add Progressive AA (requires FBO)
+Add Temporal AA (requires FBO)
 Dynamic Geometry
 Add flag for marking models static (needed for batching)
 Support Static mesh batching
