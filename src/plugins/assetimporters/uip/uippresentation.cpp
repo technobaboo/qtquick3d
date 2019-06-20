@@ -399,8 +399,7 @@ QString qmlPresentationComponentName(const QString &name) {
     if (nameCopy.startsWith("/"))
         nameCopy.remove(0, 1);
 
-    if (nameCopy[0].isLower())
-        nameCopy[0] = nameCopy[0].toUpper();
+    nameCopy = QDemonQmlUtilities::qmlComponentName(nameCopy);
 
     return nameCopy;
 }
