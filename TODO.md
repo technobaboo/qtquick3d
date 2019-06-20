@@ -1,8 +1,12 @@
 # TODO
 
+## Asset Import framework
+Add the pumbing for using plugins options (QVariantMap) + command line arguments for balsam
+
 ## UIP Exporter
 Add Support for translateing Slides -> States
 See if it's possible to translate known custom materials
+Fix folder creation (models/maps/materials) for modern UIA projects
 
 ## Effects
 Add support for Post Processing Effects (applied to View3D ouput, and requires FBO)
