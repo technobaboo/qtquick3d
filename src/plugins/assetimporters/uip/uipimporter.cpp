@@ -43,6 +43,15 @@ const QVariantMap UipImporter::importOptions() const
     return QVariantMap();
 }
 
+namespace  {
+QString stripParentDirectory(const QString &filePath) {
+    QString sourceCopy = filePath;
+    while(sourceCopy.startsWith('.') || sourceCopy.startsWith('/') || sourceCopy.startsWith('\\'))
+        sourceCopy.remove(0, 1);
+    return sourceCopy;
+}
+}
+
 const QString UipImporter::import(const QString &sourceFile, const QDir &savePath, const QVariantMap &options, QStringList *generatedFiles)
 {
     m_sourceFile = sourceFile;
@@ -81,9 +90,15 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
     // Copy any resource files to export directory
     for (auto file : m_resourcesList) {
         QFileInfo sourceFile(source.absolutePath() + QDir::separator() + file);
-        if (!sourceFile.exists())
-            errorString += QStringLiteral("Resource file does not exist: ") + sourceFile.absoluteFilePath();
-        QFileInfo destFile(savePath.absoluteFilePath(file));
+        if (!sourceFile.exists()) {
+            // Try again after stripping the parent directory
+            sourceFile = QFileInfo(source.absolutePath() + QDir::separator() + stripParentDirectory(file));
+            if (!sourceFile.exists()) {
+                errorString += QStringLiteral("Resource file does not exist: ") + sourceFile.absoluteFilePath() + QChar('\n');
+                continue;
+            }
+        }
+        QFileInfo destFile(savePath.absoluteFilePath(stripParentDirectory(file)));
         QDir destDir(destFile.absolutePath());
         destDir.mkpath(".");
 

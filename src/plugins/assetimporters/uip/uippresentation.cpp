@@ -1865,7 +1865,7 @@ QString tesselationModeToString(ModelNode::Tessellation mode)
 void ModelNode::writeQmlProperties(QTextStream &output, int tabLevel)
 {
     Node::writeQmlProperties(output, tabLevel);
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("source: ") << QDemonQmlUtilities::sanitizeQmlSourcePath(m_mesh_unresolved) << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("source: ") << QDemonQmlUtilities::sanitizeQmlSourcePath(m_mesh_unresolved, true) << endl;
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("poseroot"), m_skeletonRoot);
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("tessellation"), tesselationModeToString(m_tessellation));
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("edgetess"), m_edgeTess);

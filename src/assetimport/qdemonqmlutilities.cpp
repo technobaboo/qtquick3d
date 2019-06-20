@@ -90,11 +90,23 @@ QString sanitizeQmlId(const QString &id)
     return idCopy;
 }
 
-QString sanitizeQmlSourcePath(const QString &source)
+namespace  {
+QString stripParentDirectory(const QString &filePath) {
+    QString sourceCopy = filePath;
+    while(sourceCopy.startsWith('.') || sourceCopy.startsWith('/') || sourceCopy.startsWith('\\'))
+        sourceCopy.remove(0, 1);
+    return sourceCopy;
+}
+}
+
+QString sanitizeQmlSourcePath(const QString &source, bool removeParentDirectory)
 {
     QString sourceCopy = source;
 
-    sourceCopy.replace("\\", "/");
+    if (removeParentDirectory)
+        sourceCopy = stripParentDirectory(sourceCopy);
+
+    sourceCopy.replace('\\', '/');
 
     // must be surrounded in quotes
     return QString(QStringLiteral("\"") + sourceCopy + QStringLiteral("\""));
