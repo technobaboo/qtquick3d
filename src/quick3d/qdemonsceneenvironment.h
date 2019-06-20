@@ -232,7 +232,7 @@ private:
 
     QHash<QObject*, QMetaObject::Connection> m_connections;
     bool m_isDepthTestDisabled = false;
-    bool m_isDepthPrePassDisabled = false;
+    bool m_isDepthPrePassDisabled = true;
 };
 
 QT_END_NAMESPACE

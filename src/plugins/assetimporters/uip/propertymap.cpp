@@ -118,7 +118,7 @@ PropertyMap::PropertyMap()
 
     layer->insert(QStringLiteral("temporalaa"), Property(QStringLiteral("temporalAAEnabled"), Q3DS::Boolean, false));
     layer->insert(QStringLiteral("disabledepthtest"), Property(QStringLiteral("isDepthTestDisabled"), Q3DS::Boolean, false));
-    layer->insert(QStringLiteral("disabledepthprepass"), Property(QStringLiteral("isDepthPrePassDisabled"), Q3DS::Boolean, false));
+    layer->insert(QStringLiteral("disabledepthprepass"), Property(QStringLiteral("isDepthPrePassDisabled"), Q3DS::Boolean, true));
 
     m_properties.insert(GraphObject::Layer, layer);
 
