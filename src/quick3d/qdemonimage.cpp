@@ -17,52 +17,52 @@ QUrl QDemonImage::source() const
 
 float QDemonImage::scaleU() const
 {
-    return m_scaleu;
+    return m_scaleU;
 }
 
 float QDemonImage::scaleV() const
 {
-    return m_scalev;
+    return m_scaleV;
 }
 
 QDemonImage::MappingMode QDemonImage::mappingMode() const
 {
-    return m_mappingmode;
+    return m_mappingMode;
 }
 
 QDemonImage::TilingMode QDemonImage::horizontalTiling() const
 {
-    return m_tilingmodehorz;
+    return m_tilingModeHorizontal;
 }
 
 QDemonImage::TilingMode QDemonImage::verticalTiling() const
 {
-    return m_tilingmodevert;
+    return m_tilingModeVertical;
 }
 
 float QDemonImage::rotationUV() const
 {
-    return m_rotationuv;
+    return m_rotationUV;
 }
 
 float QDemonImage::positionU() const
 {
-    return m_positionu;
+    return m_positionU;
 }
 
 float QDemonImage::positionV() const
 {
-    return m_positionv;
+    return m_positionV;
 }
 
 float QDemonImage::pivotU() const
 {
-    return m_pivotu;
+    return m_pivotU;
 }
 
 float QDemonImage::pivotV() const
 {
-    return m_pivotv;
+    return m_pivotV;
 }
 
 QDemonObject::Type QDemonImage::type() const
@@ -80,103 +80,103 @@ void QDemonImage::setSource(const QUrl &source)
     update();
 }
 
-void QDemonImage::setScaleU(float scaleu)
+void QDemonImage::setScaleU(float scaleU)
 {
-    if (qFuzzyCompare(m_scaleu, scaleu))
+    if (qFuzzyCompare(m_scaleU, scaleU))
         return;
 
-    m_scaleu = scaleu;
-    emit scaleUChanged(m_scaleu);
+    m_scaleU = scaleU;
+    emit scaleUChanged(m_scaleU);
     update();
 }
 
-void QDemonImage::setScaleV(float scalev)
+void QDemonImage::setScaleV(float scaleV)
 {
-    if (qFuzzyCompare(m_scalev, scalev))
+    if (qFuzzyCompare(m_scaleV, scaleV))
         return;
 
-    m_scalev = scalev;
-    emit scaleVChanged(m_scalev);
+    m_scaleV = scaleV;
+    emit scaleVChanged(m_scaleV);
     update();
 }
 
-void QDemonImage::setMappingMode(QDemonImage::MappingMode mappingmode)
+void QDemonImage::setMappingMode(QDemonImage::MappingMode mappingMode)
 {
-    if (m_mappingmode == mappingmode)
+    if (m_mappingMode == mappingMode)
         return;
 
-    m_mappingmode = mappingmode;
-    emit mappingModeChanged(m_mappingmode);
+    m_mappingMode = mappingMode;
+    emit mappingModeChanged(m_mappingMode);
     update();
 }
 
-void QDemonImage::setHorizontalTiling(QDemonImage::TilingMode tilingmodehorz)
+void QDemonImage::setHorizontalTiling(QDemonImage::TilingMode tilingModeHorizontal)
 {
-    if (m_tilingmodehorz == tilingmodehorz)
+    if (m_tilingModeHorizontal == tilingModeHorizontal)
         return;
 
-    m_tilingmodehorz = tilingmodehorz;
-    emit horizontalTilingChanged(m_tilingmodehorz);
+    m_tilingModeHorizontal = tilingModeHorizontal;
+    emit horizontalTilingChanged(m_tilingModeHorizontal);
     update();
 }
 
-void QDemonImage::setVerticalTiling(QDemonImage::TilingMode tilingmodevert)
+void QDemonImage::setVerticalTiling(QDemonImage::TilingMode tilingModeVertical)
 {
-    if (m_tilingmodevert == tilingmodevert)
+    if (m_tilingModeVertical == tilingModeVertical)
         return;
 
-    m_tilingmodevert = tilingmodevert;
-    emit verticalTilingChanged(m_tilingmodevert);
+    m_tilingModeVertical = tilingModeVertical;
+    emit verticalTilingChanged(m_tilingModeVertical);
     update();
 }
 
-void QDemonImage::setRotationUV(float rotationuv)
+void QDemonImage::setRotationUV(float rotationUV)
 {
-    if (qFuzzyCompare(m_rotationuv, rotationuv))
+    if (qFuzzyCompare(m_rotationUV, rotationUV))
         return;
 
-    m_rotationuv = rotationuv;
-    emit rotationUVChanged(m_rotationuv);
+    m_rotationUV = rotationUV;
+    emit rotationUVChanged(m_rotationUV);
     update();
 }
 
-void QDemonImage::setPositionU(float positionu)
+void QDemonImage::setPositionU(float positionU)
 {
-    if (qFuzzyCompare(m_positionu, positionu))
+    if (qFuzzyCompare(m_positionU, positionU))
         return;
 
-    m_positionu = positionu;
-    emit positionUChanged(m_positionu);
+    m_positionU = positionU;
+    emit positionUChanged(m_positionU);
     update();
 }
 
-void QDemonImage::setPositionV(float positionv)
+void QDemonImage::setPositionV(float positionV)
 {
-    if (qFuzzyCompare(m_positionv, positionv))
+    if (qFuzzyCompare(m_positionV, positionV))
         return;
 
-    m_positionv = positionv;
-    emit positionVChanged(m_positionv);
+    m_positionV = positionV;
+    emit positionVChanged(m_positionV);
     update();
 }
 
-void QDemonImage::setPivotU(float pivotu)
+void QDemonImage::setPivotU(float pivotU)
 {
-    if (qFuzzyCompare(m_pivotu, pivotu))
+    if (qFuzzyCompare(m_pivotU, pivotU))
         return;
 
-    m_pivotu = pivotu;
-    emit pivotUChanged(m_pivotu);
+    m_pivotU = pivotU;
+    emit pivotUChanged(m_pivotU);
     update();
 }
 
-void QDemonImage::setPivotV(float pivotv)
+void QDemonImage::setPivotV(float pivotV)
 {
-    if (qFuzzyCompare(m_pivotv, pivotv))
+    if (qFuzzyCompare(m_pivotV, pivotV))
         return;
 
-    m_pivotv = pivotv;
-    emit pivotVChanged(m_pivotv);
+    m_pivotV = pivotV;
+    emit pivotVChanged(m_pivotV);
     update();
 }
 
@@ -188,13 +188,13 @@ QDemonRenderGraphObject *QDemonImage::updateSpatialNode(QDemonRenderGraphObject 
     auto imageNode = static_cast<QDemonRenderImage *>(node);
 
     imageNode->m_imagePath = QQmlFile::urlToLocalFileOrQrc(m_source);
-    imageNode->m_scale = QVector2D(m_scaleu, m_scalev);
-    imageNode->m_pivot = QVector2D(m_pivotu, m_pivotv);
-    imageNode->m_rotation = m_rotationuv;
-    imageNode->m_position = QVector2D(m_positionu, m_positionv);
-    imageNode->m_mappingMode = QDemonRenderImage::MappingModes(m_mappingmode);
-    imageNode->m_horizontalTilingMode = QDemonRenderTextureCoordOp(m_tilingmodehorz);
-    imageNode->m_verticalTilingMode = QDemonRenderTextureCoordOp(m_tilingmodevert);
+    imageNode->m_scale = QVector2D(m_scaleU, m_scaleV);
+    imageNode->m_pivot = QVector2D(m_pivotU, m_pivotV);
+    imageNode->m_rotation = m_rotationUV;
+    imageNode->m_position = QVector2D(m_positionU, m_positionV);
+    imageNode->m_mappingMode = QDemonRenderImage::MappingModes(m_mappingMode);
+    imageNode->m_horizontalTilingMode = QDemonRenderTextureCoordOp(m_tilingModeHorizontal);
+    imageNode->m_verticalTilingMode = QDemonRenderTextureCoordOp(m_tilingModeVertical);
     // ### Make this more conditional
     imageNode->m_flags.setFlag(QDemonRenderImage::Flag::Dirty);
     imageNode->m_flags.setFlag(QDemonRenderImage::Flag::TransformDirty);

@@ -60,16 +60,16 @@ public:
 
 public Q_SLOTS:
     void setSource(const QUrl &source);
-    void setScaleU(float scaleu);
-    void setScaleV(float scalev);
-    void setMappingMode(MappingMode mappingmode);
-    void setHorizontalTiling(TilingMode tilingmodehorz);
-    void setVerticalTiling(TilingMode tilingmodevert);
-    void setRotationUV(float rotationuv);
-    void setPositionU(float positionu);
-    void setPositionV(float positionv);
-    void setPivotU(float pivotu);
-    void setPivotV(float pivotv);
+    void setScaleU(float scaleU);
+    void setScaleV(float scaleV);
+    void setMappingMode(MappingMode mappingMode);
+    void setHorizontalTiling(TilingMode tilingModeHorizontal);
+    void setVerticalTiling(TilingMode tilingModeVertical);
+    void setRotationUV(float rotationUV);
+    void setPositionU(float positionU);
+    void setPositionV(float positionV);
+    void setPivotU(float pivotU);
+    void setPivotV(float pivotV);
 
 Q_SIGNALS:
     void sourceChanged(const QUrl &source);
@@ -89,16 +89,16 @@ protected:
 
 private:
     QUrl m_source;
-    float m_scaleu = 1.0f;
-    float m_scalev = 1.0f;
-    MappingMode m_mappingmode = Normal;
-    TilingMode m_tilingmodehorz = ClampToEdge;
-    TilingMode m_tilingmodevert = ClampToEdge;
-    float m_rotationuv = 0;
-    float m_positionu = 0;
-    float m_positionv = 0;
-    float m_pivotu = 0;
-    float m_pivotv = 0;
+    float m_scaleU = 1.0f;
+    float m_scaleV = 1.0f;
+    MappingMode m_mappingMode = Normal;
+    TilingMode m_tilingModeHorizontal = ClampToEdge;
+    TilingMode m_tilingModeVertical = ClampToEdge;
+    float m_rotationUV = 0;
+    float m_positionU = 0;
+    float m_positionV = 0;
+    float m_pivotU = 0;
+    float m_pivotV = 0;
 };
 
 QT_END_NAMESPACE
