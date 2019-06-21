@@ -39,7 +39,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: copperFragShader
+            shaders: copperFragShader
         }
     ]
 }

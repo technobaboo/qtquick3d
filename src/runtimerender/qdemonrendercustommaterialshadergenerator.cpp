@@ -384,8 +384,33 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         return pCB;
     }
 
-    void generateVertexShader()
+    bool generateVertexShader(QDemonShaderDefaultMaterialKey &, const QByteArray &inShaderPathName)
     {
+        QDemonRef<QDemonDynamicObjectSystem> theDynamicSystem(m_renderContext->dynamicObjectSystem());
+        QByteArray vertSource = theDynamicSystem->getShaderSource(inShaderPathName);
+
+        Q_ASSERT(!vertSource.isEmpty());
+
+        // Check if the vertex shader portion already contains a main function
+        // The same string contains both the vertex and the fragment shader
+        // The last "#ifdef FRAGMENT_SHADER" should mark the start of the fragment shader
+        int fragmentDefStart = vertSource.indexOf("#ifdef FRAGMENT_SHADER");
+        int nextIndex = fragmentDefStart;
+        while (nextIndex != -1) {
+            nextIndex = vertSource.indexOf("#ifdef FRAGMENT_SHADER", nextIndex + 1);
+            if (nextIndex != -1)
+                fragmentDefStart = nextIndex;
+        }
+        const int mainStart = vertSource.indexOf("void main()");
+
+        auto &vertGenerator = vertexGenerator();
+
+        if (mainStart != -1 && (fragmentDefStart == -1 || mainStart < fragmentDefStart)) {
+            programGenerator()->beginProgram();
+            vertGenerator << "#define VERTEX_SHADER\n\n";
+            vertGenerator << vertSource;
+            return true;
+        }
         // vertex displacement
         quint32 imageIdx = 0;
         QDemonRenderableImage *displacementImage = nullptr;
@@ -401,6 +426,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
         // the pipeline opens/closes up the shaders stages
         vertexGenerator().beginVertexGeneration(displacementImageIdx, displacementImage);
+        return false;
     }
 
     QDemonRef<QDemonShaderGeneratorGeneratedShader> getShaderForProgram(const QDemonRef<QDemonRenderShaderProgram> &inProgram)
@@ -890,7 +916,9 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                             "}\n\n";
     }
 
-    void generateFragmentShader(QDemonShaderDefaultMaterialKey &, const QByteArray &inShaderPathName)
+    bool generateFragmentShader(QDemonShaderDefaultMaterialKey &,
+                                const QByteArray &inShaderPathName,
+                                bool hasCustomVertShader)
     {
         QDemonRef<QDemonDynamicObjectSystem> theDynamicSystem(m_renderContext->dynamicObjectSystem());
         QByteArray fragSource = theDynamicSystem->getShaderSource(inShaderPathName);
@@ -915,10 +943,11 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             }
         }
 
-        vertexGenerator().generateUVCoords(0);
-        // for lightmaps we expect a second set of uv coordinates
-        if (hasLightmaps) {
-            vertexGenerator().generateUVCoords(1);
+        if (!hasCustomVertShader) {
+            vertexGenerator().generateUVCoords(0);
+            // for lightmaps we expect a second set of uv coordinates
+            if (hasLightmaps)
+                vertexGenerator().generateUVCoords(1);
         }
 
         QDemonDefaultMaterialVertexPipelineInterface &vertexShader(vertexGenerator());
@@ -936,7 +965,9 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
         fragmentShader << "#define FRAGMENT_SHADER\n\n";
 
-        if (!srcString.contains("void main()"))
+        const bool hasCustomFragShader = srcString.contains("void main()");
+
+        if (!hasCustomFragShader)
             fragmentShader.addInclude("evalLightmaps.glsllib");
 
         // check dielectric materials
@@ -949,17 +980,21 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
         fragmentShader << srcString << "\n";
 
-        if (srcString.contains("void main()")) // If a "main()" is already
-                                               // written, we'll assume that the
-                                               // shader
-        { // pass is already written out and we don't need to add anything.
-            // Nothing beyond the basics, anyway
-            vertexShader.generateWorldNormal();
-            vertexShader.generateVarTangentAndBinormal();
-            vertexShader.generateWorldPosition();
+        // If a "main()" is already
+        // written, we'll assume that the
+        // shader
+        // pass is already written out and we don't need to add anything.
+        // Nothing beyond the basics, anyway
+        if (hasCustomFragShader) {
+            fragmentShader << "#define FRAGMENT_SHADER\n\n";
+            if (!hasCustomVertShader) {
+                vertexShader.generateWorldNormal();
+                vertexShader.generateVarTangentAndBinormal();
+                vertexShader.generateWorldPosition();
 
-            vertexShader.generateViewVector();
-            return;
+                vertexShader.generateViewVector();
+            }
+            return true;
         }
 
         if (material().hasLighting() && lightmapIndirectImage) {
@@ -1033,6 +1068,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             fragmentShader << "  gl_FragColor = rgba;\n";
         else
             fragmentShader << "  fragColor = rgba;\n";
+        return false;
     }
 
     QDemonRef<QDemonRenderShaderProgram> generateCustomMaterialShader(const QByteArray &inShaderPrefix, const QByteArray &inCustomMaterialName)
@@ -1047,12 +1083,12 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         QDemonShaderDefaultMaterialKey theKey(key());
         theKey.toString(generatedShaderString, m_defaultMaterialShaderKeyProperties);
 
-        generateVertexShader();
+        const bool hasCustomVertShader = generateVertexShader(theKey, inCustomMaterialName);
         // TODO: The material name shouldn't need to be a QString
-        generateFragmentShader(theKey, inCustomMaterialName);
+        const bool hasCustomFragShader = generateFragmentShader(theKey, inCustomMaterialName, hasCustomVertShader);
 
-        vertexGenerator().endVertexGeneration();
-        vertexGenerator().endFragmentGeneration();
+        vertexGenerator().endVertexGeneration(hasCustomVertShader);
+        vertexGenerator().endFragmentGeneration(hasCustomFragShader);
 
         return programGenerator()->compileGeneratedShader(generatedShaderString, QDemonShaderCacheProgramFlags(), m_currentFeatureSet);
     }

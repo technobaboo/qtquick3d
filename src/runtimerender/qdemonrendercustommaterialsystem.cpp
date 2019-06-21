@@ -366,7 +366,7 @@ void QDemonCustomMaterialVertexPipeline::generateWorldPosition()
 }
 
 // responsible for closing all vertex and fragment generation
-void QDemonCustomMaterialVertexPipeline::endVertexGeneration()
+void QDemonCustomMaterialVertexPipeline::endVertexGeneration(bool customShader)
 {
     if (hasTessellation()) {
         // finalize tess control shader
@@ -384,12 +384,14 @@ void QDemonCustomMaterialVertexPipeline::endVertexGeneration()
         }
     }
 
-    vertex().append("}");
+    if (!customShader)
+        vertex().append("}");
 }
 
-void QDemonCustomMaterialVertexPipeline::endFragmentGeneration()
+void QDemonCustomMaterialVertexPipeline::endFragmentGeneration(bool customShader)
 {
-    fragment().append("}");
+    if (!customShader)
+        fragment().append("}");
 }
 
 QDemonShaderStageGeneratorInterface &QDemonCustomMaterialVertexPipeline::activeStage()

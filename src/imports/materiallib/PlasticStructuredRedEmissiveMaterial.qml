@@ -98,7 +98,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: plasticStructuredRedEmissiveFragShader
+            shaders: plasticStructuredRedEmissiveFragShader
         }
     ]
 }

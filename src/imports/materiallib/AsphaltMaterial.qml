@@ -81,7 +81,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: asphaltFragShader
+            shaders: asphaltFragShader
         }
     ]
 }

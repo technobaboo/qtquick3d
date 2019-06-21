@@ -63,7 +63,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: paperOfficeFragShader
+            shaders: paperOfficeFragShader
         }
     ]
 }

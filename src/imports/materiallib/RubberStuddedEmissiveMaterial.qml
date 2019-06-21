@@ -78,7 +78,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: rubberStuddedEmissiveFragShader
+            shaders: rubberStuddedEmissiveFragShader
         }
     ]
 }

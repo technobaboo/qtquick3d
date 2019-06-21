@@ -109,7 +109,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: aluminumEmissiveShader
+            shaders: aluminumEmissiveShader
         }
     ]
 }

@@ -54,7 +54,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: powderCoatFragShader
+            shaders: powderCoatFragShader
         }
     ]
 }

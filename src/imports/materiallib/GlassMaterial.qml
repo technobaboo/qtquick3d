@@ -43,7 +43,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: simpleGlassFragShader
+            shaders: simpleGlassFragShader
             commands: [ DemonCustomMaterialBlending {
                     srcBlending: DemonCustomMaterialBlending.SrcAlpha
                     destBlending: DemonCustomMaterialBlending.OneMinusSrcAlpha

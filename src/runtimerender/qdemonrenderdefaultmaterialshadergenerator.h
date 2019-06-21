@@ -79,8 +79,8 @@ public:
     virtual bool hasActiveWireframe() = 0; // varEdgeDistance is a valid entity
 
     // responsible for closing all vertex and fragment generation
-    virtual void endVertexGeneration() = 0;
-    virtual void endFragmentGeneration() = 0;
+    virtual void endVertexGeneration(bool customShader) = 0;
+    virtual void endFragmentGeneration(bool customShader) = 0;
 };
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonDefaultMaterialShaderGeneratorInterface : public QDemonMaterialShaderGeneratorInterface

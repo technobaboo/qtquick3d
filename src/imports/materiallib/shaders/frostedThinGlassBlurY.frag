@@ -38,4 +38,4 @@ void main()
     gl_FragColor = (value / wtsum);
     gl_FragColor.a = 1.0;
 
-    // No close paren because the generator adds it for us.
+}

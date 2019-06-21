@@ -53,7 +53,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: simpleGlassRefractiveFragShader
+            shaders: simpleGlassRefractiveFragShader
             commands: [ DemonCustomMaterialBufferBlit {
                     destination: tempBuffer
                 }, DemonCustomMaterialBufferInput {

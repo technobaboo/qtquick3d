@@ -370,7 +370,7 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
         vertex().append("\tvarColor = attr_color;");
     }
 
-    void endVertexGeneration() override
+    void endVertexGeneration(bool customShader) override
     {
 
         if (hasTessellation()) {
@@ -387,10 +387,15 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
             finalizeWireframeGeometryShader();
             geometry().append("}");
         }
-        vertex().append("}");
+        if (!customShader)
+            vertex().append("}");
     }
 
-    void endFragmentGeneration() override { fragment().append("}"); }
+    void endFragmentGeneration(bool customShader) override
+    {
+        if (!customShader)
+            fragment().append("}");
+    }
 
     void addInterpolationParameter(const QByteArray &inName, const QByteArray &inType) override
     {

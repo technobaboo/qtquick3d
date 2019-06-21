@@ -265,7 +265,7 @@ void QDemonShaderCache::addShaderExtensionStrings(ShaderType shaderType, bool is
         if (shaderType == ShaderType::Vertex || shaderType == ShaderType::Fragment || shaderType == ShaderType::Geometry) {
             if (m_renderContext->renderContextType() != QDemonRenderContextType::GLES2) {
                 m_insertStr += "#extension GL_ARB_gpu_shader5 : enable\n";
-                m_insertStr += "#extension GL_ARB_shading_language_420pack : enable\n";
+//                m_insertStr += "#extension GL_ARB_shading_language_420pack : enable\n";
             }
             if (isGLES && m_renderContext->supportsTextureLod())
                 m_insertStr += "#extension GL_EXT_shader_texture_lod : enable\n";

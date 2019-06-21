@@ -216,8 +216,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialVertexPipeline : public Q
     virtual void generateVarTangentAndBinormal() override;
     virtual void generateWorldPosition() override;
     // responsible for closing all vertex and fragment generation
-    virtual void endVertexGeneration() override;
-    virtual void endFragmentGeneration() override;
+    virtual void endVertexGeneration(bool customShader) override;
+    virtual void endFragmentGeneration(bool customShader) override;
     virtual QDemonShaderStageGeneratorInterface &activeStage() override;
     virtual void addInterpolationParameter(const QByteArray &inName, const QByteArray &inType) override;
     virtual void doGenerateUVCoords(quint32 inUVSet) override;

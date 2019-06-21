@@ -79,7 +79,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: leatherFragShader
+            shaders: leatherFragShader
         }
     ]
 }

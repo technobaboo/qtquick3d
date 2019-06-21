@@ -90,7 +90,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: frostedGlassSpFragShader
+            shaders: frostedGlassSpFragShader
             commands: [ DemonCustomMaterialBufferBlit {
                     destination: tempBuffer
                 }, DemonCustomMaterialBufferInput {

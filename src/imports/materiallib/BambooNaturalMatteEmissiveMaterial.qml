@@ -107,7 +107,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: bambooEmissiveFragShader
+            shaders: bambooEmissiveFragShader
         }
     ]
 }

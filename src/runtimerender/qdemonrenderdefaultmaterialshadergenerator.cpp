@@ -1360,8 +1360,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         generateVertexShader();
         generateFragmentShader(theKey);
 
-        vertexGenerator().endVertexGeneration();
-        vertexGenerator().endFragmentGeneration();
+        vertexGenerator().endVertexGeneration(false);
+        vertexGenerator().endFragmentGeneration(false);
 
         return programGenerator()->compileGeneratedShader(generatedShaderString, QDemonShaderCacheProgramFlags(), m_currentFeatureSet);
     }

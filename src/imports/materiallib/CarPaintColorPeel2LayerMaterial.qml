@@ -91,7 +91,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: carpaint2LayerFragShader
+            shaders: carpaint2LayerFragShader
         }
     ]
 }

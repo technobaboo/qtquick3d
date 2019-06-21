@@ -426,7 +426,7 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
                  << "\n";
     }
 
-    void endVertexGeneration() override
+    void endVertexGeneration(bool) override
     {
 
         if (hasTessellation()) {
@@ -445,7 +445,7 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
         }
     }
 
-    void endFragmentGeneration() override { fragment().append("}"); }
+    void endFragmentGeneration(bool) override { fragment().append("}"); }
 
     void addInterpolationParameter(const QByteArray &inName, const QByteArray &inType) override
     {
@@ -641,9 +641,9 @@ struct QDemonXYRectVertexPipeline : public QDemonVertexPipelineImpl
                  << "\n";
     }
 
-    void endVertexGeneration() override { vertex().append("}"); }
+    void endVertexGeneration(bool) override { vertex().append("}"); }
 
-    void endFragmentGeneration() override { fragment().append("}"); }
+    void endFragmentGeneration(bool) override { fragment().append("}"); }
 
     void addInterpolationParameter(const QByteArray &inName, const QByteArray &inType) override
     {
@@ -1500,8 +1500,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 thePipeline.beginVertexGeneration(displacementIdx, displacementImage);
                 thePipeline.beginFragmentGeneration();
                 thePipeline.fragment().append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
-                thePipeline.endVertexGeneration();
-                thePipeline.endFragmentGeneration();
+                thePipeline.endVertexGeneration(false);
+                thePipeline.endFragmentGeneration(false);
                 const char *shaderName = "path depth";
                 if (displacementImage)
                     shaderName = "path depth displacement";
@@ -1522,8 +1522,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 thePipeline.beginVertexGeneration(0, nullptr);
                 thePipeline.beginFragmentGeneration();
                 thePipeline.fragment().append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
-                thePipeline.endVertexGeneration();
-                thePipeline.endFragmentGeneration();
+                thePipeline.endVertexGeneration(false);
+                thePipeline.endFragmentGeneration(false);
                 QDemonShaderCacheProgramFlags theFlags;
                 QDemonRef<QDemonRenderShaderProgram> theProgram = thePipeline.programGenerator()->compileGeneratedShader("path painted depth",
                                                                                                                          theFlags,

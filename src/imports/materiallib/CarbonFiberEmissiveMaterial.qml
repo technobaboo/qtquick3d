@@ -124,7 +124,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: carbonFiberEmissiveFragShader
+            shaders: carbonFiberEmissiveFragShader
         }
     ]
 }

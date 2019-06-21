@@ -166,14 +166,14 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: noopShader
+            shaders: noopShader
             output: dummyBuffer
             commands: [ DemonCustomMaterialBufferBlit {
                     destination: frameBuffer
                 }
             ]
         }, DemonCustomMaterialPass {
-            shader: preBlurShader
+            shaders: preBlurShader
             output: tempBuffer
             commands: [ DemonCustomMaterialBufferInput {
                     buffer: frameBuffer
@@ -181,7 +181,7 @@ DemonCustomMaterial {
                 }
             ]
         }, DemonCustomMaterialPass {
-            shader: blurXShader
+            shaders: blurXShader
             output: blurXBuffer
             commands: [ DemonCustomMaterialBufferInput {
                     buffer: tempBuffer
@@ -189,7 +189,7 @@ DemonCustomMaterial {
                 }
             ]
         }, DemonCustomMaterialPass {
-            shader: blurYShader
+            shaders: blurYShader
             output: blurYBuffer
             commands: [ DemonCustomMaterialBufferInput {
                     buffer: blurXBuffer
@@ -200,7 +200,7 @@ DemonCustomMaterial {
                 }
             ]
         }, DemonCustomMaterialPass {
-            shader: mainShader
+            shaders: mainShader
             commands: [DemonCustomMaterialBufferInput {
                     buffer: blurYBuffer
                     param: "refractiveTexture"

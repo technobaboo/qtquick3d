@@ -44,7 +44,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: porcelainFragShader
+            shaders: porcelainFragShader
         }
     ]
 }

@@ -44,7 +44,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: aluminumAnodizedShader
+            shaders: aluminumAnodizedShader
         }
     ]
 }

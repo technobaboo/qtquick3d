@@ -29,4 +29,4 @@ void main()
 
     totSum /= wtSum;
     gl_FragColor = totSum;
-    // No close paren because the generator adds it for us.
+}

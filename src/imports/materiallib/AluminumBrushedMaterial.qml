@@ -97,7 +97,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: aluminumBrushedFragShader
+            shaders: aluminumBrushedFragShader
         }
     ]
 }

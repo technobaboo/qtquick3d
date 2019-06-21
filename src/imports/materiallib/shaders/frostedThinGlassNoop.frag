@@ -12,3 +12,4 @@ void main()
     // pass, and if you do a buffer blit on a pass that outputs to lower-resolution,
     // it only blits a smaller portion of the backbuffer that occupies that number of
     // pixels.  So we need a dummy no-op pass that is full-res in order to blit everything.
+}

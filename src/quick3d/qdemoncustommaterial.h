@@ -422,7 +422,7 @@ class Q_QUICK3D_EXPORT QDemonCustomMaterialRenderPass : public QObject
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<QDemonCustomMaterialRenderCommand> commands READ commands)
     Q_PROPERTY(QDemonCustomMaterialBuffer *output MEMBER outputBuffer)
-    Q_PROPERTY(QDemonCustomMaterialShader *shader MEMBER shader)
+    Q_PROPERTY(QQmlListProperty<QDemonCustomMaterialShader> shaders READ shaders)
 public:
     QDemonCustomMaterialRenderPass() = default;
     ~QDemonCustomMaterialRenderPass() override = default;
@@ -431,10 +431,16 @@ public:
     static QDemonCustomMaterialRenderCommand *qmlCommandAt(QQmlListProperty<QDemonCustomMaterialRenderCommand> *list, int index);
     static int qmlCommandCount(QQmlListProperty<QDemonCustomMaterialRenderCommand> *list);
 
+    static void qmlAppendShader(QQmlListProperty<QDemonCustomMaterialShader> *list, QDemonCustomMaterialShader *shader);
+    static QDemonCustomMaterialShader *qmlShaderAt(QQmlListProperty<QDemonCustomMaterialShader> *list, int index);
+    static int qmlShaderCount(QQmlListProperty<QDemonCustomMaterialShader> *list);
+    static void qmlShaderClear(QQmlListProperty<QDemonCustomMaterialShader> *list);
+
     QQmlListProperty<QDemonCustomMaterialRenderCommand> commands();
     QVector<QDemonCustomMaterialRenderCommand *> m_commands;
     QDemonCustomMaterialBuffer *outputBuffer = nullptr;
-    QDemonCustomMaterialShader *shader = nullptr;
+    QQmlListProperty<QDemonCustomMaterialShader> shaders();
+    QVarLengthArray<QDemonCustomMaterialShader *, 5> m_shaders { nullptr, nullptr, nullptr, nullptr, nullptr };
 };
 
 class Q_QUICK3D_EXPORT QDemonCustomMaterialShaderInfo : public QObject
@@ -484,7 +490,8 @@ public:
         Shared,
         Vertex,
         Fragment,
-        Geometry
+        Geometry,
+        Compute
     };
     Q_ENUM(Stage)
 

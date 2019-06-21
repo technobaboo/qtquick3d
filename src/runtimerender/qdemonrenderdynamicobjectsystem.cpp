@@ -476,9 +476,9 @@ QDemonRef<QDemonRenderShaderProgram> QDemonDynamicObjectSystem::compileShader(co
 
 QByteArray QDemonDynamicObjectSystem::getShaderSource(const QByteArray &inPath)
 {
-    QByteArray source(QByteArrayLiteral("#define FRAGMENT_SHADER\n"));
-    source.append(doLoadShader(inPath));
-    return source;
+//    QByteArray source(QByteArrayLiteral("#define FRAGMENT_SHADER\n"));
+//    source.append(doLoadShader(inPath));
+    return doLoadShader(inPath);
 }
 
 TShaderAndFlags QDemonDynamicObjectSystem::getShaderProgram(const QByteArray &inPath,

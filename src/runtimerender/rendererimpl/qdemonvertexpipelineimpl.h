@@ -353,10 +353,10 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
 
     void beginVertexGeneration(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage) override = 0;
     void assignOutput(const QByteArray &inVarName, const QByteArray &inVarValueExpr) override = 0;
-    void endVertexGeneration() override = 0;
+    void endVertexGeneration(bool customShader) override = 0;
 
     void beginFragmentGeneration() override = 0;
-    void endFragmentGeneration() override = 0;
+    void endFragmentGeneration(bool customShader) override = 0;
 
     virtual QDemonShaderStageGeneratorInterface &activeStage() = 0;
     virtual void addInterpolationParameter(const QByteArray &inParamName, const QByteArray &inParamType) = 0;

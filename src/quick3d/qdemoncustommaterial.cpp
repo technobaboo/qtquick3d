@@ -342,22 +342,28 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         QByteArray vertex, geometry, fragment, shaderCode;
         if (!m_passes.isEmpty()) {
             for (const auto &pass : qAsConst(m_passes)) {
-                QDemonCustomMaterialShader *shader = pass->shader;
-                if (!shader) {
+                QDemonCustomMaterialShader *sharedShader = pass->m_shaders.at(int(QDemonCustomMaterialShader::Stage::Shared));
+                QDemonCustomMaterialShader *vertShader = pass->m_shaders.at(int(QDemonCustomMaterialShader::Stage::Vertex));
+                QDemonCustomMaterialShader *fragShader = pass->m_shaders.at(int(QDemonCustomMaterialShader::Stage::Fragment));
+                QDemonCustomMaterialShader *geomShader = pass->m_shaders.at(int(QDemonCustomMaterialShader::Stage::Geometry));
+                if (!sharedShader && !vertShader && !fragShader && !geomShader) {
                     qWarning("Pass with no shader attatched!");
                     continue;
                 }
 
-                if (shader->stage != QDemonCustomMaterialShader::Stage::Fragment) {
-                    qWarning("Only fragment shaders supported in passes");
-                    continue;
-                }
-
                 // Build up shader code
-                const QByteArray &shaderName = shader->shader;
+                const QByteArray &shaderName = fragShader ? fragShader->shader : vertShader->shader;
                 Q_ASSERT(!shaderName.isEmpty());
 
-                const QByteArray fragment = resolveShader(shader->shader);
+                if (sharedShader)
+                    shared += resolveShader(sharedShader->shader);
+                if (vertShader)
+                    vertex = resolveShader(vertShader->shader);
+                if (fragShader)
+                    fragment = resolveShader(fragShader->shader);
+                if (geomShader)
+                    geometry = resolveShader(geomShader->shader);
+
                 shaderCode = mergeShaderCode(shared, vertex, geometry, fragment);
 
                 // Bind shader
@@ -472,6 +478,46 @@ QQmlListProperty<QDemonCustomMaterialRenderCommand> QDemonCustomMaterialRenderPa
                                                                QDemonCustomMaterialRenderPass::qmlCommandCount,
                                                                QDemonCustomMaterialRenderPass::qmlCommandAt,
                                                                nullptr);
+}
+
+void QDemonCustomMaterialRenderPass::qmlAppendShader(QQmlListProperty<QDemonCustomMaterialShader> *list, QDemonCustomMaterialShader *shader)
+{
+    if (!shader)
+        return;
+
+    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    that->m_shaders[int(shader->stage)] = shader;
+}
+
+QDemonCustomMaterialShader *QDemonCustomMaterialRenderPass::qmlShaderAt(QQmlListProperty<QDemonCustomMaterialShader> *list, int index)
+{
+    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    return that->m_shaders.at(index);
+}
+
+int QDemonCustomMaterialRenderPass::qmlShaderCount(QQmlListProperty<QDemonCustomMaterialShader> *list)
+{
+    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    return that->m_shaders.count();
+}
+
+void QDemonCustomMaterialRenderPass::qmlShaderClear(QQmlListProperty<QDemonCustomMaterialShader> *list)
+{
+    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    auto it = that->m_shaders.begin();
+    const auto end = that->m_shaders.end();
+    for (;it != end; ++it)
+        *it = nullptr;
+}
+
+QQmlListProperty<QDemonCustomMaterialShader> QDemonCustomMaterialRenderPass::shaders()
+{
+    return QQmlListProperty<QDemonCustomMaterialShader>(this,
+                                                        nullptr,
+                                                        QDemonCustomMaterialRenderPass::qmlAppendShader,
+                                                        QDemonCustomMaterialRenderPass::qmlShaderCount,
+                                                        QDemonCustomMaterialRenderPass::qmlShaderAt,
+                                                        QDemonCustomMaterialRenderPass::qmlShaderClear);
 }
 
 QT_END_NAMESPACE

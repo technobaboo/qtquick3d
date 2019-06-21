@@ -69,7 +69,7 @@ DemonCustomMaterial {
     }
 
     passes: [ DemonCustomMaterialPass {
-            shader: metalFenceFineFragShader
+            shaders: metalFenceFineFragShader
         }
     ]
 }

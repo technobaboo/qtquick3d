@@ -65,7 +65,7 @@ DemonCustomMaterial {
 
     passes: [
         DemonCustomMaterialPass {
-            shader: steelMilledConcentricFragShader
+            shaders: steelMilledConcentricFragShader
         }
     ]
 }
