@@ -166,7 +166,7 @@ void QDemonImage::setPivotU(float pivotu)
         return;
 
     m_pivotu = pivotu;
-    emit piviotUChanged(m_pivotu);
+    emit pivotUChanged(m_pivotu);
     update();
 }
 
@@ -176,7 +176,7 @@ void QDemonImage::setPivotV(float pivotv)
         return;
 
     m_pivotv = pivotv;
-    emit piviotVChanged(m_pivotv);
+    emit pivotVChanged(m_pivotv);
     update();
 }
 

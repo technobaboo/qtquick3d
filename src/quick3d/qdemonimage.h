@@ -19,8 +19,8 @@ class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
     Q_PROPERTY(float rotationUV READ rotationUV WRITE setRotationUV NOTIFY rotationUVChanged)
     Q_PROPERTY(float positionU READ positionU WRITE setPositionU NOTIFY positionUChanged)
     Q_PROPERTY(float positionV READ positionV WRITE setPositionV NOTIFY positionVChanged)
-    Q_PROPERTY(float pivotU READ pivotU WRITE setPivotU NOTIFY piviotUChanged)
-    Q_PROPERTY(float pivotV READ pivotV WRITE setPivotV NOTIFY piviotVChanged)
+    Q_PROPERTY(float pivotU READ pivotU WRITE setPivotU NOTIFY pivotUChanged)
+    Q_PROPERTY(float pivotV READ pivotV WRITE setPivotV NOTIFY pivotVChanged)
 
 public:
     enum MappingMode
@@ -81,8 +81,8 @@ Q_SIGNALS:
     void rotationUVChanged(float rotationuv);
     void positionUChanged(float positionu);
     void positionVChanged(float positionv);
-    void piviotUChanged(float pivotu);
-    void piviotVChanged(float pivotv);
+    void pivotUChanged(float pivotu);
+    void pivotVChanged(float pivotv);
 
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
