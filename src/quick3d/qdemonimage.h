@@ -73,16 +73,16 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void sourceChanged(const QUrl &source);
-    void scaleUChanged(float scaleu);
-    void scaleVChanged(float scalev);
-    void mappingModeChanged(MappingMode mappingmode);
-    void horizontalTilingChanged(TilingMode tilingmodehorz);
-    void verticalTilingChanged(TilingMode tilingmodevert);
-    void rotationUVChanged(float rotationuv);
-    void positionUChanged(float positionu);
-    void positionVChanged(float positionv);
-    void pivotUChanged(float pivotu);
-    void pivotVChanged(float pivotv);
+    void scaleUChanged(float scaleU);
+    void scaleVChanged(float scaleV);
+    void mappingModeChanged(MappingMode mappingMode);
+    void horizontalTilingChanged(TilingMode tilingModeHorizontal);
+    void verticalTilingChanged(TilingMode tilingModeVertical);
+    void rotationUVChanged(float rotationUV);
+    void positionUChanged(float positionU);
+    void positionVChanged(float positionV);
+    void pivotUChanged(float pivotU);
+    void pivotVChanged(float pivotV);
 
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
