@@ -31,7 +31,7 @@ private:
     void checkForResourceFiles(GraphObject *object);
     void generateMaterialComponent(GraphObject *object);
     void generateAliasComponent(GraphObject *reference);
-    void generateAnimationTimeLine(GraphObject *layer, QTextStream &output, int tabLevel);
+    void generateAnimationTimeLine(GraphObject *object, Slide *masterSlide, QTextStream &output, int tabLevel);
     void generateComponent(GraphObject *component);
     void writeHeader(QTextStream &output);
 

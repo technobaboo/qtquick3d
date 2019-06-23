@@ -156,7 +156,7 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
                 }
 
                 // Generate Animation Timeline
-                generateAnimationTimeLine(obj, output, tabLevel + 1);
+                generateAnimationTimeLine(obj, m_presentation->masterSlide(), output, tabLevel + 1);
 
 
             } else if (obj->type() == GraphObject::Model) {
@@ -311,14 +311,14 @@ QSet<GraphObject*> getSubtreeItems(GraphObject *node)
 
 }
 
-void UipImporter::generateAnimationTimeLine(GraphObject *layer, QTextStream &output, int tabLevel)
+void UipImporter::generateAnimationTimeLine(GraphObject *object, Slide *masterSlide, QTextStream &output, int tabLevel)
 {
     // Get a list off all animations for the master and first slide
-    auto animations = m_presentation->masterSlide()->animations();
-    auto firstSlide = static_cast<Slide*>(m_presentation->masterSlide()->firstChild());
+    auto animations = masterSlide->animations();
+    auto firstSlide = static_cast<Slide*>(masterSlide->firstChild());
     animations.append(firstSlide->animations());
 
-    auto layerItems = getSubtreeItems(layer);
+    auto layerItems = getSubtreeItems(object);
     if (layerItems.isEmpty())
         return;
 
@@ -331,8 +331,8 @@ void UipImporter::generateAnimationTimeLine(GraphObject *layer, QTextStream &out
         pingPong = QStringLiteral("true");
     }
 
-    float startFrame = layer->startTime();
-    float endFrame = layer->endTime();
+    float startFrame = object->startTime();
+    float endFrame = object->endTime();
 
     output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Timeline {") << endl;
     output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("startFrame: ") << startFrame << endl;
@@ -384,7 +384,9 @@ void UipImporter::generateComponent(GraphObject *component)
 
     processNode(component->firstChild(), output, 1);
 
-    // Keyframes
+    // Generate Animation Timeline
+    auto componentNode = static_cast<ComponentNode*>(component);
+    generateAnimationTimeLine(componentNode, componentNode->m_masterSlide, output, 1);
 
     // Footer
     component->writeQmlFooter(output, 0);
