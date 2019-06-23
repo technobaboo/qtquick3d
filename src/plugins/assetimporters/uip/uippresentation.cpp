@@ -1948,7 +1948,7 @@ void ComponentNode::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void ComponentNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    Node::writeQmlHeader(output, tabLevel);
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QDemonQmlUtilities::qmlComponentName(m_id) << QStringLiteral(" {") << endl;
 }
 
 void ComponentNode::writeQmlProperties(QTextStream &output, int tabLevel)

@@ -136,7 +136,8 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
             obj->writeQmlProperties(output, tabLevel + 1);
             output << endl;
 
-            processNode(obj->firstChild(), output, tabLevel + 1);
+            if (obj->type() != GraphObject::Component)
+                processNode(obj->firstChild(), output, tabLevel + 1);
 
             if (obj->type() == GraphObject::Layer) {
                 // effects array
@@ -179,6 +180,8 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
                 m_referencedMaterials.append(static_cast<ReferencedMaterial *>(obj));
             } else if (obj->type() == GraphObject::Alias) {
                 m_aliasNodes.append(static_cast<AliasNode*>(obj));
+            } else if (obj->type() == GraphObject::Component) {
+                m_componentNodes.append(static_cast<ComponentNode*>(obj));
             }
 
             checkForResourceFiles(obj);
@@ -363,6 +366,33 @@ void UipImporter::generateAnimationTimeLine(GraphObject *layer, QTextStream &out
     output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl;
 }
 
+void UipImporter::generateComponent(GraphObject *component)
+{
+    QString componentName = QDemonQmlUtilities::qmlComponentName(component->qmlId());
+    QString targetFileName = m_exportPath.absolutePath() + QDir::separator() + componentName + QStringLiteral(".qml");
+    QFile componentFile(targetFileName);
+    if (!componentFile.open(QIODevice::WriteOnly)) {
+        qWarning() << "Could not write to file: " << componentFile;
+        return;
+    }
+
+    QTextStream output(&componentFile);
+    writeHeader(output);
+
+    output << QStringLiteral("DemonNode {") << endl;
+    component->writeQmlProperties(output, 1);
+
+    processNode(component->firstChild(), output, 1);
+
+    // Keyframes
+
+    // Footer
+    component->writeQmlFooter(output, 0);
+
+    componentFile.close();
+    m_generatedFiles += targetFileName;
+}
+
 void UipImporter::writeHeader(QTextStream &output)
 {
     output << "import QtDemon 1.0" << endl;
@@ -383,6 +413,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
 {
     m_referencedMaterials.clear();
     m_aliasNodes.clear();
+    m_componentNodes.clear();
     m_presentation = presentation;
 
     // Apply the properties of the first slide before running generator
@@ -432,7 +463,12 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
     }
 
 
-    // Generate Alias, and ReferenceMaterials (2nd pass)
+    // Generate Alias, Components, and ReferenceMaterials (2nd pass)
+    // Use iterators because generateComponent can contain additional nested components
+    QVector<ComponentNode *>::iterator componentIterator;
+    for (componentIterator = m_componentNodes.begin(); componentIterator != m_componentNodes.end(); ++componentIterator)
+        generateComponent(*componentIterator);
+
     for (auto material : m_referencedMaterials) {
         QString id = material->m_referencedMaterial_unresolved;
         if (id.startsWith("#"))
