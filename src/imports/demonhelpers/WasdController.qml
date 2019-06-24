@@ -13,6 +13,7 @@ Item {
     property real downSpeed: 5
     property real xSpeed: 0.1
     property real ySpeed: 0.1
+    property real shiftSpeed: 3
 
     property bool xInvert: false
     property bool yInvert: true
@@ -96,6 +97,14 @@ Item {
         status.moveDown = false
     }
 
+    function shiftPressed() {
+        status.shiftDown = true
+    }
+
+    function shiftReleased() {
+        status.shiftDown = false
+    }
+
     function handleKeyPress(event)
     {
         switch (event.key) {
@@ -122,6 +131,9 @@ Item {
         case Qt.Key_F:
         case Qt.Key_PageDown:
             wasdController.downPressed();
+            break;
+        case Qt.Key_Shift:
+            wasdController.shiftPressed();
             break;
         }
     }
@@ -153,6 +165,9 @@ Item {
         case Qt.Key_PageDown:
             wasdController.downReleased();
             break;
+        case Qt.Key_Shift:
+            wasdController.shiftReleased();
+            break;
         }
     }
 
@@ -165,6 +180,7 @@ Item {
         property bool moveRight: false
         property bool moveUp: false
         property bool moveDown: false
+        property bool shiftDown: false
         property bool useMouse: false
         property bool moving: moveForward | moveBack | moveLeft | moveRight | moveUp | moveDown | useMouse
 
@@ -173,6 +189,9 @@ Item {
 
         function updatePosition(vector, speed, position)
         {
+            if (shiftDown)
+                speed *= shiftSpeed;
+
             var direction = vector;
             var velocity = Qt.vector3d(direction.x * speed,
                                        direction.y * speed,
