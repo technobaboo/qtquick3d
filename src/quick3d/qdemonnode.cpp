@@ -148,8 +148,20 @@ void QDemonNode::setPosition(QVector3D position)
     if (m_position == position)
         return;
 
+    const bool xUnchanged = qFuzzyCompare(position.x(), m_position.x());
+    const bool yUnchanged = qFuzzyCompare(position.y(), m_position.y());
+    const bool zUnchanged = qFuzzyCompare(position.z(), m_position.z());
+
     m_position = position;
     emit positionChanged(m_position);
+
+    if (!xUnchanged)
+        emit xChanged(m_position.x());
+    if (!yUnchanged)
+        emit yChanged(m_position.y());
+    if (!zUnchanged)
+        emit zChanged(m_position.z());
+
     update();
 }
 
