@@ -250,7 +250,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     {
     }
 
-    QDemonRef<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
+    const QDemonRef<QDemonShaderProgramGeneratorInterface> &programGenerator() { return m_programGenerator; }
     QDemonDefaultMaterialVertexPipelineInterface &vertexGenerator() { return *m_currentPipeline; }
     QDemonShaderStageGeneratorInterface &fragmentGenerator()
     {
@@ -354,7 +354,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     ///< get the light constant buffer and generate if necessary
     QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(const QByteArray &name, qint32 inLightCount)
     {
-        QDemonRef<QDemonRenderContext> theContext(m_renderContext->renderContext());
+        const QDemonRef<QDemonRenderContext> &theContext(m_renderContext->renderContext());
 
         // we assume constant buffer support
         Q_ASSERT(inLightCount >= 0);
@@ -364,21 +364,19 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             return nullptr;
 
         QDemonRef<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(name);
+        if (pCB)
+            return pCB;
 
-        if (!pCB) {
-            // create with size of all structures + int for light count
-            const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
-            quint8 stackData[size];
-            memset(stackData, 0, 4 * sizeof(qint32));
-            new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
-            QDemonByteView cBuffer(stackData, size);
-            pCB = new QDemonRenderConstantBuffer(theContext, name, QDemonRenderBufferUsageType::Static, cBuffer);
-            if (!pCB) {
-                Q_ASSERT(false);
-                return nullptr;
-            }
-
-            m_constantBuffers.insert(name, pCB);
+        // create with size of all structures + int for light count
+        const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
+        quint8 stackData[size];
+        memset(stackData, 0, 4 * sizeof(qint32));
+        new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
+        QDemonByteView cBuffer(stackData, size);
+        pCB = *m_constantBuffers.insert(name, new QDemonRenderConstantBuffer(theContext, name, QDemonRenderBufferUsageType::Static, cBuffer));
+        if (Q_UNLIKELY(!pCB)) {
+            Q_ASSERT(false);
+            return nullptr;
         }
 
         return pCB;
@@ -386,7 +384,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
     bool generateVertexShader(QDemonShaderDefaultMaterialKey &, const QByteArray &inShaderPathName)
     {
-        QDemonRef<QDemonDynamicObjectSystem> theDynamicSystem(m_renderContext->dynamicObjectSystem());
+        const QDemonRef<QDemonDynamicObjectSystem> &theDynamicSystem(m_renderContext->dynamicObjectSystem());
         QByteArray vertSource = theDynamicSystem->getShaderSource(inShaderPathName);
 
         Q_ASSERT(!vertSource.isEmpty());
@@ -437,7 +435,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                                    QDemonRef<QDemonShaderGeneratorGeneratedShader>(
                                                            new QDemonShaderGeneratorGeneratedShader(inProgram)));
 
-        return inserter.value();
+        return *inserter;
     }
 
     virtual QDemonRef<QDemonShaderLightProperties> setLight(const QDemonRef<QDemonRenderShaderProgram> &inShader,
@@ -448,14 +446,14 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                                             qint32 shadowIdx,
                                                             float shadowDist)
     {
-        QDemonRef<QDemonShaderLightProperties> theLightEntry;
-        for (int idx = 0, end = m_lightEntries.size(); idx < end && theLightEntry == nullptr; ++idx) {
-            if (m_lightEntries[idx].first == lightIdx && m_lightEntries[idx].second->m_shader == inShader
-                && m_lightEntries[idx].second->m_lightType == inLight->m_lightType) {
-                theLightEntry = m_lightEntries[idx].second;
-            }
+        auto it = m_lightEntries.cbegin();
+        const auto end = m_lightEntries.cend();
+        for (; it != end; ++it) {
+            if (it->first == lightIdx && it->second->m_shader == inShader && it->second->m_lightType == inLight->m_lightType)
+                break;
         }
-        if (theLightEntry == nullptr) {
+
+        if (it == end) {
             // create a new name
 #if 0
             QString lightName;
@@ -468,19 +466,17 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             lightName.append(QString::fromLocal8Bit(buf));
 #endif
 
-            QDemonRef<QDemonShaderLightProperties> theNewEntry(
-                    new QDemonShaderLightProperties(QDemonShaderLightProperties::createLightEntry(inShader)));
-            m_lightEntries.push_back(TCustomMaterialLightEntry(lightIdx, theNewEntry));
-            theLightEntry = theNewEntry;
+            m_lightEntries.push_back(TCustomMaterialLightEntry(lightIdx, new QDemonShaderLightProperties(QDemonShaderLightProperties::createLightEntry(inShader))));
+            it = m_lightEntries.cend() - 1;
         }
-        theLightEntry->set(inLight);
-        theLightEntry->m_lightData.shadowControls = QVector4D(inLight->m_shadowBias, inLight->m_shadowFactor, shadowDist, 0.0);
-        theLightEntry->m_lightData.shadowIdx = (inShadow) ? shadowIdx : -1;
+        it->second->set(inLight);
+        it->second->m_lightData.shadowControls = QVector4D(inLight->m_shadowBias, inLight->m_shadowFactor, shadowDist, 0.0);
+        it->second->m_lightData.shadowIdx = (inShadow) ? shadowIdx : -1;
 
-        return theLightEntry;
+        return it->second;
     }
 
-    void setShadowMaps(QDemonRef<QDemonRenderShaderProgram> inProgram,
+    void setShadowMaps(const QDemonRef<QDemonRenderShaderProgram> &inProgram,
                        QDemonShadowMapEntry *inShadow,
                        qint32 &numShadowMaps,
                        qint32 &numShadowCubes,
@@ -508,7 +504,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                              const QVector<QVector3D> &,
                              const QDemonRef<QDemonRenderShadowMap> &inShadowMaps)
     {
-        QDemonRef<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
+        const QDemonRef<QDemonShaderGeneratorGeneratedShader> &theShader(getShaderForProgram(inProgram));
         m_renderContext->renderContext()->setActiveShader(inProgram);
 
         QDemonRenderCamera &theCamera(inCamera);
@@ -534,8 +530,8 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         theShader->m_aoShadowParams.set();
 
         if (m_renderContext->renderContext()->supportsConstantBuffer()) {
-            QDemonRef<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer(QByteArrayLiteral("cbBufferLights"), inLights.size());
-            QDemonRef<QDemonRenderConstantBuffer> pAreaLightCb = getLightConstantBuffer(QByteArrayLiteral("cbBufferAreaLights"), inLights.size());
+            const QDemonRef<QDemonRenderConstantBuffer> &pLightCb = getLightConstantBuffer(QByteArrayLiteral("cbBufferLights"), inLights.size());
+            const QDemonRef<QDemonRenderConstantBuffer> &pAreaLightCb = getLightConstantBuffer(QByteArrayLiteral("cbBufferAreaLights"), inLights.size());
 
             // Split the count between CG lights and area lights
             for (int lightIdx = 0; lightIdx < inLights.size() && pLightCb; ++lightIdx) {
@@ -553,13 +549,13 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                               theShader->m_shadowCubes);
 
                 if (inLights[lightIdx]->m_lightType == QDemonRenderLight::Type::Area) {
-                    QDemonRef<QDemonShaderLightProperties> theAreaLightEntry = setLight(inProgram,
-                                                                                        lightIdx,
-                                                                                        areaLights,
-                                                                                        inLights[lightIdx],
-                                                                                        theShadow,
-                                                                                        shdwIdx,
-                                                                                        inCamera.clipFar);
+                    const QDemonRef<QDemonShaderLightProperties> &theAreaLightEntry = setLight(inProgram,
+                                                                                               lightIdx,
+                                                                                               areaLights,
+                                                                                               inLights[lightIdx],
+                                                                                               theShadow,
+                                                                                               shdwIdx,
+                                                                                               inCamera.clipFar);
 
                     if (theAreaLightEntry && pAreaLightCb) {
                         pAreaLightCb->updateRaw(areaLights * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
@@ -568,13 +564,13 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
                     areaLights++;
                 } else {
-                    QDemonRef<QDemonShaderLightProperties> theLightEntry = setLight(inProgram,
-                                                                                    lightIdx,
-                                                                                    cgLights,
-                                                                                    inLights[lightIdx],
-                                                                                    theShadow,
-                                                                                    shdwIdx,
-                                                                                    inCamera.clipFar);
+                    const QDemonRef<QDemonShaderLightProperties> &theLightEntry = setLight(inProgram,
+                                                                                           lightIdx,
+                                                                                           cgLights,
+                                                                                           inLights[lightIdx],
+                                                                                           theShadow,
+                                                                                           shdwIdx,
+                                                                                           inCamera.clipFar);
 
                     if (theLightEntry && pLightCb) {
                         pLightCb->updateRaw(cgLights * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
@@ -614,7 +610,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                               theShader->m_shadowMaps,
                               theShader->m_shadowCubes);
 
-                QDemonRef<QDemonShaderLightProperties> p = setLight(inProgram, lightIdx, areaLights, inLights[lightIdx], theShadow, shdwIdx, inCamera.clipFar);
+                const QDemonRef<QDemonShaderLightProperties> &p = setLight(inProgram, lightIdx, areaLights, inLights[lightIdx], theShadow, shdwIdx, inCamera.clipFar);
                 if (inLights[lightIdx]->m_lightType == QDemonRenderLight::Type::Area)
                     alprop.push_back(p);
                 else
@@ -660,8 +656,8 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                float inProbe2Fade,
                                float inProbeFOV)
     {
-        QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->customMaterialSystem());
-        QDemonRef<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
+        const QDemonRef<QDemonMaterialSystem> &theMaterialSystem(m_renderContext->customMaterialSystem());
+        const QDemonRef<QDemonShaderGeneratorGeneratedShader> &theShader(getShaderForProgram(inProgram));
 
         theShader->m_viewProjMatrix.set(inModelViewProjection);
         theShader->m_normalMatrix.set(inNormalMatrix);
@@ -921,7 +917,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                 const QByteArray &inShaderPathName,
                                 bool hasCustomVertShader)
     {
-        QDemonRef<QDemonDynamicObjectSystem> theDynamicSystem(m_renderContext->dynamicObjectSystem());
+        const QDemonRef<QDemonDynamicObjectSystem> &theDynamicSystem(m_renderContext->dynamicObjectSystem());
         QByteArray fragSource = theDynamicSystem->getShaderSource(inShaderPathName);
 
         Q_ASSERT(!fragSource.isEmpty());

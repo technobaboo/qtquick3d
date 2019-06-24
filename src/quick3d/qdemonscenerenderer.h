@@ -21,7 +21,7 @@ class QDemonSceneRenderer
 {
 public:
     struct FramebufferObject {
-        FramebufferObject(const QSize &s, QDemonRef<QDemonRenderContext> context);
+        FramebufferObject(const QSize &s, const QDemonRef<QDemonRenderContext> &context);
         ~FramebufferObject();
         QSize size;
         QDemonRef<QDemonRenderContext> renderContext;

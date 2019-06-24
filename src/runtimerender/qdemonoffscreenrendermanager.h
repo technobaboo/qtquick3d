@@ -187,9 +187,9 @@ public:
     // returns true if the renderer has not been registered.
     // No return value means there was an error registering this id.
     QDemonOption<bool> maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                                              QDemonRef<QDemonOffscreenRendererInterface> inRenderer);
+                                                              const QDemonRef<QDemonOffscreenRendererInterface> &inRenderer);
     void registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                           QDemonRef<QDemonOffscreenRendererInterface> inRenderer);
+                                           const QDemonRef<QDemonOffscreenRendererInterface> &inRenderer);
     bool hasOffscreenRenderer(const QDemonOffscreenRendererKey &inKey);
     QDemonRef<QDemonOffscreenRendererInterface> getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey);
     void releaseOffscreenRenderer(const QDemonOffscreenRendererKey &inKey);

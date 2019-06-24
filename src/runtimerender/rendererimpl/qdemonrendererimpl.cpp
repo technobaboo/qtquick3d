@@ -188,13 +188,13 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
 
     buildRenderableLayers(inLayer, renderableLayers, inRenderSiblings);
 
-    QDemonRef<QDemonRenderContext> theRenderContext(m_demonContext->renderContext());
+    const QDemonRef<QDemonRenderContext> &theRenderContext(m_demonContext->renderContext());
     QDemonRef<QDemonRenderFrameBuffer> theFB = theRenderContext->renderTarget();
-    auto iter = renderableLayers.rbegin();
-    const auto end = renderableLayers.rend();
+    auto iter = renderableLayers.crbegin();
+    const auto end = renderableLayers.crend();
     for (; iter != end; ++iter) {
         QDemonRenderLayer *theLayer = *iter;
-        QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
+        const QDemonRef<QDemonLayerRenderData> &theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
         QDemonLayerRenderPreparationResult &prepRes(*theRenderData->layerPrepResult);
         QDemonRenderLayer::BlendMode layerBlend = prepRes.layer()->getLayerBlend();
 #ifdef ADVANCED_BLEND_SW_FALLBACK
@@ -229,10 +229,10 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
 #endif
     }
 
-    for (iter = renderableLayers.rbegin(); iter != end; ++iter) {
+    for (iter = renderableLayers.crbegin(); iter != end; ++iter) {
         // Store the previous state of if we were rendering a layer.
         QDemonRenderLayer *theLayer = *iter;
-        QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
+        const QDemonRef<QDemonLayerRenderData> &theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (Q_LIKELY(theRenderData)) {
             // Make sure that we don't clear the window, when requested not to.
@@ -261,26 +261,24 @@ QDemonRef<QDemonLayerRenderData> QDemonRendererImpl::getOrCreateLayerRenderDataF
 {
     const QDemonRenderLayer *theLayer = layerForNode(inNode);
     if (theLayer) {
-        const auto theIter = m_instanceRenderMap.constFind(combineLayerAndId(theLayer, id));
-        if (theIter != m_instanceRenderMap.cend())
-            return QDemonRef<QDemonLayerRenderData>(theIter.value());
+        auto it = m_instanceRenderMap.constFind(combineLayerAndId(theLayer, id));
+        if (it != m_instanceRenderMap.cend())
+            return it.value();
 
-        QDemonRef<QDemonLayerRenderData> theRenderData = QDemonRef<QDemonLayerRenderData>(
-                new QDemonLayerRenderData(const_cast<QDemonRenderLayer &>(*theLayer), this));
-        m_instanceRenderMap.insert(combineLayerAndId(theLayer, id), theRenderData);
+        it = m_instanceRenderMap.insert(combineLayerAndId(theLayer, id), new QDemonLayerRenderData(const_cast<QDemonRenderLayer &>(*theLayer), this));
 
         // create a profiler if enabled
-        if (isLayerGpuProfilingEnabled() && theRenderData)
-            theRenderData->createGpuProfiler();
+        if (isLayerGpuProfilingEnabled() && it.value())
+            it.value()->createGpuProfiler();
 
-        return theRenderData;
+        return *it;
     }
     return nullptr;
 }
 
 QDemonRenderCamera *QDemonRendererImpl::cameraForNode(const QDemonRenderNode &inNode) const
 {
-    QDemonRef<QDemonLayerRenderData> theLayer = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
+    const QDemonRef<QDemonLayerRenderData> &theLayer = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
     if (theLayer)
         return theLayer->camera;
     return nullptr;
@@ -290,7 +288,7 @@ QDemonOption<QDemonCuboidRect> QDemonRendererImpl::cameraBounds(const QDemonRend
 {
     if (inObject.isNodeType()) {
         const QDemonRenderNode &theNode = static_cast<const QDemonRenderNode &>(inObject);
-        QDemonRef<QDemonLayerRenderData> theLayer = getOrCreateLayerRenderDataForNode(theNode);
+        const QDemonRef<QDemonLayerRenderData> &theLayer = getOrCreateLayerRenderDataForNode(theNode);
         if (!theLayer->usesOffscreenRenderer()) {
             QDemonRenderCamera *theCamera = theLayer->camera;
             if (theCamera)
@@ -391,10 +389,10 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
 
 void QDemonRendererImpl::setupWidgetLayer()
 {
-    QDemonRef<QDemonRenderContext> theContext = m_demonContext->renderContext();
+    const QDemonRef<QDemonRenderContext> &theContext = m_demonContext->renderContext();
 
     if (!m_widgetTexture) {
-        QDemonRef<QDemonResourceManager> theManager = m_demonContext->resourceManager();
+        const QDemonRef<QDemonResourceManager> &theManager = m_demonContext->resourceManager();
         m_widgetTexture = theManager->allocateTexture2D(m_beginFrameViewport.width(),
                                                         m_beginFrameViewport.height(),
                                                         QDemonRenderTextureFormat::RGBA8);
@@ -454,7 +452,7 @@ void QDemonRendererImpl::endFrame()
         theCamera.calculateViewProjectionMatrix(theViewProj);
         renderQuad(theTextureDims, theViewProj, *m_widgetTexture);
 
-        QDemonRef<QDemonResourceManager> theManager(m_demonContext->resourceManager());
+        const QDemonRef<QDemonResourceManager> &theManager(m_demonContext->resourceManager());
         theManager->release(m_widgetFbo);
         theManager->release(m_widgetTexture);
         m_widgetTexture = nullptr;
@@ -664,7 +662,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonRenderNode &inNod
                                                          QDemonDataView<QDemonRenderGraphObject *> inMapperObjects,
                                                          QDemonRenderBasisPlanes inPlane)
 {
-    QDemonRef<QDemonLayerRenderData> theLayerData = getOrCreateLayerRenderDataForNode(inNode);
+    const QDemonRef<QDemonLayerRenderData> &theLayerData = getOrCreateLayerRenderDataForNode(inNode);
     if (theLayerData == nullptr)
         return QDemonEmpty();
     // This function assumes the layer was rendered to the scene itself.  There is another
@@ -742,7 +740,7 @@ QDemonRenderPickResult QDemonRendererImpl::pickOffscreenLayer(QDemonRenderLayer 
 QVector3D QDemonRendererImpl::unprojectToPosition(QDemonRenderNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const
 {
     // Translate mouse into layer's coordinates
-    QDemonRef<QDemonLayerRenderData> theData = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
+    const QDemonRef<QDemonLayerRenderData> &theData = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->camera == nullptr) {
         return QVector3D(0, 0, 0);
     } // Q_ASSERT( false ); return QVector3D(0,0,0); }
@@ -759,7 +757,7 @@ QVector3D QDemonRendererImpl::unprojectToPosition(QDemonRenderNode &inNode, QVec
 QVector3D QDemonRendererImpl::unprojectWithDepth(QDemonRenderNode &inNode, QVector3D &, const QVector3D &inMouseVec) const
 {
     // Translate mouse into layer's coordinates
-    QDemonRef<QDemonLayerRenderData> theData = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
+    const QDemonRef<QDemonLayerRenderData> &theData = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->camera == nullptr) {
         return QVector3D(0, 0, 0);
     } // Q_ASSERT( false ); return QVector3D(0,0,0); }
@@ -784,7 +782,7 @@ QVector3D QDemonRendererImpl::unprojectWithDepth(QDemonRenderNode &inNode, QVect
 QVector3D QDemonRendererImpl::projectPosition(QDemonRenderNode &inNode, const QVector3D &inPosition) const
 {
     // Translate mouse into layer's coordinates
-    QDemonRef<QDemonLayerRenderData> theData = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
+    const QDemonRef<QDemonLayerRenderData> &theData = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->camera == nullptr) {
         return QVector3D(0, 0, 0);
     }
@@ -821,7 +819,7 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonR
                                                                          const QVector2D &inMouseCoords,
                                                                          const QSize &inPickDims)
 {
-    QDemonRef<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inLayer);
+    const QDemonRef<QDemonLayerRenderData> &theData = getOrCreateLayerRenderDataForNode(inLayer);
     if (Q_UNLIKELY(theData == nullptr || theData->camera == nullptr)) {
         Q_ASSERT(false);
         return QDemonEmpty();
@@ -1175,33 +1173,29 @@ QDemonRef<QDemonShaderGeneratorGeneratedShader> QDemonRendererImpl::getShader(QD
         Q_ASSERT(false);
         return nullptr;
     }
-    const auto theFind = m_shaders.constFind(inRenderable.shaderDescription);
-    QDemonRef<QDemonShaderGeneratorGeneratedShader> retval = nullptr;
-    if (theFind == m_shaders.cend()) {
+    auto shaderIt = m_shaders.constFind(inRenderable.shaderDescription);
+    if (shaderIt == m_shaders.cend()) {
         // Generate the shader.
-        QDemonRef<QDemonRenderShaderProgram> theShader(generateShader(inRenderable, inFeatureSet));
+        const QDemonRef<QDemonRenderShaderProgram> &theShader(generateShader(inRenderable, inFeatureSet));
         if (theShader) {
             QDemonRef<QDemonShaderGeneratorGeneratedShader> theGeneratedShader = QDemonRef<QDemonShaderGeneratorGeneratedShader>(
                     new QDemonShaderGeneratorGeneratedShader(m_generatedShaderString, theShader));
-            m_shaders.insert(inRenderable.shaderDescription, theGeneratedShader);
-            retval = theGeneratedShader;
+            shaderIt = m_shaders.insert(inRenderable.shaderDescription, theGeneratedShader);
         } else {
             // We still insert something because we don't to attempt to generate the same bad shader
             // twice.
-            m_shaders.insert(inRenderable.shaderDescription, nullptr);
+            shaderIt = m_shaders.insert(inRenderable.shaderDescription, nullptr);
         }
-    } else {
-        retval = theFind.value();
     }
 
-    if (retval != nullptr) {
+    if (!shaderIt->isNull()) {
         if (m_currentLayer && m_currentLayer->camera) {
             QDemonRenderCamera &theCamera(*m_currentLayer->camera);
             if (!m_currentLayer->cameraDirection.hasValue())
                 m_currentLayer->cameraDirection = theCamera.getScalingCorrectDirection();
         }
     }
-    return retval;
+    return *shaderIt;
 }
 static QVector3D g_fullScreenRectFace[] = {
     QVector3D(-1, -1, 0),
@@ -1406,54 +1400,47 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getOrCreateVertexBuffer(
                                                                                 quint32 stride,
                                                                                 QDemonByteView bufferData)
 {
-    QDemonRef<QDemonRenderVertexBuffer> retval = getVertexBuffer(inStr);
+    const QDemonRef<QDemonRenderVertexBuffer> &retval = getVertexBuffer(inStr);
     if (retval) {
         // we update the buffer
         retval->updateBuffer(bufferData);
         return retval;
     }
-    retval = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, stride, bufferData);
-    m_widgetVertexBuffers.insert(inStr, retval);
-    return retval;
+
+    return *m_widgetVertexBuffers.insert(inStr, new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, stride, bufferData));
 }
 QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getOrCreateIndexBuffer(const QByteArray &inStr,
                                                                               QDemonRenderComponentType componentType,
                                                                               QDemonByteView bufferData)
 {
-    QDemonRef<QDemonRenderIndexBuffer> retval = getIndexBuffer(inStr);
+    const QDemonRef<QDemonRenderIndexBuffer> &retval = getIndexBuffer(inStr);
     if (retval) {
         // we update the buffer
         retval->updateBuffer(bufferData);
         return retval;
     }
 
-    retval = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, componentType, bufferData);
-    m_widgetIndexBuffers.insert(inStr, retval);
-    return retval;
+    return *m_widgetIndexBuffers.insert(inStr, new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, componentType, bufferData));;
 }
 
 QDemonRef<QDemonRenderAttribLayout> QDemonRendererImpl::createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs)
 {
     // create our attribute layout
-    QDemonRef<QDemonRenderAttribLayout> theAttribLayout = m_context->createAttributeLayout(attribs);
-    return theAttribLayout;
+    return m_context->createAttributeLayout(attribs);
 }
 
-QDemonRef<QDemonRenderInputAssembler> QDemonRendererImpl::getOrCreateInputAssembler(
-        const QByteArray &inStr,
-        QDemonRef<QDemonRenderAttribLayout> attribLayout,
-        QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
-        const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
-        QDemonDataView<quint32> strides,
-        QDemonDataView<quint32> offsets)
+QDemonRef<QDemonRenderInputAssembler> QDemonRendererImpl::getOrCreateInputAssembler(const QByteArray &inStr,
+                                                                                    const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
+                                                                                    QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                                                                                    const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
+                                                                                    QDemonDataView<quint32> strides,
+                                                                                    QDemonDataView<quint32> offsets)
 {
-    QDemonRef<QDemonRenderInputAssembler> retval = getInputAssembler(inStr);
+    const QDemonRef<QDemonRenderInputAssembler> &retval = getInputAssembler(inStr);
     if (retval)
         return retval;
 
-    retval = m_context->createInputAssembler(attribLayout, buffers, indexBuffer, strides, offsets);
-    m_widgetInputAssembler.insert(inStr, retval);
-    return retval;
+    return *m_widgetInputAssembler.insert(inStr, m_context->createInputAssembler(attribLayout, buffers, indexBuffer, strides, offsets));
 }
 
 QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getVertexBuffer(const QByteArray &inStr) const
@@ -1490,13 +1477,13 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::getShader(const QByteAr
 
 QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::compileAndStoreShader(const QByteArray &inStr)
 {
-    QDemonRef<QDemonRenderShaderProgram> newProgram = getProgramGenerator()->compileGeneratedShader(inStr);
+    const QDemonRef<QDemonRenderShaderProgram> &newProgram = getProgramGenerator()->compileGeneratedShader(inStr);
     if (newProgram)
         m_widgetShaders.insert(inStr, newProgram);
     return newProgram;
 }
 
-QDemonRef<QDemonShaderProgramGeneratorInterface> QDemonRendererImpl::getProgramGenerator()
+const QDemonRef<QDemonShaderProgramGeneratorInterface> &QDemonRendererImpl::getProgramGenerator()
 {
     return m_demonContext->shaderProgramGenerator();
 }

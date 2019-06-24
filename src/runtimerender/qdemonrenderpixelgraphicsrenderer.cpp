@@ -138,7 +138,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
     }
     void generateXYQuad()
     {
-        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+        const QDemonRef<QDemonRenderContext> &theRenderContext(m_renderContext->renderContext());
 
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 2),
@@ -219,7 +219,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
     void render(const QVector<QDemonPGGraphObject *> &inObjects) override
     {
-        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->renderContext());
+        const QDemonRef<QDemonRenderContext> &theRenderContext(m_renderContext->renderContext());
         theRenderContext->pushPropertySet();
         // Setup an orthographic camera that places the center at the
         // lower left of the viewport.

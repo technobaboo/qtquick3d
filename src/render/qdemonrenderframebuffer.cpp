@@ -58,7 +58,7 @@ QDemonRenderFrameBuffer::~QDemonRenderFrameBuffer()
     }
 }
 
-inline void CheckAttachment(QDemonRef<QDemonRenderContext> ctx, QDemonRenderFrameBufferAttachment attachment)
+inline void CheckAttachment(const QDemonRef<QDemonRenderContext> &ctx, QDemonRenderFrameBufferAttachment attachment)
 {
     (void)ctx;
     (void)attachment;
@@ -247,22 +247,22 @@ bool QDemonRenderFrameBuffer::isComplete()
     return m_backend->renderTargetIsValid(m_bufferHandle);
 }
 
-QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2D> texture)
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(const QDemonRef<QDemonRenderTexture2D> &texture)
     : m_texture2D(texture)
 {
 }
 
-QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderRenderBuffer> render)
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(const QDemonRef<QDemonRenderRenderBuffer> &render)
     : m_renderBuffer(render)
 {
 }
 
-QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2DArray> textureArray)
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(const QDemonRef<QDemonRenderTexture2DArray> &textureArray)
     : m_texture2DArray(textureArray)
 {
 }
 
-QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTextureCube> textureCube)
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(const QDemonRef<QDemonRenderTextureCube> &textureCube)
     : m_textureCube(textureCube)
 {
 }
@@ -277,10 +277,10 @@ QDemonRenderTextureOrRenderBuffer::~QDemonRenderTextureOrRenderBuffer() = defaul
 QDemonRenderTextureOrRenderBuffer &QDemonRenderTextureOrRenderBuffer::operator=(const QDemonRenderTextureOrRenderBuffer &other)
 {
     if (this != &other) {
-        m_texture2D = QDemonRef<QDemonRenderTexture2D>(other.m_texture2D);
-        m_texture2DArray = QDemonRef<QDemonRenderTexture2DArray>(other.m_texture2DArray);
-        m_renderBuffer = QDemonRef<QDemonRenderRenderBuffer>(other.m_renderBuffer);
-        m_textureCube = QDemonRef<QDemonRenderTextureCube>(other.m_textureCube);
+        m_texture2D = other.m_texture2D;
+        m_texture2DArray = other.m_texture2DArray;
+        m_renderBuffer = other.m_renderBuffer;
+        m_textureCube = other.m_textureCube;
     }
     return *this;
 }

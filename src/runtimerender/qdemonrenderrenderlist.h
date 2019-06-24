@@ -85,7 +85,7 @@ public:
     // we agree to *not* have rendered anything, no clears or anything so if you are caching
     // render state and you detect nothing has changed it may not be necessary to swap egl
     // buffers.
-    quint32 addRenderTask(QDemonRef<QDemonRenderTask> inTask);
+    quint32 addRenderTask(const QDemonRef<QDemonRenderTask> &inTask);
     void discardRenderTask(quint32 inTaskId);
     // This runs through the added tasks in reverse order.  This is used to render dependencies
     // before rendering to the main render target.

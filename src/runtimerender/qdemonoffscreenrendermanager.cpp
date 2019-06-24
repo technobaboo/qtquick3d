@@ -115,7 +115,7 @@ QDemonOffscreenRenderManager::QDemonOffscreenRenderManager(const QDemonRef<QDemo
 
 QDemonOffscreenRenderManager::~QDemonOffscreenRenderManager() = default;
 
-QDemonOption<bool> QDemonOffscreenRenderManager::maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey, QDemonRef<QDemonOffscreenRendererInterface> inRenderer)
+QDemonOption<bool> QDemonOffscreenRenderManager::maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey, const QDemonRef<QDemonOffscreenRendererInterface> &inRenderer)
 {
     TRendererMap::iterator theIter = m_renderers.find(inKey);
     if (theIter != m_renderers.end()) {
@@ -135,7 +135,7 @@ QDemonOption<bool> QDemonOffscreenRenderManager::maybeRegisterOffscreenRenderer(
     return true;
 }
 
-void QDemonOffscreenRenderManager::registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey, QDemonRef<QDemonOffscreenRendererInterface> inRenderer)
+void QDemonOffscreenRenderManager::registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey, const QDemonRef<QDemonOffscreenRendererInterface> &inRenderer)
 {
     auto inserter = m_renderers.find(inKey);
     if (inserter == m_renderers.end())
@@ -151,12 +151,8 @@ bool QDemonOffscreenRenderManager::hasOffscreenRenderer(const QDemonOffscreenRen
 
 QDemonRef<QDemonOffscreenRendererInterface> QDemonOffscreenRenderManager::getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey)
 {
-    TRendererMap::iterator theRenderer = m_renderers.find(inKey);
-    if (theRenderer != m_renderers.end()) {
-        QDemonRendererData &theData = theRenderer.value();
-        return theData.renderer;
-    }
-    return nullptr;
+    const auto it = m_renderers.constFind(inKey);
+    return (it != m_renderers.cend()) ? it.value().renderer : nullptr;
 }
 
 void QDemonOffscreenRenderManager::releaseOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) { m_renderers.remove(inKey); }
@@ -360,8 +356,8 @@ QDemonOffscreenRenderResult QDemonOffscreenRenderManager::getRenderedItem(const 
         }
 
         QRect theViewport(0, 0, theDesiredEnvironment.width, theDesiredEnvironment.height);
-        auto theRenderList = m_context->renderList();
-        auto theContext = m_context->renderContext();
+        const auto &theRenderList = m_context->renderList();
+        const auto &theContext = m_context->renderContext();
         // This happens here because if there are any fancy render steps
         QDemonRenderListScopedProperty<bool> scissor(*theRenderList,
                                                      &QDemonRenderList::isScissorTestEnabled,

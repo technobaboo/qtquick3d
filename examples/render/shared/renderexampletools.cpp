@@ -138,7 +138,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
 
 namespace {
 
-static void dumpShaderOutput(QDemonRef<QDemonRenderContext> ctx, const QDemonRenderVertFragCompilationResult &compResult)
+static void dumpShaderOutput(const QDemonRef<QDemonRenderContext> &ctx, const QDemonRenderVertFragCompilationResult &compResult)
 {
     //    if (!isTrivial(compResult.mFragCompilationOutput)) {
     //        qWarning("Frag output:\n%s", compResult.mFragCompilationOutput);
@@ -151,7 +151,7 @@ static void dumpShaderOutput(QDemonRef<QDemonRenderContext> ctx, const QDemonRen
     //    }
 }
 
-QDemonRef<QDemonRenderShaderProgram> compileAndDump(QDemonRef<QDemonRenderContext> ctx, const char *name, const char *vertShader, const char *fragShader)
+QDemonRef<QDemonRenderShaderProgram> compileAndDump(const QDemonRef<QDemonRenderContext> &ctx, const char *name, const char *vertShader, const char *fragShader)
 {
     QDemonRenderVertFragCompilationResult compResult =
             ctx->compileSource(name, toByteView(vertShader), toByteView(fragShader));

@@ -148,8 +148,8 @@ private:
                                const QVector<QDemonShaderPreprocessorFeature> &inFeatures);
 
 public:
-    QDemonShaderCache(QDemonRef<QDemonRenderContext> ctx,
-                QDemonRef<QDemonInputStreamFactory> inInputStreamFactory,
+    QDemonShaderCache(const QDemonRef<QDemonRenderContext> &ctx,
+                const QDemonRef<QDemonInputStreamFactory> &inInputStreamFactory,
                 QDemonPerfTimer *inPerfTimer);
     ~QDemonShaderCache();
     // If directory is nonnull, then we attempt to load any shaders from shadercache.xml in
@@ -211,9 +211,9 @@ public:
     static quint32 getShaderVersion() { return 4; }
     static const QString getShaderCacheFileName() { return QStringLiteral("shadercache.xml"); }
 
-    static QDemonRef<QDemonShaderCache> createShaderCache(QDemonRef<QDemonRenderContext> inContext,
-                                                                   QDemonRef<QDemonInputStreamFactory> inInputStreamFactory,
-                                                                   QDemonPerfTimer *inPerfTimer);
+    static QDemonRef<QDemonShaderCache> createShaderCache(const QDemonRef<QDemonRenderContext> &inContext,
+                                                          const QDemonRef<QDemonInputStreamFactory> &inInputStreamFactory,
+                                                          QDemonPerfTimer *inPerfTimer);
 };
 
 QT_END_NAMESPACE

@@ -66,34 +66,35 @@ class QDemonOffscreenRenderManager;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextInterface
 {
+    Q_DISABLE_COPY(QDemonRenderContextInterface)
 public:
     QAtomicInt ref;
 private:
-    QDemonRef<QDemonRenderContext> m_renderContext;
+    const QDemonRef<QDemonRenderContext> m_renderContext;
     QDemonPerfTimer m_perfTimer;
 
-    QDemonRef<QDemonInputStreamFactory> m_inputStreamFactory;
-    QDemonRef<QDemonBufferManager> m_bufferManager;
-    QDemonRef<QDemonResourceManager> m_resourceManager;
-    QDemonRef<QDemonOffscreenRenderManager> m_offscreenRenderManager;
-    QDemonRef<QDemonRendererInterface> m_renderer;
-    QDemonRef<QDemonDynamicObjectSystem> m_dynamicObjectSystem;
-    QDemonRef<QDemonEffectSystem> m_effectSystem;
-    QDemonRef<QDemonShaderCache> m_shaderCache;
-    QDemonRef<QDemonAbstractThreadPool> m_threadPool;
-    QDemonRef<IImageBatchLoader> m_imageBatchLoader;
-    QDemonRef<QDemonMaterialSystem> m_customMaterialSystem;
-    QDemonRef<QDemonPixelGraphicsRendererInterface> m_pixelGraphicsRenderer;
-    QDemonRef<QDemonPathManagerInterface> m_pathManager;
-    QDemonRef<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
-    QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
-    QDemonRef<QDemonMaterialShaderGeneratorInterface> m_customMaterialShaderGenerator;
+    const QDemonRef<QDemonInputStreamFactory> m_inputStreamFactory;
+    const QDemonRef<QDemonBufferManager> m_bufferManager;
+    const QDemonRef<QDemonResourceManager> m_resourceManager;
+    const QDemonRef<QDemonOffscreenRenderManager> m_offscreenRenderManager;
+    const QDemonRef<QDemonRendererInterface> m_renderer;
+    const QDemonRef<QDemonDynamicObjectSystem> m_dynamicObjectSystem;
+    const QDemonRef<QDemonEffectSystem> m_effectSystem;
+    const QDemonRef<QDemonShaderCache> m_shaderCache;
+    const QDemonRef<QDemonAbstractThreadPool> m_threadPool;
+    const QDemonRef<IImageBatchLoader> m_imageBatchLoader;
+    const QDemonRef<QDemonMaterialSystem> m_customMaterialSystem;
+    const QDemonRef<QDemonPixelGraphicsRendererInterface> m_pixelGraphicsRenderer;
+    const QDemonRef<QDemonPathManagerInterface> m_pathManager;
+    const QDemonRef<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
+    const QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
+    const QDemonRef<QDemonMaterialShaderGeneratorInterface> m_customMaterialShaderGenerator;
     QDemonPerFrameAllocator m_perFrameAllocator;
-    QDemonRef<QDemonRenderList> m_renderList;
+    const QDemonRef<QDemonRenderList> m_renderList;
     quint32 m_frameCount = 0;
     // Viewport that this render context should use
     QDemonOption<QRect> m_viewport;
-    QSize m_windowDimensions;
+    QSize m_windowDimensions {800, 480};
     ScaleModes m_scaleMode = ScaleModes::ExactSize;
     bool m_wireframeMode = false;
     bool m_isInSubPresentation = false;
@@ -107,9 +108,9 @@ private:
     QSize m_presentationDimensions;
     QSize m_renderPresentationDimensions;
     QSize m_preRenderPresentationDimensions;
-    QVector2D m_presentationScale;
+    QVector2D m_presentationScale {0.0f, 0.0f};
     QRect m_virtualViewport;
-    QPair<float, int> m_fps;
+    QPair<float, int> m_fps = qMakePair(0.0f, 0);
     bool m_authoringMode = false;
 
     struct BeginFrameResult
@@ -163,26 +164,26 @@ public:
     static QDemonRenderContextInterface::QDemonRenderContextInterfacePtr getRenderContextInterface(quintptr wid);
 
     ~QDemonRenderContextInterface();
-    QDemonRef<QDemonRendererInterface> renderer();
+    const QDemonRef<QDemonRendererInterface> &renderer() const;
     QDemonRef<QDemonRendererImpl> renderWidgetContext();
-    QDemonRef<QDemonBufferManager> bufferManager();
-    QDemonRef<QDemonResourceManager> resourceManager();
-    const QDemonRef<QDemonRenderContext> &renderContext();
-    QDemonRef<QDemonOffscreenRenderManager> offscreenRenderManager();
-    QDemonRef<QDemonInputStreamFactory> inputStreamFactory();
-    QDemonRef<QDemonEffectSystem> effectSystem();
-    QDemonRef<QDemonShaderCache> shaderCache();
-    QDemonRef<QDemonAbstractThreadPool> threadPool();
-    QDemonRef<IImageBatchLoader> imageBatchLoader();
-    QDemonRef<QDemonDynamicObjectSystem> dynamicObjectSystem();
-    QDemonRef<QDemonMaterialSystem> customMaterialSystem();
-    QDemonRef<QDemonPixelGraphicsRendererInterface> pixelGraphicsRenderer();
+    const QDemonRef<QDemonBufferManager> &bufferManager() const;
+    const QDemonRef<QDemonResourceManager> &resourceManager() const;
+    const QDemonRef<QDemonRenderContext> &renderContext() const;
+    const QDemonRef<QDemonOffscreenRenderManager> &offscreenRenderManager() const;
+    const QDemonRef<QDemonInputStreamFactory> &inputStreamFactory() const;
+    const QDemonRef<QDemonEffectSystem> &effectSystem() const;
+    const QDemonRef<QDemonShaderCache> &shaderCache() const;
+    const QDemonRef<QDemonAbstractThreadPool> &threadPool() const;
+    const QDemonRef<IImageBatchLoader> &imageBatchLoader() const;
+    const QDemonRef<QDemonDynamicObjectSystem> &dynamicObjectSystem() const;
+    const QDemonRef<QDemonMaterialSystem> &customMaterialSystem() const;
+    const QDemonRef<QDemonPixelGraphicsRendererInterface> &pixelGraphicsRenderer() const;
     QDemonPerfTimer *performanceTimer() { return &m_perfTimer; }
-    QDemonRef<QDemonRenderList> renderList();
-    QDemonRef<QDemonPathManagerInterface> pathManager();
-    QDemonRef<QDemonShaderProgramGeneratorInterface> shaderProgramGenerator();
-    QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> defaultMaterialShaderGenerator();
-    QDemonRef<QDemonMaterialShaderGeneratorInterface> customMaterialShaderGenerator();
+    const QDemonRef<QDemonRenderList> &renderList() const;
+    const QDemonRef<QDemonPathManagerInterface> &pathManager() const;
+    const QDemonRef<QDemonShaderProgramGeneratorInterface> &shaderProgramGenerator() const;
+    const QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> &defaultMaterialShaderGenerator() const;
+    const QDemonRef<QDemonMaterialShaderGeneratorInterface> &customMaterialShaderGenerator() const;
     // The memory used for the per frame allocator is released as the first step in BeginFrame.
     // This is useful for short lived objects and datastructures.
     QDemonPerFrameAllocator &perFrameAllocator() { return m_perFrameAllocator; }

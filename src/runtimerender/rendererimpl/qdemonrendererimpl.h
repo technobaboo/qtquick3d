@@ -85,7 +85,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
 
     typedef QHash<long, QDemonRenderNode *> TBoneIdNodeMap;
 
-    QDemonRef<QDemonRenderContextInterface> m_demonContext;
+    const QDemonRef<QDemonRenderContextInterface> m_demonContext;
     QDemonRef<QDemonRenderContext> m_context;
     QDemonRef<QDemonBufferManager> m_bufferManager;
     QDemonRef<QDemonOffscreenRenderManager> m_offscreenRenderManager;
@@ -348,7 +348,7 @@ public:
     QDemonLayerGlobalRenderProperties getLayerGlobalRenderProperties();
     void updateCbAoShadow(const QDemonRenderLayer *pLayer, const QDemonRenderCamera *pCamera, QDemonResourceTexture2D &inDepthTexture);
 
-    QDemonRef<QDemonRenderContext> context() { return m_context; }
+    const QDemonRef<QDemonRenderContext> &context() { return m_context; }
 
     const QDemonRef<QDemonRenderContextInterface> &demonContext() { return m_demonContext; }
 
@@ -357,9 +357,9 @@ public:
     void setupWidgetLayer();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    QDemonRef<QDemonRenderTexture2D> layerBlendTexture() { return m_layerBlendTexture.getTexture(); }
+    QDemonRef<QDemonRenderTexture2D> layerBlendTexture() const { return m_layerBlendTexture.getTexture(); }
 
-    QDemonRef<QDemonRenderFrameBuffer> blendFrameBuffer() { return m_blendFb; }
+    QDemonRef<QDemonRenderFrameBuffer> blendFrameBuffer() const { return m_blendFb; }
 #endif
     // widget context implementation
     QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
@@ -372,7 +372,7 @@ public:
             QDemonByteView bufferData = QDemonByteView());
     QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs);
     QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
-                                                                    QDemonRef<QDemonRenderAttribLayout> attribLayout,
+                                                                    const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
                                                                     QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                     const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
                                                                     QDemonDataView<quint32> strides,
@@ -384,7 +384,7 @@ public:
 
     QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr) const;
     QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr);
-    QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator();
+    const QDemonRef<QDemonShaderProgramGeneratorInterface> &getProgramGenerator();
 
     // Given a node and a point in the node's local space (most likely its pivot point), we
     // return

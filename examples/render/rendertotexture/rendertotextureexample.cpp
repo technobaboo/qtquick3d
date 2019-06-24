@@ -140,11 +140,11 @@ public:
         QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth);
         // render to frame buffer
         {
-            QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> framebuffer(
-                *m_Context.data(),
-                &QDemonRenderContext::renderTarget,
-                &QDemonRenderContext::setRenderTarget,
-                mFrameBuffer);
+            QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> framebuffer(*m_Context.data(),
+                                                                                              &QDemonRenderContext::renderTarget,
+                                                                                              &QDemonRenderContext::setRenderTarget,
+                                                                                              mFrameBuffer);
+
             QDemonRenderContextScopedProperty<QRect> viewport(
                 *m_Context.data(), &QDemonRenderContext::viewport, &QDemonRenderContext::setViewport,
                 QRect(0, 0, mFBWidth, mFBHeight));

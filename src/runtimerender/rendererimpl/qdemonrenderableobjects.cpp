@@ -61,9 +61,7 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
                                                      const QDemonRenderCamera &inCamera,
                                                      QDemonShadowMapEntry *inShadowMapEntry) const
 {
-    auto context = generator->context();
-    QDemonRef<QDemonRenderableDepthPrepassShader> shader = nullptr;
-    QDemonRef<QDemonRenderInputAssembler> pIA = nullptr;
+    const auto &context = generator->context();
 
     /*
         if ( inLight->m_LightType == RenderLightTypes::Area )
@@ -75,19 +73,16 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
         will change to include a geometry shader pass.
         */
 
-    if (inLight->m_lightType == QDemonRenderLight::Type::Directional)
-        shader = generator->getOrthographicDepthShader(tessellationMode);
-    else
-        shader = generator->getCubeShadowDepthShader(tessellationMode);
+    const QDemonRef<QDemonRenderableDepthPrepassShader> &shader = (inLight->m_lightType == QDemonRenderLight::Type::Directional) ? generator->getOrthographicDepthShader(tessellationMode)
+                                                                                                                                 : generator->getCubeShadowDepthShader(tessellationMode);
 
     if (shader == nullptr || inShadowMapEntry == nullptr)
         return;
 
     // for phong and npatch tesselleation we need the normals too
-    if (tessellationMode == TessModeValues::NoTess || tessellationMode == TessModeValues::TessLinear)
-        pIA = subset.inputAssemblerDepth;
-    else
-        pIA = subset.inputAssembler;
+    const QDemonRef<QDemonRenderInputAssembler> &pIA = (tessellationMode == TessModeValues::NoTess || tessellationMode == TessModeValues::TessLinear)
+            ? subset.inputAssemblerDepth
+            : subset.inputAssembler;
 
     QMatrix4x4 theModelViewProjection = inShadowMapEntry->m_lightVP * globalTransform;
     // QMatrix4x4 theModelView = inLight->m_GlobalTransform.getInverse() * m_GlobalTransform;
@@ -128,7 +123,7 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
 
 void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec, QDemonRenderableImage *inDisplacementImage, float inDisplacementAmount)
 {
-    auto context = generator->context();
+    const auto &context = generator->context();
     QDemonRenderableImage *displacementImage = inDisplacementImage;
 
     const auto &shader = (subset.primitiveType != QDemonRenderDrawMode::Patches) ? generator->getDepthPrepassShader(displacementImage != nullptr)
@@ -213,9 +208,9 @@ QDemonSubsetRenderable::QDemonSubsetRenderable(QDemonRenderableObjectFlags inFla
 
 void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderFeatureSet &inFeatureSet)
 {
-    auto context = generator->context();
+    const auto &context = generator->context();
 
-    QDemonRef<QDemonShaderGeneratorGeneratedShader> shader = generator->getShader(*this, inFeatureSet);
+    const QDemonRef<QDemonShaderGeneratorGeneratedShader> &shader = generator->getShader(*this, inFeatureSet);
     if (shader == nullptr)
         return;
 
@@ -304,11 +299,11 @@ void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                             const QDemonRenderLayer &inLayer,
                                             const QVector<QDemonRenderLight *> &inLights,
                                             const QDemonRenderCamera &inCamera,
-                                            const QDemonRef<QDemonRenderTexture2D> inDepthTexture,
-                                            const QDemonRef<QDemonRenderTexture2D> inSsaoTexture,
+                                            const QDemonRef<QDemonRenderTexture2D> &inDepthTexture,
+                                            const QDemonRef<QDemonRenderTexture2D> &inSsaoTexture,
                                             const TShaderFeatureSet &inFeatureSet)
 {
-    QDemonRef<QDemonRenderContextInterface> demonContext(generator->demonContext());
+    const auto &demonContext = generator->demonContext();
     QDemonCustomMaterialRenderContext theRenderContext(inLayer,
                                                        inLayerData,
                                                        inLights,
@@ -330,7 +325,7 @@ void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
 
 void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVec,
                                                      const QDemonRenderLayer & /*inLayer*/,
-                                                     const QVector<QDemonRenderLight *> /*inLights*/,
+                                                     const QVector<QDemonRenderLight *> &/*inLights*/,
                                                      const QDemonRenderCamera & /*inCamera*/,
                                                      const QDemonRenderTexture2D * /*inDepthTexture*/)
 {

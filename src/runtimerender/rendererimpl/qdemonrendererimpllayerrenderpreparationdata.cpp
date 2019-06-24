@@ -476,9 +476,9 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
                                                              QDemonShaderDefaultMaterialKey &inShaderKey,
                                                              quint32 inImageIndex)
 {
-    QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
-    QDemonRef<QDemonBufferManager> bufferManager = demonContext->bufferManager();
-    QDemonRef<QDemonOffscreenRenderManager> theOffscreenRenderManager(demonContext->offscreenRenderManager());
+    const QDemonRef<QDemonRenderContextInterface> &demonContext(renderer->demonContext());
+    const QDemonRef<QDemonBufferManager> &bufferManager = demonContext->bufferManager();
+    const QDemonRef<QDemonOffscreenRenderManager> &theOffscreenRenderManager(demonContext->offscreenRenderManager());
     //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
     if (inImage.clearDirty(bufferManager, *theOffscreenRenderManager /*, theRenderPluginManager*/))
         ioFlags |= QDemonRenderableObjectFlag::Dirty;
@@ -723,8 +723,8 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                              const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                                                              QDemonNodeLightEntryList &inScopedLights)
 {
-    QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
-    QDemonRef<QDemonBufferManager> bufferManager = demonContext->bufferManager();
+    const QDemonRef<QDemonRenderContextInterface> &demonContext(renderer->demonContext());
+    const QDemonRef<QDemonBufferManager> &bufferManager = demonContext->bufferManager();
     QDemonRenderMesh *theMesh = bufferManager->loadMesh(inModel.meshPath);
     if (theMesh == nullptr)
         return false;
@@ -846,7 +846,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             } else if (theMaterialObject->type == QDemonRenderGraphObject::Type::CustomMaterial) {
                 QDemonRenderCustomMaterial &theMaterial(static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
 
-                QDemonRef<QDemonMaterialSystem> theMaterialSystem(demonContext->customMaterialSystem());
+                const QDemonRef<QDemonMaterialSystem> &theMaterialSystem(demonContext->customMaterialSystem());
                 subsetDirty |= theMaterialSystem->prepareForRender(theModelContext.model, theSubset, theMaterial, clearMaterialDirtyFlags);
 
                 QDemonDefaultMaterialPreparationResult theMaterialPrepResult(
@@ -935,8 +935,8 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
 
 bool QDemonLayerRenderPreparationData::checkLightProbeDirty(QDemonRenderImage &inLightProbe)
 {
-    QDemonRef<QDemonRenderContextInterface> theContext(renderer->demonContext());
-    QDemonRef<QDemonBufferManager> bufferManager = theContext->bufferManager();
+    const QDemonRef<QDemonRenderContextInterface> &theContext(renderer->demonContext());
+    const QDemonRef<QDemonBufferManager> &bufferManager = theContext->bufferManager();
     return inLightProbe.clearDirty(bufferManager,
                                    *theContext->offscreenRenderManager() /*,
                                     theContext.GetRenderPluginManager()*/
@@ -991,7 +991,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     features.clear();
     featureSetHash = 0;
     QVector2D thePresentationDimensions((float)inViewportDimensions.width(), (float)inViewportDimensions.height());
-    QDemonRef<QDemonRenderList> theGraph(renderer->demonContext()->renderList());
+    const QDemonRef<QDemonRenderList> &theGraph(renderer->demonContext()->renderList());
     QRect theViewport(theGraph->getViewport());
     QRect theScissor(theGraph->getViewport());
     if (theGraph->isScissorTestEnabled())
@@ -1018,7 +1018,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
     if (layer.flags.testFlag(QDemonRenderLayer::Flag::Active)) {
         // Get the layer's width and height.
-        QDemonRef<QDemonEffectSystem> theEffectSystem(renderer->demonContext()->effectSystem());
+        const QDemonRef<QDemonEffectSystem> &theEffectSystem(renderer->demonContext()->effectSystem());
         for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect; theEffect = theEffect->m_nextEffect) {
             if (theEffect->flags.testFlag(QDemonRenderEffect::Flag::Dirty)) {
                 wasDirty = true;
@@ -1253,7 +1253,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 bool theScissor = true;
                 QRect theScissorRect = thePrepResult.scissor().toRect();
                 // This happens here because if there are any fancy render steps
-                QDemonRef<QDemonRenderList> theRenderList(renderer->demonContext()->renderList());
+                const QDemonRef<QDemonRenderList> &theRenderList(renderer->demonContext()->renderList());
                 auto theContext = renderer->context();
                 QDemonRenderListScopedProperty<bool> _listScissorEnabled(*theRenderList,
                                                                          &QDemonRenderList::isScissorTestEnabled,

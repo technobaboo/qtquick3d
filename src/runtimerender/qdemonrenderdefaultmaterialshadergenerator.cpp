@@ -657,8 +657,9 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     }
 
     ///< get the light constant buffer and generate if necessary
-    QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(quint32 inLightCount)
+    QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(qint32 inLightCount)
     {
+        Q_ASSERT(inLightCount >= 0);
         const QDemonRef<QDemonRenderContext> &theContext = m_renderContext->renderContext();
 
         // we assume constant buffer support
@@ -670,24 +671,23 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
         static const QByteArray theName = QByteArrayLiteral("cbBufferLights");
         QDemonRef<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(theName);
+        if (pCB)
+            return pCB;
 
-        if (!pCB) {
-            // create
-            const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
-            quint8 stackData[size];
-            memset(stackData, 0, 4 * sizeof(qint32));
-//            QDemonLightSourceShader *s = new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
-            QDemonByteView cBuffer(stackData, size);
-            pCB = new QDemonRenderConstantBuffer(theContext, theName, QDemonRenderBufferUsageType::Static, cBuffer);
-            if (!pCB) {
-                Q_ASSERT(false);
-                return nullptr;
-            }
-
-            m_constantBuffers.insert(theName, pCB);
+        // create
+        const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
+        quint8 stackData[size];
+        memset(stackData, 0, 4 * sizeof(qint32));
+        // QDemonLightSourceShader *s = new (stackData + 4*sizeof(qint32)) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
+        QDemonByteView cBuffer(stackData, size);
+        pCB = *m_constantBuffers.insert(theName, new QDemonRenderConstantBuffer(theContext, theName, QDemonRenderBufferUsageType::Static, cBuffer));
+        if (Q_UNLIKELY(!pCB)) {
+            Q_ASSERT(false);
+            return nullptr;
         }
 
         return pCB;
+
     }
 
     void setImageShaderVariables(const QDemonRef<QDemonShaderGeneratorGeneratedShader> &inShader, QDemonRenderableImage &inImage, quint32 idx)
@@ -714,9 +714,9 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         // on the shader.
         // because setting the image on the texture forces the textue to bind and immediately apply
         // any tex params.
-        QDemonRef<QDemonRenderTexture2D> imageTexture = inImage.m_image.m_textureData.m_texture;
-        inImage.m_image.m_textureData.m_texture->setTextureWrapS(inImage.m_image.m_horizontalTilingMode);
-        inImage.m_image.m_textureData.m_texture->setTextureWrapT(inImage.m_image.m_verticalTilingMode);
+        const QDemonRef<QDemonRenderTexture2D> &imageTexture = inImage.m_image.m_textureData.m_texture;
+        imageTexture->setTextureWrapS(inImage.m_image.m_horizontalTilingMode);
+        imageTexture->setTextureWrapT(inImage.m_image.m_verticalTilingMode);
         theShaderProps.sampler.set(imageTexture.data());
         theShaderProps.offsets.set(offsets);
         theShaderProps.rotations.set(rotations);
@@ -1409,7 +1409,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                              const QVector<QVector3D> &inLightDirections,
                              const QDemonRef<QDemonRenderShadowMap> &inShadowMapManager)
     {
-        const auto &shader = getShaderForProgram(inProgram);
+        const QDemonRef<QDemonShaderGeneratorGeneratedShader> &shader(getShaderForProgram(inProgram));
         m_renderContext->renderContext()->setActiveShader(inProgram);
 
         m_shadowMapManager = inShadowMapManager;
@@ -1626,7 +1626,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         shader->m_fresnelPower.set(inMaterial.fresnelPower);
 
         if (context->supportsConstantBuffer()) {
-            QDemonRef<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer(shader->m_lights.size());
+            const QDemonRef<QDemonRenderConstantBuffer> &pLightCb = getLightConstantBuffer(shader->m_lights.size());
             // if we have lights we need a light buffer
             Q_ASSERT(shader->m_lights.size() == 0 || pLightCb);
 

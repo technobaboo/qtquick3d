@@ -136,7 +136,7 @@ private:
 
     QDemonRef<QDemonRenderAttribLayout> m_attribLayout; ///< pointer to attribute layout
     QVector<QDemonRef<QDemonRenderVertexBuffer>> m_vertexBuffers; ///< vertex buffers
-    const QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer; ///< index buffer
+    QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer; ///< index buffer
     QDemonDataView<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
 
     QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_handle; ///< opaque backend handle

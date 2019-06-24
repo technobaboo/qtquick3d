@@ -12,7 +12,7 @@ void QDemonRenderShaderConstantBuffer::validate(const QDemonRef<QDemonRenderShad
     if (m_constBuffer)
         return;
 
-    QDemonRef<QDemonRenderConstantBuffer> cb = m_context->getConstantBuffer(m_name);
+    const QDemonRef<QDemonRenderConstantBuffer> &cb = m_context->getConstantBuffer(m_name);
     if (cb) {
         cb->setupBuffer(inShader.data(), m_location, m_size, m_paramCount);
         // cb->addRef();
@@ -36,7 +36,7 @@ void QDemonRenderShaderStorageBuffer::validate(const QDemonRef<QDemonRenderShade
     if (m_storageBuffer)
         return;
 
-    QDemonRef<QDemonRenderStorageBuffer> sb = m_context->getStorageBuffer(m_name);
+    const QDemonRef<QDemonRenderStorageBuffer> &sb = m_context->getStorageBuffer(m_name);
     if (sb) {
         m_storageBuffer = sb;
     } else {
@@ -58,12 +58,11 @@ void QDemonRenderShaderAtomicCounterBuffer::validate(const QDemonRef<QDemonRende
     if (m_atomicCounterBuffer)
         return;
 
-    QDemonRef<QDemonRenderAtomicCounterBuffer> acb = m_context->getAtomicCounterBuffer(m_name);
-    if (acb) {
+    const QDemonRef<QDemonRenderAtomicCounterBuffer> &acb = m_context->getAtomicCounterBuffer(m_name);
+    if (Q_LIKELY(acb))
         m_atomicCounterBuffer = acb;
-    } else {
+    else
         Q_ASSERT(false);
-    }
 }
 
 void QDemonRenderShaderAtomicCounterBuffer::bindToProgram(const QDemonRef<QDemonRenderShaderProgram> &)

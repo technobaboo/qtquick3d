@@ -168,7 +168,7 @@ QString QDemonBufferManager::getImagePath(const QString &inSourcePath) const
     return (foundIt != aliasImageMap.cend()) ? foundIt.value() : inSourcePath;
 }
 
-QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString &inImagePath, QDemonRef<QDemonLoadedTexture> inLoadedImage, bool inForceScanForTransparency, bool inBsdfMipmaps)
+QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString &inImagePath, const QDemonRef<QDemonLoadedTexture> &inLoadedImage, bool inForceScanForTransparency, bool inBsdfMipmaps)
 {
     //        SStackPerfTimer __perfTimer(perfTimer, "Image Upload");
     {

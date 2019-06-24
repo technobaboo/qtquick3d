@@ -253,13 +253,13 @@ struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
                 const QDemonRenderLayer &inLayer,
                 const QVector<QDemonRenderLight *> &inLights,
                 const QDemonRenderCamera &inCamera,
-                const QDemonRef<QDemonRenderTexture2D> inDepthTexture,
-                const QDemonRef<QDemonRenderTexture2D> inSsaoTexture,
+                const QDemonRef<QDemonRenderTexture2D> &inDepthTexture,
+                const QDemonRef<QDemonRenderTexture2D> &inSsaoTexture,
                 const TShaderFeatureSet &inFeatureSet);
 
     void renderDepthPass(const QVector2D &inCameraVec,
                          const QDemonRenderLayer &inLayer,
-                         const QVector<QDemonRenderLight *> inLights,
+                         const QVector<QDemonRenderLight *> &inLights,
                          const QDemonRenderCamera &inCamera,
                          const QDemonRenderTexture2D *inDepthTexture);
 };

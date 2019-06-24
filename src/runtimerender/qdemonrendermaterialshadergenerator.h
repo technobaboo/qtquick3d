@@ -110,6 +110,7 @@ struct QDemonLayerGlobalRenderProperties
 
 class QDemonMaterialShaderGeneratorInterface
 {
+    Q_DISABLE_COPY(QDemonMaterialShaderGeneratorInterface)
 public:
     QAtomicInt ref;
 
@@ -118,7 +119,7 @@ protected:
 
     bool m_hasTransparency = false;
     QDemonRenderContextInterface *m_renderContext;
-    QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
+    const QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
 
     QDemonShaderDefaultMaterialKey *m_currentKey = nullptr;
     QDemonDefaultMaterialVertexPipelineInterface *m_currentPipeline = nullptr;

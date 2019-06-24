@@ -77,7 +77,6 @@ public:
 
 private:
     typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonRenderCustomMaterialShader>> ShaderMap;
-    typedef QPair<QString, QDemonRenderImage *> AllocatedImageEntry;
     typedef QPair<QByteArray, QByteArray> TStrStrPair;
     typedef QPair<QByteArray, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
 
@@ -118,10 +117,10 @@ private:
     void applyRenderStateValue(const dynamic::QDemonApplyRenderState &inCommand);
 
     // we currently only bind a source texture
-    const QDemonRef<QDemonRenderTexture2D> applyBufferValue(const QDemonRenderCustomMaterial &inMaterial,
+    QDemonRef<QDemonRenderTexture2D> applyBufferValue(const QDemonRenderCustomMaterial &inMaterial,
                                                             const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                                             const dynamic::QDemonApplyBufferValue &inCommand,
-                                                            const QDemonRef<QDemonRenderTexture2D> inSourceTexture);
+                                                            const QDemonRef<QDemonRenderTexture2D> &inSourceTexture);
 
     void allocateBuffer(const dynamic::QDemonAllocateBuffer &inCommand, const QDemonRef<QDemonRenderFrameBuffer> &inTarget);
 

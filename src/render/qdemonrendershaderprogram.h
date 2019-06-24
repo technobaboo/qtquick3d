@@ -55,6 +55,7 @@ typedef QHash<QByteArray, QDemonRef<QDemonRenderShaderBufferBase>> TShaderBuffer
 /// geometry,....)
 class Q_DEMONRENDER_EXPORT QDemonRenderShaderProgram
 {
+    Q_DISABLE_COPY(QDemonRenderShaderProgram)
 public:
     QAtomicInt ref;
 
@@ -65,8 +66,8 @@ public:
     };
 
 private:
-    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
-    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
+    const QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
+    const QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     const char *m_programName; /// Name of the program
     QDemonRenderBackend::QDemonRenderBackendShaderProgramObject m_handle; ///< opaque backend handle
     TShaderConstantMap m_constants; ///< map of shader constants
@@ -161,7 +162,7 @@ public:
     template<typename TDataType>
     void setPropertyValue(const char *inConstantName, const TDataType &inValue, const qint32 inCount = 1)
     {
-        QDemonRef<QDemonRenderShaderConstantBase> theConstant = shaderConstant(inConstantName);
+        const QDemonRef<QDemonRenderShaderConstantBase> &theConstant = shaderConstant(inConstantName);
 
         if (theConstant) {
             if (theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
@@ -212,7 +213,7 @@ public:
      *
      * @return context which this shader belongs to.
      */
-    QDemonRef<QDemonRenderContext> renderContext();
+    const QDemonRef<QDemonRenderContext> &renderContext();
 
     /**
      * @brief Create a shader program
@@ -264,10 +265,10 @@ struct QDemonRenderCachedShaderProperty
     QDemonRef<QDemonRenderShaderProgram> shader; ///< pointer to shader program
     QDemonRef<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
 
-    QDemonRenderCachedShaderProperty(const QByteArray &inConstantName, QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonRenderCachedShaderProperty(const QByteArray &inConstantName, const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : shader(inShader)
     {
-        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inConstantName);
+        const QDemonRef<QDemonRenderShaderConstantBase> &theConstant = inShader->shaderConstant(inConstantName);
         if (theConstant) {
             if (Q_LIKELY(theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType())) {
                 constant = theConstant;
@@ -299,7 +300,7 @@ struct QDemonRenderCachedShaderPropertyArray
     QDemonRef<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
     TDataType m_array[size];
 
-    QDemonRenderCachedShaderPropertyArray(const QByteArray &inConstantName, QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonRenderCachedShaderPropertyArray(const QByteArray &inConstantName, const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : shader(inShader)
     {
         memset(m_array, 0, sizeof(m_array));
@@ -338,10 +339,10 @@ struct QDemonRenderCachedShaderBuffer
     QDemonRef<QDemonRenderShaderProgram> shader; ///< pointer to shader program
     QDemonRef<TDataType> shaderBuffer; ///< poiner to shader buffer object
 
-    QDemonRenderCachedShaderBuffer(const QByteArray &inShaderBufferName, QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonRenderCachedShaderBuffer(const QByteArray &inShaderBufferName, const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : shader(inShader)
     {
-        QDemonRef<TDataType> theShaderBuffer = static_cast<TDataType *>(inShader->shaderBuffer(inShaderBufferName).get());
+        TDataType *theShaderBuffer = static_cast<TDataType *>(inShader->shaderBuffer(inShaderBufferName).get());
         if (theShaderBuffer)
             shaderBuffer = theShaderBuffer;
     }

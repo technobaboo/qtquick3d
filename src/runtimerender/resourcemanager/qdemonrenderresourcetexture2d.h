@@ -68,13 +68,13 @@ public:
         Q_ASSERT(m_texture);
         return *m_texture;
     }
-    QDemonRef<QDemonRenderTexture2D> operator->()
+    const QDemonRef<QDemonRenderTexture2D> &operator->() const
     {
         Q_ASSERT(m_texture);
         return m_texture;
     }
-    operator QDemonRef<QDemonRenderTexture2D>() { return m_texture; }
-    QDemonRef<QDemonRenderTexture2D> getTexture() { return m_texture; }
+    operator const QDemonRef<QDemonRenderTexture2D>() & { return m_texture; }
+    QDemonRef<QDemonRenderTexture2D> getTexture() const { return m_texture; }
     void forgetTexture();
     // Enforces single ownership rules.
     void stealTexture(QDemonResourceTexture2D &inOther);
@@ -112,13 +112,13 @@ public:
         Q_ASSERT(m_texture);
         return *m_texture;
     }
-    QDemonRef<QDemonRenderTexture2DArray> operator->()
+    const QDemonRef<QDemonRenderTexture2DArray> &operator->() const
     {
         Q_ASSERT(m_texture);
         return m_texture;
     }
-    operator QDemonRef<QDemonRenderTexture2DArray>() { return m_texture; }
-    QDemonRef<QDemonRenderTexture2DArray> getTexture() { return m_texture; }
+    operator const QDemonRef<QDemonRenderTexture2DArray>() & { return m_texture; }
+    QDemonRef<QDemonRenderTexture2DArray> getTexture() const { return m_texture; }
     // Enforces single ownership rules.
     void stealTexture(QDemonResourceTexture2DArray &inOther);
 };

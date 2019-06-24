@@ -153,7 +153,7 @@ struct QDemonLightConstantProperties
 
     ~QDemonLightConstantProperties() { qDeleteAll(m_constants); }
 
-    void updateLights(QDemonRef<GeneratedShader> shader)
+    void updateLights(const QDemonRef<GeneratedShader> &shader)
     {
         for (int i = 0; i < m_constants.size(); ++i)
             m_constants[i]->updateLights(shader->m_lights[i].lightData);

@@ -199,16 +199,16 @@ bool QDemonShaderPreprocessorFeature::operator==(const QDemonShaderPreprocessorF
 
 QDemonShaderCache::~QDemonShaderCache() {}
 
-QDemonRef<QDemonShaderCache> QDemonShaderCache::createShaderCache(QDemonRef<QDemonRenderContext> inContext,
-                                                                                    QDemonRef<QDemonInputStreamFactory> inInputStreamFactory,
-                                                                                    QDemonPerfTimer *inPerfTimer)
+QDemonRef<QDemonShaderCache> QDemonShaderCache::createShaderCache(const QDemonRef<QDemonRenderContext> &inContext,
+                                                                  const QDemonRef<QDemonInputStreamFactory> &inInputStreamFactory,
+                                                                  QDemonPerfTimer *inPerfTimer)
 {
     return QDemonRef<QDemonShaderCache>(new QDemonShaderCache(inContext, inInputStreamFactory, inPerfTimer));
 }
 
 QT_END_NAMESPACE
 
-QDemonShaderCache::QDemonShaderCache(QDemonRef<QDemonRenderContext> ctx, QDemonRef<QDemonInputStreamFactory> inInputStreamFactory, QDemonPerfTimer *inPerfTimer)
+QDemonShaderCache::QDemonShaderCache(const QDemonRef<QDemonRenderContext> &ctx, const QDemonRef<QDemonInputStreamFactory> &inInputStreamFactory, QDemonPerfTimer *inPerfTimer)
     : m_renderContext(ctx), m_perfTimer(inPerfTimer), m_inputStreamFactory(inInputStreamFactory), m_shaderCompilationEnabled(true)
 {
 }
@@ -444,9 +444,8 @@ QDemonRef<QDemonRenderShaderProgram> QDemonShaderCache::forceCompileProgram(cons
                                                         toByteView(m_tessCtrlCode),
                                                         toByteView(m_tessEvalCode),
                                                         toByteView(m_geometryCode),
-                                                        separableProgram)
-            .m_shader;
-    m_shaders.insert(tempKey, shaderProgram);
+                                                        separableProgram).m_shader;
+    const auto inserted = m_shaders.insert(tempKey, shaderProgram);
     if (shaderProgram) {
         // ### Shader Chache Writing Code is disabled
         //            if (m_ShaderCache) {
@@ -491,16 +490,16 @@ QDemonRef<QDemonRenderShaderProgram> QDemonShaderCache::forceCompileProgram(cons
         //                }
         //            }
     }
-    return shaderProgram;
+    return inserted.value();
 }
 
 QDemonRef<QDemonRenderShaderProgram> QDemonShaderCache::compileProgram(const QByteArray &inKey, const QByteArray &inVert, const QByteArray &inFrag, const QByteArray &inTessCtrl, const QByteArray &inTessEval, const QByteArray &inGeom, const QDemonShaderCacheProgramFlags &inFlags, const QVector<QDemonShaderPreprocessorFeature> &inFeatures, bool separableProgram)
 {
-    QDemonRef<QDemonRenderShaderProgram> theProgram = getProgram(inKey, inFeatures);
+    const QDemonRef<QDemonRenderShaderProgram> &theProgram = getProgram(inKey, inFeatures);
     if (theProgram)
         return theProgram;
 
-    QDemonRef<QDemonRenderShaderProgram> retval = forceCompileProgram(inKey, inVert, inFrag, inTessCtrl, inTessEval, inGeom, inFlags, inFeatures, separableProgram);
+    const QDemonRef<QDemonRenderShaderProgram> &retval = forceCompileProgram(inKey, inVert, inFrag, inTessCtrl, inTessEval, inGeom, inFlags, inFeatures, separableProgram);
     // ### Shader Chache Writing Code is disabled
     //        if (m_CacheFilePath.toLocal8Bit().constData() && m_ShaderCache && m_ShaderCompilationEnabled) {
     //            CFileSeekableIOStream theStream(m_CacheFilePath.toLocal8Bit().constData(), FileWriteFlags());

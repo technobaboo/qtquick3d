@@ -650,13 +650,13 @@ static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QBy
 }
 
 template<typename TShaderBufferType, typename TBufferDataType>
-static QDemonRef<QDemonRenderShaderBufferBase> shaderBufferFactory(QDemonRef<QDemonRenderContext> context,
+static QDemonRef<QDemonRenderShaderBufferBase> shaderBufferFactory(const QDemonRef<QDemonRenderContext> &context,
                                                                    const QByteArray &inName,
                                                                    qint32 cbLoc,
                                                                    qint32 cbBinding,
                                                                    qint32 cbSize,
                                                                    qint32 cbCount,
-                                                                   QDemonRef<TBufferDataType> pBuffer)
+                                                                   const QDemonRef<TBufferDataType> &pBuffer)
 {
     return QDemonRef<QDemonRenderShaderBufferBase>(new TShaderBufferType(context, inName, cbLoc, cbBinding, cbSize, cbCount, pBuffer));
 }
@@ -693,7 +693,7 @@ bool QDemonRenderShaderProgram::link()
 
             if (location != -1) {
                 // find constant buffer in our DB
-                QDemonRef<QDemonRenderConstantBuffer> cb = m_context->getConstantBuffer(nameBuf);
+                const QDemonRef<QDemonRenderConstantBuffer> &cb = m_context->getConstantBuffer(nameBuf);
                 if (cb) {
                     cb->setupBuffer(this, location, bufferSize, paramCount);
                 }
@@ -711,7 +711,7 @@ bool QDemonRenderShaderProgram::link()
 
             if (location != -1) {
                 // find constant buffer in our DB
-                QDemonRef<QDemonRenderStorageBuffer> sb = m_context->getStorageBuffer(nameBuf);
+                const QDemonRef<QDemonRenderStorageBuffer> &sb = m_context->getStorageBuffer(nameBuf);
                 m_shaderBuffers.insert(nameBuf,
                                        shaderBufferFactory<QDemonRenderShaderStorageBuffer,
                                                            QDemonRenderStorageBuffer>(m_context, nameBuf, location, -1, bufferSize, paramCount, sb));
@@ -733,7 +733,7 @@ bool QDemonRenderShaderProgram::link()
                 // counter buffer.
                 // We get the actual buffer name by searching for this uniform name
                 // See NVRenderTestAtomicCounterBuffer.cpp how the setup works
-                QDemonRef<QDemonRenderAtomicCounterBuffer> acb = m_context->getAtomicCounterBufferByParam(nameBuf);
+                const QDemonRef<QDemonRenderAtomicCounterBuffer> &acb = m_context->getAtomicCounterBufferByParam(nameBuf);
                 if (acb) {
                     m_shaderBuffers.insert(acb->bufferName(),
                                            shaderBufferFactory<QDemonRenderShaderAtomicCounterBuffer,
@@ -769,7 +769,7 @@ QDemonRef<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::shaderBuffer(
     return (foundIt != m_shaderBuffers.cend()) ? foundIt.value() : nullptr;
 }
 
-QDemonRef<QDemonRenderContext> QDemonRenderShaderProgram::renderContext()
+const QDemonRef<QDemonRenderContext> &QDemonRenderShaderProgram::renderContext()
 {
     return m_context;
 }
@@ -1047,7 +1047,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
         return result;
     }
 
-    QDemonRef<QDemonRenderBackend> backend = context->backend();
+    const QDemonRef<QDemonRenderBackend> &backend = context->backend();
 
     // first create and compile shaders
     QDemonRenderBackend::QDemonRenderBackendVertexShaderObject vtxShader = nullptr;
@@ -1170,7 +1170,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(c
         return result;
     }
 
-    auto backend = context->backend();
+    const auto &backend = context->backend();
     QByteArray errorMessage;
     QDemonRenderBackend::QDemonRenderBackendComputeShaderObject computeShader =
         backend->createComputeShader(computeShaderSource, errorMessage, false);

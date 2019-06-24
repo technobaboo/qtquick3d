@@ -353,7 +353,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
 
     QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QByteArray &inShaderName,
                                                                 const QDemonShaderCacheProgramFlags &inFlags,
-                                                                TShaderFeatureSet inFeatureSet,
+                                                                const TShaderFeatureSet &inFeatureSet,
                                                                 bool separableProgram) override
     {
         // No stages enabled
@@ -374,7 +374,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
             }
         }
 
-        QDemonRef<QDemonShaderCache> theCache = m_context->shaderCache();
+        const QDemonRef<QDemonShaderCache> &theCache = m_context->shaderCache();
         return theCache->compileProgram(inShaderName,
                                         m_vs.m_finalBuilder,
                                         m_fs.m_finalBuilder,

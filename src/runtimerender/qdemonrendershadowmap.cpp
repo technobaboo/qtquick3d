@@ -67,7 +67,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
                                               ShadowMapModes mode,
                                               ShadowFilterValues filter)
 {
-    QDemonRef<QDemonResourceManager> theManager(m_context->resourceManager());
+    const QDemonRef<QDemonResourceManager> &theManager(m_context->resourceManager());
     QDemonShadowMapEntry *pEntry = nullptr;
 
     if (index < m_shadowMapList.size())

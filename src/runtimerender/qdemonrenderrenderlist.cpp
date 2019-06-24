@@ -47,7 +47,7 @@ void QDemonRenderList::beginFrame()
     m_tasks.clear();
 }
 
-quint32 QDemonRenderList::addRenderTask(QDemonRef<QDemonRenderTask> inTask)
+quint32 QDemonRenderList::addRenderTask(const QDemonRef<QDemonRenderTask> &inTask)
 {
     quint32 taskId = m_nextTaskId;
     ++m_nextTaskId;

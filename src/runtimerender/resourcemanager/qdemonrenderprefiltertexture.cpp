@@ -405,9 +405,8 @@ void QDemonRenderPrefilterTextureCompute::createComputeProgram(const QDemonRef<Q
     }
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(
-        const QDemonRef<QDemonRenderContext> &context,
-        QDemonRenderTextureFormat inFormat)
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(const QDemonRef<QDemonRenderContext> &context,
+                                                                                                          QDemonRenderTextureFormat inFormat)
 {
     QByteArray computeProg;
 
@@ -488,7 +487,7 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
     theOutputImage = new QDemonRenderImage2D(m_renderContext, m_texture2D, QDemonRenderImageAccessType::ReadWrite);
 
     if (needMipUpload && m_level0Tex) {
-        QDemonRef<QDemonRenderShaderProgram> uploadProg = getOrCreateUploadComputeProgram(m_renderContext, inFormat);
+        const QDemonRef<QDemonRenderShaderProgram> &uploadProg = getOrCreateUploadComputeProgram(m_renderContext, inFormat);
         if (!uploadProg)
             return;
 

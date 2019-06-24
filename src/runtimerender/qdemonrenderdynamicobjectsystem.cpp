@@ -408,8 +408,8 @@ void QDemonDynamicObjectSystem::insertSnapperDirectives(QString &str)
 QDemonRef<QDemonRenderShaderProgram> QDemonDynamicObjectSystem::compileShader(const QByteArray &inId,
                                                                               const QByteArray &inProgramSource,
                                                                               const QByteArray &inGeomSource,
-                                                                              QByteArray inProgramMacroName,
-                                                                              TShaderFeatureSet inFeatureSet,
+                                                                              const QByteArray &inProgramMacroName,
+                                                                              const TShaderFeatureSet &inFeatureSet,
                                                                               const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                                                               bool inForceCompilation)
 {
@@ -481,7 +481,7 @@ QByteArray QDemonDynamicObjectSystem::getShaderSource(const QByteArray &inPath)
 
 TShaderAndFlags QDemonDynamicObjectSystem::getShaderProgram(const QByteArray &inPath,
                                                             const QByteArray &inProgramMacro,
-                                                            TShaderFeatureSet inFeatureSet,
+                                                            const TShaderFeatureSet &inFeatureSet,
                                                             const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                                             bool inForceCompilation)
 {

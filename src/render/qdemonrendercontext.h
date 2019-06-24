@@ -88,9 +88,9 @@ enum class QDemonRenderContextDirtyValues
 Q_DECLARE_FLAGS(QDemonRenderContextDirtyFlags, QDemonRenderContextDirtyValues)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextDirtyFlags)
 
-typedef QHash<QByteArray, QDemonRenderConstantBuffer *> TContextConstantBufferMap;
-typedef QHash<QByteArray, QDemonRenderStorageBuffer *> TContextStorageBufferMap;
-typedef QHash<QByteArray, QDemonRenderAtomicCounterBuffer *> TContextAtomicCounterBufferMap;
+typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TContextConstantBufferMap;
+typedef QHash<QByteArray, QDemonRef<QDemonRenderStorageBuffer>> TContextStorageBufferMap;
+typedef QHash<QByteArray, QDemonRef<QDemonRenderAtomicCounterBuffer>> TContextAtomicCounterBufferMap;
 typedef QHash<QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject, QDemonRenderRasterizerState *> TContextRasterizerStateMap;
 typedef QHash<QString, QDemonRenderPathFontSpecification *> TContextPathFontSpecificationMap;
 
@@ -100,6 +100,7 @@ class QDemonRenderProgramPipeline;
 template<typename TDataType>
 struct QDemonRenderContextScopedProperty : public QDemonRenderGenericScopedProperty<QDemonRenderContext, TDataType>
 {
+    Q_STATIC_ASSERT_X(!std::is_reference<TDataType>::value, "Changing the same data!!!");
     typedef typename QDemonRenderGenericScopedProperty<QDemonRenderContext, TDataType>::TGetter TGetter;
     typedef typename QDemonRenderGenericScopedProperty<QDemonRenderContext, TDataType>::TSetter TSetter;
     QDemonRenderContextScopedProperty(QDemonRenderContext &ctx, TGetter getter, TSetter setter)
@@ -139,7 +140,7 @@ public:
     QDemonGLHardPropertyContext m_hardwarePropertyContext;
 
 private:
-    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to our render backend
+    const QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to our render backend
     QDemonRenderContextDirtyFlags m_dirtyFlags; ///< context dirty flags
 
     QDemonRenderBackend::QDemonRenderBackendRenderTargetObject m_defaultOffscreenRenderTarget; ///< this is a special target set from outside if we
@@ -258,7 +259,7 @@ protected:
         m_dirtyFlags |= QDemonRenderContextDirtyValues::InputAssembler;
     }
 
-    void doSetRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
+    void doSetRenderTarget(const QDemonRef<QDemonRenderFrameBuffer> &inBuffer)
     {
         if (inBuffer)
             m_backend->setRenderTarget(inBuffer->handle());
@@ -268,7 +269,7 @@ protected:
         m_hardwarePropertyContext.m_frameBuffer = inBuffer;
     }
 
-    void doSetReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
+    void doSetReadTarget(const QDemonRef<QDemonRenderFrameBuffer> &inBuffer)
     {
         if (inBuffer)
             m_backend->setReadTarget(inBuffer->handle());
@@ -285,7 +286,7 @@ public:
     QDemonRenderContext(const QDemonRef<QDemonRenderBackend> &inBackend);
     ~QDemonRenderContext();
 
-    QDemonRef<QDemonRenderBackend> backend() { return m_backend; }
+    const QDemonRef<QDemonRenderBackend> &backend() { return m_backend; }
 
     void maxTextureSize(qint32 &oWidth, qint32 &oHeight);
 
@@ -423,9 +424,9 @@ public:
 
     void setDefaultDepthBufferBitCount(qint32 depthBits) { m_dephBits = depthBits; }
 
-    void setDepthStencilState(QDemonRef<QDemonRenderDepthStencilState> inDepthStencilState);
+    void setDepthStencilState(const QDemonRef<QDemonRenderDepthStencilState> &inDepthStencilState);
 
-    void setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState);
+    void setRasterizerState(const QDemonRef<QDemonRenderRasterizerState> &inRasterizerState);
 
     void registerConstantBuffer(QDemonRenderConstantBuffer *buffer);
     QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName) const;
@@ -447,9 +448,9 @@ public:
     qint32 nextTextureUnit();
 
     QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs);
-    QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRef<QDemonRenderAttribLayout> attribLayout,
+    QDemonRef<QDemonRenderInputAssembler> createInputAssembler(const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
                                                                QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
-                                                               const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
+                                                               const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
                                                                QDemonDataView<quint32> strides,
                                                                QDemonDataView<quint32> offsets,
                                                                QDemonRenderDrawMode primType = QDemonRenderDrawMode::Triangles,
@@ -540,10 +541,10 @@ public:
     void setActiveShader(const QDemonRef<QDemonRenderShaderProgram> &inShader);
     QDemonRef<QDemonRenderShaderProgram> activeShader() const;
 
-    void setActiveProgramPipeline(QDemonRef<QDemonRenderProgramPipeline> inProgramPipeline);
+    void setActiveProgramPipeline(const QDemonRef<QDemonRenderProgramPipeline> &inProgramPipeline);
     QDemonRef<QDemonRenderProgramPipeline> activeProgramPipeline() const;
 
-    void dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ);
+    void dispatchCompute(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ);
 
     void setDrawBuffers(QDemonDataView<qint32> inDrawBufferSet);
     void setReadBuffer(QDemonReadFace inReadFace);
@@ -569,7 +570,7 @@ public:
     // clear current bound render target
     void clear(QDemonRenderClearFlags flags);
     // clear passed in rendertarget
-    void clear(QDemonRef<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags);
+    void clear(const QDemonRef<QDemonRenderFrameBuffer> &fb, QDemonRenderClearFlags flags);
 
     // copy framebuffer content between read target and render target
     void blitFramebuffer(qint32 srcX0,

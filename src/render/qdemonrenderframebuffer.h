@@ -50,10 +50,10 @@ class Q_DEMONRENDER_EXPORT QDemonRenderTextureOrRenderBuffer
     QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
 
 public:
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2D> texture);
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderRenderBuffer> render);
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2DArray> textureArray);
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTextureCube> textureCube);
+    QDemonRenderTextureOrRenderBuffer(const QDemonRef<QDemonRenderTexture2D> &texture);
+    QDemonRenderTextureOrRenderBuffer(const QDemonRef<QDemonRenderRenderBuffer> &render);
+    QDemonRenderTextureOrRenderBuffer(const QDemonRef<QDemonRenderTexture2DArray> &textureArray);
+    QDemonRenderTextureOrRenderBuffer(const QDemonRef<QDemonRenderTextureCube> &textureCube);
     QDemonRenderTextureOrRenderBuffer();
     QDemonRenderTextureOrRenderBuffer(const QDemonRenderTextureOrRenderBuffer &other);
     ~QDemonRenderTextureOrRenderBuffer();

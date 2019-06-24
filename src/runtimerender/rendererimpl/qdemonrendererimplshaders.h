@@ -148,7 +148,7 @@ struct QDemonRenderableDepthPrepassShader
     // Cache the tessellation property name lookups
     QDemonShaderTessellationProperties tessellation;
 
-    QDemonRenderableDepthPrepassShader(QDemonRef<QDemonRenderShaderProgram> inShader, QDemonRef<QDemonRenderContext> inContext)
+    QDemonRenderableDepthPrepassShader(QDemonRef<QDemonRenderShaderProgram> inShader, const QDemonRef<QDemonRenderContext> &inContext)
         : shader(inShader)
         , mvp("model_view_projection", inShader)
         , globalTransform("model_matrix", inShader)
@@ -188,7 +188,7 @@ struct QDemonSkyBoxShader
     QDemonRenderCachedShaderProperty<QMatrix4x4> projection;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> skyboxTexture;
 
-    QDemonSkyBoxShader(QDemonRef<QDemonRenderShaderProgram> inShader, QDemonRef<QDemonRenderContext> inContext)
+    QDemonSkyBoxShader(const QDemonRef<QDemonRenderShaderProgram> &inShader, const QDemonRef<QDemonRenderContext> &inContext)
         : shader(inShader)
         , viewMatrix("view_matrix", inShader)
         , projection("projection", inShader)
@@ -212,7 +212,7 @@ struct QDemonDefaultAoPassShader
 
     QDemonRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer> aoShadowParams;
 
-    QDemonDefaultAoPassShader(QDemonRef<QDemonRenderShaderProgram> inShader, QDemonRef<QDemonRenderContext> inContext)
+    QDemonDefaultAoPassShader(const QDemonRef<QDemonRenderShaderProgram> &inShader, const QDemonRef<QDemonRenderContext> &inContext)
         : shader(inShader)
         , viewMatrix("view_matrix", inShader)
         , cameraProperties("camera_properties", inShader)
@@ -234,7 +234,7 @@ struct QDemonLayerProgAABlendShader
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> accumSampler;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> lastFrame;
     QDemonRenderCachedShaderProperty<QVector2D> blendFactors;
-    QDemonLayerProgAABlendShader(QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonLayerProgAABlendShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : shader(inShader), accumSampler("accumulator", inShader), lastFrame("last_frame", inShader), blendFactors("blend_factors", inShader)
     {
     }
@@ -251,7 +251,7 @@ struct QDemonLayerSceneShader
     // The fourth member of text color is the opacity
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> sampler;
 
-    QDemonLayerSceneShader(QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonLayerSceneShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : shader(inShader)
         , mvp("model_view_projection", inShader)
         , dimensions("layer_dimensions", inShader)
@@ -269,7 +269,7 @@ struct QDemonShadowmapPreblurShader
     QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *> depthCube;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> depthMap;
 
-    QDemonShadowmapPreblurShader(QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonShadowmapPreblurShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : shader(inShader), cameraProperties("camera_properties", inShader), depthCube("depthCube", inShader), depthMap("depthSrc", inShader)
     {
     }
@@ -284,7 +284,7 @@ struct QDemonAdvancedModeBlendShader
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> baseLayer;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> blendLayer;
 
-    QDemonAdvancedModeBlendShader(QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonAdvancedModeBlendShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : shader(inShader), baseLayer("base_layer", inShader), blendLayer("blend_layer", inShader)
     {
     }

@@ -162,8 +162,8 @@ struct QDemonDynamicObjectSystem
     QDemonRef<QDemonRenderShaderProgram> compileShader(const QByteArray &inId,
                                                        const QByteArray &inProgramSource,
                                                        const QByteArray &inGeomSource,
-                                                       QByteArray inProgramMacroName,
-                                                       TShaderFeatureSet inFeatureSet,
+                                                       const QByteArray &inProgramMacroName,
+                                                       const TShaderFeatureSet &inFeatureSet,
                                                        const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                                        bool inForceCompilation = false);
 
@@ -172,7 +172,7 @@ struct QDemonDynamicObjectSystem
 
     TShaderAndFlags getShaderProgram(const QByteArray &inPath,
                                      const QByteArray &inProgramMacro,
-                                     TShaderFeatureSet inFeatureSet,
+                                     const TShaderFeatureSet &inFeatureSet,
                                      const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
                                      bool inForceCompilation);
 

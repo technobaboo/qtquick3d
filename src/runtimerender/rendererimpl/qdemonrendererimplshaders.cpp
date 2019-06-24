@@ -422,7 +422,7 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
 static QByteArray logPrefix() { return QByteArrayLiteral("mesh subset pipeline-- "); }
 
 QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSubsetRenderable &inRenderable,
-                                                                        const TShaderFeatureSet &inFeatureSet)
+                                                                               const TShaderFeatureSet &inFeatureSet)
 {
     // build a string that allows us to print out the shader we are generating to the log.
     // This is time consuming but I feel like it doesn't happen all that often and is very
@@ -433,7 +433,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSu
     QDemonShaderDefaultMaterialKey theKey(inRenderable.shaderDescription);
     theKey.toString(m_generatedShaderString, m_defaultMaterialShaderKeyProperties);
     QDemonRef<QDemonShaderCache> theCache = m_demonContext->shaderCache();
-    QDemonRef<QDemonRenderShaderProgram> cachedProgram = theCache->getProgram(m_generatedShaderString, inFeatureSet);
+    const QDemonRef<QDemonRenderShaderProgram> &cachedProgram = theCache->getProgram(m_generatedShaderString, inFeatureSet);
     if (cachedProgram)
         return cachedProgram;
 
@@ -1846,12 +1846,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::getTextAtlasEntryShader
     fragmentGenerator.append("\tfragOutput = vec4(alpha, alpha, alpha, alpha);");
     fragmentGenerator.append("}");
 
-    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()
-                                                             ->compileGeneratedShader("texture atlas entry shader",
-                                                                                      QDemonShaderCacheProgramFlags(),
-                                                                                      TShaderFeatureSet());
-
-    return theShader;
+    return getProgramGenerator()->compileGeneratedShader("texture atlas entry shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 }
 
 QDemonRef<QDemonLayerSceneShader> QDemonRendererImpl::getSceneLayerShader()
@@ -2227,7 +2222,8 @@ QDemonRef<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getAdvancedBlendMod
     } else if (blendMode == AdvancedBlendModes::ColorDodge) {
         return getColorDodgeBlendModeShader();
     }
-    return {};
+
+    return nullptr;
 }
 
 QDemonRef<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getOverlayBlendModeShader()

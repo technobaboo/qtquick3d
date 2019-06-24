@@ -107,7 +107,7 @@ public:
     // Can't name this LoadImage because that gets mangled by windows to LoadImageA (uggh)
     // In some cases we need to only scan particular images for transparency.
     QDemonRenderImageTextureData loadRenderImage(const QString &inImagePath,
-                                                 QDemonRef<QDemonLoadedTexture> inTexture,
+                                                 const QDemonRef<QDemonLoadedTexture> &inTexture,
                                                  bool inForceScanForTransparency = false,
                                                  bool inBsdfMipmaps = false);
     QDemonRenderImageTextureData loadRenderImage(const QString &inSourcePath,

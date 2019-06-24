@@ -75,8 +75,6 @@ QDemonRenderContext::~QDemonRenderContext()
     m_constantToImpMap.clear();
     Q_ASSERT(m_storageToImpMap.size() == 0);
     m_storageToImpMap.clear();
-
-    m_backend = nullptr;
 }
 
 void QDemonRenderContext::maxTextureSize(qint32 &oWidth, qint32 &oHeight)
@@ -88,7 +86,7 @@ void QDemonRenderContext::maxTextureSize(qint32 &oWidth, qint32 &oHeight)
     oHeight = theMaxTextureSize;
 }
 
-void QDemonRenderContext::setDepthStencilState(QDemonRef<QDemonRenderDepthStencilState> inDepthStencilState)
+void QDemonRenderContext::setDepthStencilState(const QDemonRef<QDemonRenderDepthStencilState> &inDepthStencilState)
 {
     if (inDepthStencilState) {
         m_backend->setDepthStencilState(inDepthStencilState->handle());
@@ -100,7 +98,7 @@ void QDemonRenderContext::setDepthStencilState(QDemonRef<QDemonRenderDepthStenci
     }
 }
 
-void QDemonRenderContext::setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState)
+void QDemonRenderContext::setRasterizerState(const QDemonRef<QDemonRenderRasterizerState> &inRasterizerState)
 {
     if (inRasterizerState)
         m_backend->setRasterizerState(inRasterizerState->handle());
@@ -116,13 +114,17 @@ QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::getConstantBuffer(con
 {
     const auto entry = m_constantToImpMap.constFind(bufferName);
     if (entry != m_constantToImpMap.cend())
-        return QDemonRef<QDemonRenderConstantBuffer>(entry.value());
+        return entry.value();
     return nullptr;
 }
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderConstantBuffer *buffer)
 {
-    m_constantToImpMap.remove(buffer->name());
+    const auto it = m_constantToImpMap.constFind(buffer->name());
+    if (it != m_constantToImpMap.cend()) {
+        Q_ASSERT(it.value()->ref == 1);
+        m_constantToImpMap.erase(it);
+    }
 }
 
 qint32 QDemonRenderContext::nextConstantBufferUnit()
@@ -146,13 +148,17 @@ QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContext::getStorageBuffer(const
 {
     const auto entry = m_storageToImpMap.constFind(bufferName);
     if (entry != m_storageToImpMap.cend())
-        return QDemonRef<QDemonRenderStorageBuffer>(entry.value());
+        return entry.value();
     return nullptr;
 }
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderStorageBuffer *buffer)
 {
-    m_storageToImpMap.remove(buffer->name());
+    const auto it = m_storageToImpMap.constFind(buffer->name());
+    if (it != m_storageToImpMap.cend()) {
+        Q_ASSERT(it.value()->ref == 1);
+        m_storageToImpMap.erase(it);
+    }
 }
 
 void QDemonRenderContext::registerAtomicCounterBuffer(QDemonRenderAtomicCounterBuffer *buffer)
@@ -164,26 +170,30 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::getAtomicCounter
 {
     const auto entry = m_atomicCounterToImpMap.constFind(bufferName);
     if (entry != m_atomicCounterToImpMap.cend())
-        return QDemonRef<QDemonRenderAtomicCounterBuffer>(entry.value());
-    return QDemonRef<QDemonRenderAtomicCounterBuffer>();
+        return entry.value();
+    return nullptr;
 }
 
 QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::getAtomicCounterBufferByParam(const QByteArray &paramName)
 {
     // iterate through all atomic counter buffers
-    for (TContextAtomicCounterBufferMap::iterator iter = m_atomicCounterToImpMap.begin(), end = m_atomicCounterToImpMap.end();
-         iter != end;
-         ++iter) {
-        if (iter.value() && iter.value()->containsParam(paramName))
-            return QDemonRef<QDemonRenderAtomicCounterBuffer>(iter.value());
+    auto it = m_atomicCounterToImpMap.cbegin();
+    const auto end = m_atomicCounterToImpMap.cend();
+    for (; it != end; ++it) {
+        if (it.value() && it.value()->containsParam(paramName))
+            break;
     }
 
-    return QDemonRef<QDemonRenderAtomicCounterBuffer>();
+    return (it != end) ? it.value() : nullptr;
 }
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer)
 {
-    m_atomicCounterToImpMap.remove(buffer->bufferName());
+    const auto it = m_atomicCounterToImpMap.constFind(buffer->bufferName());
+    if (it != m_atomicCounterToImpMap.cend()) {
+        Q_ASSERT(it.value()->ref == 1);
+        m_atomicCounterToImpMap.erase(it);
+    }
 }
 
 void QDemonRenderContext::setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers)
@@ -211,9 +221,9 @@ QDemonRef<QDemonRenderAttribLayout> QDemonRenderContext::createAttributeLayout(Q
 }
 
 QDemonRef<QDemonRenderInputAssembler> QDemonRenderContext::createInputAssembler(
-        QDemonRef<QDemonRenderAttribLayout> attribLayout,
+        const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
         QDemonDataView<QDemonRef<QDemonRenderVertexBuffer>> buffers,
-        const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
+        const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
         QDemonDataView<quint32> strides,
         QDemonDataView<quint32> offsets,
         QDemonRenderDrawMode primType,
@@ -437,7 +447,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRenderContext::activeShader() const
     return m_hardwarePropertyContext.m_activeShader;
 }
 
-void QDemonRenderContext::setActiveProgramPipeline(QDemonRef<QDemonRenderProgramPipeline> inProgramPipeline)
+void QDemonRenderContext::setActiveProgramPipeline(const QDemonRef<QDemonRenderProgramPipeline> &inProgramPipeline)
 {
     if (inProgramPipeline != m_hardwarePropertyContext.m_activeProgramPipeline)
         doSetActiveProgramPipeline(inProgramPipeline);
@@ -448,7 +458,7 @@ QDemonRef<QDemonRenderProgramPipeline> QDemonRenderContext::activeProgramPipelin
     return m_hardwarePropertyContext.m_activeProgramPipeline;
 }
 
-void QDemonRenderContext::dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ)
+void QDemonRenderContext::dispatchCompute(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ)
 {
     Q_ASSERT(inShader);
 
@@ -545,7 +555,7 @@ void QDemonRenderContext::clear(QDemonRenderClearFlags flags)
     m_backend->clear(flags);
 }
 
-void QDemonRenderContext::clear(QDemonRef<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags)
+void QDemonRenderContext::clear(const QDemonRef<QDemonRenderFrameBuffer> &fb, QDemonRenderClearFlags flags)
 {
     QDemonRef<QDemonRenderFrameBuffer> previous = m_hardwarePropertyContext.m_frameBuffer;
     if (previous != fb)
@@ -572,7 +582,7 @@ void QDemonRenderContext::blitFramebuffer(qint32 srcX0,
 }
 
 bool QDemonRenderContext::bindShaderToInputAssembler(const QDemonRef<QDemonRenderInputAssembler> &inputAssembler,
-                                                         const QDemonRef<QDemonRenderShaderProgram> &shader)
+                                                     const QDemonRef<QDemonRenderShaderProgram> &shader)
 {
     // setup the input assembler object
     return m_backend->setInputAssembler(inputAssembler->handle(), shader->handle());
@@ -581,8 +591,8 @@ bool QDemonRenderContext::bindShaderToInputAssembler(const QDemonRef<QDemonRende
 bool QDemonRenderContext::applyPreDrawProperties()
 {
     // Get the currently bound vertex and shader
-    QDemonRef<QDemonRenderInputAssembler> inputAssembler = m_hardwarePropertyContext.m_inputAssembler;
-    QDemonRef<QDemonRenderShaderProgram> shader(m_hardwarePropertyContext.m_activeShader);
+    const QDemonRef<QDemonRenderInputAssembler> &inputAssembler = m_hardwarePropertyContext.m_inputAssembler;
+    QDemonRef<QDemonRenderShaderProgram> &shader(m_hardwarePropertyContext.m_activeShader);
 
     // we could render through a program pipline
     if (shader == nullptr && m_hardwarePropertyContext.m_activeProgramPipeline)
@@ -705,11 +715,6 @@ void QDemonRenderContext::doSetActiveProgramPipeline(const QDemonRef<QDemonRende
 }
 QDemonRef<QDemonRenderContext> QDemonRenderContext::createNull()
 {
-    QDemonRef<QDemonRenderContext> retval;
-
-    // create backend
-    QDemonRef<QDemonRenderContext> impl(new QDemonRenderContext(QDemonRenderBackendNULL::createBackend()));
-    retval = impl;
-    return retval;
+    return QDemonRef<QDemonRenderContext>(new QDemonRenderContext(QDemonRenderBackendNULL::createBackend()));;
 }
 QT_END_NAMESPACE

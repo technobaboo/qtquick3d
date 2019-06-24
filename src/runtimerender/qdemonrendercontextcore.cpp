@@ -63,30 +63,26 @@ QDemonRenderContextInterface::QDemonRenderContextInterface(const QDemonRef<QDemo
     , m_inputStreamFactory(new QDemonInputStreamFactory)
     , m_bufferManager(new QDemonBufferManager(ctx, m_inputStreamFactory, &m_perfTimer))
     , m_resourceManager(new QDemonResourceManager(ctx))
+    , m_offscreenRenderManager(QDemonOffscreenRenderManager::createOffscreenRenderManager(m_resourceManager, this))
+    , m_renderer(QDemonRendererInterface::createRenderer(this))
+    , m_dynamicObjectSystem(new QDemonDynamicObjectSystem(this))
+    , m_effectSystem(new QDemonEffectSystem(this))
     , m_shaderCache(QDemonShaderCache::createShaderCache(ctx, m_inputStreamFactory, &m_perfTimer))
     , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
-    , m_windowDimensions(800, 480)
-    , m_presentationScale(0, 0)
-    , m_fps(qMakePair(0.0, 0))
+    , m_customMaterialSystem(new QDemonMaterialSystem(this))
+    , m_pixelGraphicsRenderer(QDemonPixelGraphicsRendererInterface::createRenderer(this))
+    , m_pathManager(QDemonPathManagerInterface::createPathManager(this))
+    , m_shaderProgramGenerator(QDemonShaderProgramGeneratorInterface::createProgramGenerator(this))
+    , m_defaultMaterialShaderGenerator(QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(this))
+    , m_customMaterialShaderGenerator(QDemonMaterialShaderGeneratorInterface::createCustomMaterialShaderGenerator(this))
+    , m_renderList(QDemonRenderList::createRenderList())
 {
-    m_renderList = QDemonRenderList::createRenderList();
-    m_offscreenRenderManager = QDemonOffscreenRenderManager::createOffscreenRenderManager(m_resourceManager, this);
-    m_renderer = QDemonRendererInterface::createRenderer(this);
     if (!inApplicationDirectory.isEmpty())
         m_inputStreamFactory->addSearchDirectory(inApplicationDirectory);
 
-    m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, &m_perfTimer);
-    m_dynamicObjectSystem = new QDemonDynamicObjectSystem(this);
-    m_effectSystem = new QDemonEffectSystem(this);
-    m_customMaterialSystem = new QDemonMaterialSystem(this);
+    const_cast<QDemonRef<IImageBatchLoader> &>(m_imageBatchLoader) = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, &m_perfTimer);
     m_customMaterialSystem->setRenderContextInterface(this);
-    // as does the custom material system
-    m_pixelGraphicsRenderer = QDemonPixelGraphicsRendererInterface::createRenderer(this);
-    m_shaderProgramGenerator = QDemonShaderProgramGeneratorInterface::createProgramGenerator(this);
-    m_defaultMaterialShaderGenerator = QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(this);
-    m_customMaterialShaderGenerator = QDemonMaterialShaderGeneratorInterface::createCustomMaterialShaderGenerator(this);
 
-    m_pathManager = QDemonPathManagerInterface::createPathManager(this);
 
     const char *versionString = nullptr;
     switch (ctx->renderContextType()) {
@@ -175,53 +171,53 @@ QDemonRenderContextInterface::QDemonRenderContextInterfacePtr QDemonRenderContex
     return QDemonRenderContextInterfacePtr();
 }
 
-QDemonRef<QDemonRendererInterface> QDemonRenderContextInterface::renderer() { return m_renderer; }
+const QDemonRef<QDemonRendererInterface> &QDemonRenderContextInterface::renderer() const { return m_renderer; }
 
-QDemonRef<QDemonBufferManager> QDemonRenderContextInterface::bufferManager() { return m_bufferManager; }
+const QDemonRef<QDemonBufferManager> &QDemonRenderContextInterface::bufferManager() const { return m_bufferManager; }
 
-QDemonRef<QDemonResourceManager> QDemonRenderContextInterface::resourceManager() { return m_resourceManager; }
+const QDemonRef<QDemonResourceManager> &QDemonRenderContextInterface::resourceManager() const { return m_resourceManager; }
 
-const QDemonRef<QDemonRenderContext> &QDemonRenderContextInterface::renderContext() { return m_renderContext; }
+const QDemonRef<QDemonRenderContext> &QDemonRenderContextInterface::renderContext() const { return m_renderContext; }
 
-QDemonRef<QDemonOffscreenRenderManager> QDemonRenderContextInterface::offscreenRenderManager()
+const QDemonRef<QDemonOffscreenRenderManager> &QDemonRenderContextInterface::offscreenRenderManager() const
 {
     return m_offscreenRenderManager;
 }
 
-QDemonRef<QDemonInputStreamFactory> QDemonRenderContextInterface::inputStreamFactory() { return m_inputStreamFactory; }
+const QDemonRef<QDemonInputStreamFactory> &QDemonRenderContextInterface::inputStreamFactory() const { return m_inputStreamFactory; }
 
-QDemonRef<QDemonEffectSystem> QDemonRenderContextInterface::effectSystem() { return m_effectSystem; }
+const QDemonRef<QDemonEffectSystem> &QDemonRenderContextInterface::effectSystem() const { return m_effectSystem; }
 
-QDemonRef<QDemonShaderCache> QDemonRenderContextInterface::shaderCache() { return m_shaderCache; }
+const QDemonRef<QDemonShaderCache> &QDemonRenderContextInterface::shaderCache() const { return m_shaderCache; }
 
-QDemonRef<QDemonAbstractThreadPool> QDemonRenderContextInterface::threadPool() { return m_threadPool; }
+const QDemonRef<QDemonAbstractThreadPool> &QDemonRenderContextInterface::threadPool() const { return m_threadPool; }
 
-QDemonRef<IImageBatchLoader> QDemonRenderContextInterface::imageBatchLoader() { return m_imageBatchLoader; }
+const QDemonRef<IImageBatchLoader> &QDemonRenderContextInterface::imageBatchLoader() const { return m_imageBatchLoader; }
 
-QDemonRef<QDemonDynamicObjectSystem> QDemonRenderContextInterface::dynamicObjectSystem() { return m_dynamicObjectSystem; }
+const QDemonRef<QDemonDynamicObjectSystem> &QDemonRenderContextInterface::dynamicObjectSystem() const { return m_dynamicObjectSystem; }
 
-QDemonRef<QDemonMaterialSystem> QDemonRenderContextInterface::customMaterialSystem() { return m_customMaterialSystem; }
+const QDemonRef<QDemonMaterialSystem> &QDemonRenderContextInterface::customMaterialSystem() const { return m_customMaterialSystem; }
 
-QDemonRef<QDemonPixelGraphicsRendererInterface> QDemonRenderContextInterface::pixelGraphicsRenderer()
+const QDemonRef<QDemonPixelGraphicsRendererInterface> &QDemonRenderContextInterface::pixelGraphicsRenderer() const
 {
     return m_pixelGraphicsRenderer;
 }
 
-QDemonRef<QDemonRenderList> QDemonRenderContextInterface::renderList() { return m_renderList; }
+const QDemonRef<QDemonRenderList> &QDemonRenderContextInterface::renderList() const { return m_renderList; }
 
-QDemonRef<QDemonPathManagerInterface> QDemonRenderContextInterface::pathManager() { return m_pathManager; }
+const QDemonRef<QDemonPathManagerInterface> &QDemonRenderContextInterface::pathManager() const { return m_pathManager; }
 
-QDemonRef<QDemonShaderProgramGeneratorInterface> QDemonRenderContextInterface::shaderProgramGenerator()
+const QDemonRef<QDemonShaderProgramGeneratorInterface> &QDemonRenderContextInterface::shaderProgramGenerator() const
 {
     return m_shaderProgramGenerator;
 }
 
-QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> QDemonRenderContextInterface::defaultMaterialShaderGenerator()
+const QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> &QDemonRenderContextInterface::defaultMaterialShaderGenerator() const
 {
     return m_defaultMaterialShaderGenerator;
 }
 
-QDemonRef<QDemonMaterialShaderGeneratorInterface> QDemonRenderContextInterface::customMaterialShaderGenerator()
+const QDemonRef<QDemonMaterialShaderGeneratorInterface> &QDemonRenderContextInterface::customMaterialShaderGenerator() const
 {
     return m_customMaterialShaderGenerator;
 }

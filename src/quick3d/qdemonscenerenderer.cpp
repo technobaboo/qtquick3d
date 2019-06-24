@@ -359,7 +359,7 @@ void QDemonSceneRenderer::addNodeToLayer(QDemonRenderNode *node)
     m_layer->addChild(*node);
 }
 
-QDemonSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, QDemonRef<QDemonRenderContext> context)
+QDemonSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, const QDemonRef<QDemonRenderContext> &context)
 {
     size = s;
     renderContext = context;

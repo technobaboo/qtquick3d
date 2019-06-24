@@ -101,7 +101,7 @@ public:
 
     virtual QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QByteArray &inShaderName,
                                                                         const QDemonShaderCacheProgramFlags &inFlags,
-                                                                        TShaderFeatureSet inFeatureSet,
+                                                                        const TShaderFeatureSet &inFeatureSet,
                                                                         bool separableProgram = false) = 0;
 
     QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QByteArray &inShaderName, bool separableProgram = false);
