@@ -29,6 +29,10 @@ public:
     };
     Q_ENUM(QDemonTessModeValues)
 
+    enum QDemonModelDirtyType {
+        SourceDirty = 0x00000001
+    };
+
     QDemonModel();
     ~QDemonModel() override;
 
@@ -70,6 +74,9 @@ private:
     float m_edgeTess = 1.0f;
     float m_innerTess = 1.0f;
     bool m_isWireframeMode = false;
+
+    quint32 m_dirtyAttributes = 0xffffffff; // all dirty by default
+    void markDirty(QDemonModelDirtyType type);
 
     static void qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDemonMaterial *material);
     static QDemonMaterial *qmlMaterialAt(QQmlListProperty<QDemonMaterial> *list, int index);

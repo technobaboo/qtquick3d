@@ -67,7 +67,7 @@ void QDemonModel::setSource(const QUrl &source)
 
     m_source = source;
     emit sourceChanged(m_source);
-    update();
+    markDirty(SourceDirty);
 }
 
 void QDemonModel::setSkeletonRoot(int skeletonRoot)
@@ -134,8 +134,8 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
     QDemonNode::updateSpatialNode(node);
 
     auto modelNode = static_cast<QDemonRenderModel *>(node);
-    // TODO: Don't call translateSource() unless the source is dirty!
-    modelNode->meshPath = translateSource();
+    if (m_dirtyAttributes & SourceDirty)
+        modelNode->meshPath = translateSource();
     modelNode->skeletonRoot = m_skeletonRoot;
     modelNode->tessellationMode = TessModeValues(m_tesselationMode);
     modelNode->edgeTess = m_edgeTess;
@@ -166,6 +166,8 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
         modelNode->materials.clear();
     }
 
+    m_dirtyAttributes = 0;
+
     return modelNode;
 }
 
@@ -187,6 +189,14 @@ QString QDemonModel::translateSource()
     }
 
     return QQmlFile::urlToLocalFileOrQrc(m_source) + fragment;
+}
+
+void QDemonModel::markDirty(QDemonModel::QDemonModelDirtyType type)
+{
+    if (!(m_dirtyAttributes & quint32(type))) {
+        m_dirtyAttributes |= quint32(type);
+        update();
+    }
 }
 
 void QDemonModel::qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDemonMaterial *material)
