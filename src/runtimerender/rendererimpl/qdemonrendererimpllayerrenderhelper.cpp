@@ -33,35 +33,25 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace {
+#if 0
 // left/top
-float getMinValue(float start, float width, float value, QDemonRenderLayer::UnitType units)
+inline constexpr float getMinValue(float start, float width, float value, QDemonRenderLayer::UnitType units) Q_DECL_NOTHROW
 {
-    if (units == QDemonRenderLayer::UnitType::Pixels)
-        return start + value;
-
-    return start + (value * width / 100.0f);
+    return (units == QDemonRenderLayer::UnitType::Pixels) ? (start + value) : (start + (value * width / 100.0f));
 }
 
 // width/height
-float getValueLen(float width, float value, QDemonRenderLayer::UnitType units)
+inline constexpr float getValueLen(float width, float value, QDemonRenderLayer::UnitType units) Q_DECL_NOTHROW
 {
-    if (units == QDemonRenderLayer::UnitType::Pixels)
-        return value;
-
-    return width * value / 100.0f;
+    return (units == QDemonRenderLayer::UnitType::Pixels) ? value : (width * value / 100.0f);
 }
 
 // right/bottom
-float getMaxValue(float start, float width, float value, QDemonRenderLayer::UnitType units)
+inline constexpr float getMaxValue(float start, float width, float value, QDemonRenderLayer::UnitType units) Q_DECL_NOTHROW
 {
-    if (units == QDemonRenderLayer::UnitType::Pixels)
-        return start + width - value;
-
-    return start + width - (value * width / 100.0f);
+    return (units == QDemonRenderLayer::UnitType::Pixels) ? (start + width - value) : (start + width - (value * width / 100.0f));
 }
-
-}
+#endif
 
 QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationViewport,
                                                  const QRectF &inPresentationScissor,
