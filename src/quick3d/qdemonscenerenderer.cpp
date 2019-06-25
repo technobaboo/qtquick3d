@@ -15,6 +15,10 @@
 
 QT_BEGIN_NAMESPACE
 
+static bool dumpPerfTiming = false;
+static int frameCount = 0;
+static bool dumpRenderTimes = false;
+
 SGFramebufferObjectNode::SGFramebufferObjectNode()
     : window(nullptr)
     , renderer(nullptr)
@@ -51,6 +55,8 @@ void SGFramebufferObjectNode::preprocess()
 void SGFramebufferObjectNode::render()
 {
     if (renderPending) {
+        QElapsedTimer renderTimer;
+        renderTimer.start();
         renderPending = false;
         GLuint textureId = renderer->render();
 
@@ -66,6 +72,10 @@ void SGFramebufferObjectNode::render()
 
         markDirty(QSGNode::DirtyMaterial);
         emit textureChanged();
+        if (dumpRenderTimes) {
+            QOpenGLContext::currentContext()->functions()->glFinish();
+            qDebug() << "FBO: Render took: " << renderTimer.elapsed() << "ms";
+        }
     }
 }
 
@@ -76,6 +86,7 @@ void SGFramebufferObjectNode::handleScreenChange()
         quickFbo->update();
     }
 }
+
 
 QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
     : m_window(window)
@@ -94,6 +105,11 @@ QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
         m_renderContext = QDemonRenderContext::createGl(openGLContext->format());
     if (m_sgContext.isNull())
         m_sgContext = QDemonRenderContextInterface::getRenderContextInterface(m_renderContext, QString::fromLatin1("./"), quintptr(window));
+
+    dumpPerfTiming = !qgetenv("QUICK3D_PERFTIMERS").isEmpty();
+    dumpRenderTimes = !qgetenv("QUICK3D_RENDERTIMES").isEmpty();
+    if (dumpPerfTiming)
+        m_sgContext->renderer()->enableLayerGpuProfiling(true);
 }
 
 QDemonSceneRenderer::~QDemonSceneRenderer()
@@ -115,6 +131,13 @@ GLuint QDemonSceneRenderer::render()
     m_sgContext->runRenderTasks();
     m_sgContext->renderer()->renderLayer(*m_layer, m_surfaceSize, true, QVector3D(0, 0, 0), false);
     m_sgContext->endFrame();
+
+    if (dumpPerfTiming) {
+        if (++frameCount == 60) {
+            m_sgContext->performanceTimer()->dump();
+            frameCount = 0;
+        }
+    }
 
     return HandleToID_cast(GLuint, size_t, m_fbo->color0->handle());
 }
@@ -139,12 +162,21 @@ void QDemonSceneRenderer::render(const QRect &viewport, bool clearFirst)
     m_sgContext->renderer()->renderLayer(*m_layer, m_surfaceSize, clearFirst, QVector3D(0, 0, 0), false);
     m_sgContext->endFrame();
 
+    if (dumpPerfTiming) {
+        if (++frameCount == 60) {
+            m_sgContext->performanceTimer()->dump();
+            frameCount = 0;
+        }
+    }
 }
 
 void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size, bool useFBO)
 {
     if (!item)
         return;
+
+    QElapsedTimer syncTimer;
+    syncTimer.start();
 
     if (m_surfaceSize != size) {
         m_layerSizeIsDirty = true;
@@ -200,6 +232,10 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size, boo
             m_fbo = new FramebufferObject(m_surfaceSize, m_renderContext);
             m_layerSizeIsDirty = false;
         }
+    }
+    if (dumpRenderTimes) {
+        QOpenGLContext::currentContext()->functions()->glFinish();
+        qDebug() << "Sync took " << syncTimer.elapsed() << "ms";
     }
 
 }
@@ -339,6 +375,8 @@ QRect convertQtRectToGLViewport(const QRectF &rect, const QSize surfaceSize) {
 
 void QDemonSGRenderNode::render(const QSGRenderNode::RenderState *state)
 {
+    QElapsedTimer renderTimer;
+    renderTimer.start();
     // calculate viewport
     const double dpr = renderer->m_window->devicePixelRatio();
     const QSizeF itemSize = renderer->surfaceSize() / dpr;
@@ -352,6 +390,11 @@ void QDemonSGRenderNode::render(const QSGRenderNode::RenderState *state)
 
     // reset some state
     window->resetOpenGLState();
+
+    if (dumpRenderTimes) {
+        QOpenGLContext::currentContext()->functions()->glFinish();
+        qDebug() << "SGRenderNode: Render took: " << renderTimer.elapsed() << "ms";
+    }
 }
 
 void QDemonSGRenderNode::releaseResources()
@@ -391,9 +434,15 @@ void QDemonSGDirectRenderer::requestRender()
 
 void QDemonSGDirectRenderer::render()
 {
+    QElapsedTimer renderTimer;
+    renderTimer.start();
     const QRect glViewport = convertQtRectToGLViewport(m_viewport, m_window->size() * m_window->devicePixelRatio());
     m_renderer->render(glViewport, false);
     m_window->resetOpenGLState();
+    if (dumpRenderTimes) {
+        QOpenGLContext::currentContext()->functions()->glFinish();
+        qDebug() << "Window: Render took: " << renderTimer.elapsed() << "ms";
+    }
 }
 
 QT_END_NAMESPACE
