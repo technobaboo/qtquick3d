@@ -377,6 +377,7 @@ void QDemonSGRenderNode::render(const QSGRenderNode::RenderState *state)
 {
     QElapsedTimer renderTimer;
     renderTimer.start();
+    Q_UNUSED(state)
     // calculate viewport
     const double dpr = renderer->m_window->devicePixelRatio();
     const QSizeF itemSize = renderer->surfaceSize() / dpr;
