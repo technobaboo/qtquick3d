@@ -180,25 +180,23 @@ inline EulerAngles rotationAndOrderToShoemake(QVector3D inRotation, quint32 inOr
 
 QVector3D QDemonRenderNode::getRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const
 {
-    const float *matrixData = inMatrix.constData();
-    float theConvertMatrixData[16] = { inMatrix(0, 0),
-                                       inMatrix(0, 1),
-                                       inMatrix(0, 2),
-                                       0.0f,
-                                       inMatrix(1, 0),
-                                       inMatrix(1, 1),
-                                       inMatrix(1, 2),
-                                       0.0f,
-                                       inMatrix(2, 0),
-                                       inMatrix(2, 1),
-                                       inMatrix(2, 2),
-                                       0.0f,
-                                       0.0f,
-                                       0.0f,
-                                       0.0f,
-                                       1.0f };
+    QMatrix4x4 theConvertMatrix = { inMatrix(0, 0),
+                                    inMatrix(0, 1),
+                                    inMatrix(0, 2),
+                                    0.0f,
+                                    inMatrix(1, 0),
+                                    inMatrix(1, 1),
+                                    inMatrix(1, 2),
+                                    0.0f,
+                                    inMatrix(2, 0),
+                                    inMatrix(2, 1),
+                                    inMatrix(2, 2),
+                                    0.0f,
+                                    0.0f,
+                                    0.0f,
+                                    0.0f,
+                                    1.0f };
 
-    QMatrix4x4 theConvertMatrix(theConvertMatrixData);
     if (flags.testFlag(Flag::LeftHanded))
         QDemonRenderNode::flipCoordinateSystem(theConvertMatrix);
     QDemonEulerAngleConverter theConverter;
