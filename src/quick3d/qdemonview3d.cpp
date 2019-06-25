@@ -379,7 +379,7 @@ static QSurfaceFormat findIdealGLESVersion()
     // are broken and succeed the 3.1 context request even though they only
     // support and return a 3.0 context. This is against the spec since 3.0 is
     // obviously not backwards compatible with 3.1, but hey...
-    if (ctx.create() && ctx.format().version() >= qMakePair(3, 1) && !isBlackListedES3Driver(ctx)) {
+    if (ctx.create() && ctx.format().version() >= qMakePair(3, 1)) {
         qDebug("Requesting OpenGL ES 3.1 context succeeded");
         return ctx.format();
     }
