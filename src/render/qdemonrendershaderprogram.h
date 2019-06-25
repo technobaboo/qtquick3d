@@ -304,7 +304,7 @@ struct QDemonRenderCachedShaderPropertyArray
     {
         memset(m_array, 0, sizeof(m_array));
         QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inConstantName);
-        if (theConstant) {
+        if (Q_LIKELY(theConstant)) {
             if (theConstant->m_elementCount > 1 && theConstant->m_elementCount <= size
                 && theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType *>::getType()) {
                 constant = theConstant;

@@ -68,8 +68,8 @@ void QDemonRenderList::discardRenderTask(quint32 inTaskId)
 
 void QDemonRenderList::runRenderTasks()
 {
-    auto iter = m_tasks.rbegin();
-    const auto end = m_tasks.rend();
+    auto iter = m_tasks.crbegin();
+    const auto end = m_tasks.crend();
     while (iter != end) {
         iter->second->run();
         ++iter;

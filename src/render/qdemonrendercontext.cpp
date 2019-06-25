@@ -144,8 +144,8 @@ void QDemonRenderContext::registerStorageBuffer(QDemonRenderStorageBuffer *buffe
 
 QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContext::getStorageBuffer(const QByteArray &bufferName)
 {
-    TContextStorageBufferMap::iterator entry = m_storageToImpMap.find(bufferName);
-    if (entry != m_storageToImpMap.end())
+    const auto entry = m_storageToImpMap.constFind(bufferName);
+    if (entry != m_storageToImpMap.cend())
         return QDemonRef<QDemonRenderStorageBuffer>(entry.value());
     return nullptr;
 }
@@ -162,8 +162,8 @@ void QDemonRenderContext::registerAtomicCounterBuffer(QDemonRenderAtomicCounterB
 
 QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::getAtomicCounterBuffer(const QByteArray &bufferName)
 {
-    TContextAtomicCounterBufferMap::iterator entry = m_atomicCounterToImpMap.find(bufferName);
-    if (entry != m_atomicCounterToImpMap.end())
+    const auto entry = m_atomicCounterToImpMap.constFind(bufferName);
+    if (entry != m_atomicCounterToImpMap.cend())
         return QDemonRef<QDemonRenderAtomicCounterBuffer>(entry.value());
     return QDemonRef<QDemonRenderAtomicCounterBuffer>();
 }
@@ -677,16 +677,18 @@ QMatrix4x4 QDemonRenderContext::applyVirtualViewportToProjectionMatrix(const QMa
 
 void QDemonRenderContext::doSetActiveShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
-    m_hardwarePropertyContext.m_activeShader = nullptr;
-    if (!m_backend)
+    if (!m_backend) {
+        m_hardwarePropertyContext.m_activeShader = nullptr;
         return;
+    }
+
+    if (m_hardwarePropertyContext.m_activeShader != inShader)
+        m_hardwarePropertyContext.m_activeShader = inShader;
 
     if (inShader)
         m_backend->setActiveProgram(inShader->handle());
     else
         m_backend->setActiveProgram(nullptr);
-
-    m_hardwarePropertyContext.m_activeShader = inShader;
 }
 
 void QDemonRenderContext::doSetActiveProgramPipeline(const QDemonRef<QDemonRenderProgramPipeline> &inProgramPipeline)
