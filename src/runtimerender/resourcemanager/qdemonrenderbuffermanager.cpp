@@ -46,6 +46,8 @@
 
 #include <QtDemonAssetImport/private/qdemonmeshutilities_p.h>
 
+#include <QtQuick/QSGTexture>
+
 #include <QtCore/QDir>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
@@ -328,6 +330,32 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString 
     }
 
     return QDemonRenderImageTextureData();
+}
+
+QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QSGTexture *qsgTexture)
+{
+    if (Q_UNLIKELY(!qsgTexture))
+        return QDemonRenderImageTextureData();
+
+    auto theImage = qsgImageMap.find(qsgTexture);
+
+    if (theImage == qsgImageMap.end()) {
+        theImage = qsgImageMap.insert(qsgTexture, QDemonRenderImageTextureData());
+        QDemonRef<QDemonRenderTexture2D> theTexture = new QDemonRenderTexture2D(context, qsgTexture);
+        theImage.value().m_texture = theTexture;
+        QObject::connect(qsgTexture, &QObject::destroyed, [&]() {
+            qsgImageMap.remove(qsgTexture);
+        });
+    } else {
+        //TODO: make QDemonRenderTexture2D support updating handles instead of this hack
+        auto textureId = reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendTextureObject>(qsgTexture->textureId());
+        if (theImage.value().m_texture->handle() != textureId) {
+            QDemonRef<QDemonRenderTexture2D> theTexture = new QDemonRenderTexture2D(context, qsgTexture);
+            theImage.value().m_texture = theTexture;
+        }
+    }
+
+    return theImage.value();
 }
 
 QDemonMeshUtilities::MultiLoadResult QDemonBufferManager::loadPrimitive(const QString &inRelativePath) const

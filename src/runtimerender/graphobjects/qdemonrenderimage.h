@@ -43,6 +43,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
 class QDemonOffscreenRenderManager;
 class QDemonOffscreenRendererInterface;
+class QSGTexture;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonRenderGraphObject
 {
@@ -73,6 +74,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonRenderGraphO
     QDemonRenderGraphObject *m_parent;
 
     QDemonRenderImageTextureData m_textureData;
+
+    QSGTexture *m_qsgTexture = nullptr; // overrides source if available
 
     Flags m_flags; // only dirty, transform dirty, and active apply
 

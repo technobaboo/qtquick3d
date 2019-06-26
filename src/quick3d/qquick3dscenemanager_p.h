@@ -51,6 +51,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QSGDynamicTexture;
+
 class Q_QUICK3D_PRIVATE_EXPORT QQuick3DSceneManager : public QObject
 {
     Q_OBJECT
@@ -77,6 +79,7 @@ public:
     QList<QQuick3DObject *> dirtyLightList;
     QList<QDemonRenderGraphObject *> cleanupNodeList;
     QSet<QQuick3DObject *> parentlessItems;
+    QVector<QSGDynamicTexture *> qsgDynamicTextures;
     friend QQuick3DObject;
 
 Q_SIGNALS:

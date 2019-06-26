@@ -231,6 +231,14 @@ QSGNode *QQuick3DViewport::updatePaintNode(QSGNode *node, QQuickItem::UpdatePain
 
         n->renderer->synchronize(this, desiredFboSize);
 
+        // Update QSGDynamicTextures that are used for source textures
+        // TODO: could be optimized to not update textures that aren't used or are on culled
+        // geometry.
+        auto *sceneManager = QQuick3DObjectPrivate::get(m_sceneRoot)->sceneManager;
+        for (auto *texture : qAsConst(sceneManager->qsgDynamicTextures)) {
+            texture->updateTexture();
+        }
+
         n->setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
         n->setFiltering(smooth() ? QSGTexture::Linear : QSGTexture::Nearest);
         n->setRect(0, 0, width(), height());

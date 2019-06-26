@@ -33,6 +33,7 @@
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderprefiltertexture.h>
 #include <qdemonoffscreenrenderkey.h>
+#include <QtQuick/QSGTexture>
 
 QT_BEGIN_NAMESPACE
 
@@ -84,6 +85,11 @@ bool QDemonRenderImage::clearDirty(const QDemonRef<QDemonBufferManager> &inBuffe
             QDemonOffscreenRenderResult theResult = inRenderManager.getRenderedItem(m_offscreenRendererId);
             HandleOffscreenResult(*this, newImage, theResult, replaceTexture, wasDirty);
         }
+    }
+
+    if (newImage.m_texture == nullptr && m_qsgTexture) {
+        newImage = inBufferManager->loadRenderImage(m_qsgTexture);
+        replaceTexture = newImage.m_texture != m_textureData.m_texture;
     }
 
     if (newImage.m_texture == nullptr) {

@@ -56,6 +56,7 @@ public:
 private:
     typedef QSet<QString> StringSet;
     typedef QHash<QString, QDemonRenderImageTextureData> ImageMap;
+    typedef QHash<QSGTexture *, QDemonRenderImageTextureData> QSGImageMap;
     typedef QHash<QDemonRenderMeshPath, QDemonRenderMesh *> MeshMap;
     typedef QHash<QString, QString> AliasImageMap;
 
@@ -63,6 +64,7 @@ private:
     QDemonRef<QDemonInputStreamFactory> inputStreamFactory;
     QDemonPerfTimer *perfTimer;
     ImageMap imageMap;
+    QSGImageMap qsgImageMap;
     QMutex loadedImageSetMutex;
     StringSet loadedImageSet;
     AliasImageMap aliasImageMap;
@@ -115,6 +117,7 @@ public:
                                                  const QDemonRenderTextureFormat &inFormat = QDemonRenderTextureFormat::Unknown,
                                                  bool inForceScanForTransparency = false,
                                                  bool inBsdfMipmaps = false);
+    QDemonRenderImageTextureData loadRenderImage(QSGTexture *qsgTexture);
     QDemonRenderMesh *loadMesh(const QDemonRenderMeshPath &inSourcePath);
 
     QDemonRenderMesh *createMesh(const QString &inSourcePath,

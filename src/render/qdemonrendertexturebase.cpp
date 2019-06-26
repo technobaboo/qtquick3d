@@ -123,7 +123,7 @@ QDemonRenderTextureBase::~QDemonRenderTextureBase()
 {
     if (m_sampler)
         delete m_sampler;
-    if (m_handle)
+    if (m_handle && m_ownsTexture)
         m_backend->releaseTexture(m_handle);
 }
 

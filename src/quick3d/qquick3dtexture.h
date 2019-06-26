@@ -31,16 +31,20 @@
 #define QDEMONIMAGE_H
 
 #include <QtQuick3D/QQuick3DObject>
-
+#include <QtQuick/private/qquickitemchangelistener_p.h>
+#include <QtQuick/QSGNode>
 #include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
 
+class QQuickItem;
+class QSGLayer;
 struct QDemonRenderImage;
-class Q_QUICK3D_EXPORT QQuick3DTexture : public QQuick3DObject
+class Q_QUICK3D_EXPORT QQuick3DTexture : public QQuick3DObject, public QQuickItemChangeListener
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(QQuickItem *sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
     Q_PROPERTY(float scaleU READ scaleU WRITE setScaleU NOTIFY scaleUChanged)
     Q_PROPERTY(float scaleV READ scaleV WRITE setScaleV NOTIFY scaleVChanged)
     Q_PROPERTY(MappingMode mappingMode READ mappingMode WRITE setMappingMode NOTIFY mappingModeChanged)
@@ -112,6 +116,7 @@ public:
     ~QQuick3DTexture() override;
 
     QUrl source() const;
+    QQuickItem *sourceItem() const;
     float scaleU() const;
     float scaleV() const;
     MappingMode mappingMode() const;
@@ -130,6 +135,7 @@ public:
 
 public Q_SLOTS:
     void setSource(const QUrl &source);
+    void setSourceItem(QQuickItem *sourceItem);
     void setScaleU(float scaleU);
     void setScaleV(float scaleV);
     void setMappingMode(MappingMode mappingMode);
@@ -144,6 +150,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void sourceChanged(const QUrl &source);
+    void sourceItemChanged(QQuickItem *sourceItem);
     void scaleUChanged(float scaleU);
     void scaleVChanged(float scaleV);
     void mappingModeChanged(MappingMode mappingMode);
@@ -158,9 +165,20 @@ Q_SIGNALS:
 
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
+    void itemChange(ItemChange change, const ItemChangeData &value) override;
+
+    void itemGeometryChanged(QQuickItem *item, QQuickGeometryChange change, const QRectF &geometry) override;
+
+private Q_SLOTS:
+    void sourceItemDestroyed(QObject *item);
 
 private:
+    void ensureTexture();
+
     QUrl m_source;
+    QQuickItem *m_sourceItem = nullptr;
+    bool m_sourceItemReparented = false;
+    QSGLayer *m_layer = nullptr;
     float m_scaleU = 1.0f;
     float m_scaleV = 1.0f;
     MappingMode m_mappingMode = Normal;

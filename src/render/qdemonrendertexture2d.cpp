@@ -30,12 +30,30 @@
 
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemon/qdemonutils.h>
+#include <QtQuick/QSGTexture>
 
 QT_BEGIN_NAMESPACE
 
 QDemonRenderTexture2D::QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context)
     : QDemonRenderTextureBase(context, QDemonRenderTextureTargetType::Texture2D), m_width(0), m_height(0)
 {
+}
+
+QDemonRenderTexture2D::QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context, QSGTexture *qsgTexture)
+    : QDemonRenderTextureBase(context, QDemonRenderTextureTargetType::Texture2D), m_width(qsgTexture->textureSize().width()), m_height(qsgTexture->textureSize().height())
+{
+    // TODO: Avoid generating a texture handle in the first place
+    m_backend->releaseTexture(m_handle);
+    m_handle = nullptr;
+
+    Q_ASSERT(!m_handle);
+    m_handle = reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendTextureObject>(qsgTexture->textureId());
+    m_ownsTexture = false;
+    m_texTarget = QDemonRenderTextureTargetType::Texture2D;
+
+    m_format = qsgTexture->hasAlphaChannel() ? QDemonRenderTextureFormat::RGBA8
+                                             : QDemonRenderTextureFormat::RGB8;
+    m_sampleCount = 1; // TODO
 }
 
 QDemonRenderTexture2D::~QDemonRenderTexture2D()

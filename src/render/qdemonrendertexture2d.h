@@ -39,6 +39,7 @@
 QT_BEGIN_NAMESPACE
 
 class QDemonRenderContext;
+class QSGTexture;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderTexture2D : public QDemonRenderTextureBase
 {
@@ -58,6 +59,8 @@ public:
      * @return No return.
      */
     QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context);
+
+    QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context, QSGTexture *qsgTexture);
 
     virtual ~QDemonRenderTexture2D() override;
 

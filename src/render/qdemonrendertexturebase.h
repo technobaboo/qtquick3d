@@ -75,6 +75,7 @@ protected:
     qint32 m_maxLevel; ///< maximum lod specified
     qint32 m_maxMipLevel; ///< highest mip level
     bool m_immutable; ///< true if this is a immutable texture ( size and format )
+    bool m_ownsTexture = true;
 
 public:
     /**
