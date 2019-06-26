@@ -152,6 +152,43 @@ void QDemonCamera::setProjectionMode(QDemonCamera::QDemonCameraProjectionMode pr
     emit projectionModeChanged(m_projectionMode);
 }
 
+/*!
+ * Transforms \a worldPos from world space into viewport space. The position
+ * is normalized between 0 and 1. The top-left of the viewport is (0,0) and
+ * the botton-right is (1,1). If the position is not visible in the viewport, a
+ * position of [-1, -1] is returned.
+ */
+QVector2D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
+{
+    if (!m_cameraNode)
+        return QVector2D(-1, -1);
+
+    // Convert from left-handed to right-handed
+    QVector3D worldPosRightHand = worldPos * QVector3D(0, 0, -1);
+
+    // Transform position
+    const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
+    QMatrix4x4 projectionViewMatrix = m_cameraNode->projection * worldToCamera;
+    QVector4D pos4d = mat44::transform(projectionViewMatrix, QVector4D(worldPosRightHand, 1));
+
+    // Check if the position is visible in the viewport
+    if (pos4d.w() <= 0)
+        return QVector2D(-1, -1);
+
+    QVector2D pos2d = pos4d.toVector2D();
+
+    // Normalize screenPos between [-1, 1]
+    pos2d = pos2d / pos4d.w();
+    // Normalize screenPos between [0, 1]
+    pos2d = (pos2d / 2) + QVector2D(0.5, 0.5);
+    // Convert origin from bottom-left to top-left
+    pos2d.setY(1 - pos2d.y());
+
+    const bool visibleX = (pos2d.x() - 1) * pos2d.x() <= 0;
+    const bool visibleY = (pos2d.y() - 1) * pos2d.y() <= 0;
+    return visibleX && visibleY ? pos2d : QVector2D(-1, -1);
+}
+
 QDemonRenderGraphObject *QDemonCamera::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)

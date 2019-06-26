@@ -63,6 +63,8 @@ public:
 
     QDemonCameraProjectionMode projectionMode() const;
 
+    Q_INVOKABLE QVector2D worldToViewport(const QVector3D &worldPos) const;
+
 public Q_SLOTS:
     void setClipNear(float clipNear);
     void setClipFar(float clipFar);
