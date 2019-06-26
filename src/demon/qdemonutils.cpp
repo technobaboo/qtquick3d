@@ -92,10 +92,7 @@ QVector3D mat44::rotate(const QMatrix4x4 &m, const QVector3D &v)
 
 QVector4D mat44::rotate(const QMatrix4x4 &m, const QVector4D &v)
 {  
-    const QVector4D column0(m(0, 0), m(1, 0), m(2, 0), m(3, 0));
-    const QVector4D column1(m(0, 1), m(1, 1), m(2, 1), m(3, 1));
-    const QVector4D column2(m(0, 2), m(1, 2), m(2, 2), m(3, 2));
-    return column0 * v.x() + column1 * v.y() + column2 * v.z();
+    return m.column(0) * v.x() + m.column(1) * v.y() + m.column(2) * v.z();
 }
 
 QVector3D mat44::transform(const QMatrix4x4 &m, const QVector3D &v)
@@ -106,11 +103,7 @@ QVector3D mat44::transform(const QMatrix4x4 &m, const QVector3D &v)
 
 QVector4D mat44::transform(const QMatrix4x4 &m, const QVector4D &v)
 {
-    const QVector4D column0(m(0, 0), m(1, 0), m(2, 0), m(3, 0));
-    const QVector4D column1(m(0, 1), m(1, 1), m(2, 1), m(3, 1));
-    const QVector4D column2(m(0, 2), m(1, 2), m(2, 2), m(3, 2));
-    const QVector4D column3(m(0, 3), m(1, 3), m(2, 3), m(3, 3));
-    return column0 * v.x() + column1 * v.y() + column2 * v.z() + column3 * v.w();
+    return m.column(0) * v.x() + m.column(1) * v.y() + m.column(2) * v.z() + m.column(3) * v.w();
 }
 
 bool quant::isFinite(const QQuaternion &q)
