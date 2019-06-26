@@ -1424,7 +1424,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         }
 
         if (shader->m_viewMatrix.isValid()) {
-            viewProj = mat44::getInverse(theCamera.globalTransform);
+            viewProj = theCamera.globalTransform.inverted();
             shader->m_viewMatrix.set(viewProj);
         }
 

@@ -79,11 +79,6 @@ QMatrix3x3 mat44::getUpper3x3(const QMatrix4x4 &m)
     return QMatrix3x3(values);
 }
 
-QMatrix4x4 mat44::getInverse(const QMatrix4x4 &m)
-{
-    return m.inverted();
-}
-
 QVector3D mat44::rotate(const QMatrix4x4 &m, const QVector3D &v)
 {
     const QVector4D tmp = mat44::rotate(m, QVector4D(v.x(), v.y(), v.z(), 1.0f));

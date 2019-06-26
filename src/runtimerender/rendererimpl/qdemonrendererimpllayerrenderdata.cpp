@@ -723,7 +723,7 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
             setupCameraForShadowMap(theCameraProps, *renderer->context(), __viewport.m_initialValue, *camera, globalLights[i], theCamera);
             // we need this matrix for the final rendering
             theCamera.calculateViewProjectionMatrix(pEntry->m_lightVP);
-            pEntry->m_lightView = mat44::getInverse(theCamera.globalTransform);
+            pEntry->m_lightView = theCamera.globalTransform.inverted();
 
             QDemonTextureDetails theDetails(pEntry->m_depthMap->textureDetails());
             theRenderContext->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
@@ -751,7 +751,7 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
             int passes = 6;
             for (int k = 0; k < passes; ++k) {
                 // theCameras[k].CalculateViewProjectionMatrix( pEntry->m_LightCubeVP[k] );
-                pEntry->m_lightCubeView[k] = mat44::getInverse(theCameras[k].globalTransform);
+                pEntry->m_lightCubeView[k] = theCameras[k].globalTransform.inverted();
                 theCameras[k].calculateViewProjectionMatrix(pEntry->m_lightVP);
 
                 // Geometry shader multiplication really doesn't work unless you have a

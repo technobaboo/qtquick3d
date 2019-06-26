@@ -317,8 +317,7 @@ void QDemonRenderCamera::lookAt(const QVector3D &inCameraPos, const QVector3D &i
 
 void QDemonRenderCamera::calculateViewProjectionMatrix(QMatrix4x4 &outMatrix) const
 {
-    QMatrix4x4 globalInverse = mat44::getInverse(globalTransform);
-    outMatrix = projection * globalInverse;
+    outMatrix = projection * globalTransform.inverted();
 }
 
 QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QRectF &inViewport, const QVector2D &inDesignDimensions) const

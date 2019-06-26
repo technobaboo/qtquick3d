@@ -773,7 +773,7 @@ QVector3D QDemonRendererImpl::unprojectWithDepth(QDemonRenderNode &inNode, QVect
     QDemonRenderRay theRay = thePrepResult.pickRay(theMouse, QVector2D(float(theWindow.width()), float(theWindow.height())), true);
     QVector3D theTargetPosition = theRay.origin + theRay.direction * theDepth;
     if (inNode.parent != nullptr && inNode.parent->type != QDemonRenderGraphObject::Type::Layer)
-        theTargetPosition = mat44::transform(mat44::getInverse(inNode.parent->globalTransform), theTargetPosition);
+        theTargetPosition = mat44::transform(inNode.parent->globalTransform.inverted(), theTargetPosition);
     // Our default global space is right handed, so if you are left handed z means something
     // opposite.
     if (inNode.flags.testFlag(QDemonRenderNode::Flag::LeftHanded))
@@ -858,9 +858,9 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonR
     QRectF thePickRect(qreal(bottomLeft.x()), qreal(bottomLeft.y()), qreal(viewportDims.x()), qreal(viewportDims.y()));
     QMatrix4x4 projectionPremult;
     projectionPremult = QDemonRenderContext::applyVirtualViewportToProjectionMatrix(projectionPremult, layerToPresentation, thePickRect);
-    projectionPremult = mat44::getInverse(projectionPremult);
+    projectionPremult = projectionPremult.inverted();
 
-    QMatrix4x4 globalInverse = mat44::getInverse(theCamera.globalTransform);
+    QMatrix4x4 globalInverse = theCamera.globalTransform.inverted();
     QMatrix4x4 theVP = theCamera.projection * globalInverse;
     // For now we won't setup the scissor, so we may be off by inPickDims at most because
     // GetLayerMouseCoords will return
@@ -1549,7 +1549,7 @@ QDemonWidgetRenderInformation QDemonRendererImpl::getWidgetRenderInformation(QDe
     QMatrix4x4 theGlobalTransform;
     if (inNode.parent != nullptr && inNode.parent->type != QDemonRenderGraphObject::Type::Layer && !inNode.flags.testFlag(QDemonRenderNode::Flag::IgnoreParentTransform))
         theGlobalTransform = inNode.parent->globalTransform;
-    QMatrix4x4 theCameraInverse = mat44::getInverse(theCamera->globalTransform);
+    QMatrix4x4 theCameraInverse = theCamera->globalTransform.inverted();
     QMatrix4x4 theNodeParentToCamera;
     if (inWidgetMode == RenderWidgetModes::Local)
         theNodeParentToCamera = theCameraInverse * theGlobalTransform;

@@ -36,7 +36,6 @@ QMatrix3x3 Q_DEMON_EXPORT getInverse(const QMatrix3x3 &m);
 }
 
 namespace mat44 {
-QMatrix4x4 Q_DEMON_EXPORT getInverse(const QMatrix4x4 &m);
 QMatrix3x3 Q_DEMON_EXPORT getUpper3x3(const QMatrix4x4 &m);
 QVector3D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector4D &v);

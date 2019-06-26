@@ -61,7 +61,7 @@ QDemonRenderRay::IntersectionResult QDemonRenderRay::intersectWithAABB(const QMa
     // that the pick could possibly be in.
 
     // Transform pick origin and direction into the subset's space.
-    QMatrix4x4 theOriginTransform = mat44::getInverse(inGlobalTransform);
+    QMatrix4x4 theOriginTransform = inGlobalTransform.inverted();
 
     QVector3D theTransformedOrigin = mat44::transform(theOriginTransform, origin);
     float *outOriginTransformPtr(theOriginTransform.data());
@@ -125,7 +125,7 @@ QDemonOption<QVector2D> QDemonRenderRay::relative(const QMatrix4x4 &inGlobalTran
                                                      const QDemonBounds3 &inBounds,
                                                      QDemonRenderBasisPlanes inPlane) const
 {
-    QMatrix4x4 theOriginTransform = mat44::getInverse(inGlobalTransform);
+    QMatrix4x4 theOriginTransform = inGlobalTransform.inverted();
 
     QVector3D theTransformedOrigin = mat44::transform(theOriginTransform, origin);
     float *outOriginTransformPtr(theOriginTransform.data());

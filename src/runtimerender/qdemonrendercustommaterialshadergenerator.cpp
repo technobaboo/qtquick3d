@@ -517,7 +517,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         theShader->m_cameraPos.set(theCamera.getGlobalPos());
 
         if (theShader->m_viewMatrix.isValid())
-            theShader->m_viewMatrix.set(mat44::getInverse(theCamera.globalTransform));
+            theShader->m_viewMatrix.set(theCamera.globalTransform.inverted());
 
         if (theShader->m_projMatrix.isValid()) {
             QMatrix4x4 vProjMat;
