@@ -352,7 +352,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     }
 
     ///< get the light constant buffer and generate if necessary
-    QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(const char *name, qint32 inLightCount)
+    QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(const QByteArray &name, qint32 inLightCount)
     {
         QDemonRef<QDemonRenderContext> theContext(m_renderContext->renderContext());
 
@@ -535,8 +535,8 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         theShader->m_aoShadowParams.set();
 
         if (m_renderContext->renderContext()->supportsConstantBuffer()) {
-            QDemonRef<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer("cbBufferLights", inLights.size());
-            QDemonRef<QDemonRenderConstantBuffer> pAreaLightCb = getLightConstantBuffer("cbBufferAreaLights", inLights.size());
+            QDemonRef<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer(QByteArrayLiteral("cbBufferLights"), inLights.size());
+            QDemonRef<QDemonRenderConstantBuffer> pAreaLightCb = getLightConstantBuffer(QByteArrayLiteral("cbBufferAreaLights"), inLights.size());
 
             // Split the count between CG lights and area lights
             for (int lightIdx = 0; lightIdx < inLights.size() && pLightCb; ++lightIdx) {
