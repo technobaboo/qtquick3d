@@ -1043,7 +1043,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             fragmentHasSpecularAmount = maybeAddMaterialFresnel(fragmentShader, inKey, fragmentHasSpecularAmount);
 
             // Iterate through all lights
-            for (int lightIdx = 0; lightIdx < m_lights.size(); ++lightIdx) {
+            Q_ASSERT(m_lights.size() < INT32_MAX);
+            for (qint32 lightIdx = 0; lightIdx < m_lights.size(); ++lightIdx) {
                 QDemonRenderLight *lightNode = m_lights[lightIdx];
                 setupLightVariableNames(lightIdx, *lightNode);
                 bool isDirectional = lightNode->m_lightType == QDemonRenderLight::Type::Directional;
@@ -1051,8 +1052,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 bool isShadow = enableShadowMaps && lightNode->m_castShadow;
 
                 fragmentShader.append("");
-                char buf[10];
-                sprintf(buf, "%d", lightIdx);
+                char buf[11];
+                snprintf(buf, 11, "%d", lightIdx);
 
                 QByteArray tempStr = "light";
                 tempStr.append(buf);
