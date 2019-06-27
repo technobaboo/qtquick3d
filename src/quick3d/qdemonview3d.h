@@ -57,6 +57,8 @@ public:
 
     static QSurfaceFormat idealSurfaceFormat();
 
+    Q_INVOKABLE QVector2D worldToView(const QVector3D &worldPos) const;
+
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;

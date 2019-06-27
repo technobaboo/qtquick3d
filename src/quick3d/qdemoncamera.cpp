@@ -157,6 +157,8 @@ void QDemonCamera::setProjectionMode(QDemonCamera::QDemonCameraProjectionMode pr
  * is normalized between 0 and 1. The top-left of the viewport is (0,0) and
  * the botton-right is (1,1). If the position is not visible in the viewport, a
  * position of [-1, -1] is returned.
+ *
+ * \sa QDemonView3D::worldToView
  */
 QVector2D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
 {

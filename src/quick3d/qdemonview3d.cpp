@@ -4,6 +4,7 @@
 #include "qdemonscenemanager_p.h"
 #include "qdemonimage.h"
 #include "qdemonscenerenderer.h"
+#include "qdemoncamera.h"
 #include <QtDemonRuntimeRender/QDemonRenderLayer>
 #include <QOpenGLFunctions>
 
@@ -419,6 +420,26 @@ QSurfaceFormat QDemonView3D::idealSurfaceFormat()
         return fmt;
     }();
     return f;
+}
+
+/*!
+ * Transforms \a worldPoint from world space into view space. If the position
+ * is not visible in the viewport, a position of [-1, -1] is returned. This
+ * function requires that a camera is assigned to the view.
+ *
+ * \sa QDemonCamera::worldToViewport
+ */
+QVector2D QDemonView3D::worldToView(const QVector3D &worldPos) const
+{
+    if (!m_camera) {
+        qmlWarning(this) << "Cannot resolve position in view without a camera assigned!";
+        return QVector2D(-1, -1);
+    }
+
+    const QVector2D normalizedPos = m_camera->worldToViewport(worldPos);
+    if (normalizedPos.x() < 0)
+        return normalizedPos;
+    return normalizedPos * QVector2D(float(width()), float(height()));
 }
 
 void QDemonView3D::invalidateSceneGraph()
