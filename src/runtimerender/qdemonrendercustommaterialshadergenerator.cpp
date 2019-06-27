@@ -443,7 +443,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
     virtual QDemonRef<QDemonShaderLightProperties> setLight(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                                             qint32 lightIdx,
-                                                            qint32 shadeIdx,
+                                                            qint32 /*shadeIdx*/,
                                                             const QDemonRenderLight *inLight,
                                                             QDemonShadowMapEntry *inShadow,
                                                             qint32 shadowIdx,
@@ -458,6 +458,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         }
         if (theLightEntry == nullptr) {
             // create a new name
+#if 0
             QString lightName;
             if (inLight->m_lightType == QDemonRenderLight::Type::Area)
                 lightName = QStringLiteral("arealights");
@@ -466,6 +467,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             char buf[16];
             qsnprintf(buf, 16, "[%d]", int(shadeIdx));
             lightName.append(QString::fromLocal8Bit(buf));
+#endif
 
             QDemonRef<QDemonShaderLightProperties> theNewEntry(
                     new QDemonShaderLightProperties(QDemonShaderLightProperties::createLightEntry(inShader)));
