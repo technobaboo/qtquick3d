@@ -81,7 +81,7 @@ void SGFramebufferObjectNode::render()
 
 void SGFramebufferObjectNode::handleScreenChange()
 {
-    if (window->effectiveDevicePixelRatio() != devicePixelRatio) {
+    if (!qFuzzyCompare(window->effectiveDevicePixelRatio(), devicePixelRatio)) {
         renderer->invalidateFramebufferObject();
         quickFbo->update();
     }
