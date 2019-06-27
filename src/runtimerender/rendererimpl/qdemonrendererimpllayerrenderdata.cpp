@@ -889,7 +889,7 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
     theRenderContext->setDepthFunction(QDemonRenderBoolOp::LessThanOrEqual);
     theRenderContext->setBlendingEnabled(false);
     QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
-    const auto theOpaqueObjects = getOpaqueRenderableObjects();
+    const auto &theOpaqueObjects = getOpaqueRenderableObjects();
     bool usingDepthBuffer = layer.flags.testFlag(QDemonRenderLayer::Flag::LayerEnableDepthTest) && theOpaqueObjects.size() > 0;
 
     if (usingDepthBuffer) {

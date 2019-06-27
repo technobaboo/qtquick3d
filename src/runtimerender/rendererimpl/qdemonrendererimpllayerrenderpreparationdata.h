@@ -338,9 +338,9 @@ struct QDemonLayerRenderPreparationData
 
     QVector3D getCameraDirection();
     // Per-frame cache of renderable objects post-sort.
-    QVector<QDemonRenderableObject *> getOpaqueRenderableObjects();
+    const QVector<QDemonRenderableObject *> &getOpaqueRenderableObjects();
     // If layer depth test is false, this may also contain opaque objects.
-    QVector<QDemonRenderableObject *> getTransparentRenderableObjects();
+    const QVector<QDemonRenderableObject *> &getTransparentRenderableObjects();
 
     virtual void resetForFrame();
 

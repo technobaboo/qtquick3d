@@ -200,7 +200,7 @@ QVector3D QDemonLayerRenderPreparationData::getCameraDirection()
 }
 
 // Per-frame cache of renderable objects post-sort.
-QVector<QDemonRenderableObject *> QDemonLayerRenderPreparationData::getOpaqueRenderableObjects()
+const QVector<QDemonRenderableObject *> &QDemonLayerRenderPreparationData::getOpaqueRenderableObjects()
 {
     if (renderedOpaqueObjects.empty() == false || camera == nullptr)
         return renderedOpaqueObjects;
@@ -221,7 +221,7 @@ QVector<QDemonRenderableObject *> QDemonLayerRenderPreparationData::getOpaqueRen
 }
 
 // If layer depth test is false, this may also contain opaque objects.
-QVector<QDemonRenderableObject *> QDemonLayerRenderPreparationData::getTransparentRenderableObjects()
+const QVector<QDemonRenderableObject *> &QDemonLayerRenderPreparationData::getTransparentRenderableObjects()
 {
     if (renderedTransparentObjects.empty() == false || camera == nullptr)
         return renderedTransparentObjects;
