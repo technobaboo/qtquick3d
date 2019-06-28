@@ -46,7 +46,7 @@ namespace {
 class QDemonInputStream : public QFile
 {
 public:
-    QDemonInputStream(const QString &inPath) : QFile(inPath), m_path(inPath) {}
+    explicit QDemonInputStream(const QString &inPath) : QFile(inPath), m_path(inPath) {}
     ~QDemonInputStream() override = default;
     QString path() const { return m_path; }
 

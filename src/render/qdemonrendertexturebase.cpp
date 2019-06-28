@@ -72,7 +72,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContext> &context)
+    explicit QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContext> &context)
         : m_backend(context->backend())
         , m_handle(nullptr)
     {

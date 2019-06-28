@@ -570,7 +570,7 @@ struct QDemonCustomMaterialsTessellationProperties
     /// culling optimization in the tess shader
 
     QDemonCustomMaterialsTessellationProperties() = default;
-    QDemonCustomMaterialsTessellationProperties(const QDemonRef<QDemonRenderShaderProgram> &inShader)
+    explicit QDemonCustomMaterialsTessellationProperties(const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : m_edgeTessLevel("tessLevelOuter", inShader)
         , m_insideTessLevel("tessLevelInner", inShader)
         , m_phongBlend("phongBlend", inShader)
@@ -643,11 +643,11 @@ struct QDemonMaterialOrComputeShader
     const QDemonRef<QDemonRenderCustomMaterialShader> m_materialShader;
     const QDemonRef<QDemonRenderShaderProgram> m_computeShader;
     QDemonMaterialOrComputeShader() = default;
-    QDemonMaterialOrComputeShader(const QDemonRef<QDemonRenderCustomMaterialShader> &inMaterialShader)
+    explicit QDemonMaterialOrComputeShader(const QDemonRef<QDemonRenderCustomMaterialShader> &inMaterialShader)
         : m_materialShader(inMaterialShader)
     {
     }
-    QDemonMaterialOrComputeShader(const QDemonRef<QDemonRenderShaderProgram> &inComputeShader)
+    explicit QDemonMaterialOrComputeShader(const QDemonRef<QDemonRenderShaderProgram> &inComputeShader)
         : m_computeShader(inComputeShader)
     {
         Q_ASSERT(inComputeShader->programType() == QDemonRenderShaderProgram::ProgramType::Compute);

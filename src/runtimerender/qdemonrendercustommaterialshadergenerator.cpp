@@ -165,7 +165,7 @@ struct QDemonShaderGeneratorGeneratedShader
     // Cache the image property name lookups
     TCustomMaterialImagMap m_images; // Images external to custom material usage
 
-    QDemonShaderGeneratorGeneratedShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
+    explicit QDemonShaderGeneratorGeneratedShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : m_shader(inShader)
         , m_modelMatrix("model_matrix", inShader)
         , m_viewProjMatrix("model_view_projection", inShader)
@@ -244,7 +244,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
     QVector<TCustomMaterialLightEntry> m_lightEntries;
 
-    QDemonShaderGenerator(QDemonRenderContextInterface *inRc)
+    explicit QDemonShaderGenerator(QDemonRenderContextInterface *inRc)
         : QDemonMaterialShaderGeneratorInterface (inRc)
         , m_currentMaterial(nullptr)
     {

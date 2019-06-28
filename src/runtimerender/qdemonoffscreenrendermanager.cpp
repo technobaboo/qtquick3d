@@ -58,7 +58,7 @@ struct QDemonRendererData : QDemonOffscreenRenderResult
     quint32 frameCount = std::numeric_limits<quint32>::max();
     bool rendering = false;
 
-    QDemonRendererData(const QDemonRef<QDemonResourceManager> &inResourceManager)
+    explicit QDemonRendererData(const QDemonRef<QDemonResourceManager> &inResourceManager)
         : resourceManager(inResourceManager)
     {
     }
@@ -67,7 +67,7 @@ struct QDemonRendererData : QDemonOffscreenRenderResult
 struct QDemonScopedRenderDataRenderMarker
 {
     QDemonRendererData &data;
-    QDemonScopedRenderDataRenderMarker(QDemonRendererData &d) : data(d)
+    explicit QDemonScopedRenderDataRenderMarker(QDemonRendererData &d) : data(d)
     {
         Q_ASSERT(data.rendering == false);
         data.rendering = true;
