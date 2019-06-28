@@ -340,7 +340,6 @@ Module {
         exports: ["QtDemon/DemonCustomMaterialBufferInput 1.0"]
         exportMetaObjectRevisions: [0]
         Property { name: "buffer"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
-        Property { name: "bufferName"; type: "QByteArray" }
         Property { name: "param"; type: "QByteArray" }
     }
     Component {
@@ -361,7 +360,7 @@ Module {
             isReadonly: true
         }
         Property { name: "output"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
-        Property { name: "shader"; type: "QDemonCustomMaterialShader"; isPointer: true }
+        Property { name: "shaders"; type: "QDemonCustomMaterialShader"; isList: true; isReadonly: true }
     }
     Component {
         name: "QDemonCustomMaterialRenderState"
@@ -399,7 +398,8 @@ Module {
                 "Shared": 0,
                 "Vertex": 1,
                 "Fragment": 2,
-                "Geometry": 3
+                "Geometry": 3,
+                "Compute": 4
             }
         }
         Property { name: "shader"; type: "QByteArray" }
@@ -454,10 +454,8 @@ Module {
             }
         }
         Property { name: "image"; type: "QDemonImage"; isPointer: true }
-        Property { name: "name"; type: "QByteArray" }
         Property { name: "type"; type: "TextureType" }
         Property { name: "enabled"; type: "bool" }
-        Property { name: "hidden"; type: "bool" }
         Signal {
             name: "textureDirty"
             Parameter { name: "texture"; type: "QDemonCustomMaterialTexture"; isPointer: true }
@@ -783,104 +781,104 @@ Module {
                 "Repeat": 3
             }
         }
-        Property { name: "source"; type: "string" }
-        Property { name: "scaleu"; type: "float" }
-        Property { name: "scalev"; type: "float" }
-        Property { name: "mappingmode"; type: "MappingMode" }
-        Property { name: "tilingmodehorz"; type: "TilingMode" }
-        Property { name: "tilingmodevert"; type: "TilingMode" }
-        Property { name: "rotationuv"; type: "float" }
-        Property { name: "positionu"; type: "float" }
-        Property { name: "positionv"; type: "float" }
-        Property { name: "pivotu"; type: "float" }
-        Property { name: "pivotv"; type: "float" }
+        Property { name: "source"; type: "QUrl" }
+        Property { name: "scaleU"; type: "float" }
+        Property { name: "scaleV"; type: "float" }
+        Property { name: "mappingMode"; type: "MappingMode" }
+        Property { name: "tilingModeHorizontal"; type: "TilingMode" }
+        Property { name: "tilingModeVertical"; type: "TilingMode" }
+        Property { name: "rotationUV"; type: "float" }
+        Property { name: "positionU"; type: "float" }
+        Property { name: "positionV"; type: "float" }
+        Property { name: "pivotU"; type: "float" }
+        Property { name: "pivotV"; type: "float" }
         Signal {
             name: "sourceChanged"
-            Parameter { name: "source"; type: "string" }
+            Parameter { name: "source"; type: "QUrl" }
         }
         Signal {
             name: "scaleUChanged"
-            Parameter { name: "scaleu"; type: "float" }
+            Parameter { name: "scaleU"; type: "float" }
         }
         Signal {
             name: "scaleVChanged"
-            Parameter { name: "scalev"; type: "float" }
+            Parameter { name: "scaleV"; type: "float" }
         }
         Signal {
             name: "mappingModeChanged"
-            Parameter { name: "mappingmode"; type: "MappingMode" }
+            Parameter { name: "mappingMode"; type: "MappingMode" }
         }
         Signal {
             name: "horizontalTilingChanged"
-            Parameter { name: "tilingmodehorz"; type: "TilingMode" }
+            Parameter { name: "tilingModeHorizontal"; type: "TilingMode" }
         }
         Signal {
             name: "verticalTilingChanged"
-            Parameter { name: "tilingmodevert"; type: "TilingMode" }
+            Parameter { name: "tilingModeVertical"; type: "TilingMode" }
         }
         Signal {
             name: "rotationUVChanged"
-            Parameter { name: "rotationuv"; type: "float" }
+            Parameter { name: "rotationUV"; type: "float" }
         }
         Signal {
             name: "positionUChanged"
-            Parameter { name: "positionu"; type: "float" }
+            Parameter { name: "positionU"; type: "float" }
         }
         Signal {
             name: "positionVChanged"
-            Parameter { name: "positionv"; type: "float" }
+            Parameter { name: "positionV"; type: "float" }
         }
         Signal {
-            name: "piviotUChanged"
-            Parameter { name: "pivotu"; type: "float" }
+            name: "pivotUChanged"
+            Parameter { name: "pivotU"; type: "float" }
         }
         Signal {
-            name: "piviotVChanged"
-            Parameter { name: "pivotv"; type: "float" }
+            name: "pivotVChanged"
+            Parameter { name: "pivotV"; type: "float" }
         }
         Method {
             name: "setSource"
-            Parameter { name: "source"; type: "string" }
+            Parameter { name: "source"; type: "QUrl" }
         }
         Method {
             name: "setScaleU"
-            Parameter { name: "scaleu"; type: "float" }
+            Parameter { name: "scaleU"; type: "float" }
         }
         Method {
             name: "setScaleV"
-            Parameter { name: "scalev"; type: "float" }
+            Parameter { name: "scaleV"; type: "float" }
         }
         Method {
             name: "setMappingMode"
-            Parameter { name: "mappingmode"; type: "MappingMode" }
+            Parameter { name: "mappingMode"; type: "MappingMode" }
         }
         Method {
             name: "setHorizontalTiling"
-            Parameter { name: "tilingmodehorz"; type: "TilingMode" }
+            Parameter { name: "tilingModeHorizontal"; type: "TilingMode" }
         }
         Method {
             name: "setVerticalTiling"
-            Parameter { name: "tilingmodevert"; type: "TilingMode" }
+            Parameter { name: "tilingModeVertical"; type: "TilingMode" }
         }
         Method {
             name: "setRotationUV"
-            Parameter { name: "rotationuv"; type: "float" }
+            Parameter { name: "rotationUV"; type: "float" }
         }
         Method {
             name: "setPositionU"
-            Parameter { name: "positionu"; type: "float" }
+            Parameter { name: "positionU"; type: "float" }
         }
         Method {
             name: "setPositionV"
-            Parameter { name: "positionv"; type: "float" }
+            Parameter { name: "positionV"; type: "float" }
         }
         Method {
             name: "setPivotU"
-            Parameter { name: "pivotu"; type: "float" }
+            Parameter { name: "pivotU"; type: "float" }
         }
         Method {
             name: "setPivotV"
-            Parameter { name: "pivotv"; type: "float" }
+            Parameter { name: "pivotV"; type: "float" }
         }
     }
     Component {
@@ -1129,7 +1127,7 @@ Module {
                 "TessNPatch": 3
             }
         }
-        Property { name: "source"; type: "string" }
+        Property { name: "source"; type: "QUrl" }
         Property { name: "skeletonRoot"; type: "int" }
         Property { name: "tesselationMode"; type: "QDemonTessModeValues" }
         Property { name: "edgeTess"; type: "float" }
@@ -1138,7 +1136,7 @@ Module {
         Property { name: "materials"; type: "QDemonMaterial"; isList: true; isReadonly: true }
         Signal {
             name: "sourceChanged"
-            Parameter { name: "source"; type: "string" }
+            Parameter { name: "source"; type: "QUrl" }
         }
         Signal {
             name: "skeletonRootChanged"
@@ -1162,7 +1160,7 @@ Module {
         }
         Method {
             name: "setSource"
-            Parameter { name: "source"; type: "string" }
+            Parameter { name: "source"; type: "QUrl" }
         }
         Method {
             name: "setSkeletonRoot"
@@ -1223,10 +1221,14 @@ Module {
         Property { name: "scale"; type: "QVector3D" }
         Property { name: "pivot"; type: "QVector3D" }
         Property { name: "opacity"; type: "float" }
-        Property { name: "boneid"; type: "int" }
-        Property { name: "rotationorder"; type: "RotationOrder" }
+        Property { name: "boneId"; type: "int" }
+        Property { name: "rotationOrder"; type: "RotationOrder" }
         Property { name: "orientation"; type: "Orientation" }
         Property { name: "visible"; type: "bool" }
+        Property { name: "forward"; type: "QVector3D"; isReadonly: true }
+        Property { name: "up"; type: "QVector3D"; isReadonly: true }
+        Property { name: "right"; type: "QVector3D"; isReadonly: true }
+        Property { name: "globalPosition"; type: "QVector3D"; isReadonly: true }
         Signal {
             name: "xChanged"
             Parameter { name: "x"; type: "float" }
@@ -1275,6 +1277,23 @@ Module {
             name: "visibleChanged"
             Parameter { name: "visible"; type: "bool" }
         }
+        Signal {
+            name: "forwardChanged"
+            Parameter { name: "forward"; type: "QVector3D" }
+        }
+        Signal {
+            name: "upChanged"
+            Parameter { name: "up"; type: "QVector3D" }
+        }
+        Signal {
+            name: "rightChanged"
+            Parameter { name: "right"; type: "QVector3D" }
+        }
+        Signal {
+            name: "globalPositionChanged"
+            Parameter { name: "globalPosition"; type: "QVector3D" }
+        }
+        Signal { name: "transformPropertiesDirty" }
         Method {
             name: "setX"
             Parameter { name: "x"; type: "float" }
@@ -1426,7 +1445,8 @@ Module {
             values: {
                 "Transparent": 0,
                 "Unspecified": 1,
-                "Color": 2
+                "Color": 2,
+                "SkyBox": 3
             }
         }
         Enum {
@@ -1693,10 +1713,20 @@ Module {
         prototype: "QQuickItem"
         exports: ["QtDemon/DemonView3D 1.0"]
         exportMetaObjectRevisions: [0]
+        Enum {
+            name: "QDemonView3DRenderMode"
+            values: {
+                "Texture": 0,
+                "Underlay": 1,
+                "Overlay": 2,
+                "RenderNode": 3
+            }
+        }
         Property { name: "data"; type: "QObject"; isList: true; isReadonly: true }
         Property { name: "camera"; type: "QDemonCamera"; isPointer: true }
         Property { name: "environment"; type: "QDemonSceneEnvironment"; isPointer: true }
         Property { name: "scene"; type: "QDemonNode"; isPointer: true }
+        Property { name: "renderMode"; type: "QDemonView3DRenderMode" }
         Signal {
             name: "cameraChanged"
             Parameter { name: "camera"; type: "QDemonCamera"; isPointer: true }
@@ -1709,6 +1739,10 @@ Module {
             name: "sceneChanged"
             Parameter { name: "sceneRoot"; type: "QDemonNode"; isPointer: true }
         }
+        Signal {
+            name: "renderModeChanged"
+            Parameter { name: "renderMode"; type: "QDemonView3DRenderMode" }
+        }
         Method {
             name: "setCamera"
             Parameter { name: "camera"; type: "QDemonCamera"; isPointer: true }
@@ -1720,6 +1754,10 @@ Module {
         Method {
             name: "setScene"
             Parameter { name: "sceneRoot"; type: "QDemonNode"; isPointer: true }
+        }
+        Method {
+            name: "setRenderMode"
+            Parameter { name: "renderMode"; type: "QDemonView3DRenderMode" }
         }
     }
 }
