@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 QDemonOption<QVector3D> QDemonRenderRay::intersect(const QDemonPlane &inPlane) const
 {
     float Vd = QVector3D::dotProduct(inPlane.n, direction);
-    if (fabs(Vd) < .0001f)
+    if (std::abs(Vd) < .0001f)
         return QDemonEmpty();
     float V0 = -1.0f * (QVector3D::dotProduct(inPlane.n, origin) + inPlane.d);
     float t = V0 / Vd;
