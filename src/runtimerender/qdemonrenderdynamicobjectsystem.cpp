@@ -217,8 +217,6 @@ void QDemonDynamicObjectSystem::setShaderData(const QByteArray &inPath,
         theShaderInfo.m_hasGeomShader = inHasGeomShader;
         theShaderInfo.m_isComputeShader = inIsComputeShader;
     }
-
-    return;
 }
 
 QByteArray QDemonDynamicObjectSystem::getShaderCacheKey(const QByteArray &inId,
