@@ -436,7 +436,7 @@ QVector2D QDemonView3D::worldToView(const QVector3D &worldPos) const
         return QVector2D(-1, -1);
     }
 
-    const QVector2D normalizedPos = m_camera->worldToViewport(worldPos);
+    const QVector2D normalizedPos = m_camera->worldToViewport(worldPos).toVector2D();
     if (normalizedPos.x() < 0)
         return normalizedPos;
     return normalizedPos * QVector2D(float(width()), float(height()));

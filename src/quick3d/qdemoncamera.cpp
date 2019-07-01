@@ -155,15 +155,16 @@ void QDemonCamera::setProjectionMode(QDemonCamera::QDemonCameraProjectionMode pr
 /*!
  * Transforms \a worldPos from world space into viewport space. The position
  * is normalized between 0 and 1. The top-left of the viewport is (0,0) and
- * the botton-right is (1,1). If the position is not visible in the viewport, a
- * position of [-1, -1] is returned.
+ * the botton-right is (1,1). The returned z value will contain the distance
+ * from \l clipNear to \a worldPos. If the position is not visible in the
+ * viewport, a position of [-1, -1, -1] is returned.
  *
  * \sa QDemonView3D::worldToView
  */
-QVector2D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
+QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
 {
     if (!m_cameraNode)
-        return QVector2D(-1, -1);
+        return QVector3D(-1, -1, -1);
 
     // Convert from left-handed to right-handed
     QVector4D worldPosRightHand(worldPos.x(), worldPos.y(), -worldPos.z(), 1);
@@ -175,20 +176,21 @@ QVector2D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
 
     // Check if the position is visible in the viewport
     if (pos4d.w() <= 0)
-        return QVector2D(-1, -1);
+        return QVector3D(-1, -1, -1);
 
-    QVector2D pos2d = pos4d.toVector2D();
-
+    QVector3D pos3d = pos4d.toVector3D();
     // Normalize screenPos between [-1, 1]
-    pos2d = pos2d / pos4d.w();
+    pos3d = pos3d / pos4d.w();
     // Normalize screenPos between [0, 1]
-    pos2d = (pos2d / 2) + QVector2D(0.5, 0.5);
+    pos3d = (pos3d / 2) + QVector3D(0.5, 0.5, 0.0);
     // Convert origin from bottom-left to top-left
-    pos2d.setY(1 - pos2d.y());
+    pos3d.setY(1 - pos3d.y());
+    // Set z to be the distance from clipNear to worldPos
+    pos3d.setZ((position() - worldPos).length() - clipNear());
 
-    const bool visibleX = (pos2d.x() - 1) * pos2d.x() <= 0;
-    const bool visibleY = (pos2d.y() - 1) * pos2d.y() <= 0;
-    return visibleX && visibleY ? pos2d : QVector2D(-1, -1);
+    const bool visibleX = (pos3d.x() - 1) * pos3d.x() <= 0;
+    const bool visibleY = (pos3d.y() - 1) * pos3d.y() <= 0;
+    return visibleX && visibleY ? pos3d : QVector3D(-1, -1, -1);
 }
 
 QDemonRenderGraphObject *QDemonCamera::updateSpatialNode(QDemonRenderGraphObject *node)
