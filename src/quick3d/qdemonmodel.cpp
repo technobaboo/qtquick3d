@@ -77,7 +77,7 @@ void QDemonModel::setSkeletonRoot(int skeletonRoot)
 
     m_skeletonRoot = skeletonRoot;
     emit skeletonRootChanged(m_skeletonRoot);
-    update();
+    markDirty(SkeletonRootDirty);
 }
 
 void QDemonModel::setTesselationMode(QDemonModel::QDemonTessModeValues tesselationMode)
@@ -87,7 +87,7 @@ void QDemonModel::setTesselationMode(QDemonModel::QDemonTessModeValues tesselati
 
     m_tesselationMode = tesselationMode;
     emit tesselationModeChanged(m_tesselationMode);
-    update();
+    markDirty(TesselationModeDirty);
 }
 
 void QDemonModel::setEdgeTess(float edgeTess)
@@ -97,7 +97,7 @@ void QDemonModel::setEdgeTess(float edgeTess)
 
     m_edgeTess = edgeTess;
     emit edgeTessChanged(m_edgeTess);
-    update();
+    markDirty(TesselationEdgeDirty);
 }
 
 void QDemonModel::setInnerTess(float innerTess)
@@ -107,7 +107,7 @@ void QDemonModel::setInnerTess(float innerTess)
 
     m_innerTess = innerTess;
     emit innerTessChanged(m_innerTess);
-    update();
+    markDirty(TesselationInnerDirty);
 }
 
 void QDemonModel::setIsWireframeMode(bool isWireframeMode)
@@ -117,7 +117,7 @@ void QDemonModel::setIsWireframeMode(bool isWireframeMode)
 
     m_isWireframeMode = isWireframeMode;
     emit isWireframeModeChanged(m_isWireframeMode);
-    update();
+    markDirty(WireframeDirty);
 }
 
 static QDemonRenderGraphObject *getMaterialNodeFromQDemonMaterial(QDemonMaterial *material)
@@ -136,34 +136,41 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
     auto modelNode = static_cast<QDemonRenderModel *>(node);
     if (m_dirtyAttributes & SourceDirty)
         modelNode->meshPath = translateSource();
-    modelNode->skeletonRoot = m_skeletonRoot;
-    modelNode->tessellationMode = TessModeValues(m_tesselationMode);
-    modelNode->edgeTess = m_edgeTess;
-    modelNode->innerTess = m_innerTess;
-    modelNode->wireframeMode = m_isWireframeMode;
+    if (m_dirtyAttributes & SkeletonRootDirty)
+        modelNode->skeletonRoot = m_skeletonRoot;
+    if (m_dirtyAttributes & TesselationModeDirty)
+        modelNode->tessellationMode = TessModeValues(m_tesselationMode);
+    if (m_dirtyAttributes & TesselationEdgeDirty)
+        modelNode->edgeTess = m_edgeTess;
+    if (m_dirtyAttributes & TesselationInnerDirty)
+        modelNode->innerTess = m_innerTess;
+    if (m_dirtyAttributes & WireframeDirty)
+        modelNode->wireframeMode = m_isWireframeMode;
 
-    // ### TODO: Make sure materials are setup
-    if (!m_materials.isEmpty()) {
-        if (modelNode->materials.isEmpty()) {
-            // Easy mode, just add each material
-            for (auto material : m_materials) {
-                QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(material);
-                if (graphObject)
-                    modelNode->materials.append(graphObject);
+
+    if (m_dirtyAttributes & MaterialsDirty) {
+        if (!m_materials.isEmpty()) {
+            if (modelNode->materials.isEmpty()) {
+                // Easy mode, just add each material
+                for (auto material : m_materials) {
+                    QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(material);
+                    if (graphObject)
+                        modelNode->materials.append(graphObject);
+                }
+            } else {
+                // Hard mode, go through each material and see if they match
+                if (modelNode->materials.size() != m_materials.size())
+                    modelNode->materials.resize(m_materials.size());
+                for (int i = 0; i < m_materials.size(); ++i) {
+                    QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(m_materials[i]);
+                    if (modelNode->materials[i] != graphObject)
+                        modelNode->materials[i] = graphObject;
+                }
             }
         } else {
-            // Hard mode, go through each material and see if they match
-            if (modelNode->materials.size() != m_materials.size())
-                modelNode->materials.resize(m_materials.size());
-            for (int i = 0; i < m_materials.size(); ++i) {
-                QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(m_materials[i]);
-                if (modelNode->materials[i] != graphObject)
-                    modelNode->materials[i] = graphObject;
-            }
+            // No materials
+            modelNode->materials.clear();
         }
-    } else {
-        // No materials
-        modelNode->materials.clear();
     }
 
     m_dirtyAttributes = 0;
@@ -205,7 +212,7 @@ void QDemonModel::qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDem
         return;
     QDemonModel *self = static_cast<QDemonModel *>(list->object);
     self->m_materials.push_back(material);
-    self->update();
+    self->markDirty(QDemonModel::MaterialsDirty);
 
     if(material->parentItem() == nullptr)
         material->setParentItem(self);
@@ -227,7 +234,7 @@ void QDemonModel::qmlClearMaterials(QQmlListProperty<QDemonMaterial> *list)
 {
     QDemonModel *self = static_cast<QDemonModel *>(list->object);
     self->m_materials.clear();
-    self->update();
+    self->markDirty(QDemonModel::MaterialsDirty);
 }
 
 QT_END_NAMESPACE

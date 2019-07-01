@@ -29,9 +29,6 @@ public:
     };
     Q_ENUM(QDemonTessModeValues)
 
-    enum QDemonModelDirtyType {
-        SourceDirty = 0x00000001
-    };
 
     QDemonModel();
     ~QDemonModel() override;
@@ -67,6 +64,16 @@ protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
+    enum QDemonModelDirtyType {
+        SourceDirty =           0x00000001,
+        SkeletonRootDirty =     0x00000002,
+        TesselationModeDirty =  0x00000004,
+        TesselationEdgeDirty =  0x00000008,
+        TesselationInnerDirty = 0x00000010,
+        WireframeDirty =        0x00000020,
+        MaterialsDirty =        0x00000040
+    };
+
     QString translateSource();
     QUrl m_source;
     int m_skeletonRoot = -1;
