@@ -179,6 +179,58 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     return visibleX && visibleY ? pos3d : QVector3D(-1, -1, -1);
 }
 
+/*!
+ * Transforms \a viewportPos from viewport space into world space. \a The x-, and y
+ * values of \l viewportPos should be normalized between 0 and 1, with the top-left
+ * of the viewport being (0,0) and the botton-right (1,1). The z value should be the
+ * distance from the camera into the world in world units. If \a viewportPos cannot
+ * be mapped to a position, a position of [-1, -1, -1] is returned.
+ *
+ * \sa QDemonView3D::viewToWorld QDemonCamera::worldToViewport
+ */
+QVector3D QDemonCamera::viewportToWorld(const QVector3D &viewportPos) const
+{
+    if (!m_cameraNode)
+        return QVector3D(-1, -1, -1);
+
+    // Since a position in the viewport maps to an infinite number of positions
+    // in the world, we let the caller specify the depth-from-camera using the z
+    // value of the vector (which means that viewportPos is not a real vector, since
+    // it mixes to spaces; viewport and world). This will make viewportToWorld be
+    // a reverse function of worldToViewport, meaning that you can pass the
+    // return value from the latter as argument to the first, and end up with
+    // the same position in the world.
+    const float worldDepth = viewportPos.z();
+
+    QVector4D unnormalizedPos(viewportPos, 1);
+    // Convert origin from top-left to bottom-left
+    unnormalizedPos.setY(1 - unnormalizedPos.y());
+    // Convert to homogenous position between [-1, 1]
+    unnormalizedPos.setX((unnormalizedPos.x() * 2.0f) - 1.0f);
+    unnormalizedPos.setY((unnormalizedPos.y() * 2.0f) - 1.0f);
+    // clipNear: z = -1, clipFar: z = 1. It's recommended to use 0 as
+    // target pos (instead of clipFar) because of projection issues.
+    unnormalizedPos.setZ(0);
+
+    // Transform position to world
+    const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
+    const QMatrix4x4 projectionViewMatrixInv = (m_cameraNode->projection * worldToCamera).inverted();
+    const QVector4D worldPosNear4d = mat44::transform(projectionViewMatrixInv, unnormalizedPos);
+
+    if (worldPosNear4d.w() <= 0)
+        return QVector3D(-1, -1, -1);
+
+    // Reverse the projection
+    const QVector3D worldPosNear = worldPosNear4d.toVector3D() / worldPosNear4d.w();
+
+    // Calculate the end position, and convert from left-handed to right-handed
+    const QVector3D positionRightHand = position() * QVector3D(1, 1, -1);
+    const QVector3D direction = (worldPosNear - positionRightHand).normalized();
+    QVector3D endPos = positionRightHand + (direction * worldDepth);
+    endPos.setZ(-endPos.z());
+    return endPos;
+}
+
 bool QDemonCamera::enableFrustumCulling() const
 {
     return m_enableFrustumCulling;

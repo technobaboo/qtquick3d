@@ -59,6 +59,8 @@ public:
     bool enableFrustumCulling() const;
 
     Q_INVOKABLE QVector3D worldToViewport(const QVector3D &worldPos) const;
+    Q_INVOKABLE QVector3D viewportToWorld(const QVector3D &viewportPos) const;
+
     QDemonRenderCamera *getCameraNode() const;
 
 public Q_SLOTS:
