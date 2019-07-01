@@ -3,6 +3,7 @@
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 
 #include <QtMath>
+#include <qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
 
