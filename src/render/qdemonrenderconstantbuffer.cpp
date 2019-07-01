@@ -76,14 +76,7 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
 
 QDemonRenderConstantBuffer::~QDemonRenderConstantBuffer()
 {
-    for (TRenderConstantBufferEntryMap::iterator iter = m_constantBufferEntryMap.begin(), end = m_constantBufferEntryMap.end();
-         iter != end;
-         ++iter) {
-        delete iter.value();
-    }
-
-    m_constantBufferEntryMap.clear();
-
+    qDeleteAll(m_constantBufferEntryMap);
     m_context->bufferDestroyed(this);
 }
 
