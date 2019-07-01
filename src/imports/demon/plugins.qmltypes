@@ -51,8 +51,7 @@ Module {
         Property { name: "projectionMode"; type: "QDemonCameraProjectionMode" }
         Property { name: "scaleMode"; type: "QDemonCameraScaleModes" }
         Property { name: "scaleAnchor"; type: "QDemonCameraScaleAnchors" }
-        Property { name: "frustumScaleX"; type: "float" }
-        Property { name: "frustumScaleY"; type: "float" }
+        Property { name: "enableFrustumCulling"; type: "bool" }
         Signal {
             name: "clipNearChanged"
             Parameter { name: "clipNear"; type: "float" }
@@ -78,16 +77,12 @@ Module {
             Parameter { name: "scaleAnchor"; type: "QDemonCameraScaleAnchors" }
         }
         Signal {
-            name: "frustumScaleXChanged"
-            Parameter { name: "frustumScaleX"; type: "float" }
-        }
-        Signal {
-            name: "frustumScaleYChanged"
-            Parameter { name: "frustumScaleY"; type: "float" }
-        }
-        Signal {
             name: "projectionModeChanged"
             Parameter { name: "projectionMode"; type: "QDemonCameraProjectionMode" }
+        }
+        Signal {
+            name: "enableFrustumCullingChanged"
+            Parameter { name: "enableFrustumCulling"; type: "bool" }
         }
         Method {
             name: "setClipNear"
@@ -114,16 +109,17 @@ Module {
             Parameter { name: "scaleAnchor"; type: "QDemonCameraScaleAnchors" }
         }
         Method {
-            name: "setFrustumScaleX"
-            Parameter { name: "frustumScaleX"; type: "float" }
-        }
-        Method {
-            name: "setFrustumScaleY"
-            Parameter { name: "frustumScaleY"; type: "float" }
-        }
-        Method {
             name: "setProjectionMode"
             Parameter { name: "projectionMode"; type: "QDemonCameraProjectionMode" }
+        }
+        Method {
+            name: "setEnableFrustumCulling"
+            Parameter { name: "enableFrustumCulling"; type: "bool" }
+        }
+        Method {
+            name: "worldToViewport"
+            type: "QVector3D"
+            Parameter { name: "worldPos"; type: "QVector3D" }
         }
     }
     Component {
@@ -1229,6 +1225,7 @@ Module {
         Property { name: "up"; type: "QVector3D"; isReadonly: true }
         Property { name: "right"; type: "QVector3D"; isReadonly: true }
         Property { name: "globalPosition"; type: "QVector3D"; isReadonly: true }
+        Property { name: "globalTransform"; type: "QMatrix4x4"; isReadonly: true }
         Signal {
             name: "xChanged"
             Parameter { name: "x"; type: "float" }
@@ -1278,22 +1275,9 @@ Module {
             Parameter { name: "visible"; type: "bool" }
         }
         Signal {
-            name: "forwardChanged"
-            Parameter { name: "forward"; type: "QVector3D" }
+            name: "globalTransformChanged"
+            Parameter { name: "transform"; type: "QMatrix4x4" }
         }
-        Signal {
-            name: "upChanged"
-            Parameter { name: "up"; type: "QVector3D" }
-        }
-        Signal {
-            name: "rightChanged"
-            Parameter { name: "right"; type: "QVector3D" }
-        }
-        Signal {
-            name: "globalPositionChanged"
-            Parameter { name: "globalPosition"; type: "QVector3D" }
-        }
-        Signal { name: "transformPropertiesDirty" }
         Method {
             name: "setX"
             Parameter { name: "x"; type: "float" }
@@ -1758,6 +1742,11 @@ Module {
         Method {
             name: "setRenderMode"
             Parameter { name: "renderMode"; type: "QDemonView3DRenderMode" }
+        }
+        Method {
+            name: "worldToView"
+            type: "QVector3D"
+            Parameter { name: "worldPos"; type: "QVector3D" }
         }
     }
 }
