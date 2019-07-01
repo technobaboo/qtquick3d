@@ -167,12 +167,12 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
         return QVector3D(-1, -1, -1);
 
     // Convert from left-handed to right-handed
-    QVector4D worldPosRightHand(worldPos.x(), worldPos.y(), -worldPos.z(), 1);
+    const QVector4D worldPosRightHand(worldPos.x(), worldPos.y(), -worldPos.z(), 1);
 
     // Transform position
     const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
     const QMatrix4x4 projectionViewMatrix = m_cameraNode->projection * worldToCamera;
-    QVector4D pos4d = mat44::transform(projectionViewMatrix, worldPosRightHand);
+    const QVector4D pos4d = mat44::transform(projectionViewMatrix, worldPosRightHand);
 
     // Check if the position is visible in the viewport
     if (pos4d.w() <= 0)
