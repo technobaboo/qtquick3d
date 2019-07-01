@@ -44,12 +44,36 @@ class QDemonRenderContext;
 class ConstantBufferParamEntry;
 class QDemonRenderShaderProgram;
 
-typedef QHash<QByteArray, ConstantBufferParamEntry *> TRenderConstantBufferEntryMap;
-
 ///< Constant (uniform) buffer representation
 class Q_DEMONRENDER_EXPORT QDemonRenderConstantBuffer : public QDemonRenderDataBuffer
 {
 public:
+    struct ParamHandle
+    {
+        const QByteArray name;
+        const uint key = 0;
+        inline static ParamHandle create(const QByteArray &name)
+        {
+            return ParamHandle{ name, qHash(name) };
+        }
+    };
+
+    enum class Param
+    {
+        AoProperties,
+        AoProperties2,
+        AoScreenConst,
+        ShadowProperties,
+        UvToEyeConst
+    };
+
+    template <Param>
+    struct ParamData {
+        static QByteArray name();
+        static ParamHandle handle();
+    };
+
+
     /**
      * @brief constructor
      *
@@ -117,7 +141,7 @@ public:
      *
      * @return no return
      */
-    void addParam(const QByteArray &name, QDemonRenderShaderDataType type, qint32 count);
+    void addParam(const ParamHandle &handle, QDemonRenderShaderDataType type, qint32 count);
 
     /**
      * @brief update a parameter in the constant buffer
@@ -128,7 +152,7 @@ public:
      *
      * @return no return
      */
-    void updateParam(const QByteArray &name, QDemonByteView value);
+    void updateParam(const ParamHandle &handle, QDemonByteView value);
 
     /**
      * @brief update a piece of memory directly within the constant buffer
@@ -183,8 +207,10 @@ private:
         m_rangeEnd = qMax(m_rangeEnd, start + size);
     }
 
+    using RenderConstantBufferEntryMap = QHash<ParamHandle, ConstantBufferParamEntry *>;
+
     QByteArray m_name; ///< buffer name
-    TRenderConstantBufferEntryMap m_constantBufferEntryMap; ///< holds the entries of a constant buffer
+    RenderConstantBufferEntryMap m_constantBufferEntryMap; ///< holds the entries of a constant buffer
     quint32 m_currentOffset; ///< holds the current offset
     quint32 m_currentSize; ///< holds the current size
     bool m_hwBufferInitialized; ///< true if the hardware version of the buffer is initialized
@@ -193,6 +219,44 @@ private:
     qint32 m_maxBlockSize; ///< maximum size for a single constant buffer
     QByteArray m_shadowCopy; ///< host copy of the data in the GPU
 };
+
+inline bool operator==(const QDemonRenderConstantBuffer::ParamHandle &h1, const QDemonRenderConstantBuffer::ParamHandle &h2)
+{
+    return (h1.name == h2.name);
+}
+
+template<>
+struct QDemonRenderConstantBuffer::ParamData<QDemonRenderConstantBuffer::Param::AoProperties>
+{
+    static QByteArray name() { return QByteArrayLiteral("ao_properties"); }
+    static ParamHandle handle() { return ParamHandle::create(name()); }
+};
+
+template<>
+struct QDemonRenderConstantBuffer::ParamData<QDemonRenderConstantBuffer::Param::AoProperties2>
+{
+    static QByteArray name() { return QByteArrayLiteral("ao_properties2"); }
+    static ParamHandle handle() { return ParamHandle::create(name()); }
+};
+template<>
+struct QDemonRenderConstantBuffer::ParamData<QDemonRenderConstantBuffer::Param::AoScreenConst>
+{
+    static QByteArray name() { return QByteArrayLiteral("aoScreenConst"); }
+    static ParamHandle handle() { return ParamHandle::create(name()); }
+};
+template<>
+struct QDemonRenderConstantBuffer::ParamData<QDemonRenderConstantBuffer::Param::ShadowProperties>
+{
+    static QByteArray name() { return QByteArrayLiteral("shadow_properties"); }
+    static ParamHandle handle() { return ParamHandle::create(name()); }
+};
+template<>
+struct QDemonRenderConstantBuffer::ParamData<QDemonRenderConstantBuffer::Param::UvToEyeConst>
+{
+    static QByteArray name() { return QByteArrayLiteral("UvToEyeConst"); }
+    static ParamHandle handle() { return ParamHandle::create(name()); }
+};
+
 
 QT_END_NAMESPACE
 

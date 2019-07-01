@@ -36,6 +36,11 @@
 
 QT_BEGIN_NAMESPACE
 
+uint qHash(const QDemonRenderConstantBuffer::ParamHandle &h, uint seed) Q_DECL_NOTHROW
+{
+    return (h.key) ? h.key : ::qHash(h.name, seed);
+}
+
 ///< struct handling a constant buffer entry
 class ConstantBufferParamEntry
 {
@@ -146,8 +151,9 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
             m_backend->getConstantInfoByID(program->handle(), theIndices[idx], 512, &elementCount, &type, &binding, nameBuf);
             // check if we already have this entry
             const QByteArray theName = nameBuf;
-            TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);
-            if (entry != m_constantBufferEntryMap.end()) {
+            ParamHandle h = ParamHandle::create(theName);
+            auto entry = m_constantBufferEntryMap.constFind(h);
+            if (entry != m_constantBufferEntryMap.cend()) {
                 ConstantBufferParamEntry *pParam = entry.value();
                 // copy content
                 if (m_shadowCopy.size())
@@ -160,7 +166,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
                 Q_ASSERT(elementCount == pParam->m_count);
             } else {
                 // create one
-                m_constantBufferEntryMap.insert(theName,
+                m_constantBufferEntryMap.insert(h,
                                                 createParamEntry(theName,
                                                                  theTypes[idx],
                                                                  theSizes[idx],
@@ -210,17 +216,15 @@ void QDemonRenderConstantBuffer::update()
     }
 }
 
-void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderShaderDataType type, qint32 count)
+void QDemonRenderConstantBuffer::addParam(const ParamHandle &handle, QDemonRenderShaderDataType type, qint32 count)
 {
-    if (m_constantBufferEntryMap.find(name) == m_constantBufferEntryMap.end()) {
-        ConstantBufferParamEntry *newEntry = new ConstantBufferParamEntry(name, type, count, m_currentOffset);
-
-        if (newEntry)
-            m_constantBufferEntryMap.insert(name, newEntry);
-    } else {
-        // no duplicated entries
+    const auto it = m_constantBufferEntryMap.constFind(handle);
+    const auto end = m_constantBufferEntryMap.cend();
+    if (it != end) // no duplicated entries
         return;
-    }
+
+    ConstantBufferParamEntry *newEntry = new ConstantBufferParamEntry(handle.name, type, count, m_currentOffset);
+    m_constantBufferEntryMap.insert(handle, newEntry);
 
     // compute new current buffer size and offset
     qint32 constantSize = uniformTypeSize(type) * count;
@@ -228,15 +232,14 @@ void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderSh
     m_currentOffset += constantSize;
 }
 
-void QDemonRenderConstantBuffer::updateParam(const QByteArray &inName, QDemonByteView value)
+void QDemonRenderConstantBuffer::updateParam(const ParamHandle &handle, QDemonByteView value)
 {
     // allocate space if not done yet
     // NOTE this gets reallocated once we get the real constant buffer size from a program
     if (!m_shadowCopy.size())
         m_shadowCopy.resize(m_currentSize);
 
-    const QByteArray theName = inName;
-    const auto entry = m_constantBufferEntryMap.constFind(theName);
+    const auto entry = m_constantBufferEntryMap.constFind(handle);
     if (entry != m_constantBufferEntryMap.cend()) {
         const qint32 size = entry.value()->m_count * uniformTypeSize(entry.value()->m_type);
         Q_ASSERT(size == value.size());
