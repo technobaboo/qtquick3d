@@ -1659,7 +1659,7 @@ bool QDemonMaterialSystem::renderDepthPrepass(const QMatrix4x4 &inMVP, const QDe
 void QDemonMaterialSystem::endFrame()
 {
     if (lastFrameTime.elapsed() != 0)
-        msSinceLastFrame = lastFrameTime.elapsed()/1000000.0;
+        msSinceLastFrame = lastFrameTime.elapsed()/1000000.0f;
 
     lastFrameTime.restart();
 }
