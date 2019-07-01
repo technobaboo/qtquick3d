@@ -423,23 +423,24 @@ QSurfaceFormat QDemonView3D::idealSurfaceFormat()
 }
 
 /*!
- * Transforms \a worldPoint from world space into view space. If the position
- * is not visible in the viewport, a position of [-1, -1] is returned. This
+ * Transforms \a worldPos from world space into view space. The returned z value
+ * will contain the distance from \l clipNear to \a worldPos. If the position
+ * is not visible in the viewport, a position of [-1, -1, -1] is returned. This
  * function requires that a camera is assigned to the view.
  *
  * \sa QDemonCamera::worldToViewport
  */
-QVector2D QDemonView3D::worldToView(const QVector3D &worldPos) const
+QVector3D QDemonView3D::worldToView(const QVector3D &worldPos) const
 {
     if (!m_camera) {
         qmlWarning(this) << "Cannot resolve position in view without a camera assigned!";
-        return QVector2D(-1, -1);
+        return QVector3D(-1, -1, -1);
     }
 
-    const QVector2D normalizedPos = m_camera->worldToViewport(worldPos).toVector2D();
+    const QVector3D normalizedPos = m_camera->worldToViewport(worldPos);
     if (normalizedPos.x() < 0)
         return normalizedPos;
-    return normalizedPos * QVector2D(float(width()), float(height()));
+    return normalizedPos * QVector3D(float(width()), float(height()), 1);
 }
 
 void QDemonView3D::invalidateSceneGraph()
