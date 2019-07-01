@@ -19,6 +19,27 @@ static bool dumpPerfTiming = false;
 static int frameCount = 0;
 static bool dumpRenderTimes = false;
 
+namespace {
+void cleanupOpenGLState() {
+    QOpenGLFunctions *gl = QOpenGLContext::currentContext()->functions();
+
+    gl->glBindBuffer(GL_ARRAY_BUFFER, 0);
+    gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    gl->glActiveTexture(GL_TEXTURE0);
+    gl->glBindTexture(GL_TEXTURE_2D, 0);
+
+    gl->glDisable(GL_DEPTH_TEST);
+    gl->glDisable(GL_STENCIL_TEST);
+    gl->glDisable(GL_SCISSOR_TEST);
+
+    gl->glUseProgram(0);
+
+    QOpenGLFramebufferObject::bindDefault();
+}
+
+}
+
 SGFramebufferObjectNode::SGFramebufferObjectNode()
     : window(nullptr)
     , renderer(nullptr)
@@ -60,7 +81,7 @@ void SGFramebufferObjectNode::render()
         renderPending = false;
         GLuint textureId = renderer->render();
 
-        window->resetOpenGLState();
+        cleanupOpenGLState();
 
         if (texture() && (GLuint(texture()->textureId()) != textureId || texture()->textureSize() != renderer->surfaceSize())) {
             delete texture();
@@ -390,7 +411,7 @@ void QDemonSGRenderNode::render(const QSGRenderNode::RenderState *state)
     markDirty(QSGNode::DirtyMaterial);
 
     // reset some state
-    window->resetOpenGLState();
+    cleanupOpenGLState();
 
     if (dumpRenderTimes) {
         QOpenGLContext::currentContext()->functions()->glFinish();
@@ -439,7 +460,7 @@ void QDemonSGDirectRenderer::render()
     renderTimer.start();
     const QRect glViewport = convertQtRectToGLViewport(m_viewport, m_window->size() * m_window->devicePixelRatio());
     m_renderer->render(glViewport, false);
-    m_window->resetOpenGLState();
+    cleanupOpenGLState();
     if (dumpRenderTimes) {
         QOpenGLContext::currentContext()->functions()->glFinish();
         qDebug() << "Window: Render took: " << renderTimer.elapsed() << "ms";
