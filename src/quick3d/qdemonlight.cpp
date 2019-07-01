@@ -1,4 +1,5 @@
 #include "qdemonlight.h"
+#include "qdemonobject_p.h"
 
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 
@@ -91,6 +92,11 @@ float QDemonLight::shadowMapFieldOfView() const
 float QDemonLight::shadowFilter() const
 {
     return m_shadowFilter;
+}
+
+QDemonNode *QDemonLight::scope() const
+{
+    return m_scope;
 }
 
 void QDemonLight::setLightType(QDemonLight::QDemonRenderLightTypes lightType)
@@ -253,6 +259,16 @@ void QDemonLight::setShadowFilter(float shadowFilter)
     update();
 }
 
+void QDemonLight::setScope(QDemonNode *scope)
+{
+    if (m_scope == scope)
+        return;
+
+    m_scope = scope;
+    emit scopeChanged(m_scope);
+    update();
+}
+
 QDemonRenderGraphObject *QDemonLight::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
@@ -282,7 +298,10 @@ QDemonRenderGraphObject *QDemonLight::updateSpatialNode(QDemonRenderGraphObject 
     light->m_shadowMapFov = m_shadowMapFieldOfView;
     light->m_shadowFilter = m_shadowFilter;
 
-    // ### TODO: Get light Scope Node
+    if (m_scope)
+        light->m_scope = static_cast<QDemonRenderNode*>(QDemonObjectPrivate::get(m_scope)->spatialNode);
+    else
+        light->m_scope = nullptr;
 
     return node;
 }

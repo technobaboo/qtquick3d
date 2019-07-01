@@ -11,6 +11,7 @@ QDemonSceneManager::QDemonSceneManager(QObject *parent)
     , dirtySpatialNodeList(nullptr)
     , dirtyResourceList(nullptr)
     , dirtyImageList(nullptr)
+    , dirtyLightList(nullptr)
 {
 }
 
@@ -61,23 +62,21 @@ void QDemonSceneManager::updateDirtyNodes()
     updateNodes(dirtyImageList);
     updateNodes(dirtyResourceList);
     updateNodes(dirtySpatialNodeList);
+    // Lights have to be last because of scoped lights
+    updateNodes(dirtyLightList);
 
     dirtyImageList = nullptr;
     dirtyResourceList = nullptr;
     dirtySpatialNodeList = nullptr;
+    dirtyLightList = nullptr;
 }
 
 void QDemonSceneManager::updateDirtyNode(QDemonObject *object)
 {
     // Different processing for resource nodes vs hierarchical nodes
     switch (object->type()) {
-//    case QDemonObject::Layer: {
-//        QDemonLayer *layerNode = qobject_cast<QDemonLayer *>(object);
-//        if (layerNode)
-//            updateDirtyLayer(layerNode);
-//    } break;
-    case QDemonObject::Node:
     case QDemonObject::Light:
+    case QDemonObject::Node:
     case QDemonObject::Camera:
     case QDemonObject::Model:
     case QDemonObject::Text:
@@ -144,31 +143,12 @@ void QDemonSceneManager::updateDirtySpatialNode(QDemonNode *spatialNode)
     }
 }
 
-//void QDemonSceneRenderer::updateDirtyLayer(QDemonLayer *layerNode)
-//{
-//    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(layerNode);
-//    quint32 dirty = itemPriv->dirtyAttributes;
-//    itemPriv->dirtyAttributes = 0;
-
-//    itemPriv->spatialNode = layerNode->updateSpatialNode(itemPriv->spatialNode);
-
-//    QDemonRenderLayer *layer = static_cast<QDemonRenderLayer *>(itemPriv->spatialNode);
-
-//    if (!layer->scene)
-//        m_scene->addChild(*layer);
-//}
-
 void QDemonSceneManager::cleanupNodes()
 {
     for (int ii = 0; ii < cleanupNodeList.count(); ++ii) {
         QDemonRenderGraphObject *node = cleanupNodeList.at(ii);
         // Different processing for resource nodes vs hierarchical nodes
         switch (node->type) {
-//        case QDemonRenderGraphObject::Type::Layer: {
-//            QDemonRenderLayer *layerNode = static_cast<QDemonRenderLayer *>(node);
-//            // remove layer from scene
-//            m_scene->removeChild(*layerNode);
-//        } break;
         case QDemonRenderGraphObject::Type::Node:
         case QDemonRenderGraphObject::Type::Light:
         case QDemonRenderGraphObject::Type::Camera:

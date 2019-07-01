@@ -25,6 +25,7 @@ class Q_QUICK3D_EXPORT QDemonLight : public QDemonNode
     Q_PROPERTY(float shadowMapFar READ shadowMapFar WRITE setShadowMapFar NOTIFY shadowMapFarChanged)
     Q_PROPERTY(float shadowMapFieldOfView READ shadowMapFieldOfView WRITE setShadowMapFieldOfView NOTIFY shadowMapFieldOfViewChanged)
     Q_PROPERTY(float shadowFilter READ shadowFilter WRITE setShadowFilter NOTIFY shadowFilterChanged)
+    Q_PROPERTY(QDemonNode *scope READ scope WRITE setScope NOTIFY scopeChanged)
 
 public:
     enum QDemonRenderLightTypes {
@@ -55,6 +56,7 @@ public:
     float shadowMapFar() const;
     float shadowMapFieldOfView() const;
     float shadowFilter() const;
+    QDemonNode *scope() const;
 
 public Q_SLOTS:
     void setLightType(QDemonRenderLightTypes lightType);
@@ -73,6 +75,7 @@ public Q_SLOTS:
     void setShadowMapFar(float shadowMapFar);
     void setShadowMapFieldOfView(float shadowMapFieldOfView);
     void setShadowFilter(float shadowFilter);
+    void setScope(QDemonNode * scope);
 
 Q_SIGNALS:
     void lightTypeChanged(QDemonRenderLightTypes lightType);
@@ -91,6 +94,7 @@ Q_SIGNALS:
     void shadowMapFarChanged(float shadowMapFar);
     void shadowMapFieldOfViewChanged(float shadowMapFieldOfView);
     void shadowFilterChanged(float shadowFilter);
+    void scopeChanged(QDemonNode *scope);
 
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
@@ -112,6 +116,7 @@ private:
     float m_shadowMapFar = 5000.0f;
     float m_shadowMapFieldOfView = 90.0f;
     float m_shadowFilter = 35.0f;
+    QDemonNode *m_scope = nullptr;
 };
 
 QT_END_NAMESPACE

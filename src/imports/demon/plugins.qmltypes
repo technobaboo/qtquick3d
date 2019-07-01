@@ -908,6 +908,7 @@ Module {
         Property { name: "shadowMapFar"; type: "float" }
         Property { name: "shadowMapFieldOfView"; type: "float" }
         Property { name: "shadowFilter"; type: "float" }
+        Property { name: "scope"; type: "QDemonNode"; isPointer: true }
         Signal {
             name: "lightTypeChanged"
             Parameter { name: "lightType"; type: "QDemonRenderLightTypes" }
@@ -972,6 +973,10 @@ Module {
             name: "shadowFilterChanged"
             Parameter { name: "shadowFilter"; type: "float" }
         }
+        Signal {
+            name: "scopeChanged"
+            Parameter { name: "scope"; type: "QDemonNode"; isPointer: true }
+        }
         Method {
             name: "setLightType"
             Parameter { name: "lightType"; type: "QDemonRenderLightTypes" }
@@ -1035,6 +1040,10 @@ Module {
         Method {
             name: "setShadowFilter"
             Parameter { name: "shadowFilter"; type: "float" }
+        }
+        Method {
+            name: "setScope"
+            Parameter { name: "scope"; type: "QDemonNode"; isPointer: true }
         }
     }
     Component {
