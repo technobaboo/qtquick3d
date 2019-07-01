@@ -39,16 +39,6 @@ QDemonCamera::QDemonCameraScaleAnchors QDemonCamera::scaleAnchor() const
     return m_scaleAnchor;
 }
 
-float QDemonCamera::frustumScaleX() const
-{
-    return m_frustumScaleX;
-}
-
-float QDemonCamera::frustumScaleY() const
-{
-    return m_frustumScaleY;
-}
-
 QDemonObject::Type QDemonCamera::type() const
 {
     return QDemonObject::Camera;
@@ -124,25 +114,6 @@ void QDemonCamera::setScaleAnchor(QDemonCamera::QDemonCameraScaleAnchors scaleAn
     update();
 }
 
-void QDemonCamera::setFrustumScaleX(float frustumScaleX)
-{
-    if (qFuzzyCompare(m_frustumScaleX, frustumScaleX))
-        return;
-
-    m_frustumScaleX = frustumScaleX;
-    emit frustumScaleXChanged(m_frustumScaleX);
-    update();
-}
-
-void QDemonCamera::setFrustumScaleY(float frustumScaleY)
-{
-    if (qFuzzyCompare(m_frustumScaleY, frustumScaleY))
-        return;
-
-    m_frustumScaleY = frustumScaleY;
-    emit frustumScaleYChanged(m_frustumScaleY);
-    update();
-}
 
 void QDemonCamera::setProjectionMode(QDemonCamera::QDemonCameraProjectionMode projectionMode)
 {
@@ -151,6 +122,17 @@ void QDemonCamera::setProjectionMode(QDemonCamera::QDemonCameraProjectionMode pr
 
     m_projectionMode = projectionMode;
     emit projectionModeChanged(m_projectionMode);
+    update();
+}
+
+void QDemonCamera::setEnableFrustumCulling(bool enableFrustumCulling)
+{
+    if (m_enableFrustumCulling == enableFrustumCulling)
+        return;
+
+    m_enableFrustumCulling = enableFrustumCulling;
+    emit enableFrustumCullingChanged(m_enableFrustumCulling);
+    update();
 }
 
 /*!
@@ -194,6 +176,11 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     return visibleX && visibleY ? pos3d : QVector3D(-1, -1, -1);
 }
 
+bool QDemonCamera::enableFrustumCulling() const
+{
+    return m_enableFrustumCulling;
+}
+
 QDemonRenderGraphObject *QDemonCamera::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
@@ -210,7 +197,7 @@ QDemonRenderGraphObject *QDemonCamera::updateSpatialNode(QDemonRenderGraphObject
 
     camera->scaleMode = QDemonRenderCamera::ScaleModes(m_scaleMode);
     camera->scaleAnchor = QDemonRenderCamera::ScaleAnchors(m_scaleAnchor);
-    camera->frustumScale = QVector2D(m_frustumScaleX, m_frustumScaleY);
+    camera->enableFrustumClipping = m_enableFrustumCulling;
 
     if (m_projectionMode == Orthographic)
         camera->flags.setFlag(QDemonRenderNode::Flag::Orthographic);

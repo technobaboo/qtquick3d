@@ -1218,17 +1218,19 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
             if (camera) {
                 camera->calculateViewProjectionMatrix(viewProjection);
-                QDemonClipPlane nearPlane;
-                QMatrix3x3 theUpper33(camera->globalTransform.normalMatrix());
+                if (camera->enableFrustumClipping) {
+                    QDemonClipPlane nearPlane;
+                    QMatrix3x3 theUpper33(camera->globalTransform.normalMatrix());
 
-                QVector3D dir(mat33::transform(theUpper33, QVector3D(0, 0, -1)));
-                dir.normalize();
-                nearPlane.normal = dir;
-                QVector3D theGlobalPos = camera->getGlobalPos() + camera->clipNear * dir;
-                nearPlane.d = -(QVector3D::dotProduct(dir, theGlobalPos));
-                // the near plane's bbox edges are calculated in the clipping frustum's
-                // constructor.
-                clippingFrustum = QDemonClippingFrustum(viewProjection, nearPlane);
+                    QVector3D dir(mat33::transform(theUpper33, QVector3D(0, 0, -1)));
+                    dir.normalize();
+                    nearPlane.normal = dir;
+                    QVector3D theGlobalPos = camera->getGlobalPos() + camera->clipNear * dir;
+                    nearPlane.d = -(QVector3D::dotProduct(dir, theGlobalPos));
+                    // the near plane's bbox edges are calculated in the clipping frustum's
+                    // constructor.
+                    clippingFrustum = QDemonClippingFrustum(viewProjection, nearPlane);
+                }
             } else
                 viewProjection = QMatrix4x4();
 

@@ -155,6 +155,7 @@ QDemonRenderCamera::QDemonRenderCamera()
     , fovHorizontal(false)
     , scaleMode(QDemonRenderCamera::ScaleModes::Fit)
     , scaleAnchor(QDemonRenderCamera::ScaleAnchors::Center)
+    , enableFrustumClipping(true)
 {
     TORAD(fov);
     projection = QMatrix4x4();

@@ -258,7 +258,7 @@ struct QDemonLayerRenderPreparationData
     TRenderableObjectList renderedOpaqueObjects;
     TRenderableObjectList renderedTransparentObjects;
     QMatrix4x4 viewProjection;
-    QDemonClippingFrustum clippingFrustum;
+    QDemonOption<QDemonClippingFrustum> clippingFrustum;
     QDemonOption<QDemonLayerRenderPreparationResult> layerPrepResult;
     // Widgets drawn at particular times during the rendering process
     QVector<QDemonRenderWidgetInterface *> iRenderWidgets;

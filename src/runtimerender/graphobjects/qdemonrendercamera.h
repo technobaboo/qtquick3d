@@ -100,6 +100,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonRenderNode
     // Record some values from creating the projection matrix
     // to use during mouse picking.
     QVector2D frustumScale;
+    bool enableFrustumClipping;
 
     QDemonRenderCamera();
 
