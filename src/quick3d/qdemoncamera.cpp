@@ -171,7 +171,7 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
 
     // Transform position
     const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
-    QMatrix4x4 projectionViewMatrix = m_cameraNode->projection * worldToCamera;
+    const QMatrix4x4 projectionViewMatrix = m_cameraNode->projection * worldToCamera;
     QVector4D pos4d = mat44::transform(projectionViewMatrix, worldPosRightHand);
 
     // Check if the position is visible in the viewport
