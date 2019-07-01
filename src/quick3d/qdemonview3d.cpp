@@ -14,6 +14,8 @@
 #include <QQuickWindow>
 #include <QtQuick/private/qquickitem_p.h>
 
+#include <QtQml>
+
 QT_BEGIN_NAMESPACE
 
 //static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *manager, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
