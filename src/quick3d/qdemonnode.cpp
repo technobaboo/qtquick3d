@@ -9,8 +9,6 @@ QT_BEGIN_NAMESPACE
 
 QDemonNode::QDemonNode()
 {
-    // Update global transform properties from backend
-    connect(this, &QDemonNode::transformPropertiesDirty, this, &QDemonNode::updateTransformProperties, Qt::QueuedConnection);
 }
 
 QDemonNode::~QDemonNode() {}
@@ -77,22 +75,39 @@ bool QDemonNode::visible() const
 
 QVector3D QDemonNode::forward() const
 {
-    return m_front;
+    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
+    theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
+
+    const QVector3D frontVector(0, 0, 1);
+    return mat33::transform(theDirMatrix, frontVector).normalized();
 }
 
 QVector3D QDemonNode::up() const
 {
-    return m_up;
+    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
+    theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
+
+    const QVector3D upVector(0, 1, 0);
+    return mat33::transform(theDirMatrix, upVector).normalized();
 }
 
 QVector3D QDemonNode::right() const
 {
-    return m_right;
+    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
+    theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
+
+    const QVector3D rightVector(1, 0, 0);
+    return mat33::transform(theDirMatrix, rightVector).normalized();
 }
 
 QVector3D QDemonNode::globalPosition() const
 {
-    return m_globalPosition;
+    return QVector3D(m_globalTransform(0, 3), m_globalTransform(1, 3), m_globalTransform(2, 3));
+}
+
+QMatrix4x4 QDemonNode::globalTransform() const
+{
+    return m_globalTransform;
 }
 
 QDemonObject::Type QDemonNode::type() const
@@ -279,11 +294,14 @@ QDemonRenderGraphObject *QDemonNode::updateSpatialNode(QDemonRenderGraphObject *
     if (transformIsDirty) {
         spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformIsDirty);
         spacialNode->calculateGlobalVariables();
-        m_globalTransform = spacialNode->globalTransform;
+        QMatrix4x4 globalTransformMatrix = spacialNode->globalTransform;
         // Might need to switch it regardless because it is always in right hand coordinates
         if (m_orientation == LeftHanded)
-            spacialNode->flipCoordinateSystem(m_globalTransform);
-        emit transformPropertiesDirty();
+            spacialNode->flipCoordinateSystem(globalTransformMatrix);
+        if (globalTransformMatrix != m_globalTransform) {
+            m_globalTransform = globalTransformMatrix;
+            emit globalTransformChanged(m_globalTransform);
+        }
         // Still needs to be marked dirty if it will show up correctly in the backend
         spacialNode->flags.setFlag(QDemonRenderNode::Flag::Dirty, true);
     } else {
@@ -291,43 +309,6 @@ QDemonRenderGraphObject *QDemonNode::updateSpatialNode(QDemonRenderGraphObject *
     }
 
     return spacialNode;
-}
-
-void QDemonNode::updateTransformProperties()
-{
-    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
-    theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
-
-    // front
-    const QVector3D frontVector(0, 0, 1);
-    const QVector3D front = mat33::transform(theDirMatrix, frontVector).normalized();
-    if (front != m_front) {
-        m_front = front;
-        emit forwardChanged(front);
-    }
-
-    // up
-    const QVector3D upVector(0, 1, 0);
-    const QVector3D up = mat33::transform(theDirMatrix, upVector).normalized();
-    if (up != m_up) {
-        m_up = up;
-        emit upChanged(up);
-    }
-
-    // right
-    const QVector3D rightVector(1, 0, 0);
-    const QVector3D right = mat33::transform(theDirMatrix, rightVector).normalized();
-    if (right != m_right) {
-        m_right = right;
-        emit rightChanged(right);
-    }
-
-    // globalPosition
-    const QVector3D globalPos(m_globalTransform(0, 3), m_globalTransform(1, 3), m_globalTransform(2, 3));
-    if (m_globalPosition != globalPos) {
-        m_globalPosition= globalPos;
-        emit globalPositionChanged(globalPos);
-    }
 }
 
 QT_END_NAMESPACE
