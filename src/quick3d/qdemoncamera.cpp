@@ -137,12 +137,12 @@ void QDemonCamera::setEnableFrustumCulling(bool enableFrustumCulling)
 
 /*!
  * Transforms \a worldPos from world space into viewport space. The position
- * is normalized between 0 and 1. The top-left of the viewport is (0,0) and
- * the botton-right is (1,1). The returned z value will contain the distance
- * from \l clipNear to \a worldPos. If the position is not visible in the
- * viewport, a position of [-1, -1, -1] is returned.
+ * is normalized between 0 and 1, with the top-left of the viewport being (0,0) and
+ * the botton-right (1,1). The returned z value will contain the distance
+ * from the camera to \a worldPos in world units. If the position is not
+ * visible in the viewport, a position of [-1, -1, -1] is returned.
  *
- * \sa QDemonView3D::worldToView
+ * \sa QDemonView3D::worldToView QDemonCamera::viewportToWorld
  */
 QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
 {

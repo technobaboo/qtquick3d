@@ -426,9 +426,9 @@ QSurfaceFormat QDemonView3D::idealSurfaceFormat()
 
 /*!
  * Transforms \a worldPos from world space into view space. The returned z value
- * will contain the distance from \l clipNear to \a worldPos. If the position
- * is not visible in the viewport, a position of [-1, -1, -1] is returned. This
- * function requires that a camera is assigned to the view.
+ * will contain the distance from \l clipNear to \a worldPos in world units. If
+ * the position is not visible in the viewport, a position of [-1, -1, -1] is
+ * returned. This function requires that a camera is assigned to the view.
  *
  * \sa QDemonCamera::worldToViewport
  */
