@@ -446,21 +446,21 @@ QVector3D QDemonView3D::worldToView(const QVector3D &worldPos) const
 }
 
 /*!
- * Transforms \a viewportPos from view space into world space. \a The x-, and y
- * values of \l viewportPos should be within the width and height of the view.
+ * Transforms \a viewPos from view space into world space. \a The x-, and y
+ * values of \l viewPos should be within the width and height of the view.
  * The z value should be the distance from the camera into the world in world units. If
- * \a viewportPos cannot be mapped to a position, a position of [-1, -1, -1] is returned.
+ * \a viewPos cannot be mapped to a position, a position of [-1, -1, -1] is returned.
  *
  * \sa QDemonCamera::viewportToWorld QDemonView3D::worldToView
  */
-QVector3D QDemonView3D::viewToWorld(const QVector3D &viewportPos) const
+QVector3D QDemonView3D::viewToWorld(const QVector3D &viewPos) const
 {
     if (!m_camera) {
         qmlWarning(this) << "Cannot resolve world position without a camera assigned!";
         return QVector3D(-1, -1, -1);
     }
 
-    const QVector3D normalizedPos = viewportPos / QVector3D(float(width()), float(height()), 1);
+    const QVector3D normalizedPos = viewPos / QVector3D(float(width()), float(height()), 1);
     return m_camera->viewportToWorld(normalizedPos);
 }
 
