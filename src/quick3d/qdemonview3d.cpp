@@ -430,12 +430,12 @@ QSurfaceFormat QDemonView3D::idealSurfaceFormat()
  * the position is not visible in the viewport, a position of [-1, -1, -1] is
  * returned. This function requires that a camera is assigned to the view.
  *
- * \sa QDemonCamera::worldToViewport
+ * \sa QDemonCamera::worldToViewport QDemonView3D::viewToWorld
  */
 QVector3D QDemonView3D::worldToView(const QVector3D &worldPos) const
 {
     if (!m_camera) {
-        qmlWarning(this) << "Cannot resolve position in view without a camera assigned!";
+        qmlWarning(this) << "Cannot resolve view position without a camera assigned!";
         return QVector3D(-1, -1, -1);
     }
 
@@ -443,6 +443,25 @@ QVector3D QDemonView3D::worldToView(const QVector3D &worldPos) const
     if (normalizedPos.x() < 0)
         return normalizedPos;
     return normalizedPos * QVector3D(float(width()), float(height()), 1);
+}
+
+/*!
+ * Transforms \a viewportPos from view space into world space. \a The x-, and y
+ * values of \l viewportPos should be within the width and height of the view.
+ * The z value should be the distance from the camera into the world in world units. If
+ * \a viewportPos cannot be mapped to a position, a position of [-1, -1, -1] is returned.
+ *
+ * \sa QDemonCamera::viewportToWorld QDemonView3D::worldToView
+ */
+QVector3D QDemonView3D::viewToWorld(const QVector3D &viewportPos) const
+{
+    if (!m_camera) {
+        qmlWarning(this) << "Cannot resolve world position without a camera assigned!";
+        return QVector3D(-1, -1, -1);
+    }
+
+    const QVector3D normalizedPos = viewportPos / QVector3D(float(width()), float(height()), 1);
+    return m_camera->viewportToWorld(normalizedPos);
 }
 
 void QDemonView3D::invalidateSceneGraph()

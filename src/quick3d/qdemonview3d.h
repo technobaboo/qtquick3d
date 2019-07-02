@@ -58,6 +58,7 @@ public:
     static QSurfaceFormat idealSurfaceFormat();
 
     Q_INVOKABLE QVector3D worldToView(const QVector3D &worldPos) const;
+    Q_INVOKABLE QVector3D viewToWorld(const QVector3D &viewportPos) const;
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
