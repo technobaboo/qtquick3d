@@ -165,11 +165,14 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     // Normalize screenPos between [-1, 1]
     pos3d = pos3d / pos4d.w();
     // Normalize screenPos between [0, 1]
-    pos3d = (pos3d / 2) + QVector3D(0.5, 0.5, 0.0);
+    pos3d.setX((pos3d.x() / 2) + 0.5f);
+    pos3d.setY((pos3d.y() / 2) + 0.5f);
     // Convert origin from bottom-left to top-left
     pos3d.setY(1 - pos3d.y());
-    // Set z to be the distance from clipNear to worldPos
-    pos3d.setZ((position() - worldPos).length() - clipNear());
+    // Set z to be the world distance from the camera so
+    // that the return value can be used as argument to
+    // viewportToWorld() to reverse the call.
+    pos3d.setZ((position() - worldPos).length());
 
     const bool visibleX = (pos3d.x() - 1) * pos3d.x() <= 0;
     const bool visibleY = (pos3d.y() - 1) * pos3d.y() <= 0;
