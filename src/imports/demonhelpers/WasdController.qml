@@ -3,8 +3,6 @@ import QtDemon 1.0
 
 Item {
     property DemonNode controlledObject: undefined
-    property DemonView3D view: undefined
-    property MouseArea mouseArea: undefined
 
     property real forwardSpeed: 5
     property real backSpeed: 5
@@ -19,25 +17,38 @@ Item {
     property bool xInvert: false
     property bool yInvert: true
 
-    Component.onCompleted: {
-        if (!view)
-            return;
+    property bool mouseEnabled: true
+    property bool keysEnabled: true
 
-        view.focus = true
-        view.Keys.onPressed.connect(handleKeyPress)
-        view.Keys.onReleased.connect(handleKeyRelease)
+    implicitWidth: parent.width
+    implicitHeight: parent.height
+    focus: keysEnabled
 
-        if (!mouseArea)
-            mouseArea = mouseAreaComponent.createObject(view);
+    DragHandler {
+        target: null
+        enabled: mouseEnabled
+        onCentroidChanged: {
+            mouseMoved(Qt.vector2d(centroid.position.x, centroid.position.y));
+        }
+
+        onActiveChanged: {
+            if (active)
+                mousePressed(Qt.vector2d(centroid.position.x, centroid.position.y));
+            else
+                mouseReleased(Qt.vector2d(centroid.position.x, centroid.position.y));
+        }
     }
 
-    function mousePressed(mouse) {
-        status.currentPos = Qt.vector2d(mouse.x, mouse.y)
-        status.lastPos = Qt.vector2d(mouse.x, mouse.y)
+    Keys.onPressed: if (keysEnabled) handleKeyPress(event)
+    Keys.onReleased: if (keysEnabled) handleKeyRelease(event)
+
+    function mousePressed(newPos) {
+        status.currentPos = newPos
+        status.lastPos = newPos
         status.useMouse = true;
     }
 
-    function mouseReleased(mouse) {
+    function mouseReleased(newPos) {
         status.useMouse = false;
     }
 
@@ -112,30 +123,30 @@ Item {
         switch (event.key) {
         case Qt.Key_W:
         case Qt.Key_Up:
-            wasdController.forwardPressed();
+            forwardPressed();
             break;
         case Qt.Key_S:
         case Qt.Key_Down:
-            wasdController.backPressed();
+            backPressed();
             break;
         case Qt.Key_A:
         case Qt.Key_Left:
-            wasdController.leftPressed();
+            leftPressed();
             break;
         case Qt.Key_D:
         case Qt.Key_Right:
-            wasdController.rightPressed();
+            rightPressed();
             break;
         case Qt.Key_R:
         case Qt.Key_PageUp:
-            wasdController.upPressed();
+            upPressed();
             break;
         case Qt.Key_F:
         case Qt.Key_PageDown:
-            wasdController.downPressed();
+            downPressed();
             break;
         case Qt.Key_Shift:
-            wasdController.shiftPressed();
+            shiftPressed();
             break;
         }
     }
@@ -145,35 +156,43 @@ Item {
         switch (event.key) {
         case Qt.Key_W:
         case Qt.Key_Up:
-            wasdController.forwardReleased();
+            forwardReleased();
             break;
         case Qt.Key_S:
         case Qt.Key_Down:
-            wasdController.backReleased();
+            backReleased();
             break;
         case Qt.Key_A:
         case Qt.Key_Left:
-            wasdController.leftReleased();
+            leftReleased();
             break;
         case Qt.Key_D:
         case Qt.Key_Right:
-            wasdController.rightReleased();
+            rightReleased();
             break;
         case Qt.Key_R:
         case Qt.Key_PageUp:
-            wasdController.upReleased();
+            upReleased();
             break;
         case Qt.Key_F:
         case Qt.Key_PageDown:
-            wasdController.downReleased();
+            downReleased();
             break;
         case Qt.Key_Shift:
-            wasdController.shiftReleased();
+            shiftReleased();
             break;
         }
     }
 
-    Item {
+    Timer {
+        id: updateTimer
+        interval: 16
+        repeat: true
+        running: status.moving
+        onTriggered: status.updateInput();
+    }
+
+    QtObject {
         id: status
 
         property bool moveForward: false
@@ -246,24 +265,5 @@ Item {
                 lastPos = currentPos;
             }
         }
-
-        Timer {
-            id: updateTimer
-            interval: 16
-            repeat: true
-            running: status.moving
-            onTriggered: status.updateInput();
-        }
     }
-
-    Component {
-        id: mouseAreaComponent
-        MouseArea {
-            anchors.fill: parent
-            onPressed: mousePressed(mouse);
-            onReleased: mouseReleased(mouse);
-            onPositionChanged: mouseMoved(Qt.vector2d(mouse.x, mouse.y));
-        }
-    }
-
 }

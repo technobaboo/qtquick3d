@@ -7,6 +7,7 @@ DemonNode {
 
     DemonCamera {
         id: camera
+        y: 200
         z: -600
     }
 

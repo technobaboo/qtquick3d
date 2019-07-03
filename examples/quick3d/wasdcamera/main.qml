@@ -20,15 +20,9 @@ Window {
 
         AxisHelper {
             enableAxisLines: true
-            enableXZGrid: false
+            enableXZGrid: true
             enableYZGrid: false
-            enableXYGrid: true
-        }
-
-        WasdController {
-            id: wasdController
-            controlledObject: sceneContent.activeCamera
-            view: sceneView
+            enableXYGrid: false
         }
 
         TestScene {
@@ -36,4 +30,8 @@ Window {
         }
     }
 
+    WasdController {
+        id: wasdController
+        controlledObject: sceneContent.activeCamera
+    }
 }
