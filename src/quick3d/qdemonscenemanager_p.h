@@ -46,6 +46,7 @@ public:
     QDemonObject *dirtySpatialNodeList;
     QDemonObject *dirtyResourceList;
     QDemonObject *dirtyImageList;
+    QDemonObject *dirtyLightList;
     QList<QDemonRenderGraphObject *> cleanupNodeList;
     QSet<QDemonObject *> parentlessItems;
     friend QDemonObject;
