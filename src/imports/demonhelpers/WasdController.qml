@@ -4,6 +4,7 @@ import QtDemon 1.0
 Item {
     property DemonNode controlledObject: undefined
     property DemonView3D view: undefined
+    property MouseArea mouseArea: undefined
 
     property real forwardSpeed: 5
     property real backSpeed: 5
@@ -26,7 +27,8 @@ Item {
         view.Keys.onPressed.connect(handleKeyPress)
         view.Keys.onReleased.connect(handleKeyRelease)
 
-        mouseAreaComponent.createObject(view);
+        if (!mouseArea)
+            mouseArea = mouseAreaComponent.createObject(view);
     }
 
     function mousePressed(mouse) {
