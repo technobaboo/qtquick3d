@@ -32,6 +32,7 @@
 
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
+#include <QtDemonRuntimeRender/qdemonrendermesh.h>
 #include <QtDemon/QDemonPerfTimer>
 
 #include <QtDemon/qdemonbounds3.h>
@@ -54,7 +55,7 @@ public:
 private:
     typedef QSet<QString> StringSet;
     typedef QHash<QString, QDemonRenderImageTextureData> ImageMap;
-    typedef QHash<QString, QDemonRenderMesh *> MeshMap;
+    typedef QHash<QDemonRenderMeshPath, QDemonRenderMesh *> MeshMap;
     typedef QHash<QString, QString> AliasImageMap;
 
     QDemonRef<QDemonRenderContext> context;
@@ -112,7 +113,7 @@ public:
     QDemonRenderImageTextureData loadRenderImage(const QString &inSourcePath,
                                                  bool inForceScanForTransparency = false,
                                                  bool inBsdfMipmaps = false);
-    QDemonRenderMesh *loadMesh(const QString &inSourcePath);
+    QDemonRenderMesh *loadMesh(const QDemonRenderMeshPath &inSourcePath);
 
     QDemonRenderMesh *createMesh(const QString &inSourcePath,
                                          quint8 *inVertData,
@@ -124,7 +125,7 @@ public:
 
     // Remove *all* buffers from the buffer manager;
 
-    void invalidateBuffer(QString inSourcePath);
+    void invalidateBuffer(const QString &inSourcePath);
 
 };
 QT_END_NAMESPACE

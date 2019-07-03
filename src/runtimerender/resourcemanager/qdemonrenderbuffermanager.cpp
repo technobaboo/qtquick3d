@@ -367,21 +367,22 @@ QVector<QVector3D> QDemonBufferManager::createPackedPositionDataArray(QDemonMesh
     return positions;
 }
 
-QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath)
+QDemonRenderMesh *QDemonBufferManager::loadMesh(const QDemonRenderMeshPath &inMeshPath)
 {
     if (inMeshPath.isNull())
         return nullptr;
+
 
     MeshMap::iterator meshItr = meshMap.find(inMeshPath);
 
     if (meshItr == meshMap.end()) {
         // check to see if this is primitive
 
-        QDemonMeshUtilities::MultiLoadResult result = loadPrimitive(inMeshPath);
+        QDemonMeshUtilities::MultiLoadResult result = loadPrimitive(inMeshPath.path);
 
         // Attempt a load from the filesystem if this mesh isn't a primitive.
         if (result.m_mesh == nullptr) {
-            QString pathBuilder = inMeshPath;
+            QString pathBuilder = inMeshPath.path;
             int poundIndex = pathBuilder.lastIndexOf('#');
             int id = 0;
             if (poundIndex != -1) {
@@ -402,7 +403,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath)
                                                              QDemonRenderWinding::CounterClockwise,
                                                              result.m_id);
             quint8 *baseAddress = reinterpret_cast<quint8 *>(result.m_mesh);
-            meshItr = meshMap.insert(inMeshPath, newMesh);
+            meshItr = meshMap.insert(QDemonRenderMeshPath::create(inMeshPath.path), newMesh);
             QDemonByteView vertexBufferData(result.m_mesh->m_vertexBuffer.m_data.begin(baseAddress),
                                                         result.m_mesh->m_vertexBuffer.m_data.size());
 
@@ -587,13 +588,16 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
     QString sourcePath = inSourcePath;
 
     // QPair<QString, SRenderMesh*> thePair(sourcePath, (SRenderMesh*)nullptr);
-    QPair<MeshMap::iterator, bool> theMesh;
     // Make sure there isn't already a buffer entry for this mesh.
-    if (meshMap.contains(sourcePath)) {
-        theMesh = QPair<MeshMap::iterator, bool>(meshMap.find(sourcePath), true);
-    } else {
-        theMesh = QPair<MeshMap::iterator, bool>(meshMap.insert(sourcePath, nullptr), false);
-    }
+    const auto meshPath = QDemonRenderMeshPath::create(sourcePath);
+    auto it = meshMap.find(meshPath);
+    const auto end = meshMap.end();
+
+    QPair<MeshMap::iterator, bool> theMesh;
+    if (it != end)
+        theMesh = { it, true };
+    else
+        theMesh = { meshMap.insert(meshPath, nullptr), false };
 
     if (theMesh.second == true) {
         QDemonRenderMesh *theNewMesh = new QDemonRenderMesh(QDemonRenderDrawMode::Triangles, QDemonRenderWinding::CounterClockwise, 0);
@@ -733,11 +737,13 @@ void QDemonBufferManager::clear()
     }
 }
 
-void QDemonBufferManager::invalidateBuffer(QString inSourcePath)
+void QDemonBufferManager::invalidateBuffer(const QString &inSourcePath)
 {
     {
-        MeshMap::iterator iter = meshMap.find(inSourcePath);
-        if (iter != meshMap.end()) {
+        // TODO:
+        const auto meshPath = QDemonRenderMeshPath::create(inSourcePath);
+        const auto iter = meshMap.constFind(meshPath);
+        if (iter != meshMap.cend()) {
             if (iter.value())
                 releaseMesh(*iter.value());
             meshMap.erase(iter);

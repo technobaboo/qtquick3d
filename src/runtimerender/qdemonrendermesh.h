@@ -139,6 +139,25 @@ struct QDemonRenderSubset : public QDemonRenderSubsetBase
     }
 };
 
+struct QDemonRenderMeshPath
+{
+    QString path;
+    uint key = 0;
+
+    inline bool isNull() const { return path.isNull(); }
+    static QDemonRenderMeshPath create(const QString &path) { return { path, qHash(path) }; }
+};
+
+inline bool operator==(const QDemonRenderMeshPath &p1, const QDemonRenderMeshPath &p2)
+{
+    return (p1.path == p2.path);
+}
+
+inline uint qHash(const QDemonRenderMeshPath &path, uint seed) Q_DECL_NOTHROW
+{
+    return (path.key) ? path.key : qHash(path.path, seed);
+}
+
 struct QDemonRenderMesh
 {
     Q_DISABLE_COPY(QDemonRenderMesh)

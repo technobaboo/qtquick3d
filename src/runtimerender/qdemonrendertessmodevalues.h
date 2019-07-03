@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-enum class TessModeValues
+enum class TessModeValues : quint8
 {
     NoTess = 0,
     TessLinear = 1,

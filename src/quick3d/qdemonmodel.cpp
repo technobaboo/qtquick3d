@@ -135,7 +135,7 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
 
     auto modelNode = static_cast<QDemonRenderModel *>(node);
     if (m_dirtyAttributes & SourceDirty)
-        modelNode->meshPath = translateSource();
+        modelNode->meshPath = QDemonRenderMeshPath::create(translateSource());
     if (m_dirtyAttributes & SkeletonRootDirty)
         modelNode->skeletonRoot = m_skeletonRoot;
     if (m_dirtyAttributes & TesselationModeDirty)

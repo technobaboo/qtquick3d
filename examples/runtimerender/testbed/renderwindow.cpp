@@ -211,7 +211,7 @@ void RenderWindow::buildTestScene()
 
     // Mesh (#Cube)
     m_cube = new QDemonRenderModel();
-    m_cube->meshPath = QStringLiteral("#Cube");
+    m_cube->meshPath = QDemonRenderMeshPath::create(QStringLiteral("#Cube"));
     m_layer->addChild(*m_cube);
 
     // Default Material

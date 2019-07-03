@@ -32,6 +32,7 @@
 
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
+#include <QtDemonRuntimeRender/qdemonrendermesh.h>
 
 #include <QtDemon/QDemonBounds3>
 #include <QtCore/QVector>
@@ -45,13 +46,13 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonRenderNode
 {
     // Complete path to the file;
     //*not* relative to the presentation directory
-    QString meshPath;
-    qint32 skeletonRoot;
-    TessModeValues tessellationMode;
-    float edgeTess;
-    float innerTess;
-    bool wireframeMode;
     QVector<QDemonRenderGraphObject *> materials;
+    QDemonRenderMeshPath meshPath;
+    qint32 skeletonRoot = -1;
+    float edgeTess = 1.0f;
+    float innerTess = 1.0f;
+    TessModeValues tessellationMode = TessModeValues::NoTess;
+    bool wireframeMode = false;
 
     QDemonRenderModel();
 

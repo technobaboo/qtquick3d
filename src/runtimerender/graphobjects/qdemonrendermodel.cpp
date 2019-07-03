@@ -36,11 +36,6 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderModel::QDemonRenderModel()
     : QDemonRenderNode(QDemonRenderGraphObject::Type::Model)
-    , skeletonRoot(-1)
-    , tessellationMode(TessModeValues::NoTess)
-    , edgeTess(1.0)
-    , innerTess(1.0)
-    , wireframeMode(false)
 {
 }
 
