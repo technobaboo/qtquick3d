@@ -432,8 +432,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     QDemonRef<QDemonShaderGeneratorGeneratedShader> getShaderForProgram(const QDemonRef<QDemonRenderShaderProgram> &inProgram)
     {
         auto inserter = m_programToShaderMap.constFind(inProgram);
-
-        if (m_programToShaderMap.constFind(inProgram) == m_programToShaderMap.constEnd())
+        if (inserter == m_programToShaderMap.constEnd())
             inserter = m_programToShaderMap.insert(inProgram,
                                                    QDemonRef<QDemonShaderGeneratorGeneratedShader>(
                                                            new QDemonShaderGeneratorGeneratedShader(inProgram)));
