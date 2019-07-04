@@ -138,9 +138,9 @@ void QDemonCamera::setEnableFrustumCulling(bool enableFrustumCulling)
 /*!
  * Transforms \a worldPos from world space into viewport space. The position
  * is normalized between 0 and 1, with the top-left of the viewport being (0,0) and
- * the botton-right (1,1). The returned z value will contain the distance
- * from the camera to \a worldPos in world units. If the position is not
- * visible in the viewport, a position of [-1, -1, -1] is returned.
+ * the botton-right (1,1). The returned z value will contain the distance from the
+ * back end of the frustum (clipNear) to \a worldPos in world units. If the
+ * position is not visible in the viewport, a position of [-1, -1, -1] is returned.
  *
  * \sa QDemonView3D::worldToView QDemonCamera::viewportToWorld
  */
@@ -155,20 +155,14 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     // Transform position
     const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
     const QMatrix4x4 projectionViewMatrix = m_cameraNode->projection * worldToCamera;
-    const QVector4D pos4d = mat44::transform(projectionViewMatrix, worldPosRightHand);
+    const QVector4D transformedWorldPos = mat44::transform(projectionViewMatrix, worldPosRightHand);
 
     // Check if the position is visible in the viewport
-    if (pos4d.w() <= 0)
+    if (transformedWorldPos.w() <= 0)
         return QVector3D(-1, -1, -1);
 
-    QVector3D pos3d = pos4d.toVector3D();
-    // Normalize screenPos between [-1, 1]
-    pos3d = pos3d / pos4d.w();
-    // Normalize screenPos between [0, 1]
-    pos3d.setX((pos3d.x() / 2) + 0.5f);
-    pos3d.setY((pos3d.y() / 2) + 0.5f);
-    // Convert origin from bottom-left to top-left
-    pos3d.setY(1 - pos3d.y());
+    // Normalize worldPosView between [-1, 1]
+    QVector3D worldPosView = transformedWorldPos.toVector3D() / transformedWorldPos.w();
 
     // Set z to be the world distance from the camera so that the return value can be
     // used as argument to viewportToWorld() to reverse the call.
@@ -176,19 +170,29 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     // matches the transformation in globalTransform. If we don't, the distance from the
     // camera to worldPos will end up wrong if this function is called after a call
     // to setPosition, but before globalTransform is updated (updateSpatialNode()).
-    pos3d.setZ((m_cameraNode->position - worldPos).length());
+    const QVector4D clipNearPos(worldPosView.x(), worldPosView.y(), -1, 1);
+    const QVector4D clipNearPosTransformed = mat44::transform(projectionViewMatrix.inverted(), clipNearPos);
+    const QVector4D clipNearPosWorld = clipNearPosTransformed / clipNearPosTransformed.w();
+    const float distanceToWorldPos = (worldPosRightHand - clipNearPosWorld).length();
+    worldPosView.setZ(distanceToWorldPos);
 
-    const bool visibleX = (pos3d.x() - 1) * pos3d.x() <= 0;
-    const bool visibleY = (pos3d.y() - 1) * pos3d.y() <= 0;
-    return visibleX && visibleY ? pos3d : QVector3D(-1, -1, -1);
+    // Convert x and y to be between [0, 1]
+    worldPosView.setX((worldPosView.x() / 2) + 0.5f);
+    worldPosView.setY((worldPosView.y() / 2) + 0.5f);
+    // And convert origin from bottom-left to top-left
+    worldPosView.setY(1 - worldPosView.y());
+
+    const bool visibleX = (worldPosView.x() - 1) * worldPosView.x() <= 0;
+    const bool visibleY = (worldPosView.y() - 1) * worldPosView.y() <= 0;
+    return visibleX && visibleY ? worldPosView : QVector3D(-1, -1, -1);
 }
 
 /*!
  * Transforms \a viewportPos from viewport space into world space. \a The x-, and y
  * values of \l viewportPos should be normalized between 0 and 1, with the top-left
  * of the viewport being (0,0) and the botton-right (1,1). The z value should be the
- * distance from the camera into the world in world units. If \a viewportPos cannot
- * be mapped to a position, a position of [-1, -1, -1] is returned.
+ * distance from the back end of the frustum (clipNear) into the world in world units.
+ * If \a viewportPos cannot be mapped to a position, a position of [-1, -1, -1] is returned.
  *
  * \sa QDemonView3D::viewToWorld QDemonCamera::worldToViewport
  */
@@ -197,46 +201,39 @@ QVector3D QDemonCamera::viewportToWorld(const QVector3D &viewportPos) const
     if (!m_cameraNode)
         return QVector3D(-1, -1, -1);
 
-    // Since a position in the viewport maps to an infinite number of positions
-    // in the world, we let the caller specify the depth-from-camera using the z
-    // value of the vector (which means that viewportPos is not a real vector, since
-    // it mixes two spaces; viewport and world). This will make viewportToWorld be
-    // a reverse function of worldToViewport, meaning that you can pass the
-    // return value from the latter as argument to the first, and end up with
-    // the same position in the world.
-    const float worldDepth = viewportPos.z();
-
-    QVector4D unnormalizedPos(viewportPos, 1);
+    // Pick two positions in the frustum
+    QVector4D clipNearPos(viewportPos, 1);
     // Convert origin from top-left to bottom-left
-    unnormalizedPos.setY(1 - unnormalizedPos.y());
+    clipNearPos.setY(1 - clipNearPos.y());
     // Convert to homogenous position between [-1, 1]
-    unnormalizedPos.setX((unnormalizedPos.x() * 2.0f) - 1.0f);
-    unnormalizedPos.setY((unnormalizedPos.y() * 2.0f) - 1.0f);
+    clipNearPos.setX((clipNearPos.x() * 2.0f) - 1.0f);
+    clipNearPos.setY((clipNearPos.y() * 2.0f) - 1.0f);
+    QVector4D clipFarPos = clipNearPos;
     // clipNear: z = -1, clipFar: z = 1. It's recommended to use 0 as
-    // target pos (instead of clipFar) because of projection issues.
-    unnormalizedPos.setZ(0);
+    // far pos instead of clipFar because of infinite projection issues.
+    clipNearPos.setZ(-1);
+    clipFarPos.setZ(0);
 
     // Transform position to world
     const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
     const QMatrix4x4 projectionViewMatrixInv = (m_cameraNode->projection * worldToCamera).inverted();
-    const QVector4D viewportPosInWorld4d = mat44::transform(projectionViewMatrixInv, unnormalizedPos);
+    const QVector4D transformedClipNearPos = mat44::transform(projectionViewMatrixInv, clipNearPos);
+    const QVector4D transformedClipFarPos = mat44::transform(projectionViewMatrixInv, clipFarPos);
 
-    if (viewportPosInWorld4d.w() <= 0)
+    if (transformedClipNearPos.w() <= 0)
         return QVector3D(-1, -1, -1);
 
     // Reverse the projection
-    const QVector3D viewportPosInWorld = viewportPosInWorld4d.toVector3D() / viewportPosInWorld4d.w();
+    const QVector3D clipNearPosWorld = transformedClipNearPos.toVector3D() / transformedClipNearPos.w();
+    const QVector3D clipFarPosWorld = transformedClipFarPos.toVector3D() / transformedClipFarPos.w();
 
-    // NB: We need to use m_cameraNode->position rather than position() here, since it
-    // matches the transformation in globalTransform. If we don't, the distance from the
-    // camera to worldPos will end up wrong if this function is called after a call
-    // to setPosition, but before globalTransform is updated (updateSpatialNode()).
-    const QVector3D flipLeftHandRightHand(1, 1, -1);
-    const QVector3D cameraPosInWorld = m_cameraNode->position * flipLeftHandRightHand;
-    const QVector3D direction = (viewportPosInWorld - cameraPosInWorld).normalized();
-    QVector3D endPos = cameraPosInWorld + (direction * worldDepth);
-    endPos *= flipLeftHandRightHand;
-    return endPos;
+    // Calculate the position in the world
+    const QVector3D direction = (clipFarPosWorld - clipNearPosWorld).normalized();
+    const float distanceFromClipNear = viewportPos.z();
+    QVector3D worldPos = clipNearPosWorld + (direction * distanceFromClipNear);
+    // Convert right-handt to left-hand
+    worldPos.setZ(-worldPos.z());
+    return worldPos;
 }
 
 bool QDemonCamera::enableFrustumCulling() const
