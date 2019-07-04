@@ -2,7 +2,11 @@
 import QtDemon 1.0
 
 Item {
+    id: root
     property DemonNode controlledObject: undefined
+
+    property real speed: 1
+    property real shiftSpeed: 3
 
     property real forwardSpeed: 5
     property real backSpeed: 5
@@ -12,7 +16,6 @@ Item {
     property real downSpeed: 5
     property real xSpeed: 0.1
     property real ySpeed: 0.1
-    property real shiftSpeed: 3
 
     property bool xInvert: false
     property bool yInvert: true
@@ -212,6 +215,8 @@ Item {
         {
             if (shiftDown)
                 speed *= shiftSpeed;
+            else
+                speed *= root.speed
 
             var direction = vector;
             var velocity = Qt.vector3d(direction.x * speed,
