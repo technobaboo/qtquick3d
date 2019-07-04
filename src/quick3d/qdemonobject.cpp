@@ -581,19 +581,15 @@ void QDemonObjectPrivate::addToDirtyList()
             }
         } else {
             if (q->type() == QDemonObject::Light) {
-                // needed for scoped lights
-                nextDirtyItem = sceneManager->dirtyLightList;
-                if (nextDirtyItem)
-                    QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
-                prevDirtyItem = &sceneManager->dirtyLightList;
-                sceneManager->dirtyLightList = q;
-            } else {
-                nextDirtyItem = sceneManager->dirtySpatialNodeList;
-                if (nextDirtyItem)
-                    QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
-                prevDirtyItem = &sceneManager->dirtySpatialNodeList;
-                sceneManager->dirtySpatialNodeList = q;
+                // needed for scoped lights second pass
+               sceneManager->dirtyLightList.append(q);
             }
+
+            nextDirtyItem = sceneManager->dirtySpatialNodeList;
+            if (nextDirtyItem)
+                QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
+            prevDirtyItem = &sceneManager->dirtySpatialNodeList;
+            sceneManager->dirtySpatialNodeList = q;
         }
 
         sceneManager->dirtyItem(q);

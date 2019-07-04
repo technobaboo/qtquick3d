@@ -11,7 +11,6 @@ QDemonSceneManager::QDemonSceneManager(QObject *parent)
     , dirtySpatialNodeList(nullptr)
     , dirtyResourceList(nullptr)
     , dirtyImageList(nullptr)
-    , dirtyLightList(nullptr)
 {
 }
 
@@ -63,12 +62,13 @@ void QDemonSceneManager::updateDirtyNodes()
     updateNodes(dirtyResourceList);
     updateNodes(dirtySpatialNodeList);
     // Lights have to be last because of scoped lights
-    updateNodes(dirtyLightList);
+    for (const auto light : dirtyLightList)
+        updateDirtyNode(light);
 
     dirtyImageList = nullptr;
     dirtyResourceList = nullptr;
     dirtySpatialNodeList = nullptr;
-    dirtyLightList = nullptr;
+    dirtyLightList.clear();
 }
 
 void QDemonSceneManager::updateDirtyNode(QDemonObject *object)
