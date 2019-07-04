@@ -169,10 +169,14 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     pos3d.setY((pos3d.y() / 2) + 0.5f);
     // Convert origin from bottom-left to top-left
     pos3d.setY(1 - pos3d.y());
-    // Set z to be the world distance from the camera so
-    // that the return value can be used as argument to
-    // viewportToWorld() to reverse the call.
-    pos3d.setZ((position() - worldPos).length());
+
+    // Set z to be the world distance from the camera so that the return value can be
+    // used as argument to viewportToWorld() to reverse the call.
+    // NB: We need to use m_cameraNode->position rather than position() here, since it
+    // matches the transformation in globalTransform. If we don't, the distance from the
+    // camera to worldPos will end up wrong if this function is called after a call
+    // to setPosition, but before globalTransform is updated (updateSpatialNode()).
+    pos3d.setZ((m_cameraNode->position - worldPos).length());
 
     const bool visibleX = (pos3d.x() - 1) * pos3d.x() <= 0;
     const bool visibleY = (pos3d.y() - 1) * pos3d.y() <= 0;
@@ -196,7 +200,7 @@ QVector3D QDemonCamera::viewportToWorld(const QVector3D &viewportPos) const
     // Since a position in the viewport maps to an infinite number of positions
     // in the world, we let the caller specify the depth-from-camera using the z
     // value of the vector (which means that viewportPos is not a real vector, since
-    // it mixes to spaces; viewport and world). This will make viewportToWorld be
+    // it mixes two spaces; viewport and world). This will make viewportToWorld be
     // a reverse function of worldToViewport, meaning that you can pass the
     // return value from the latter as argument to the first, and end up with
     // the same position in the world.
@@ -215,19 +219,23 @@ QVector3D QDemonCamera::viewportToWorld(const QVector3D &viewportPos) const
     // Transform position to world
     const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
     const QMatrix4x4 projectionViewMatrixInv = (m_cameraNode->projection * worldToCamera).inverted();
-    const QVector4D worldPosNear4d = mat44::transform(projectionViewMatrixInv, unnormalizedPos);
+    const QVector4D viewportPosInWorld4d = mat44::transform(projectionViewMatrixInv, unnormalizedPos);
 
-    if (worldPosNear4d.w() <= 0)
+    if (viewportPosInWorld4d.w() <= 0)
         return QVector3D(-1, -1, -1);
 
     // Reverse the projection
-    const QVector3D worldPosNear = worldPosNear4d.toVector3D() / worldPosNear4d.w();
+    const QVector3D viewportPosInWorld = viewportPosInWorld4d.toVector3D() / viewportPosInWorld4d.w();
 
-    // Calculate the end position, and convert from left-handed to right-handed
-    const QVector3D positionRightHand = position() * QVector3D(1, 1, -1);
-    const QVector3D direction = (worldPosNear - positionRightHand).normalized();
-    QVector3D endPos = positionRightHand + (direction * worldDepth);
-    endPos.setZ(-endPos.z());
+    // NB: We need to use m_cameraNode->position rather than position() here, since it
+    // matches the transformation in globalTransform. If we don't, the distance from the
+    // camera to worldPos will end up wrong if this function is called after a call
+    // to setPosition, but before globalTransform is updated (updateSpatialNode()).
+    const QVector3D flipLeftHandRightHand(1, 1, -1);
+    const QVector3D cameraPosInWorld = m_cameraNode->position * flipLeftHandRightHand;
+    const QVector3D direction = (viewportPosInWorld - cameraPosInWorld).normalized();
+    QVector3D endPos = cameraPosInWorld + (direction * worldDepth);
+    endPos *= flipLeftHandRightHand;
     return endPos;
 }
 
