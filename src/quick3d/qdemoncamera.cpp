@@ -164,12 +164,8 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     // Normalize worldPosView between [-1, 1]
     QVector3D worldPosView = transformedWorldPos.toVector3D() / transformedWorldPos.w();
 
-    // Set z to be the world distance from the camera so that the return value can be
-    // used as argument to viewportToWorld() to reverse the call.
-    // NB: We need to use m_cameraNode->position rather than position() here, since it
-    // matches the transformation in globalTransform. If we don't, the distance from the
-    // camera to worldPos will end up wrong if this function is called after a call
-    // to setPosition, but before globalTransform is updated (updateSpatialNode()).
+    // Set z to be the world distance from clipNear so that the return value
+    // can be used as argument to viewportToWorld() to reverse the call.
     const QVector4D clipNearPos(worldPosView.x(), worldPosView.y(), -1, 1);
     const QVector4D clipNearPosTransformed = mat44::transform(projectionViewMatrix.inverted(), clipNearPos);
     const QVector4D clipNearPosWorld = clipNearPosTransformed / clipNearPosTransformed.w();
