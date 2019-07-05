@@ -157,7 +157,7 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     const QMatrix4x4 projectionViewMatrix = m_cameraNode->projection * worldToCamera;
     const QVector4D transformedWorldPos = mat44::transform(projectionViewMatrix, worldPosRightHand);
 
-    if (transformedWorldPos.w() == 0)
+    if (qFuzzyIsNull(transformedWorldPos.w()))
         return QVector3D(0, 0, 0);
 
     // Normalize worldPosView between [-1, 1]
@@ -213,7 +213,7 @@ QVector3D QDemonCamera::viewportToWorld(const QVector3D &viewportPos) const
     const QVector4D transformedClipNearPos = mat44::transform(projectionViewMatrixInv, clipNearPos);
     const QVector4D transformedClipFarPos = mat44::transform(projectionViewMatrixInv, clipFarPos);
 
-    if (transformedClipNearPos.w() == 0)
+    if (qFuzzyIsNull(transformedClipNearPos.w()))
         return QVector3D(0, 0, 0);
 
     // Reverse the projection
