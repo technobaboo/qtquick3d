@@ -639,7 +639,6 @@ struct QDemonRenderCustomMaterialShader
 struct QDemonMaterialOrComputeShader
 {
     // TODO: struct/class?
-    Q_DISABLE_COPY(QDemonMaterialOrComputeShader)
     const QDemonRef<QDemonRenderCustomMaterialShader> m_materialShader;
     const QDemonRef<QDemonRenderShaderProgram> m_computeShader;
     QDemonMaterialOrComputeShader() = default;
