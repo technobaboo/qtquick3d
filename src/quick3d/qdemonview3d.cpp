@@ -425,9 +425,10 @@ QSurfaceFormat QDemonView3D::idealSurfaceFormat()
 }
 
 /*!
- * Transforms \a worldPos from world space into view space. The returned z value
- * will contain the distance from the back end of the frustum (clipNear) to \a worldPos.
- * If the position is not visible in the viewport, a position of [-1, -1, -1] is
+ * Transforms \a worldPos from world space into view space. The returned x-, and y values
+ * will be be in view coordinates. The returned z value will contain the distance from the
+ * back of the frustum (clipNear) to \a worldPos.
+ * If \a worldPos cannot be mapped to a position in the world, a position of [0, 0, 0] is
  * returned. This function requires that a camera is assigned to the view.
  *
  * \sa QDemonCamera::worldToViewport QDemonView3D::viewToWorld
@@ -446,10 +447,10 @@ QVector3D QDemonView3D::worldToView(const QVector3D &worldPos) const
 }
 
 /*!
- * Transforms \a viewPos from view space into world space. \a The x-, and y values of
- * \l viewPos should be within the width and height of the view. The z value should be
- * the distance from the back end of the frustum (clipNear) into the world. If \a viewPos
- * cannot be mapped to a position, a position of [-1, -1, -1] is returned.
+ * Transforms \a viewPos from view space into world space. The x-, and y values of
+ * \l viewPos should be in view coordinates. The z value should be
+ * the distance from the back of the frustum (clipNear) into the world. If \a viewPos
+ * cannot be mapped to a position in the world, a position of [0, 0, 0] is returned.
  *
  * \sa QDemonCamera::viewportToWorld QDemonView3D::worldToView
  */

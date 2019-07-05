@@ -137,10 +137,10 @@ void QDemonCamera::setEnableFrustumCulling(bool enableFrustumCulling)
 
 /*!
  * Transforms \a worldPos from world space into viewport space. The position
- * is normalized between 0 and 1, with the top-left of the viewport being (0,0) and
- * the botton-right (1,1). The returned z value will contain the distance from the
- * back end of the frustum (clipNear) to \a worldPos in world units. If the
- * position is not visible in the viewport, a position of [-1, -1, -1] is returned.
+ * is normalized, with the top-left of the viewport being [0,0] and
+ * the botton-right being [1,1]. The returned z value will contain the distance from the
+ * back of the frustum (clipNear) to \a worldPos in world units. If \a worldPos
+ * cannot be mapped to a position in the viewport, a position of [0, 0, 0] is returned.
  *
  * \sa QDemonView3D::worldToView QDemonCamera::viewportToWorld
  */
@@ -157,9 +157,8 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     const QMatrix4x4 projectionViewMatrix = m_cameraNode->projection * worldToCamera;
     const QVector4D transformedWorldPos = mat44::transform(projectionViewMatrix, worldPosRightHand);
 
-    // Check if the position is visible in the viewport
-    if (transformedWorldPos.w() <= 0)
-        return QVector3D(-1, -1, -1);
+    if (transformedWorldPos.w() == 0)
+        return QVector3D(0, 0, 0);
 
     // Normalize worldPosView between [-1, 1]
     QVector3D worldPosView = transformedWorldPos.toVector3D() / transformedWorldPos.w();
@@ -177,18 +176,16 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
     worldPosView.setY((worldPosView.y() / 2) + 0.5f);
     // And convert origin from bottom-left to top-left
     worldPosView.setY(1 - worldPosView.y());
-
-    const bool visibleX = (worldPosView.x() - 1) * worldPosView.x() <= 0;
-    const bool visibleY = (worldPosView.y() - 1) * worldPosView.y() <= 0;
-    return visibleX && visibleY ? worldPosView : QVector3D(-1, -1, -1);
+    return worldPosView;
 }
 
 /*!
  * Transforms \a viewportPos from viewport space into world space. \a The x-, and y
- * values of \l viewportPos should be normalized between 0 and 1, with the top-left
- * of the viewport being (0,0) and the botton-right (1,1). The z value should be the
- * distance from the back end of the frustum (clipNear) into the world in world units.
- * If \a viewportPos cannot be mapped to a position, a position of [-1, -1, -1] is returned.
+ * values of \l viewportPos needs to be normalized, with the top-left of the viewport
+ * being [0,0] and the botton-right being [1,1]. The z value should be the distance
+ * from the back of the frustum (clipNear) into the world in world units.
+ * If \a viewportPos cannot be mapped to a position in the world, a position of
+ * [0, 0, 0] is returned.
  *
  * \sa QDemonView3D::viewToWorld QDemonCamera::worldToViewport
  */
@@ -216,8 +213,8 @@ QVector3D QDemonCamera::viewportToWorld(const QVector3D &viewportPos) const
     const QVector4D transformedClipNearPos = mat44::transform(projectionViewMatrixInv, clipNearPos);
     const QVector4D transformedClipFarPos = mat44::transform(projectionViewMatrixInv, clipFarPos);
 
-    if (transformedClipNearPos.w() <= 0)
-        return QVector3D(-1, -1, -1);
+    if (transformedClipNearPos.w() == 0)
+        return QVector3D(0, 0, 0);
 
     // Reverse the projection
     const QVector3D clipNearPosWorld = transformedClipNearPos.toVector3D() / transformedClipNearPos.w();
