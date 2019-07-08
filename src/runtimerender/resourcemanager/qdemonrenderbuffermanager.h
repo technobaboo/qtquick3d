@@ -111,6 +111,7 @@ public:
                                                  bool inForceScanForTransparency = false,
                                                  bool inBsdfMipmaps = false);
     QDemonRenderImageTextureData loadRenderImage(const QString &inSourcePath,
+                                                 const QDemonRenderTextureFormat &inFormat = QDemonRenderTextureFormat::Unknown,
                                                  bool inForceScanForTransparency = false,
                                                  bool inBsdfMipmaps = false);
     QDemonRenderMesh *loadMesh(const QDemonRenderMeshPath &inSourcePath);

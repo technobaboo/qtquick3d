@@ -257,7 +257,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString 
     return theImage.value();
 }
 
-QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString &inImagePath, bool inForceScanForTransparency, bool inBsdfMipmaps)
+QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString &inImagePath, const QDemonRenderTextureFormat &inFormat, bool inForceScanForTransparency, bool inBsdfMipmaps)
 {
     const QString realImagePath = getImagePath(inImagePath);
 
@@ -272,7 +272,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString 
         QDemonRef<QDemonLoadedTexture> theLoadedImage;
         {
             //                SStackPerfTimer __perfTimer(perfTimer, "Image Decompression");
-            theLoadedImage = QDemonLoadedTexture::load(realImagePath, *inputStreamFactory, true, context->renderContextType());
+            theLoadedImage = QDemonLoadedTexture::load(realImagePath, inFormat, *inputStreamFactory, true, context->renderContextType());
             // Hackish solution to custom materials not finding their textures if they are used
             // in sub-presentations. Note: Runtime 1 is going to be removed in Qt 3D Studio 2.x,
             // so this should be ok.
@@ -284,6 +284,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString 
                     int loops = 0;
                     while (!theLoadedImage && ++loops <= 3) {
                         theLoadedImage = QDemonLoadedTexture::load(searchPath,
+                                                                   inFormat,
                                                                    *inputStreamFactory,
                                                                    true,
                                                                    context->renderContextType());
@@ -301,6 +302,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(const QString 
                         int loops = 0;
                         while (!theLoadedImage && ++loops <= 3) {
                             theLoadedImage = QDemonLoadedTexture::load(searchPath,
+                                                                       inFormat,
                                                                        *inputStreamFactory,
                                                                        true,
                                                                        context->renderContextType());

@@ -321,6 +321,7 @@ void QDemonLoadingImage::loadImage(void *inImg)
     //    SStackPerfTimer theTimer(theThis->m_Batch->m_Loader.m_PerfTimer, "Image Decompression");
     if (theThis->batch->loader.bufferManager->isImageLoaded(theThis->sourcePath) == false) {
         QDemonRef<QDemonLoadedTexture> theTexture = QDemonLoadedTexture::load(theThis->sourcePath,
+                                                                              QDemonRenderTextureFormat::Unknown,
                                                                               *theThis->batch->loader.inputStreamFactory,
                                                                               true,
                                                                               theThis->batch->contextType);

@@ -21,6 +21,7 @@ class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
     Q_PROPERTY(float positionV READ positionV WRITE setPositionV NOTIFY positionVChanged)
     Q_PROPERTY(float pivotU READ pivotU WRITE setPivotU NOTIFY pivotUChanged)
     Q_PROPERTY(float pivotV READ pivotV WRITE setPivotV NOTIFY pivotVChanged)
+    Q_PROPERTY(Format format READ format WRITE setFormat NOTIFY formatChanged)
 
 public:
     enum MappingMode
@@ -40,6 +41,43 @@ public:
     };
     Q_ENUM(TilingMode)
 
+    enum Format {
+        Automatic = 0,
+        R8,
+        R16,
+        R16F,
+        R32I,
+        R32UI,
+        R32F,
+        RG8,
+        RGBA8,
+        RGB8,
+        SRGB8,
+        SRGB8A8,
+        RGB565,
+        RGBA5551,
+        Alpha8,
+        Luminance8,
+        Luminance16,
+        LuminanceAlpha8,
+        RGBA16F,
+        RG16F,
+        RG32F,
+        RGB32F,
+        RGBA32F,
+        R11G11B10,
+        RGB9E5,
+        RGBA_DXT1,
+        RGB_DXT1,
+        RGBA_DXT3,
+        RGBA_DXT5,
+        Depth16,
+        Depth24,
+        Depth32,
+        Depth24Stencil8
+    };
+    Q_ENUM(Format)
+
     QDemonImage();
     ~QDemonImage() override;
 
@@ -58,6 +96,8 @@ public:
 
     QDemonRenderImage *getRenderImage();
 
+    Format format() const;
+
 public Q_SLOTS:
     void setSource(const QUrl &source);
     void setScaleU(float scaleU);
@@ -70,6 +110,7 @@ public Q_SLOTS:
     void setPositionV(float positionV);
     void setPivotU(float pivotU);
     void setPivotV(float pivotV);
+    void setFormat(Format format);
 
 Q_SIGNALS:
     void sourceChanged(const QUrl &source);
@@ -83,6 +124,7 @@ Q_SIGNALS:
     void positionVChanged(float positionV);
     void pivotUChanged(float pivotU);
     void pivotVChanged(float pivotV);
+    void formatChanged(Format format);
 
 protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
@@ -99,6 +141,7 @@ private:
     float m_positionV = 0;
     float m_pivotU = 0;
     float m_pivotV = 0;
+    Format m_format = Automatic;
 };
 
 QT_END_NAMESPACE

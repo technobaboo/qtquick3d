@@ -777,6 +777,44 @@ Module {
                 "Repeat": 3
             }
         }
+        Enum {
+            name: "Format"
+            values: {
+                "Automatic": 0,
+                "R8": 1,
+                "R16": 2,
+                "R16F": 3,
+                "R32I": 4,
+                "R32UI": 5,
+                "R32F": 6,
+                "RG8": 7,
+                "RGBA8": 8,
+                "RGB8": 9,
+                "SRGB8": 10,
+                "SRGB8A8": 11,
+                "RGB565": 12,
+                "RGBA5551": 13,
+                "Alpha8": 14,
+                "Luminance8": 15,
+                "Luminance16": 16,
+                "LuminanceAlpha8": 17,
+                "RGBA16F": 18,
+                "RG16F": 19,
+                "RG32F": 20,
+                "RGB32F": 21,
+                "RGBA32F": 22,
+                "R11G11B10": 23,
+                "RGB9E5": 24,
+                "RGBA_DXT1": 25,
+                "RGB_DXT1": 26,
+                "RGBA_DXT3": 27,
+                "RGBA_DXT5": 28,
+                "Depth16": 29,
+                "Depth24": 30,
+                "Depth32": 31,
+                "Depth24Stencil8": 32
+            }
+        }
         Property { name: "source"; type: "QUrl" }
         Property { name: "scaleU"; type: "float" }
         Property { name: "scaleV"; type: "float" }
@@ -788,6 +826,7 @@ Module {
         Property { name: "positionV"; type: "float" }
         Property { name: "pivotU"; type: "float" }
         Property { name: "pivotV"; type: "float" }
+        Property { name: "format"; type: "Format" }
         Signal {
             name: "sourceChanged"
             Parameter { name: "source"; type: "QUrl" }
@@ -832,6 +871,10 @@ Module {
             name: "pivotVChanged"
             Parameter { name: "pivotV"; type: "float" }
         }
+        Signal {
+            name: "formatChanged"
+            Parameter { name: "format"; type: "Format" }
+        }
         Method {
             name: "setSource"
             Parameter { name: "source"; type: "QUrl" }
@@ -875,6 +918,10 @@ Module {
         Method {
             name: "setPivotV"
             Parameter { name: "pivotV"; type: "float" }
+        }
+        Method {
+            name: "setFormat"
+            Parameter { name: "format"; type: "Format" }
         }
     }
     Component {

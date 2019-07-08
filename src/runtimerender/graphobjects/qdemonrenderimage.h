@@ -82,6 +82,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonRenderGraphO
     MappingModes m_mappingMode;
     QDemonRenderTextureCoordOp m_horizontalTilingMode;
     QDemonRenderTextureCoordOp m_verticalTilingMode;
+    QDemonRenderTextureFormat m_format;
 
     // Setting any of the above variables means this object is dirty.
     // Setting any of the vec2 properties means this object's transform is dirty

@@ -99,10 +99,14 @@ public:
     bool scanForTransparency();
 
     static QDemonRef<QDemonLoadedTexture> load(const QString &inPath,
+                                               const QDemonRenderTextureFormat &inFormat,
                                                QDemonInputStreamFactory &inFactory,
                                                bool inFlipY = true,
                                                const QDemonRenderContextType &renderContextType = QDemonRenderContextType::NullContext);
-    static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath, qint32 flipVertical, QDemonRenderContextType renderContextType);
+    static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath,
+                                                     const QDemonRenderTextureFormat &inFormat,
+                                                     qint32 flipVertical,
+                                                     QDemonRenderContextType renderContextType);
     static QDemonRef<QDemonLoadedTexture> loadHdrImage(QSharedPointer<QIODevice> source, QDemonRenderContextType renderContextType);
 
 };

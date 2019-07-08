@@ -46,6 +46,7 @@ QDemonRenderImage::QDemonRenderImage()
     , m_mappingMode(MappingModes::Normal)
     , m_horizontalTilingMode(QDemonRenderTextureCoordOp::ClampToEdge)
     , m_verticalTilingMode(QDemonRenderTextureCoordOp::ClampToEdge)
+    , m_format(QDemonRenderTextureFormat::Unknown)
 {
     m_flags.setFlag(Flag::Active);
     m_flags.setFlag(Flag::Dirty);
@@ -86,7 +87,7 @@ bool QDemonRenderImage::clearDirty(const QDemonRef<QDemonBufferManager> &inBuffe
 
     if (newImage.m_texture == nullptr) {
         m_lastFrameOffscreenRenderer = nullptr;
-        newImage = inBufferManager->loadRenderImage(m_imagePath, false, forIbl);
+        newImage = inBufferManager->loadRenderImage(m_imagePath, m_format, false, forIbl);
         replaceTexture = newImage.m_texture != m_textureData.m_texture;
     }
 

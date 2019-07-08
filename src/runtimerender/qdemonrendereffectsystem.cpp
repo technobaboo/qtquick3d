@@ -843,7 +843,7 @@ void QDemonEffectSystem::doApplyInstanceValue(QDemonRenderEffect *inEffect,
                             needsAlphaMultiply = false;
                             theTexture = theResult.texture;
                         } else {
-                            QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(imageSource);
+                            QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(imageSource, QDemonRenderTextureFormat::Unknown);
                             needsAlphaMultiply = true;
                             theTexture = theTextureData.m_texture;
                         }

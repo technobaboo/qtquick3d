@@ -180,6 +180,16 @@ void QDemonImage::setPivotV(float pivotV)
     update();
 }
 
+void QDemonImage::setFormat(QDemonImage::Format format)
+{
+    if (m_format == format)
+        return;
+
+    m_format = format;
+    emit formatChanged(m_format);
+    update();
+}
+
 QDemonRenderGraphObject *QDemonImage::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
@@ -195,6 +205,7 @@ QDemonRenderGraphObject *QDemonImage::updateSpatialNode(QDemonRenderGraphObject 
     imageNode->m_mappingMode = QDemonRenderImage::MappingModes(m_mappingMode);
     imageNode->m_horizontalTilingMode = QDemonRenderTextureCoordOp(m_tilingModeHorizontal);
     imageNode->m_verticalTilingMode = QDemonRenderTextureCoordOp(m_tilingModeVertical);
+    imageNode->m_format = QDemonRenderTextureFormat::Format(m_format);
     // ### Make this more conditional
     imageNode->m_flags.setFlag(QDemonRenderImage::Flag::Dirty);
     imageNode->m_flags.setFlag(QDemonRenderImage::Flag::TransformDirty);
@@ -206,6 +217,11 @@ QDemonRenderImage *QDemonImage::getRenderImage()
 {
     QDemonObjectPrivate *p = QDemonObjectPrivate::get(this);
     return static_cast<QDemonRenderImage *>(p->spatialNode);
+}
+
+QDemonImage::Format QDemonImage::format() const
+{
+    return m_format;
 }
 
 QT_END_NAMESPACE

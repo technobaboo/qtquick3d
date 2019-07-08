@@ -38,7 +38,10 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &inPath, qint32 flipVertical, QDemonRenderContextType renderContextType)
+QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &inPath,
+                                                               const QDemonRenderTextureFormat &inFormat,
+                                                               qint32 flipVertical,
+                                                               QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(flipVertical)
     Q_UNUSED(renderContextType)
@@ -53,7 +56,10 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &in
     retval->image = image;
     retval->data = (void *)retval->image.bits();
     retval->dataSizeInBytes = image.sizeInBytes();
-    retval->setFormatFromComponents();
+    if (inFormat != QDemonRenderTextureFormat::Unknown)
+        retval->format = inFormat;
+    else
+        retval->setFormatFromComponents();
     return retval;
 }
 
@@ -355,6 +361,7 @@ bool QDemonLoadedTexture::scanForTransparency()
 }
 
 QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
+                                                         const QDemonRenderTextureFormat &inFormat,
                                                          QDemonInputStreamFactory &inFactory,
                                                          bool inFlipY,
                                                          const QDemonRenderContextType &renderContextType)
@@ -371,7 +378,7 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
             || inPath.endsWith(QStringLiteral("peg"), Qt::CaseInsensitive)
             || inPath.endsWith(QStringLiteral("ktx"), Qt::CaseInsensitive) || inPath.endsWith(QStringLiteral("gif"), Qt::CaseInsensitive)
             || inPath.endsWith(QStringLiteral("bmp"), Qt::CaseInsensitive)) {
-            theLoadedImage = loadQImage(fileName, inFlipY, renderContextType);
+            theLoadedImage = loadQImage(fileName, inFormat, inFlipY, renderContextType);
             //        } else if (inPath.endsWith("dds", Qt::CaseInsensitive)) {
             //            theLoadedImage = LoadDDS(theStream, inFlipY, renderContextType);
         } else if (inPath.endsWith(QStringLiteral("hdr"), Qt::CaseInsensitive)) {
