@@ -47,6 +47,12 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &in
     Q_UNUSED(renderContextType)
     QDemonRef<QDemonLoadedTexture> retval(nullptr);
     QImage image(inPath);
+    if (inFormat == QDemonRenderTextureFormat::Unknown) {
+        // Convert palleted images
+        if (image.format() == QImage::Format_Indexed8)
+            image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    }
+
     image = image.mirrored();
     image = image.rgbSwapped();
     retval = new QDemonLoadedTexture;
