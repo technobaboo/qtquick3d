@@ -49,39 +49,39 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonNode {
+Node {
     id: rootItem
-    property DemonCamera activeCamera: camera
+    property Camera activeCamera: camera
 
-    DemonCamera {
+    Camera {
         id: camera
         y: 200
         z: -600
     }
 
-    DemonLight {
+    Light {
         id: light
         rotation: Qt.vector3d(0, 0, 0)
     }
 
-    DemonLight {
-        lightType: DemonLight.Point
+    Light {
+        lightType: Light.Point
 
         z: 200
     }
 
-    DemonNode {
+    Node {
         z: 45
         rotation: Qt.vector3d(90, 0, 0)
 
 
-        DemonModel {
+        Model {
             id: cone
             source: "#Cone"
             materials: [
-                DemonDefaultMaterial {
+                DefaultMaterial {
                     id: coneMaterial
                     diffuseColor: "pink"
                 }

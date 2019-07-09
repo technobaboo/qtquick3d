@@ -34,11 +34,48 @@ import QtQuick.Layouts 1.12
 Column {
     width: parent.width
 
-    DemonNodeSection {
+    Section {
+        width: parent.width
+        caption: qsTr("Diffuse Color")
+
+        ColorEditor {
+            caption: qsTr("Diffuse Color")
+            backendValue: backendValues.diffuseColor
+            supportGradient: false
+        }
+    }
+
+    Section {
+        width: parent.width
+        caption: qsTr("Emissive Color")
+
+        ColorEditor {
+            caption: qsTr("Emissive Color")
+            backendValue: backendValues.emissiveColor
+            supportGradient: false
+        }
+    }
+
+    Section {
+        width: parent.width
+        caption: qsTr("Specular Tint Color")
+
+        ColorEditor {
+            caption: qsTr("Specular Tint Color")
+            backendValue: backendValues.specularTint
+            supportGradient: false
+        }
+    }
+
+    DefaultMaterialSection {
         width: parent.width
     }
 
-    DemonObjectSection {
+    MaterialSection {
+        width: parent.width
+    }
+
+    Object3DSection {
         width: parent.width
     }
 }

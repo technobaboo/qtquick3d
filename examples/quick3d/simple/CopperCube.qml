@@ -49,10 +49,10 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
-import QtDemonMaterialLibrary 1.0
+import QtQuick3D 1.0
+import QtQuick3D.MaterialLibrary 1.0
 
-DemonModel {
+Model {
     source: "#Cube"
     property alias metalColor: copperMaterial.metal_color
     materials: [ CopperMaterial {

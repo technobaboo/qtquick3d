@@ -28,9 +28,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {
+CustomMaterial {
     // These properties names need to match the ones in the shader code!
     property bool uEnvironmentMappingEnabled: false
     property bool uShadowMappingEnabled: false
@@ -41,43 +41,43 @@ DemonCustomMaterial {
     property vector3d glass_color: Qt.vector3d(0.9, 0.9, 0.9)
     hasTransparency: true
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Transparent | DemonCustomMaterialShaderInfo.Glossy
+        shaderKey: CustomMaterialShaderInfo.Transparent | CustomMaterialShaderInfo.Glossy
         layers: 1
     }
 
-    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Environment
+    property CustomMaterialTexture uEnvironmentTexture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Environment
             enabled: uEnvironmentMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: envImage
                 source: "maps/spherical_checker.png"
             }
     }
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.LightmapShadow
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
+            type: CustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
     }
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: simpleGlassFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/simpleGlass.frag"
     }
 
-    passes: [ DemonCustomMaterialPass {
+    passes: [ CustomMaterialPass {
             shaders: simpleGlassFragShader
-            commands: [ DemonCustomMaterialBlending {
-                    srcBlending: DemonCustomMaterialBlending.SrcAlpha
-                    destBlending: DemonCustomMaterialBlending.OneMinusSrcAlpha
-                }, DemonCustomMaterialRenderState {
-                    renderState: DemonCustomMaterialRenderState.CullFace
+            commands: [ CustomMaterialBlending {
+                    srcBlending: CustomMaterialBlending.SrcAlpha
+                    destBlending: CustomMaterialBlending.OneMinusSrcAlpha
+                }, CustomMaterialRenderState {
+                    renderState: CustomMaterialRenderState.CullFace
                 }
             ]
         }

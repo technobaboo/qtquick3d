@@ -28,11 +28,11 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
 Item {
     id: root
-    property DemonNode controlledObject: undefined
+    property Node controlledObject: undefined
 
     property real speed: 1
     property real shiftSpeed: 3

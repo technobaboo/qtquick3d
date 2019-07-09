@@ -28,9 +28,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {
+CustomMaterial {
 
     property bool uEnvironmentMappingEnabled: true
     property bool uShadowMappingEnabled: false
@@ -47,112 +47,112 @@ DemonCustomMaterial {
     property real intensity: 1.0
     property vector3d emission_color: Qt.vector3d(0, 0, 0)
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Glossy | DemonCustomMaterialShaderInfo.Diffuse
+        shaderKey: CustomMaterialShaderInfo.Glossy | CustomMaterialShaderInfo.Diffuse
         layers: 3
     }
 
-    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uEnvironmentTexture: CustomMaterialTexture {
             id: uEnvironmentTexture
-            type: DemonCustomMaterialTexture.Environment
+            type: CustomMaterialTexture.Environment
             enabled: uEnvironmentMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: envImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/spherical_checker.png"
             }
     }
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.LightmapShadow
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
+            type: CustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: shadowImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/shadow.png"
             }
     }
 
-    property DemonCustomMaterialTexture anisotropy_rotation_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Anisotropy
+    property CustomMaterialTexture anisotropy_rotation_texture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Anisotropy
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: anisoTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/carbon_fiber_aniso.png"
             }
     }
 
-    property DemonCustomMaterialTexture reflect_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Specular
+    property CustomMaterialTexture reflect_texture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Specular
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: reflectionTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/carbon_fiber_spec.png"
             }
     }
 
-    property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Diffuse
+    property CustomMaterialTexture diffuse_texture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Diffuse
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: diffuseTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/carbon_fiber.png"
             }
     }
 
-    property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Bump
+    property CustomMaterialTexture bump_texture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Bump
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: bumpTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/carbon_fiber_bump.png"
             }
     }
 
-    property DemonCustomMaterialTexture emissive_texture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture emissive_texture: CustomMaterialTexture {
             id: emissiveTexture
-            type: DemonCustomMaterialTexture.Emissive
+            type: CustomMaterialTexture.Emissive
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: emissiveImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/emissive.png"
             }
     }
 
-    property DemonCustomMaterialTexture emissive_mask_texture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture emissive_mask_texture: CustomMaterialTexture {
             id: emissiveMaskTexture
-            type: DemonCustomMaterialTexture.Unknown
+            type: CustomMaterialTexture.Unknown
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: emissiveMaskImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/emissive_mask.png"
             }
     }
 
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: carbonFiberEmissiveFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/carbonFiberEmissive.frag"
     }
 
     passes: [
-        DemonCustomMaterialPass {
+        CustomMaterialPass {
             shaders: carbonFiberEmissiveFragShader
         }
     ]

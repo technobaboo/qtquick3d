@@ -27,30 +27,55 @@
 **
 ****************************************************************************/
 
-#include <QtQml/qqmlextensionplugin.h>
-#include <QtQml/qqml.h>
-#include <QtQml/qqmlengine.h>
+import QtQuick 2.12
+import HelperWidgets 2.0
+import QtQuick.Layouts 1.12
 
-QT_BEGIN_NAMESPACE
+Column {
+    width: parent.width
 
-class QtDemonHelpersPlugin : public QQmlExtensionPlugin
-{
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
+     Section {
+        width: parent.width
+        caption: qsTr("Diffuse Color")
 
-public:
-    QtDemonHelpersPlugin(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtDemonHelpers"));
-
-        qmlRegisterModule(uri, 1, 0);
-
-        // Auto-increment the import to stay in sync with ALL future QtQuick minor versions from 5.12 onward
-        qmlRegisterModule(uri, 1, QT_VERSION_MINOR);
+        ColorEditor {
+            caption: qsTr("Diffuse Color")
+            backendValue: backendValues.diffuseColor
+            supportGradient: false
+        }
     }
-};
 
-QT_END_NAMESPACE
+    Section {
+        width: parent.width
+        caption: qsTr("Emissive Color")
 
-#include "plugin.moc"
+        ColorEditor {
+            caption: qsTr("Emissive Color")
+            backendValue: backendValues.emissiveColor
+            supportGradient: false
+        }
+    }
+
+    Section {
+        width: parent.width
+        caption: qsTr("Specular Tint Color")
+
+        ColorEditor {
+            caption: qsTr("Specular Tint Color")
+            backendValue: backendValues.specularTint
+            supportGradient: false
+        }
+    }
+
+    LightSection {
+        width: parent.width
+    }
+
+    NodeSection {
+        width: parent.width
+    }
+
+    Object3DSection {
+        width: parent.width
+    }
+}

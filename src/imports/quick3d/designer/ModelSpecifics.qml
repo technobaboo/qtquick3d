@@ -34,7 +34,15 @@ import QtQuick.Layouts 1.12
 Column {
     width: parent.width
 
-    DemonView3dSection {
+    ModelSection {
+        width: parent.width
+    }
+
+    NodeSection {
+        width: parent.width
+    }
+
+    Object3DSection {
         width: parent.width
     }
 }

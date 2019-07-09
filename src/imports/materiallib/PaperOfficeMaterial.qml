@@ -28,9 +28,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {
+CustomMaterial {
     // These properties names need to match the ones in the shader code!
     property bool uShadowMappingEnabled: false
     property real bump_amount: 0.5
@@ -42,56 +42,56 @@ DemonCustomMaterial {
     property vector2d texture_tiling: Qt.vector2d(1.0, 1.0)
     property vector3d paper_color: Qt.vector3d(0.531, 0.531, 0.531)
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Transmissive | DemonCustomMaterialShaderInfo.Diffuse
+        shaderKey: CustomMaterialShaderInfo.Transmissive | CustomMaterialShaderInfo.Diffuse
         layers: 1
     }
 
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
             enabled: uShadowMappingEnabled
-            type: DemonCustomMaterialTexture.LightmapShadow
-            image: DemonImage {
+            type: CustomMaterialTexture.LightmapShadow
+            image: Texture {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
     }
-    property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Diffuse
+    property CustomMaterialTexture diffuse_texture: CustomMaterialTexture {
+        type: CustomMaterialTexture.Diffuse
         enabled: true
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/paper_diffuse.png"
         }
     }
-    property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Bump
+    property CustomMaterialTexture bump_texture: CustomMaterialTexture {
+        type: CustomMaterialTexture.Bump
         enabled: true
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/paper_diffuse.png"
         }
     }
-    property DemonCustomMaterialTexture transmission_texture: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Bump
+    property CustomMaterialTexture transmission_texture: CustomMaterialTexture {
+        type: CustomMaterialTexture.Bump
         enabled: true
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/paper_trans.png"
         }
     }
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: paperOfficeFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/paperOffice.frag"
     }
 
-    passes: [ DemonCustomMaterialPass {
+    passes: [ CustomMaterialPass {
             shaders: paperOfficeFragShader
         }
     ]

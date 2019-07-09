@@ -28,72 +28,72 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {
+CustomMaterial {
     property bool uEnvironmentMappingEnabled: true
     property bool uShadowMappingEnabled: false
     property real material_ior: 20.0
     property real anisotropy: 0.8
     property vector2d texture_tiling: Qt.vector2d(8, 5)
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Glossy
+        shaderKey: CustomMaterialShaderInfo.Glossy
         layers: 1
     }
 
-    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uEnvironmentTexture: CustomMaterialTexture {
             id: uEnvironmentTexture
-            type: DemonCustomMaterialTexture.Environment
+            type: CustomMaterialTexture.Environment
             enabled: uEnvironmentMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: envImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/spherical_checker.png"
             }
     }
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.LightmapShadow
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
+            type: CustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: shadowImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/shadow.png"
             }
     }
-    property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Diffuse
+    property CustomMaterialTexture diffuse_texture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Diffuse
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: diffuseTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/concentric_milled_steel.png"
             }
     }
-    property DemonCustomMaterialTexture anisotropy_rot_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Anisotropy
+    property CustomMaterialTexture anisotropy_rot_texture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Anisotropy
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: anisoTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/concentric_milled_steel_aniso.png"
             }
     }
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: steelMilledConcentricFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/steelMilledConcentric.frag"
     }
 
     passes: [
-        DemonCustomMaterialPass {
+        CustomMaterialPass {
             shaders: steelMilledConcentricFragShader
         }
     ]

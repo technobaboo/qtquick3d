@@ -215,7 +215,7 @@ const QString AssimpImporter::import(const QString &sourceFile, const QDir &save
 
 void AssimpImporter::writeHeader(QTextStream &output)
 {
-    output << "import QtDemon 1.0" << endl;
+    output << "import QtQuick3D 1.0" << endl;
     output << "import QtQuick 2.12" << endl;
     output << "import QtQuick.Timeline 1.0" << endl;
     output << endl;
@@ -228,15 +228,15 @@ void AssimpImporter::processNode(aiNode *node, QTextStream &output, int tabLevel
         // Figure out what kind of node this is
         if (isModel(currentNode)) {
             // Model
-            output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonModel {") << endl;
+            output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Model {") << endl;
             generateModelProperties(currentNode, output, tabLevel + 1);
         } else if (isLight(currentNode)) {
             // Light
-            output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonLight {") << endl;
+            output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Light {") << endl;
             generateLightProperties(currentNode, output, tabLevel + 1);
         } else if (isCamera(currentNode)) {
             // Camera
-            output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonCamera {") << endl;
+            output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Camera {") << endl;
             generateCameraProperties(currentNode, output, tabLevel + 1);
         } else {
             // Transform Node
@@ -247,7 +247,7 @@ void AssimpImporter::processNode(aiNode *node, QTextStream &output, int tabLevel
             if (!containsNodesOfConsequence(node))
                 return;
 
-            output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonNode {") << endl;
+            output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Node {") << endl;
             generateNodeProperties(currentNode, output, tabLevel + 1);
         }
 
@@ -323,12 +323,12 @@ void AssimpImporter::generateLightProperties(aiNode *lightNode, QTextStream &out
 
     // lightType
     if (light->mType == aiLightSource_DIRECTIONAL || light->mType == aiLightSource_AMBIENT ) {
-        QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Light, QStringLiteral("lightType"), QStringLiteral("DemonLight.Directional"));
+        QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Light, QStringLiteral("lightType"), QStringLiteral("Light.Directional"));
     } else if (light->mType == aiLightSource_POINT) {
-        QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Light, QStringLiteral("lightType"), QStringLiteral("DemonLight.Point"));
+        QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Light, QStringLiteral("lightType"), QStringLiteral("Light.Point"));
     } else if (light->mType == aiLightSource_SPOT) {
         // ### This is not and area light, but it's the closest we have right now
-        QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Light, QStringLiteral("lightType"), QStringLiteral("DemonLight.Area"));
+        QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Light, QStringLiteral("lightType"), QStringLiteral("Light.Area"));
     }
 
     // diffuseColor
@@ -464,10 +464,10 @@ void AssimpImporter::generateNodeProperties(aiNode *node, QTextStream &output, i
     // boneid
 
     // rotation order
-    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("rotationOrder"), QStringLiteral("DemonNode.XYZr"));
+    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("rotationOrder"), QStringLiteral("Node.XYZr"));
 
     // orientation
-    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("orientation"), QStringLiteral("DemonNode.RightHanded"));
+    QDemonQmlUtilities::writeQmlPropertyHelper(output, tabLevel, QDemonQmlUtilities::PropertyMap::Node, QStringLiteral("orientation"), QStringLiteral("Node.RightHanded"));
 
     // visible
 
@@ -704,7 +704,7 @@ QColor aiColorToQColor(const aiColor3D &color)
 
 void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonDefaultMaterial {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DefaultMaterial {") << endl;
 
     // id
     QString id = generateUniqueId(QDemonQmlUtilities::sanitizeQmlId(material->GetName().C_Str() + QStringLiteral("_material")));
@@ -718,7 +718,7 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
     // lighting
     if (result == aiReturn_SUCCESS) {
         if (shadingModel == aiShadingMode_NoShading)
-            output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("lighting: DemonDefaultMaterial.NoLighting") << endl;
+            output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("lighting: DefaultMaterial.NoLighting") << endl;
     }
 
 
@@ -838,11 +838,11 @@ void AssimpImporter::generateMaterial(aiMaterial *material, QTextStream &output,
 namespace  {
 QString aiTilingMode(int tilingMode) {
     if (tilingMode == aiTextureMapMode_Wrap)
-        return QStringLiteral("DemonImage.Repeat");
+        return QStringLiteral("Texture.Repeat");
     if (tilingMode == aiTextureMapMode_Mirror)
-        return QStringLiteral("DemonImage.Mirror");
+        return QStringLiteral("Texture.Mirror");
 
-    return QStringLiteral("DemonImage.ClampToEdge");
+    return QStringLiteral("Texture.ClampToEdge");
 }
 }
 
@@ -872,7 +872,7 @@ QString AssimpImporter::generateImage(aiMaterial *material, aiTextureType textur
     // Start QML generation
     QString outputString;
     QTextStream output(&outputString, QIODevice::WriteOnly);
-    output << QStringLiteral("DemonImage {") << endl;
+    output << QStringLiteral("Texture {") << endl;
 
     output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("source: \"") << targetFileName << QStringLiteral("\"") << endl;
 
@@ -887,7 +887,7 @@ QString AssimpImporter::generateImage(aiMaterial *material, aiTextureType textur
                                                        tabLevel + 1,
                                                        QDemonQmlUtilities::PropertyMap::Image,
                                                        QStringLiteral("mappingMode"),
-                                                       QStringLiteral("DemonImage.Normal"));
+                                                       QStringLiteral("Texture.Normal"));
             // It would be possible to use another channel than UV0 to map image data
             // but for now we force everything to use UV0
             //int uvSource;
@@ -920,7 +920,7 @@ QString AssimpImporter::generateImage(aiMaterial *material, aiTextureType textur
                                                    tabLevel + 1,
                                                    QDemonQmlUtilities::PropertyMap::Image,
                                                    QStringLiteral("tilingModeHorizontal"),
-                                                   QStringLiteral("DemonImage.Repeat"));
+                                                   QStringLiteral("Texture.Repeat"));
     }
 
     // mapping mode V
@@ -938,7 +938,7 @@ QString AssimpImporter::generateImage(aiMaterial *material, aiTextureType textur
                                                    tabLevel + 1,
                                                    QDemonQmlUtilities::PropertyMap::Image,
                                                    QStringLiteral("tilingModeVertical"),
-                                                   QStringLiteral("DemonImage.Repeat"));
+                                                   QStringLiteral("Texture.Repeat"));
     }
 
     aiUVTransform transforms;

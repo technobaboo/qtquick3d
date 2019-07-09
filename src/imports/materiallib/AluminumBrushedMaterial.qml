@@ -28,9 +28,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {
+CustomMaterial {
     property bool uEnvironmentMappingEnabled: true
     property bool uShadowMappingEnabled: false
     property vector3d tiling: Qt.vector3d(3, 3, 3)
@@ -43,89 +43,89 @@ DemonCustomMaterial {
 //                                         <Property formalName="Roughness Map V" name="roughness_texture_v" description="Vertical roughness texture" type="Texture" filter="linear" minfilter="linearMipmapLinear" clamp="repeat" usage="roughness" default="./maps/materials/brushed_full_contrast.png" category="Material"/>
 
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Glossy
+        shaderKey: CustomMaterialShaderInfo.Glossy
         layers: 1
     }
 
 
-    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uEnvironmentTexture: CustomMaterialTexture {
             id: uEnvironmentTexture
-            type: DemonCustomMaterialTexture.Environment
+            type: CustomMaterialTexture.Environment
             enabled: uEnvironmentMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: envImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/spherical_checker.png"
             }
     }
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.LightmapShadow
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
+            type: CustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: shadowImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/shadow.png"
             }
     }
 
-    property DemonCustomMaterialTexture brush_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Unknown
+    property CustomMaterialTexture brush_texture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Unknown
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: brushTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/brushed_full_contrast.png"
             }
     }
 
-    property DemonCustomMaterialTexture roughness_texture_u: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Unknown
+    property CustomMaterialTexture roughness_texture_u: CustomMaterialTexture {
+            type: CustomMaterialTexture.Unknown
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: roughnessUTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/brushed_full_contrast.png"
             }
     }
 
-    property DemonCustomMaterialTexture roughness_texture_v: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Unknown
+    property CustomMaterialTexture roughness_texture_v: CustomMaterialTexture {
+            type: CustomMaterialTexture.Unknown
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: roughnessVTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/brushed_full_contrast.png"
             }
     }
 
 
-    property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Bump
+    property CustomMaterialTexture bump_texture: CustomMaterialTexture {
+            type: CustomMaterialTexture.Bump
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: bumpTexture
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/brushed_a.png"
             }
     }
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: aluminumBrushedFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/aluminumBrushed.frag"
     }
 
     passes: [
-        DemonCustomMaterialPass {
+        CustomMaterialPass {
             shaders: aluminumBrushedFragShader
         }
     ]

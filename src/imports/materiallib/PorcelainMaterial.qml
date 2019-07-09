@@ -28,9 +28,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {
+CustomMaterial {
     // These properties names need to match the ones in the shader code!
     property bool uEnvironmentMappingEnabled: true
     property bool uShadowMappingEnabled: false
@@ -39,40 +39,40 @@ DemonCustomMaterial {
     property real roughness: 0.15
     property vector3d porcelain_color: Qt.vector3d(0.92, 0.92, 0.92)
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Glossy
+        shaderKey: CustomMaterialShaderInfo.Glossy
         layers: 1
     }
 
-    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uEnvironmentTexture: CustomMaterialTexture {
             id: uEnvironmentTexture
-            type: DemonCustomMaterialTexture.Environment
+            type: CustomMaterialTexture.Environment
             enabled: uEnvironmentMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: envImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/spherical_checker.png"
             }
     }
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.LightmapShadow
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
+            type: CustomMaterialTexture.LightmapShadow
             enabled: uShadowMappingEnabled
-            image: DemonImage {
+            image: Texture {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
     }
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: porcelainFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/porcelain.frag"
     }
 
-    passes: [ DemonCustomMaterialPass {
+    passes: [ CustomMaterialPass {
             shaders: porcelainFragShader
         }
     ]

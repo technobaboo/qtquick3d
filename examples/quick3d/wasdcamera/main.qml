@@ -50,8 +50,8 @@
 
 import QtQuick 2.12
 import QtQuick.Window 2.12
-import QtDemon 1.0
-import QtDemonHelpers 1.0
+import QtQuick3D 1.0
+import QtQuick3D.Helpers 1.0
 
 Window {
     id: window
@@ -59,12 +59,12 @@ Window {
     height: 720
     visible: true
 
-    DemonView3D {
+    View3D {
         id: sceneView
         anchors.fill: parent
         camera: sceneContent.activeCamera
-        environment: DemonSceneEnvironment {
-            backgroundMode: DemonSceneEnvironment.Color
+        environment: SceneEnvironment {
+            backgroundMode: SceneEnvironment.Color
             clearColor: "black"
         }
 

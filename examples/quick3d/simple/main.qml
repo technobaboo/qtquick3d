@@ -50,8 +50,8 @@
 
 import QtQuick 2.12
 import QtQuick.Window 2.11
-import QtDemon 1.0
-import QtDemonMaterialLibrary 1.0
+import QtQuick3D 1.0
+import QtQuick3D.MaterialLibrary 1.0
 
 Window {
     id: window
@@ -59,15 +59,15 @@ Window {
     height: 720
     visible: true
 
-    DemonView3D {
+    View3D {
         id: layer1
         anchors.fill: parent
         camera: camera
 
         // Light always points the same direction as camera
-//        DemonLight {
+//        Light {
 //            id: directionalLight
-//            lightType: DemonLight.Directional
+//            lightType: Light.Directional
 //            rotation: Qt.vector3d(0, 0, 0)
 //            SequentialAnimation on rotation {
 //                loops: Animation.Infinite
@@ -75,21 +75,21 @@ Window {
 //            }
 //        }
 
-        environment: DemonSceneEnvironment {
+        environment: SceneEnvironment {
             probeBrightness: 1000
             clearColor: "green"
-            backgroundMode: DemonSceneEnvironment.Color
-            lightProbe: DemonImage {
+            backgroundMode: SceneEnvironment.Color
+            lightProbe: Texture {
                 source: "maps/OpenfootageNET_garage-1024.hdr"
             }
         }
 
-        DemonNode {
+        Node {
             id: cameraSpinner
             position: Qt.vector3d(0, 0, 0);
 
 
-            DemonCamera {
+            Camera {
                 id: camera
                 position: Qt.vector3d(0, 0, -600)
             }
@@ -102,7 +102,7 @@ Window {
             }
         }
 
-        DemonNode {
+        Node {
             id: shapeSpawner
             Timer {
                 property real range: 300
@@ -166,7 +166,7 @@ Window {
             }
         }
 
-        DemonModel {
+        Model {
             position: Qt.vector3d(0, 0, 0)
             source: "#Cube"
             materials: [ GlassMaterial {
@@ -174,7 +174,7 @@ Window {
             ]
         }
 
-        DemonModel {
+        Model {
             position: Qt.vector3d(0, 300, 0)
             source: "#Cube"
             materials: [ AluminumMaterial {
@@ -182,7 +182,7 @@ Window {
             ]
         }
 
-        DemonModel {
+        Model {
             position: Qt.vector3d(0, -300, 0)
             source: "#Cube"
             materials: [ MeshFenceMaterial {
@@ -190,7 +190,7 @@ Window {
             ]
         }
 
-        DemonModel {
+        Model {
             position: Qt.vector3d(-300, 0, 0)
             source: "#Cube"
             materials: [ FrostedGlassMaterial {

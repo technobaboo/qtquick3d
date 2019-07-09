@@ -28,9 +28,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {
+CustomMaterial {
     // These properties names need to match the ones in the shader code!
     property bool uEnvironmentMappingEnabled: false
     property bool uShadowMappingEnabled: false
@@ -40,64 +40,64 @@ DemonCustomMaterial {
     property real bump_amount: 13.0
     property vector2d texture_tiling: Qt.vector2d(75.0, 75.0)
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Cutout | DemonCustomMaterialShaderInfo.Glossy | DemonCustomMaterialShaderInfo.Diffuse
+        shaderKey: CustomMaterialShaderInfo.Cutout | CustomMaterialShaderInfo.Glossy | CustomMaterialShaderInfo.Diffuse
         layers: 2
     }
 
-    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uEnvironmentTexture: CustomMaterialTexture {
             enabled: uEnvironmentMappingEnabled
-            type: DemonCustomMaterialTexture.Environment
-            image: DemonImage {
+            type: CustomMaterialTexture.Environment
+            image: Texture {
                 id: envImage
                 source: "maps/spherical_checker.png"
             }
     }
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
             enabled: uShadowMappingEnabled
-            type: DemonCustomMaterialTexture.LightmapShadow
-            image: DemonImage {
+            type: CustomMaterialTexture.LightmapShadow
+            image: Texture {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
     }
-    property DemonCustomMaterialTexture diffuse_texture: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Diffuse
+    property CustomMaterialTexture diffuse_texture: CustomMaterialTexture {
+        type: CustomMaterialTexture.Diffuse
         enabled: true
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/metal_mesh.png"
         }
     }
-    property DemonCustomMaterialTexture bump_texture: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Bump
+    property CustomMaterialTexture bump_texture: CustomMaterialTexture {
+        type: CustomMaterialTexture.Bump
         enabled: true
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/metal_mesh_bump.png"
         }
     }
-    property DemonCustomMaterialTexture cutout_opacity_texture: DemonCustomMaterialTexture {
-        type: DemonCustomMaterial.Unknown // cutout
+    property CustomMaterialTexture cutout_opacity_texture: CustomMaterialTexture {
+        type: CustomMaterial.Unknown // cutout
         enabled: true
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/metal_mesh_spec.png"
         }
     }
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: metalFenceFineFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/metalFenceFine.frag"
     }
 
-    passes: [ DemonCustomMaterialPass {
+    passes: [ CustomMaterialPass {
             shaders: metalFenceFineFragShader
         }
     ]

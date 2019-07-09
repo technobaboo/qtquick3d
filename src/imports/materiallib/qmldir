@@ -1,6 +1,6 @@
-module QtDemonMaterialLibrary
-plugin qtdemonmaterialplugin
-classname QtDemonMaterialPlugin
+module QtQuick3D.MaterialLibrary
+plugin qtquick3dmaterialplugin
+classname QtQuick3DMaterialPlugin
 AluminumAnisotropicMaterial 1.0 AluminumAnisotropicMaterial.qml
 AluminumBrushedMaterial 1.0 AluminumBrushedMaterial.qml
 AluminumEmissiveMaterial 1.0 AluminumEmissiveMaterial.qml
@@ -37,5 +37,5 @@ RubberStuddedMaterial 1.0 RubberStuddedMaterial.qml
 RubberStuddedEmissiveMaterial 1.0 RubberStuddedEmissiveMaterial.qml
 SteelMilledConcentricMaterial 1.0 SteelMilledConcentricMaterial.qml
 designersupported
-depends QtDemon 1.0
+depends QtQuick3D 1.0
 depends QtQuick.Window 2.1

@@ -28,9 +28,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {    
+CustomMaterial {
     // These properties names need to match the ones in the shader code!
     property bool uEnvironmentMappingEnabled: true
     property bool uShadowMappingEnabled: false
@@ -45,68 +45,68 @@ DemonCustomMaterial {
     property vector3d powdercoat_diffuse_color: Qt.vector3d(0.046, 0.046, 0.054)
     property vector3d emission_color: Qt.vector3d(0.0, 0.0, 0.0)
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Glossy | DemonCustomMaterialShaderInfo.Diffuse
+        shaderKey: CustomMaterialShaderInfo.Glossy | CustomMaterialShaderInfo.Diffuse
         layers: 2
     }
 
-    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uEnvironmentTexture: CustomMaterialTexture {
             enabled: uEnvironmentMappingEnabled
-            type: DemonCustomMaterialTexture.Environment
-            image: DemonImage {
+            type: CustomMaterialTexture.Environment
+            image: Texture {
                 id: envImage
                 source: "maps/spherical_checker.png"
             }
     }
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
             enabled: uShadowMappingEnabled
-            type: DemonCustomMaterialTexture.LightmapShadow
-            image: DemonImage {
+            type: CustomMaterialTexture.LightmapShadow
+            image: Texture {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
     }
-    property DemonCustomMaterialTexture powdercoat_bump_texture: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Bump
+    property CustomMaterialTexture powdercoat_bump_texture: CustomMaterialTexture {
+        type: CustomMaterialTexture.Bump
         enabled: true
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/powdercoat_bump_01.png"
         }
     }
-    property DemonCustomMaterialTexture emissive_texture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture emissive_texture: CustomMaterialTexture {
             id: emissiveTexture
-            type: DemonCustomMaterialTexture.Emissive
+            type: CustomMaterialTexture.Emissive
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: emissiveImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/emissive.png"
             }
     }
-    property DemonCustomMaterialTexture emissive_mask_texture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture emissive_mask_texture: CustomMaterialTexture {
             id: emissiveMaskTexture
-            type: DemonCustomMaterialTexture.Unknown
+            type: CustomMaterialTexture.Unknown
             enabled: true
-            image: DemonImage {
+            image: Texture {
                 id: emissiveMaskImage
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/emissive_mask.png"
             }
     }
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: powderCoatEmissiveFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/powderCoatEmissive.frag"
     }
 
-    passes: [ DemonCustomMaterialPass {
+    passes: [ CustomMaterialPass {
             shaders: powderCoatEmissiveFragShader
         }
     ]

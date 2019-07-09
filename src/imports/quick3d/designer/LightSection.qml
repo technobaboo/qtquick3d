@@ -44,7 +44,7 @@ Column {
                 tooltip: qsTr("Type of illumination to use")
             }
             ComboBox {
-                scope: "DemonLight"
+                scope: "Light"
                 model: ["Directional", "Point", "Area"]
                 backendValue: backendValues.lightType
                 Layout.fillWidth: true

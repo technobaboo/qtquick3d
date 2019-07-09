@@ -1,7 +1,0 @@
-module QtDemonHelpers
-plugin qtdemonhelpersplugin
-classname QtDemonHelpersPlugin
-AxisHelper 1.0 AxisHelper.qml
-WasdController 1.0 WasdController.qml
-designersupported
-depends QtDemon 1.0

@@ -1178,7 +1178,7 @@ void Image::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void Image::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonImage {\n");
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Texture {\n");
 }
 
 namespace  {
@@ -1186,12 +1186,12 @@ QString mappingModeToString(Image::MappingMode mode)
 {
     switch (mode) {
     case Image::EnvironmentalMapping:
-        return QStringLiteral("DemonImage.Environment");
+        return QStringLiteral("Texture.Environment");
     case Image::LightProbe:
     case Image::IBLOverride:
-        return QStringLiteral("DemonImage.LightProbe");
+        return QStringLiteral("Texture.LightProbe");
     default:
-        return QStringLiteral("DemonImage.Normal");
+        return QStringLiteral("Texture.Normal");
     }
 }
 
@@ -1199,11 +1199,11 @@ QString tilingModeToString(Image::TilingMode mode)
 {
     switch (mode) {
     case Image::Tiled:
-        return QStringLiteral("DemonImage.Repeat");
+        return QStringLiteral("Texture.Repeat");
     case Image::Mirrored:
-        return QStringLiteral("DemonImage.MirroredRepeat");
+        return QStringLiteral("Texture.MirroredRepeat");
     case Image::NoTiling:
-        return QStringLiteral("DemonImage.ClampToEdge");
+        return QStringLiteral("Texture.ClampToEdge");
     }
 
     Q_ASSERT(false);
@@ -1278,36 +1278,36 @@ void Node::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void Node::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonNode {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Node {") << endl;
 }
 
 namespace {
 QString rotationOrderToString(Node::RotationOrder ro) {
     switch (ro) {
     case Node::XYZ:
-        return QStringLiteral("DemonNode.XYZ");
+        return QStringLiteral("Node.XYZ");
     case Node::YZX:
-        return QStringLiteral("DemonNode.YZX");
+        return QStringLiteral("Node.YZX");
     case Node::ZXY:
-        return QStringLiteral("DemonNode.ZXY");
+        return QStringLiteral("Node.ZXY");
     case Node::XZY:
-        return QStringLiteral("DemonNode.XZY");
+        return QStringLiteral("Node.XZY");
     case Node::YXZ:
-        return QStringLiteral("DemonNode.YZX");
+        return QStringLiteral("Node.YZX");
     case Node::ZYX:
-        return QStringLiteral("DemonNode.ZYX");
+        return QStringLiteral("Node.ZYX");
     case Node::XYZr:
-        return QStringLiteral("DemonNode.XYZr");
+        return QStringLiteral("Node.XYZr");
     case Node::YZXr:
-        return QStringLiteral("DemonNode.YZXr");
+        return QStringLiteral("Node.YZXr");
     case Node::ZXYr:
-        return QStringLiteral("DemonNode.ZXYr");
+        return QStringLiteral("Node.ZXYr");
     case Node::XZYr:
-        return QStringLiteral("DemonNode.XZYr");
+        return QStringLiteral("Node.XZYr");
     case Node::YXZr:
-        return QStringLiteral("DemonNode.YXZr");
+        return QStringLiteral("Node.YXZr");
     case Node::ZYXr:
-        return QStringLiteral("DemonNode.ZYXr");
+        return QStringLiteral("Node.ZYXr");
     }
 
     Q_ASSERT(false);
@@ -1316,9 +1316,9 @@ QString rotationOrderToString(Node::RotationOrder ro) {
 QString orientationToString(Node::Orientation orientation)
 {
     if (orientation == Node::LeftHanded)
-        return QStringLiteral("DemonNode.LeftHanded");
+        return QStringLiteral("Node.LeftHanded");
 
-    return QStringLiteral("DemonNode.RightHanded");
+    return QStringLiteral("Node.RightHanded");
 }
 }
 
@@ -1376,7 +1376,7 @@ void LayerNode::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void LayerNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << "DemonView3D {" << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << "View3D {" << endl;
 }
 
 namespace {
@@ -1384,13 +1384,13 @@ QString progressiveAAToString(LayerNode::ProgressiveAA mode)
 {
     switch (mode) {
     case LayerNode::NoPAA:
-        return QStringLiteral("DemonSceneEnvironment.NoAA");
+        return QStringLiteral("SceneEnvironment.NoAA");
     case LayerNode::PAA2x:
-        return QStringLiteral("DemonSceneEnvironment.X2");
+        return QStringLiteral("SceneEnvironment.X2");
     case LayerNode::PAA4x:
-        return QStringLiteral("DemonSceneEnvironment.X4");
+        return QStringLiteral("SceneEnvironment.X4");
     case LayerNode::PAA8x:
-        return QStringLiteral("DemonSceneEnvironment.X8");
+        return QStringLiteral("SceneEnvironment.X8");
     }
 
     Q_ASSERT(false);
@@ -1401,13 +1401,13 @@ QString multisampleAAToString(LayerNode::MultisampleAA mode)
 {
     switch (mode) {
     case LayerNode::NoMSAA:
-        return QStringLiteral("DemonSceneEnvironment.NoAA");
+        return QStringLiteral("SceneEnvironment.NoAA");
     case LayerNode::MSAA2x:
-        return QStringLiteral("DemonSceneEnvironment.X2");
+        return QStringLiteral("SceneEnvironment.X2");
     case LayerNode::MSAA4x:
-        return QStringLiteral("DemonSceneEnvironment.X4");
+        return QStringLiteral("SceneEnvironment.X4");
     case LayerNode::SSAA:
-        return QStringLiteral("DemonSceneEnvironment.SSAA");
+        return QStringLiteral("SceneEnvironment.SSAA");
     }
 
     Q_ASSERT(false);
@@ -1418,11 +1418,11 @@ QString layerBackgroundToString(LayerNode::LayerBackground mode)
 {
     switch (mode) {
     case LayerNode::Transparent:
-        return QStringLiteral("DemonSceneEnvironment.Transparent");
+        return QStringLiteral("SceneEnvironment.Transparent");
     case LayerNode::SolidColor:
-        return QStringLiteral("DemonSceneEnvironment.Color");
+        return QStringLiteral("SceneEnvironment.Color");
     case LayerNode::Unspecified:
-        return QStringLiteral("DemonSceneEnvironment.Unspecified");
+        return QStringLiteral("SceneEnvironment.Unspecified");
     }
 
     Q_ASSERT(false);
@@ -1433,19 +1433,19 @@ QString blendTypeToString(LayerNode::BlendType type)
 {
     switch (type) {
     case LayerNode::Normal:
-        return QStringLiteral("DemonSceneEnvironment.Normal");
+        return QStringLiteral("SceneEnvironment.Normal");
     case LayerNode::Screen:
-        return QStringLiteral("DemonSceneEnvironment.Screen");
+        return QStringLiteral("SceneEnvironment.Screen");
     case LayerNode::Multiply:
-        return QStringLiteral("DemonSceneEnvironment.Multiply");
+        return QStringLiteral("SceneEnvironment.Multiply");
     case LayerNode::Add:
-        return QStringLiteral("DemonSceneEnvironment.Add");
+        return QStringLiteral("SceneEnvironment.Add");
     case LayerNode::Subtract:
-        return QStringLiteral("DemonSceneEnvironment.Subtract");
+        return QStringLiteral("SceneEnvironment.Subtract");
     case LayerNode::Overlay:
-        return QStringLiteral("DemonSceneEnvironment.Overlay");
+        return QStringLiteral("SceneEnvironment.Overlay");
     case LayerNode::ColorBurn:
-        return QStringLiteral("DemonSceneEnvironment.ColorBurn");
+        return QStringLiteral("SceneEnvironment.ColorBurn");
     case LayerNode::ColorDodge:
         return QStringLiteral("DemonSceneEnvironment.ColorDodge");
     }
@@ -1551,7 +1551,7 @@ void LayerNode::writeQmlProperties(QTextStream &output, int tabLevel)
 
 
     // SceneEnvironment Properties (seperate component)
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("environment: DemonSceneEnvironment {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("environment: SceneEnvironment {") << endl;
     writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("progressiveaa"), progressiveAAToString(m_progressiveAA));
     writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("multisampleaa"), multisampleAAToString(m_multisampleAA));
     writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("background"), layerBackgroundToString(m_layerBackground));
@@ -1679,7 +1679,7 @@ void CameraNode::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void CameraNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonCamera {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Camera {") << endl;
 }
 
 namespace {
@@ -1687,13 +1687,13 @@ QString cameraScaleModeToString(CameraNode::ScaleMode mode)
 {
     switch (mode) {
     case CameraNode::SameSize:
-        return QStringLiteral("DemonCamera.SameSize");
+        return QStringLiteral("Camera.SameSize");
     case CameraNode::Fit:
-        return QStringLiteral("DemonCamera.Fit");
+        return QStringLiteral("Camera.Fit");
     case CameraNode::FitHorizontal:
-        return QStringLiteral("DemonCamera.FitHorizontal");
+        return QStringLiteral("Camera.FitHorizontal");
     case CameraNode::FitVertical:
-        return QStringLiteral("DemonCamera.FitVertical");
+        return QStringLiteral("Camera.FitVertical");
     }
     Q_ASSERT(false);
     return QString();
@@ -1702,23 +1702,23 @@ QString cameraScaleAnchorToString(CameraNode::ScaleAnchor anchor)
 {
     switch (anchor) {
     case CameraNode::Center:
-        return QStringLiteral("DemonCamera.Center");
+        return QStringLiteral("Camera.Center");
     case CameraNode::N:
-        return QStringLiteral("DemonCamera.North");
+        return QStringLiteral("Camera.North");
     case CameraNode::NE:
-        return QStringLiteral("DemonCamera.NorthEast");
+        return QStringLiteral("Camera.NorthEast");
     case CameraNode::E:
-        return QStringLiteral("DemonCamera.East");
+        return QStringLiteral("Camera.East");
     case CameraNode::SE:
-        return QStringLiteral("DemonCamera.SouthEast");
+        return QStringLiteral("Camera.SouthEast");
     case CameraNode::S:
-        return QStringLiteral("DemonCamera.South");
+        return QStringLiteral("Camera.South");
     case CameraNode::SW:
-        return QStringLiteral("DemonCamera.SouthWest");
+        return QStringLiteral("Camera.SouthWest");
     case CameraNode::W:
-        return QStringLiteral("DemonCamera.West");
+        return QStringLiteral("Camera.West");
     case CameraNode::NW:
-        return QStringLiteral("DemonCamera.NorthWest");
+        return QStringLiteral("Camera.NorthWest");
     }
     Q_ASSERT(false);
     return QString();
@@ -1729,7 +1729,7 @@ QString cameraScaleAnchorToString(CameraNode::ScaleAnchor anchor)
 void CameraNode::writeQmlProperties(QTextStream &output, int tabLevel)
 {
     Node::writeQmlProperties(output, tabLevel);
-    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("orthographic"), m_orthographic ? QStringLiteral("DemonCamera.Orthographic") : QStringLiteral("DemonCamera.Perspective"));
+    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("orthographic"), m_orthographic ? QStringLiteral("Camera.Orthographic") : QStringLiteral("Camera.Perspective"));
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("clipnear"), m_clipNear);
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("clipfar"), m_clipFar);
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("fov"), m_fov);
@@ -1776,7 +1776,7 @@ void LightNode::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void LightNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonLight {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Light {") << endl;
 }
 
 namespace  {
@@ -1784,11 +1784,11 @@ QString lightTypeToString(LightNode::LightType type)
 {
     switch (type) {
     case LightNode::Directional:
-        return QStringLiteral("DemonLight.Directional");
+        return QStringLiteral("Light.Directional");
     case LightNode::Point:
-        return QStringLiteral("DemonLight.Point");
+        return QStringLiteral("Light.Point");
     case LightNode::Area:
-        return QStringLiteral("DemonLight.Area");
+        return QStringLiteral("Light.Area");
     }
     Q_ASSERT(false);
     return QString();
@@ -1869,7 +1869,7 @@ void ModelNode::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void ModelNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonModel {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Model {") << endl;
 }
 
 namespace {
@@ -1877,13 +1877,13 @@ QString tesselationModeToString(ModelNode::Tessellation mode)
 {
     switch (mode) {
     case ModelNode::None:
-        return QStringLiteral("DemonModel.NoTess");
+        return QStringLiteral("Model.NoTess");
     case ModelNode::Linear:
-        return QStringLiteral("DemonModel.TessLinear");
+        return QStringLiteral("Model.TessLinear");
     case ModelNode::Phong:
-        return QStringLiteral("DemonModel.TessPhong");
+        return QStringLiteral("Model.TessPhong");
     case ModelNode::NPatch:
-        return QStringLiteral("DemonModel.TessNPatch");
+        return QStringLiteral("Model.TessNPatch");
     }
     Q_ASSERT(false);
     return QString();
@@ -2077,33 +2077,33 @@ void DefaultMaterial::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void DefaultMaterial::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonDefaultMaterial {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DefaultMaterial {") << endl;
 }
 
 namespace {
 QString shaderLightingToString(DefaultMaterial::ShaderLighting mode)
 {
     if (mode == DefaultMaterial::PixelShaderLighting) {
-        return QStringLiteral("DemonDefaultMaterial.FragmentLighting");
+        return QStringLiteral("DefaultMaterial.FragmentLighting");
     } else {
-        return QStringLiteral("DemonDefaultMaterial.NoLighting");
+        return QStringLiteral("DefaultMaterial.NoLighting");
     }
 }
 QString shaderBlendModeToString(DefaultMaterial::BlendMode mode)
 {
     switch (mode) {
     case DefaultMaterial::Normal:
-        return QStringLiteral("DemonDefaultMaterial.Normal");
+        return QStringLiteral("DefaultMaterial.Normal");
     case DefaultMaterial::Screen:
-        return QStringLiteral("DemonDefaultMaterial.Screen");
+        return QStringLiteral("DefaultMaterial.Screen");
     case DefaultMaterial::Multiply:
-        return QStringLiteral("DemonDefaultMaterial.Multiply");
+        return QStringLiteral("DefaultMaterial.Multiply");
     case DefaultMaterial::Overlay:
-        return QStringLiteral("DemonDefaultMaterial.Overlay");
+        return QStringLiteral("DefaultMaterial.Overlay");
     case DefaultMaterial::ColorBurn:
-        return QStringLiteral("DemonDefaultMaterial.ColorBurn");
+        return QStringLiteral("DefaultMaterial.ColorBurn");
     case DefaultMaterial::ColorDodge:
-        return QStringLiteral("DemonDefaultMaterial.ColorDodge");
+        return QStringLiteral("DefaultMaterial.ColorDodge");
     }
     Q_ASSERT(false);
     return QString();
@@ -2112,11 +2112,11 @@ QString shaderSpecularModelToString(DefaultMaterial::SpecularModel model)
 {
     switch (model) {
         case DefaultMaterial::DefaultSpecularModel:
-            return QStringLiteral("DemonDefaultMaterial.Default");
+            return QStringLiteral("DefaultMaterial.Default");
     case DefaultMaterial::KGGX:
-        return QStringLiteral("DemonDefaultMaterial.KGGX");
+        return QStringLiteral("DefaultMaterial.KGGX");
     case DefaultMaterial::KWard:
-        return QStringLiteral("DemonDefaultMaterial.KWard");
+        return QStringLiteral("DefaultMaterial.KWard");
     }
     Q_ASSERT(false);
     return QString();
@@ -2338,7 +2338,7 @@ void CustomMaterialInstance::applyPropertyChanges(const PropertyChangeList &chan
 
 void CustomMaterialInstance::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonCustomMaterial {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("CustomMaterial {") << endl;
 }
 
 void CustomMaterialInstance::writeQmlProperties(QTextStream &output, int tabLevel)
@@ -2408,7 +2408,7 @@ void EffectInstance::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void EffectInstance::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("DemonEffect {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Effect {") << endl;
 }
 
 void EffectInstance::writeQmlProperties(QTextStream &output, int tabLevel)

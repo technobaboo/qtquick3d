@@ -34,15 +34,11 @@ import QtQuick.Layouts 1.12
 Column {
     width: parent.width
 
-    DemonModelSection {
+    NodeSection {
         width: parent.width
     }
 
-    DemonNodeSection {
-        width: parent.width
-    }
-
-    DemonObjectSection {
+    Object3DSection {
         width: parent.width
     }
 }

@@ -27,10 +27,10 @@
 **
 ****************************************************************************/
 
-import QtDemon 1.0
+import QtQuick3D 1.0
 import QtQuick 2.12
 
-DemonNode {
+Node {
     id: axisGrid_obj
 
     property alias gridColor: gridMaterial.diffuseColor
@@ -41,52 +41,52 @@ DemonNode {
     property bool enableAxisLines: true
 
     // Axis Lines
-    DemonModel {
+    Model {
         id: xAxis
         source: "#Cube"
         position: Qt.vector3d(5000, 0, 0)
         scale: Qt.vector3d(100, .05, .05)
         visible: enableAxisLines
 
-        materials: DemonDefaultMaterial {
-            lighting: DemonDefaultMaterial.NoLighting
+        materials: DefaultMaterial {
+            lighting: DefaultMaterial.NoLighting
             diffuseColor: "red"
         }
     }
 
-    DemonModel {
+    Model {
         id: yAxis
         source: "#Cube"
         position: Qt.vector3d(0, 5000, 0)
         scale: Qt.vector3d(0.05, 100, 0.05)
         visible: enableAxisLines
-        materials: DemonDefaultMaterial {
-            lighting: DemonDefaultMaterial.NoLighting
+        materials: DefaultMaterial {
+            lighting: DefaultMaterial.NoLighting
             diffuseColor: "green"
         }
     }
 
-    DemonModel {
+    Model {
         id: zAxis
         source: "#Cube"
         position: Qt.vector3d(0, 0, 5000)
         scale: Qt.vector3d(0.05, 0.05, 100)
         visible: enableAxisLines
-        materials: DemonDefaultMaterial {
-            lighting: DemonDefaultMaterial.NoLighting
+        materials: DefaultMaterial {
+            lighting: DefaultMaterial.NoLighting
             diffuseColor: "blue"
         }
     }
 
     // Grid Lines
-    DemonDefaultMaterial {
+    DefaultMaterial {
         id: gridMaterial
-        lighting: DemonDefaultMaterial.NoLighting
+        lighting: DefaultMaterial.NoLighting
         opacity: 0.5
         diffuseColor: Qt.rgba(0.8, 0.8, 0.8, 1)
     }
 
-    DemonModel {
+    Model {
         id: gridXZ
         source: "meshes/axisGrid.mesh"
         scale: Qt.vector3d(100, 100, 100)
@@ -95,7 +95,7 @@ DemonNode {
         ]
     }
 
-    DemonModel {
+    Model {
         id: gridXY
         visible: false
         source: "meshes/axisGrid.mesh"
@@ -106,7 +106,7 @@ DemonNode {
         ]
     }
 
-    DemonModel {
+    Model {
         id: gridYZ
         visible: false
         source: "meshes/axisGrid.mesh"

@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
-import QtDemon 1.0
-
+import QtQuick3D 1.0
 
 Window {
     id: window
@@ -51,41 +50,41 @@ Window {
 
     Component {
         id: simpleCube
-        DemonModel {
+        Model {
             source: "#Cube"
             scale: Qt.vector3d(0.1, 0.1, 0.1)
             rotation: window.cubeRotation
-            materials: DemonDefaultMaterial {
+            materials: DefaultMaterial {
                 diffuseColor: "white"
             }
         }
     }
 
 
-    DemonView3D {
+    View3D {
         id: view
         anchors.fill: parent
 
-        environment: DemonSceneEnvironment {
+        environment: SceneEnvironment {
             isDepthPrePassDisabled: true
         }
 
-        DemonLight {
+        Light {
             diffuseColor: "red"
 
         }
 
-        DemonLight {
+        Light {
             diffuseColor: "green"
             rotation: Qt.vector3d(0, 180, 0)
         }
 
-        DemonNode {
+        Node {
             id: cameraSpinner
             position: Qt.vector3d(0, 0, 0);
 
 
-            DemonCamera {
+            Camera {
                 id: camera
                 position: Qt.vector3d(0, 0, -700)
                 // Frustum Culling is disabled because we always see everything

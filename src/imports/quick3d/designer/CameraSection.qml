@@ -93,7 +93,7 @@ Section {
             text: qsTr("Projection Mode")
         }
         ComboBox {
-            scope: "DemonCamera"
+            scope: "Camera"
             model: ["Perspective", "Orthographic"]
             backendValue: backendValues.projectionMode
             Layout.fillWidth: true

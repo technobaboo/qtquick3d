@@ -43,7 +43,7 @@ Column {
             }
             SecondColumnLayout {
                 ComboBox {
-                    scope: "DemonSceneEnvironment"
+                    scope: "SceneEnvironment"
                     model: ["NoAA", "SSAA", "X2", "X4", "X8"]
                     backendValue: backendValues.progressiveAAMode
                     Layout.fillWidth: true
@@ -55,7 +55,7 @@ Column {
             }
             SecondColumnLayout {
                 ComboBox {
-                    scope: "DemonSceneEnvironment"
+                    scope: "SceneEnvironment"
                     model: ["NoAA", "SSAA", "X2", "X4", "X8"]
                     backendValue: backendValues.multisampleAAMode
                     Layout.fillWidth: true
@@ -79,7 +79,7 @@ Column {
             }
             SecondColumnLayout {
                 ComboBox {
-                    scope: "DemonSceneEnvironment"
+                    scope: "SceneEnvironment"
                     model: ["Transparent", "Unspecified", "Color"]
                     backendValue: backendValues.backgroundMode
                     Layout.fillWidth: true
@@ -90,7 +90,7 @@ Column {
             }
             SecondColumnLayout {
                 ComboBox {
-                    scope: "DemonSceneEnvironment"
+                    scope: "SceneEnvironment"
                     model: ["Normal", "Screen", "Multiply", "Add", "Subtract", "Overlay", "ColorBurn", "ColorDodge"]
                     backendValue: backendValues.blendType
                     Layout.fillWidth: true

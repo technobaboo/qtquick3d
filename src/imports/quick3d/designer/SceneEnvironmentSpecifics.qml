@@ -34,15 +34,7 @@ import QtQuick.Layouts 1.12
 Column {
     width: parent.width
 
-    DemonCustomMaterialSection {
-        width: parent.width
-    }
-
-    DemonMaterialSection {
-        width: parent.width
-    }
-
-    DemonObjectSection {
+    SceneEnvironmentSection {
         width: parent.width
     }
 }

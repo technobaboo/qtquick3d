@@ -49,14 +49,14 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonNode {
+Node {
 
     property vector3d rotationFrom: Qt.vector3d(0, 0, 0)
     property vector3d rotationTo: Qt.vector3d(0, 360, 360)
 
-    DemonModel {
+    Model {
         id: cube
         source: "#Cube"
         materials: [defaultMaterial]
@@ -69,7 +69,7 @@ DemonNode {
         }
     }
 
-    DemonDefaultMaterial {
+    DefaultMaterial {
         id: defaultMaterial
 
         diffuseColor: "red"

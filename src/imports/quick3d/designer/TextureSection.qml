@@ -79,7 +79,7 @@ Section {
         }
         SecondColumnLayout {
             ComboBox {
-                scope: "DemonImage"
+                scope: "Texture"
                 model: ["Normal", "Environment", "LightProbe"]
                 backendValue: backendValues.mappingMode
                 Layout.fillWidth: true
@@ -92,7 +92,7 @@ Section {
         }
         SecondColumnLayout {
             ComboBox {
-                scope: "DemonImage"
+                scope: "Texture"
                 model: ["Unknown", "ClampToEdge", "MirroredRepeat", "Repeat"]
                 backendValue: backendValues.tilingModeHorizontal
                 Layout.fillWidth: true
@@ -105,7 +105,7 @@ Section {
         }
         SecondColumnLayout {
             ComboBox {
-                scope: "DemonImage"
+                scope: "Texture"
                 model: ["Unknown", "ClampToEdge", "MirroredRepeat", "Repeat"]
                 backendValue: backendValues.tilingModeVertical
                 Layout.fillWidth: true

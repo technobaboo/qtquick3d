@@ -33,16 +33,16 @@
 
 QT_BEGIN_NAMESPACE
 
-class QtDemonMaterialPlugin : public QQmlExtensionPlugin
+class QtQuick3DMaterialPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
 public:
-    QtDemonMaterialPlugin(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
+    QtQuick3DMaterialPlugin(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
     virtual void registerTypes(const char *uri)
     {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtDemonMaterialLibrary"));
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtQuick3D.MaterialLibrary"));
 
         qmlRegisterModule(uri, 1, 0);
 

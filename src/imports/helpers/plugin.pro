@@ -1,6 +1,6 @@
 CXX_MODULE = qml
-TARGET = qtdemonhelpersplugin
-TARGETPATH = QtDemonHelpers
+TARGET = qtquick3dhelpersplugin
+TARGETPATH = QtQuick3D/Helpers
 QT += quick qml
 IMPORT_VERSION = 1.0
 

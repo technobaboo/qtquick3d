@@ -49,16 +49,16 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonNode {
-    DemonModel {
+Node {
+    Model {
         source: "#Cube"
 
         materials: [
-            DemonDefaultMaterial {
+            DefaultMaterial {
                 id: texturedCubeMaterial
-                diffuseMap: DemonImage {
+                diffuseMap: Texture {
                     id: cubeTexture
                     source: "texture.png"
                 }

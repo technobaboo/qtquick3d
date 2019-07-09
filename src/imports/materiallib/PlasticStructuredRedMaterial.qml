@@ -28,9 +28,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonCustomMaterial {
+CustomMaterial {
     // These properties names need to match the ones in the shader code!
     property bool uEnvironmentMappingEnabled: true
     property bool uShadowMappingEnabled: false
@@ -42,69 +42,69 @@ DemonCustomMaterial {
     property vector3d diffuse_color: Qt.vector3d(0.451, 0.04, 0.035)
     property vector3d emission_color: Qt.vector3d(0.0, 0.0, 0.0)
 
-    shaderInfo: DemonCustomMaterialShaderInfo {
+    shaderInfo: CustomMaterialShaderInfo {
         version: "330"
         type: "GLSL"
-        shaderKey: DemonCustomMaterialShaderInfo.Glossy | DemonCustomMaterialShaderInfo.Diffuse
+        shaderKey: CustomMaterialShaderInfo.Glossy | CustomMaterialShaderInfo.Diffuse
         layers: 1
     }
 
-    property DemonCustomMaterialTexture uEnvironmentTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uEnvironmentTexture: CustomMaterialTexture {
             enabled: uEnvironmentMappingEnabled
-            type: DemonCustomMaterialTexture.Environment
-            image: DemonImage {
+            type: CustomMaterialTexture.Environment
+            image: Texture {
                 id: envImage
                 source: "maps/spherical_checker.png"
             }
     }
-    property DemonCustomMaterialTexture uBakedShadowTexture: DemonCustomMaterialTexture {
+    property CustomMaterialTexture uBakedShadowTexture: CustomMaterialTexture {
             enabled: uShadowMappingEnabled
-            type: DemonCustomMaterialTexture.LightmapShadow
-            image: DemonImage {
+            type: CustomMaterialTexture.LightmapShadow
+            image: Texture {
                 id: shadowImage
                 source: "maps/shadow.png"
             }
     }
-    property DemonCustomMaterialTexture randomGradient1D: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Unknown; //Gradient
-            image: DemonImage {
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+    property CustomMaterialTexture randomGradient1D: CustomMaterialTexture {
+            type: CustomMaterialTexture.Unknown; //Gradient
+            image: Texture {
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/randomGradient1D.png"
             }
     }
-    property DemonCustomMaterialTexture randomGradient2D: DemonCustomMaterialTexture {
-            type: DemonCustomMaterialTexture.Unknown; //Gradient
-            image: DemonImage {
-                tilingModeHorizontal: DemonImage.Repeat
-                tilingModeVertical: DemonImage.Repeat
+    property CustomMaterialTexture randomGradient2D: CustomMaterialTexture {
+            type: CustomMaterialTexture.Unknown; //Gradient
+            image: Texture {
+                tilingModeHorizontal: Texture.Repeat
+                tilingModeVertical: Texture.Repeat
                 source: "maps/randomGradient2D.png"
             }
     }
-    property DemonCustomMaterialTexture randomGradient3D: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Unknown; //Gradient
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+    property CustomMaterialTexture randomGradient3D: CustomMaterialTexture {
+        type: CustomMaterialTexture.Unknown; //Gradient
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/randomGradient3D.png"
         }
     }
-    property DemonCustomMaterialTexture randomGradient4D: DemonCustomMaterialTexture {
-        type: DemonCustomMaterialTexture.Unknown; //Gradient
-        image: DemonImage {
-            tilingModeHorizontal: DemonImage.Repeat
-            tilingModeVertical: DemonImage.Repeat
+    property CustomMaterialTexture randomGradient4D: CustomMaterialTexture {
+        type: CustomMaterialTexture.Unknown; //Gradient
+        image: Texture {
+            tilingModeHorizontal: Texture.Repeat
+            tilingModeVertical: Texture.Repeat
             source: "maps/randomGradient4D.png"
         }
     }
 
-    DemonCustomMaterialShader {
+    CustomMaterialShader {
         id: plasticStructuredRedFragShader
-        stage: DemonCustomMaterialShader.Fragment
+        stage: CustomMaterialShader.Fragment
         shader: "shaders/plasticStructuredRed.frag"
     }
 
-    passes: [ DemonCustomMaterialPass {
+    passes: [ CustomMaterialPass {
             shaders: plasticStructuredRedFragShader
         }
     ]

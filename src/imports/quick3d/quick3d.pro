@@ -1,6 +1,6 @@
 CXX_MODULE = qml
-TARGET = qdemonplugin
-TARGETPATH = QtDemon
+TARGET = qquick3dplugin
+TARGETPATH = QtQuick3D
 IMPORT_VERSION = 1.$$QT_MINOR_VERSION
 
 QT += qml-private quick-private quick3d

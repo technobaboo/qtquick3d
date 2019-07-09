@@ -52,7 +52,7 @@ Section {
         }
         SecondColumnLayout {
             ComboBox {
-                scope: "DemonModel."
+                scope: "Model."
                 model: ["NoTess", "TessLinear", "TessPhong", "TessNPatch"]
                 backendValue: backendValues.orientation
                 Layout.fillWidth: true

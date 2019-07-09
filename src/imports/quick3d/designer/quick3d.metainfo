@@ -1,6 +1,6 @@
 MetaInfo {
     Type {
-        name: "QtDemon.DemonCamera"
+        name: "QtQuick3D.Camera"
         icon: "images/dummy16.png"
 
         Hints {
@@ -11,15 +11,15 @@ MetaInfo {
 
         ItemLibraryEntry {
             name: "Camera"
-            category: "Qt Demon"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
             Property { name: "z"; type: "int"; value: -500; }
         }
     }
     Type {
-        name: "QtDemon.DemonCustomMaterial"
+        name: "QtQuick3D.CustomMaterial"
         icon: "images/dummy16.png"
 
         Hints {
@@ -31,14 +31,14 @@ MetaInfo {
 
         ItemLibraryEntry {
             name: "Custom Material"
-            category: "Qt Demon"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
         }
     }
     Type {
-        name: "QtDemon.DemonDefaultMaterial"
+        name: "QtQuick3D.DefaultMaterial"
         icon: "images/dummy16.png"
 
         Hints {
@@ -50,15 +50,15 @@ MetaInfo {
 
         ItemLibraryEntry {
             name: "Default Material"
-            category: "Qt Demon"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
             Property { name: "diffuseColor"; type: "color"; value: "green"; }
         }
     }
     Type {
-        name: "QtDemon.DemonImage"
+        name: "QtQuick3D.Texture"
         icon: "images/dummy16.png"
 
         Hints {
@@ -68,15 +68,15 @@ MetaInfo {
         }
 
         ItemLibraryEntry {
-            name: "Image"
-            category: "Qt Demon"
+            name: "Texture"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
         }
     }
     Type {
-        name: "QtDemon.DemonLight"
+        name: "QtQuick3D.Light"
         icon: "images/dummy16.png"
 
         Hints {
@@ -87,15 +87,15 @@ MetaInfo {
 
         ItemLibraryEntry {
             name: "Light"
-            category: "Qt Demon"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
             Property { name: "ambientColor"; type: "color"; value: "#060606"; }
         }
     }
     Type {
-        name: "QtDemon.DemonModel"
+        name: "QtQuick3D.Model"
         icon: "images/dummy16.png"
 
         Hints {
@@ -107,15 +107,15 @@ MetaInfo {
 
         ItemLibraryEntry {
             name: "Cube Model"
-            category: "Qt Demon"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
             Property { name: "source"; type: "string"; value: "#Cube"; }
         }
     }
     Type {
-        name: "QtDemon.DemonNode"
+        name: "QtQuick3D.Node"
         icon: "images/dummy16.png"
 
         Hints {
@@ -126,14 +126,14 @@ MetaInfo {
 
         ItemLibraryEntry {
             name: "Node"
-            category: "Qt Demon"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
         }
     }
     Type {
-        name: "QtDemon.DemonSceneEnvironment"
+        name: "QtQuick3D.SceneEnvironment"
         icon: "images/dummy16.png"
 
         Hints {
@@ -144,22 +144,22 @@ MetaInfo {
 
         ItemLibraryEntry {
             name: "Scene Environment"
-            category: "Qt Demon"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
         }
     }
     Type {
-        name: "QtDemon.DemonView3D"
+        name: "QtQuick3D.View3D"
         icon: "images/dummy16.png"
 
         ItemLibraryEntry {
             name: "View3D"
-            category: "Qt Demon"
+            category: "Qt Quick 3D"
             libraryIcon: "images/dummy.png"
             version: "1.0"
-            requiredImport: "QtDemon"
+            requiredImport: "QtQuick3D"
             Property { name: "width"; type: "int"; value: 200; }
             Property { name: "height"; type: "int"; value: 200; }
         }

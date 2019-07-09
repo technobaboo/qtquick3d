@@ -27,14 +27,30 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.12
-import HelperWidgets 2.0
-import QtQuick.Layouts 1.12
+#include <QtQml/qqmlextensionplugin.h>
+#include <QtQml/qqml.h>
+#include <QtQml/qqmlengine.h>
 
-Column {
-    width: parent.width
+QT_BEGIN_NAMESPACE
 
-    DemonSceneEnvironmentSection {
-        width: parent.width
+class QtQuick3DHelpersPlugin : public QQmlExtensionPlugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
+
+public:
+    QtQuick3DHelpersPlugin(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
+    virtual void registerTypes(const char *uri)
+    {
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtQuick3D.Helpers"));
+
+        qmlRegisterModule(uri, 1, 0);
+
+        // Auto-increment the import to stay in sync with ALL future QtQuick minor versions from 5.12 onward
+        qmlRegisterModule(uri, 1, QT_VERSION_MINOR);
     }
-}
+};
+
+QT_END_NAMESPACE
+
+#include "plugin.moc"

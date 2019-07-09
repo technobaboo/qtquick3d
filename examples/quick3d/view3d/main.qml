@@ -50,7 +50,7 @@
 
 import QtQuick 2.12
 import QtQuick.Window 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 import QtQuick.Controls 2.4
 
 Window {
@@ -59,12 +59,12 @@ Window {
     height: 720
     visible: true
 
-    DemonNode {
+    Node {
         id: standAloneScene
 
-        DemonNode {
+        Node {
             id: orbitingCamera
-            DemonCamera {
+            Camera {
                 id: camera1
                 z: -600
             }
@@ -74,15 +74,15 @@ Window {
             }
         }
 
-        DemonCamera {
+        Camera {
             id: camera2
             z: -600
         }
 
-        DemonNode {
+        Node {
             id: orbitingCamera2
 
-            DemonCamera {
+            Camera {
                 id: camera3
 
                 x: 500
@@ -95,17 +95,17 @@ Window {
         }
 
 
-        DemonLight {
+        Light {
             id: light2
             ambientColor: Qt.rgba(0.1, 0.1, 0.1, 1.0);
         }
 
-        DemonModel {
+        Model {
             source: "teapot.mesh"
             y: -100
             scale: Qt.vector3d(100, 100, 100)
             materials: [
-                DemonDefaultMaterial {
+                DefaultMaterial {
                     id: cubeMaterial2
                     diffuseColor: "salmon"
                 }
@@ -127,16 +127,16 @@ Window {
         color: "grey"
         border.color: "black"
 
-        DemonView3D {
+        View3D {
             id: topLeftView
             anchors.fill: parent
             scene: standAloneScene
             camera: camerafront
 
-            DemonCamera {
+            Camera {
                 id: camerafront
                 z: -600
-                projectionMode: DemonCamera.Orthographic
+                projectionMode: Camera.Orthographic
                 rotation: Qt.vector3d(0, 0, 0)
             }
         }
@@ -168,7 +168,7 @@ Window {
             font.pointSize: 14
         }
 
-        DemonView3D {
+        View3D {
             id: topRightView
             anchors.top: controlsContainer.top
             anchors.right: parent.right
@@ -176,11 +176,11 @@ Window {
             anchors.bottom: parent.bottom;
             camera: camera1
             scene: standAloneScene
-            renderMode: DemonView3D.Underlay
+            renderMode: View3D.Underlay
 
-            environment: DemonSceneEnvironment {
+            environment: SceneEnvironment {
                 clearColor: "grey"
-                backgroundMode: DemonSceneEnvironment.Color
+                backgroundMode: SceneEnvironment.Color
             }
         }
 
@@ -220,16 +220,16 @@ Window {
         color: "grey"
         border.color: "black"
 
-        DemonView3D {
+        View3D {
             id: bottomLeftView
             anchors.fill: parent
             scene: standAloneScene
             camera: cameratop
 
-            DemonCamera {
+            Camera {
                 id: cameratop
                 y: 600
-                projectionMode: DemonCamera.Orthographic
+                projectionMode: Camera.Orthographic
                 rotation: Qt.vector3d(90, 0, 0)
             }
         }
@@ -252,16 +252,16 @@ Window {
         color: "grey"
         border.color: "black"
 
-        DemonView3D {
+        View3D {
             id: bottomRightView
             anchors.fill: parent
             scene: standAloneScene
             camera: cameratop
 
-            DemonCamera {
+            Camera {
                 id: cameraLeft
                 x: -600
-                projectionMode: DemonCamera.Orthographic
+                projectionMode: Camera.Orthographic
                 rotation: Qt.vector3d(0, 90, 0)
             }
         }

@@ -50,8 +50,8 @@
 
 import QtQuick 2.12
 import QtQuick.Window 2.11
-import QtDemon 1.0
-import QtDemonMaterialLibrary 1.0
+import QtQuick3D 1.0
+import QtQuick3D.MaterialLibrary 1.0
 
 Window {
     id: window
@@ -69,26 +69,26 @@ Window {
         }
     }
 
-    DemonView3D {
+    View3D {
         id: layer1
         anchors.fill: parent
         anchors.margins: 50
         camera: camera
-        renderMode: DemonView3D.Overlay
+        renderMode: View3D.Overlay
 
-        environment: DemonSceneEnvironment {
+        environment: SceneEnvironment {
             probeBrightness: 1000
-            backgroundMode: DemonSceneEnvironment.Transparent
-            lightProbe: DemonImage {
+            backgroundMode: SceneEnvironment.Transparent
+            lightProbe: Texture {
                 source: "maps/OpenfootageNET_garage-1024.hdr"
             }
         }
-        DemonCamera {
+        Camera {
             id: camera
             position: Qt.vector3d(0, 200, -300)
             rotation: Qt.vector3d(30, 0, 0)
         }
-        DemonModel {
+        Model {
             position: Qt.vector3d(0, 0, 0)
             source: "#Cube"
             materials: [ GlassMaterial {

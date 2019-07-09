@@ -186,33 +186,33 @@ PropertyMap::PropertyMap()
     node->insert(QStringLiteral("scale"), QVector3D(1, 1, 1));
     node->insert(QStringLiteral("pivot"), QVector3D(0, 0, 0));
     node->insert(QStringLiteral("opacity"), 1.0);
-    node->insert(QStringLiteral("rotationOrder"), QStringLiteral("DemonNode.YXZ"));
-    node->insert(QStringLiteral("orientation"), QStringLiteral("DemonNode.LeftHanded"));
+    node->insert(QStringLiteral("rotationOrder"), QStringLiteral("Node.YXZ"));
+    node->insert(QStringLiteral("orientation"), QStringLiteral("Node.LeftHanded"));
     node->insert(QStringLiteral("visible"), true);
     m_properties.insert(Type::Node, node);
 
     // Model
     PropertiesMap *model = new PropertiesMap;
     model->insert(QStringLiteral("skeletonRoot"), -1);
-    model->insert(QStringLiteral("tesselationMode"), QStringLiteral("DemonModel.NoTess"));
+    model->insert(QStringLiteral("tesselationMode"), QStringLiteral("Model.NoTess"));
     model->insert(QStringLiteral("edgeTess"), 1);
     model->insert(QStringLiteral("innerTess"), 1);
     m_properties.insert(Type::Model, model);
 
     // Camera
     PropertiesMap *camera = new PropertiesMap;
-    camera->insert(QStringLiteral("projectionMode"), QStringLiteral("DemonCamera.Perspective"));
+    camera->insert(QStringLiteral("projectionMode"), QStringLiteral("Camera.Perspective"));
     camera->insert(QStringLiteral("clipNear"), 10.0f);
     camera->insert(QStringLiteral("clipFar"), 10000.0f);
     camera->insert(QStringLiteral("fieldOfView"), 60.0f);
     camera->insert(QStringLiteral("isFieldOFViewHorizontal"), false);
-    camera->insert(QStringLiteral("scaleMode"), QStringLiteral("DemonCamera.Fit"));
-    camera->insert(QStringLiteral("scaleAnchor"), QStringLiteral("DemonCamera.Center"));
+    camera->insert(QStringLiteral("scaleMode"), QStringLiteral("Camera.Fit"));
+    camera->insert(QStringLiteral("scaleAnchor"), QStringLiteral("Camera.Center"));
     m_properties.insert(Type::Camera, camera);
 
     // Light
     PropertiesMap *light = new PropertiesMap;
-    light->insert(QStringLiteral("lightType"), QStringLiteral("DemonLight.Directional"));
+    light->insert(QStringLiteral("lightType"), QStringLiteral("Light.Directional"));
     light->insert(QStringLiteral("diffuseColor"), QColor(Qt::white));
     light->insert(QStringLiteral("specularColor"), QColor(Qt::white));
     light->insert(QStringLiteral("ambientColor"), QColor(Qt::black));
@@ -232,12 +232,12 @@ PropertyMap::PropertyMap()
 
     // DefaultMaterial
     PropertiesMap *defaultMaterial = new PropertiesMap;
-    defaultMaterial->insert(QStringLiteral("lighting"), QStringLiteral("DemonDefaultMaterial.VertexLighting"));
-    defaultMaterial->insert(QStringLiteral("blendMode"), QStringLiteral("DemonDefaultMaterial.Normal"));
+    defaultMaterial->insert(QStringLiteral("lighting"), QStringLiteral("DefaultMaterial.VertexLighting"));
+    defaultMaterial->insert(QStringLiteral("blendMode"), QStringLiteral("DefaultMaterial.Normal"));
     defaultMaterial->insert(QStringLiteral("diffuseColor"), QColor(Qt::white));
     defaultMaterial->insert(QStringLiteral("emissivePower"), 0.0f);
     defaultMaterial->insert(QStringLiteral("emissiveColor"), QColor(Qt::white));
-    defaultMaterial->insert(QStringLiteral("specularModel"), QStringLiteral("DemonDefaultMaterial.Default"));
+    defaultMaterial->insert(QStringLiteral("specularModel"), QStringLiteral("DefaultMaterial.Default"));
     defaultMaterial->insert(QStringLiteral("specularTint"), QColor(Qt::white));
     defaultMaterial->insert(QStringLiteral("indexOfRefraction"), 0.2f);
     defaultMaterial->insert(QStringLiteral("fresnelPower"), 0.0f);
@@ -256,9 +256,9 @@ PropertyMap::PropertyMap()
     PropertiesMap *image = new PropertiesMap;
     image->insert(QStringLiteral("scaleU"), 1.0f);
     image->insert(QStringLiteral("scaleV"), 1.0f);
-    image->insert(QStringLiteral("mappingMode"), QStringLiteral("DemonImage.Normal"));
-    image->insert(QStringLiteral("tilingModeHorizontal"), QStringLiteral("DemonImage.ClampToEdge"));
-    image->insert(QStringLiteral("tilingModeVertical"), QStringLiteral("DemonImage.ClampToEdge"));
+    image->insert(QStringLiteral("mappingMode"), QStringLiteral("Texture.Normal"));
+    image->insert(QStringLiteral("tilingModeHorizontal"), QStringLiteral("Texture.ClampToEdge"));
+    image->insert(QStringLiteral("tilingModeVertical"), QStringLiteral("Texture.ClampToEdge"));
     image->insert(QStringLiteral("rotationUV"), 0.0f);
     image->insert(QStringLiteral("positionU"), 0.0f);
     image->insert(QStringLiteral("positionV"), 0.0f);

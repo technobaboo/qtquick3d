@@ -42,7 +42,7 @@ Column {
                 tooltip: qsTr("Light model")
             }
             ComboBox {
-                scope: "DemonDefaultMaterial"
+                scope: "DefaultMaterial"
                 model: ["NoLighting", "VertexLighting", "FragmentLighting"]
                 backendValue: backendValues.lighting
                 Layout.fillWidth: true
@@ -52,7 +52,7 @@ Column {
                 tooltip: qsTr("How this material blends with content behind it.")
             }
             ComboBox {
-                scope: "DemonDefaultMaterial"
+                scope: "DefaultMaterial"
                 model: ["Normal", "Screen", "Multiply", "Overlay", "ColorBurn", "ColorDodge" ]
                 backendValue: backendValues.blendMode
                 Layout.fillWidth: true
@@ -128,7 +128,7 @@ Column {
                 tooltip: qsTr("Equation to use when calculating specular highlights for CG lights")
             }
             ComboBox {
-                scope: "DemonDefaultMaterial"
+                scope: "DefaultMaterial"
                 model: ["Default", "KGGX", "KWard"]
                 backendValue: backendValues.specularModel
                 Layout.fillWidth: true

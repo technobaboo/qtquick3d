@@ -72,40 +72,40 @@ static QQmlPrivate::AutoParentResult qdemonobject_autoParent(QObject *obj, QObje
     return QQmlPrivate::IncompatibleObject;
 }
 
-class QDemonPlugin : public QQmlExtensionPlugin
+class QQuick3DPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
 public:
-    QDemonPlugin(QObject *parent = nullptr) : QQmlExtensionPlugin(parent) { initResources(); }
+    QQuick3DPlugin(QObject *parent = nullptr) : QQmlExtensionPlugin(parent) { initResources(); }
     void registerTypes(const char *uri) override
     {
         QQmlPrivate::RegisterAutoParent autoparent = { 0, &qdemonobject_autoParent };
         QQmlPrivate::qmlregister(QQmlPrivate::AutoParentRegistration, &autoparent);
 
-        qmlRegisterType<QDemonCamera>(uri, 1, 0, "DemonCamera");
-        qmlRegisterType<QDemonCustomMaterial>(uri, 1, 0, "DemonCustomMaterial");
-        qmlRegisterType<QDemonCustomMaterialShader>(uri, 1, 0, "DemonCustomMaterialShader");
-        qmlRegisterType<QDemonCustomMaterialShaderInfo>(uri, 1, 0, "DemonCustomMaterialShaderInfo");
-        qmlRegisterType<QDemonCustomMaterialTexture>(uri, 1, 0, "DemonCustomMaterialTexture");
-        qmlRegisterType<QDemonCustomMaterialRenderPass>(uri, 1, 0, "DemonCustomMaterialPass");
-        qmlRegisterType<QDemonCustomMaterialRenderCommand>(uri, 1, 0, "DemonCustomMaterialCommand");
-        qmlRegisterType<QDemonCustomMaterialBufferInput>(uri, 1, 0, "DemonCustomMaterialBufferInput");
-        qmlRegisterType<QDemonCustomMaterialBufferBlit>(uri, 1, 0, "DemonCustomMaterialBufferBlit");
-        qmlRegisterType<QDemonCustomMaterialBlending>(uri, 1, 0, "DemonCustomMaterialBlending");
-        qmlRegisterType<QDemonCustomMaterialBuffer>(uri, 1, 0, "DemonCustomMaterialBuffer");
-        qmlRegisterType<QDemonCustomMaterialRenderState>(uri, 1, 0, "DemonCustomMaterialRenderState");
-        qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DemonDefaultMaterial");
-        qmlRegisterType<QDemonEffect>(uri, 1, 0, "DemonEffect");
-        qmlRegisterType<QDemonImage>(uri, 1, 0, "DemonImage");
-        qmlRegisterType<QDemonLight>(uri, 1, 0, "DemonLight");
-        qmlRegisterUncreatableType<QDemonMaterial>(uri, 1, 0, "DemonMaterial", QLatin1String("Material is Abstract"));
-        qmlRegisterType<QDemonModel>(uri, 1, 0, "DemonModel");
-        qmlRegisterType<QDemonNode>(uri, 1, 0, "DemonNode");
-        qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "DemonObject", QLatin1String("Object is Abtract"));
-        qmlRegisterType<QDemonView3D>(uri, 1, 0, "DemonView3D");
-        qmlRegisterType<QDemonSceneEnvironment>(uri, 1, 0, "DemonSceneEnvironment");
+        qmlRegisterType<QDemonCamera>(uri, 1, 0, "Camera");
+        qmlRegisterType<QDemonCustomMaterial>(uri, 1, 0, "CustomMaterial");
+        qmlRegisterType<QDemonCustomMaterialShader>(uri, 1, 0, "CustomMaterialShader");
+        qmlRegisterType<QDemonCustomMaterialShaderInfo>(uri, 1, 0, "CustomMaterialShaderInfo");
+        qmlRegisterType<QDemonCustomMaterialTexture>(uri, 1, 0, "CustomMaterialTexture");
+        qmlRegisterType<QDemonCustomMaterialRenderPass>(uri, 1, 0, "CustomMaterialPass");
+        qmlRegisterType<QDemonCustomMaterialRenderCommand>(uri, 1, 0, "CustomMaterialCommand");
+        qmlRegisterType<QDemonCustomMaterialBufferInput>(uri, 1, 0, "CustomMaterialBufferInput");
+        qmlRegisterType<QDemonCustomMaterialBufferBlit>(uri, 1, 0, "CustomMaterialBufferBlit");
+        qmlRegisterType<QDemonCustomMaterialBlending>(uri, 1, 0, "CustomMaterialBlending");
+        qmlRegisterType<QDemonCustomMaterialBuffer>(uri, 1, 0, "CustomMaterialBuffer");
+        qmlRegisterType<QDemonCustomMaterialRenderState>(uri, 1, 0, "CustomMaterialRenderState");
+        qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DefaultMaterial");
+        qmlRegisterType<QDemonEffect>(uri, 1, 0, "Effect");
+        qmlRegisterType<QDemonImage>(uri, 1, 0, "Texture");
+        qmlRegisterType<QDemonLight>(uri, 1, 0, "Light");
+        qmlRegisterUncreatableType<QDemonMaterial>(uri, 1, 0, "Material", QLatin1String("Material is Abstract"));
+        qmlRegisterType<QDemonModel>(uri, 1, 0, "Model");
+        qmlRegisterType<QDemonNode>(uri, 1, 0, "Node");
+        qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "Object3D", QLatin1String("Object3D is Abtract"));
+        qmlRegisterType<QDemonView3D>(uri, 1, 0, "View3D");
+        qmlRegisterType<QDemonSceneEnvironment>(uri, 1, 0, "SceneEnvironment");
 
         qmlRegisterModule(uri, 1, QT_VERSION_MINOR);
     }

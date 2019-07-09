@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 SUBDIRS = \
-    demon \
+    quick3d \
     materiallib \
-    demonhelpers
+    helpers

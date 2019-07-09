@@ -284,7 +284,7 @@ void UipImporter::generateMaterialComponent(GraphObject *object)
     }
 
     QTextStream output(&materialComponentFile);
-    output << "import QtDemon 1.0" << endl << endl;
+    output << "import QtQuick3D 1.0" << endl << endl;
     processNode(object, output, 0, false);
 
     materialComponentFile.close();
@@ -309,7 +309,7 @@ void UipImporter::generateAliasComponent(GraphObject *reference)
     }
 
     QTextStream output(&aliasComponentFile);
-    output << "import QtDemon 1.0" << endl << endl;
+    output << "import QtQuick3D 1.0" << endl << endl;
     processNode(reference, output, 0, false);
 
     aliasComponentFile.close();
@@ -408,7 +408,7 @@ void UipImporter::generateComponent(GraphObject *component)
     QTextStream output(&componentFile);
     writeHeader(output);
 
-    output << QStringLiteral("DemonNode {") << endl;
+    output << QStringLiteral("Node {") << endl;
     component->writeQmlProperties(output, 1);
 
     processNode(component->firstChild(), output, 1);
@@ -426,7 +426,7 @@ void UipImporter::generateComponent(GraphObject *component)
 
 void UipImporter::writeHeader(QTextStream &output)
 {
-    output << "import QtDemon 1.0" << endl;
+    output << "import QtQuick3D 1.0" << endl;
     output << "import QtQuick 2.12" << endl;
     output << "import QtQuick.Window 2.12" << endl;
     output << "import QtQuick.Timeline 1.0" << endl;
@@ -531,7 +531,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             // Write header
             writeHeader(output);
 
-            // DemonWindow header
+            // Window header
             output << QStringLiteral("Window {") << endl;
             output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("visible: true") << endl;
             output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("width: ") << m_presentation->presentationWidth()<< endl;
@@ -551,7 +551,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
                 output << endl;
             }
 
-            // DemonWindow footer
+            // Window footer
             output << QStringLiteral("}") << endl;
             outputFile.close();
             m_generatedFiles += outputFileName;

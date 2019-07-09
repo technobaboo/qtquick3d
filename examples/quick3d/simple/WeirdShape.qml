@@ -49,9 +49,9 @@
 ****************************************************************************/
 
 import QtQuick 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
-DemonNode {
+Node {
     id: weirdShape
 
     property alias color: weirdShapeMaterial.diffuseColor
@@ -60,7 +60,7 @@ DemonNode {
     property real yRotation: Math.random() * (360 - (-360)) + -360;
     property real zRotation: Math.random() * (360 - (-360)) + -360;
 
-    DemonModel {
+    Model {
         source: "weirdShape.mesh"
         scale: Qt.vector3d(100, 100, 100)
         rotation: Qt.vector3d(90, 0, 0)
@@ -76,7 +76,7 @@ DemonNode {
 
         materials: [weirdShapeMaterial]
 
-        DemonDefaultMaterial {
+        DefaultMaterial {
             id: weirdShapeMaterial
             diffuseColor: "purple"
         }
