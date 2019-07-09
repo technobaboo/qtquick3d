@@ -16,15 +16,26 @@ build_with_linux:
     - linux
   script:
     - echo "Starting Build"
-    - ~/Qt/5.12.3/gcc_64/bin/qmake
+    - mkdir build && cd build
+    - ~/Qt/5.12.3/gcc_64/bin/qmake ../qtdemonrender.pro
     - make
+    - make sub-tests
+    - cd tests && make check
+  # artifacts:
+  #   name: "$CI_JOB_NAME"
+  #   paths:
+  #   - build/
+  #   expire_in: 1 week
 
-test_with_linux:
-  stage: test
-  tags:
-    - linux
-  script:
-    - echo "No tests to run at this time... Please add some."
+# test_with_linux:
+#   stage: test
+#   tags:
+#     - linux
+#   script:
+#     - cd tests
+#     - make check
+#   dependencies:
+#     - build_with_linux
 
 build_with_windows:
   stage: build
@@ -33,12 +44,25 @@ build_with_windows:
   script:
     - echo "Starting Build"
     - "call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat\""
-    - "\"C:\\Qt\\5.12.3\\msvc2017_64\\bin\\qmake.exe\""
+    - mkdir build
+    - cd build
+    - "\"C:\\Qt\\5.12.3\\msvc2017_64\\bin\\qmake.exe\" ..\\qtdemonrender.pro"
     - "\"C:\\JOM\\JOM.exe\" /J 9"
+    - "\"C:\\JOM\\JOM.exe\" sub-tests /J 9"
+    - cd tests
+    - "\"C:\\JOM\\JOM.exe\" check"
+  # artifacts:
+  #   name: "%CI_JOB_NAME"
+  #   paths:
+  #   - build\
+  #   expire_in: 1 week
 
-test_with_windows:
-  stage: test
-  tags:
-    - windows
-  script:
-    - echo "No tests to run at this time... Please add some."
+# test_with_windows:
+#   stage: test
+#   tags:
+#     - windows
+#   script:
+#     - cd "tests"
+#     - "\"C:\\JOM\\JOM.exe\" check"
+#   dependencies:
+#     - build_with_windows
