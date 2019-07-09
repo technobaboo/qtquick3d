@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2008-2016 NVIDIA Corporation.
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2008-2012 NVIDIA Corporation.
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of Qt 3D Studio.
+** This file is part of Qt Quick 3D.
 **
 ** $QT_BEGIN_LICENSE:GPL$
 ** Commercial License Usage
