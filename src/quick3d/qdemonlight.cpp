@@ -5,6 +5,12 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype DemonLight
+    \inqmlmodule QtDemon
+    \brief Lets you define the lighting for a 3D item
+*/
+
 QDemonLight::QDemonLight() : m_diffuseColor(Qt::white), m_specularColor(Qt::white), m_ambientColor(Qt::black) {}
 
 QDemonLight::~QDemonLight() {}

@@ -1,0 +1,13 @@
+/*!
+    \group quick3d-examples
+    \title Qt Quick 3D Examples and Tutorials
+    \brief List of all examples and tutorials
+*/
+/*!
+    \example hellocube
+    \title Qt Quick 3D - Hellocube example
+    \brief Demonstrates the use of custom material
+    \ingroup quick3d-examples
+
+    \image hellocube.png
+*/

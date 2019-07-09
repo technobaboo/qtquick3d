@@ -28,6 +28,11 @@ static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemon
     }
 }
 
+/*!
+    \qmltype DemonSceneEnvironment
+    \inqmlmodule QtDemon
+    \brief Lets you configure the scene environment
+*/
 QDemonSceneEnvironment::QDemonSceneEnvironment(QDemonObject *parent)
     : QDemonObject(parent)
 {

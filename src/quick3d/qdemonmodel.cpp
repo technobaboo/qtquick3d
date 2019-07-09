@@ -11,6 +11,11 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+   \qmltype DemonModel
+   \inqmlmodule QtDemon
+   \brief Lets you load a 3D model data
+*/
 QDemonModel::QDemonModel() {}
 
 QDemonModel::~QDemonModel() {}

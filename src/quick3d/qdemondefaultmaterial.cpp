@@ -4,6 +4,11 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype DemonDefualtMaterial
+    \inqmlmodule QtDemon
+    \brief Lets you define material for the 3D item
+*/
 QDemonDefaultMaterial::QDemonDefaultMaterial()
     : m_diffuseColor(Qt::white)
     , m_emissiveColor(Qt::white)

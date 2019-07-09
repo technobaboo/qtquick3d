@@ -41,6 +41,18 @@ QT_BEGIN_NAMESPACE
 //        connections.insert(newO, connection);
 //    }
 //}
+/*!
+    \class QDemonView3D
+    \inmodule QtQuick3D
+    \brief Provides the infrastructure to render 3D items
+
+*/
+/*!
+    \qmltype DemonView3D
+    \inqmlmodule QtDemon
+    \brief Provides the infrastructure to render 3D items
+
+*/
 
 QDemonView3D::QDemonView3D(QQuickItem *parent)
     : QQuickItem(parent)
