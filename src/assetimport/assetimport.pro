@@ -10,7 +10,6 @@ SOURCES = \
     qdemonassetimportmanager.cpp \
     qdemonmeshutilities.cpp \
     qdemonqmlutilities.cpp \
-    qdemonscenegraphtranslation.cpp \
     qdemonpathutilities.cpp
 
 HEADERS = \
@@ -21,7 +20,6 @@ HEADERS = \
     qdemonassetimporterplugin_p.h \
     qdemonassetimportmanager.h \
     qdemonmeshutilities_p.h \
-    qdemonscenegraphtranslation_p.h \
     qdemonpathutilities.h
 
 DEFINES += QT_BUILD_DEMONASSETIMPORT_LIB
