@@ -41,23 +41,23 @@
 // We mean it.
 //
 
-#include <QDemonObject>
+#include <QtQuick3D/QQuick3DObject>
 
 QT_BEGIN_NAMESPACE
 
-class QDemonObjectChangeListener
+class QQuick3DObjectChangeListener
 {
 public:
-    virtual ~QDemonObjectChangeListener() {}
+    virtual ~QQuick3DObjectChangeListener() {}
 
-    virtual void itemSiblingOrderChanged(QDemonObject *) {}
-    virtual void itemVisibilityChanged(QDemonObject *) {}
-    virtual void itemEnabledChanged(QDemonObject *) {}
-    virtual void itemOpacityChanged(QDemonObject *) {}
-    virtual void itemDestroyed(QDemonObject *) {}
-    virtual void itemChildAdded(QDemonObject *, QDemonObject * /* child */) {}
-    virtual void itemChildRemoved(QDemonObject *, QDemonObject * /* child */) {}
-    virtual void itemParentChanged(QDemonObject *, QDemonObject * /* parent */) {}
+    virtual void itemSiblingOrderChanged(QQuick3DObject *) {}
+    virtual void itemVisibilityChanged(QQuick3DObject *) {}
+    virtual void itemEnabledChanged(QQuick3DObject *) {}
+    virtual void itemOpacityChanged(QQuick3DObject *) {}
+    virtual void itemDestroyed(QQuick3DObject *) {}
+    virtual void itemChildAdded(QQuick3DObject *, QQuick3DObject * /* child */) {}
+    virtual void itemChildRemoved(QQuick3DObject *, QQuick3DObject * /* child */) {}
+    virtual void itemParentChanged(QQuick3DObject *, QQuick3DObject * /* parent */) {}
 };
 
 QT_END_NAMESPACE

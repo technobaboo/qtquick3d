@@ -50,14 +50,14 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QtQuick3d/QDemonView3D>
+#include <QtQuick3D/QQuick3DView3D>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
-    QSurfaceFormat::setDefaultFormat(QDemonView3D::idealSurfaceFormat());
+    QSurfaceFormat::setDefaultFormat(QQuick3DView3D::idealSurfaceFormat());
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

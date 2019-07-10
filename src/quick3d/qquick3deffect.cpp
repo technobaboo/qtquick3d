@@ -27,36 +27,40 @@
 **
 ****************************************************************************/
 
-#ifndef QDEMONEFFECT_H
-#define QDEMONEFFECT_H
+#include "qquick3deffect.h"
 
-#include <QtQuick3d/qdemonobject.h>
+#include <QtDemonRuntimeRender/qdemonrendereffect.h>
+
 QT_BEGIN_NAMESPACE
 
-class Q_QUICK3D_EXPORT QDemonEffect : public QDemonObject
+QQuick3DEffect::QQuick3DEffect() {}
+
+QQuick3DEffect::~QQuick3DEffect() {}
+
+QQuick3DObject::Type QQuick3DEffect::type() const
 {
-    Q_OBJECT
-    Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
-public:
-    QDemonEffect();
-    ~QDemonEffect() override;
+    return QQuick3DObject::Effect;
+}
 
-    QDemonObject::Type type() const override;
+QString QQuick3DEffect::source() const
+{
+    return m_source;
+}
 
-    QString source() const;
+void QQuick3DEffect::setSource(QString source)
+{
+    if (m_source == source)
+        return;
 
-public Q_SLOTS:
-    void setSource(QString source);
+    m_source = source;
+    emit sourceChanged(m_source);
+}
 
-Q_SIGNALS:
-    void sourceChanged(QString source);
+QDemonRenderGraphObject *QQuick3DEffect::updateSpatialNode(QDemonRenderGraphObject *node)
+{
+    // TODO: Add Effect Node and update properties
 
-protected:
-    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
-
-private:
-    QString m_source;
-};
+    return node;
+}
 
 QT_END_NAMESPACE
-#endif // QDEMONEFFECT_H

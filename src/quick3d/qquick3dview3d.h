@@ -33,52 +33,52 @@
 #include <QtGui/QOpenGLFramebufferObject>
 #include <QtQuick/QQuickItem>
 
-#include <QtQuick3d/qtquick3dglobal.h>
+#include <QtQuick3D/qtquick3dglobal.h>
 
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 
 QT_BEGIN_NAMESPACE
 
 class QDemonView3DPrivate;
-class QDemonCamera;
-class QDemonSceneEnvironment;
-class QDemonNode;
-class QDemonSceneRenderer;
+class QQuick3DCamera;
+class QQuick3DSceneEnvironment;
+class QQuick3DNode;
+class QQuick3DSceneRenderer;
 
 class SGFramebufferObjectNode;
-class QDemonSGRenderNode;
-class QDemonSGDirectRenderer;
+class QQuick3DSGRenderNode;
+class QQuick3DSGDirectRenderer;
 
-class Q_QUICK3D_EXPORT QDemonView3D : public QQuickItem
+class Q_QUICK3D_EXPORT QQuick3DView3D : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<QObject> data READ data)
-    Q_PROPERTY(QDemonCamera *camera READ camera WRITE setCamera NOTIFY cameraChanged)
-    Q_PROPERTY(QDemonSceneEnvironment *environment READ environment WRITE setEnvironment NOTIFY environmentChanged)
-    Q_PROPERTY(QDemonNode* scene READ scene WRITE setScene NOTIFY sceneChanged)
-    Q_PROPERTY(QDemonView3DRenderMode renderMode READ renderMode WRITE setRenderMode NOTIFY renderModeChanged)
+    Q_PROPERTY(QQuick3DCamera *camera READ camera WRITE setCamera NOTIFY cameraChanged)
+    Q_PROPERTY(QQuick3DSceneEnvironment *environment READ environment WRITE setEnvironment NOTIFY environmentChanged)
+    Q_PROPERTY(QQuick3DNode* scene READ scene WRITE setScene NOTIFY sceneChanged)
+    Q_PROPERTY(QQuick3DView3DRenderMode renderMode READ renderMode WRITE setRenderMode NOTIFY renderModeChanged)
     Q_CLASSINFO("DefaultProperty", "data")
 public:
-    enum QDemonView3DRenderMode {
+    enum QQuick3DView3DRenderMode {
         Texture,
         Underlay,
         Overlay,
         RenderNode
     };
-    Q_ENUM(QDemonView3DRenderMode)
+    Q_ENUM(QQuick3DView3DRenderMode)
 
-    explicit QDemonView3D(QQuickItem *parent = nullptr);
-    ~QDemonView3D() override;
+    explicit QQuick3DView3D(QQuickItem *parent = nullptr);
+    ~QQuick3DView3D() override;
 
     QQmlListProperty<QObject> data();
 
-    QDemonCamera *camera() const;
-    QDemonSceneEnvironment *environment() const;
-    QDemonNode *scene() const;
-    QDemonNode *referencedScene() const;
-    QDemonView3DRenderMode renderMode() const;
+    QQuick3DCamera *camera() const;
+    QQuick3DSceneEnvironment *environment() const;
+    QQuick3DNode *scene() const;
+    QQuick3DNode *referencedScene() const;
+    QQuick3DView3DRenderMode renderMode() const;
 
-    QDemonSceneRenderer *createRenderer() const;
+    QQuick3DSceneRenderer *createRenderer() const;
 
     bool isTextureProvider() const override;
     QSGTextureProvider *textureProvider() const override;
@@ -94,38 +94,38 @@ protected:
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;
 
 public Q_SLOTS:
-    void setCamera(QDemonCamera *camera);
-    void setEnvironment(QDemonSceneEnvironment * environment);
-    void setScene(QDemonNode *sceneRoot);
-    void setRenderMode(QDemonView3DRenderMode renderMode);
+    void setCamera(QQuick3DCamera *camera);
+    void setEnvironment(QQuick3DSceneEnvironment * environment);
+    void setScene(QQuick3DNode *sceneRoot);
+    void setRenderMode(QQuick3DView3DRenderMode renderMode);
 
 private Q_SLOTS:
     void invalidateSceneGraph();
 
 Q_SIGNALS:
-    void cameraChanged(QDemonCamera *camera);
-    void environmentChanged(QDemonSceneEnvironment * environment);
-    void sceneChanged(QDemonNode *sceneRoot);
-    void renderModeChanged(QDemonView3DRenderMode renderMode);
+    void cameraChanged(QQuick3DCamera *camera);
+    void environmentChanged(QQuick3DSceneEnvironment * environment);
+    void sceneChanged(QQuick3DNode *sceneRoot);
+    void renderModeChanged(QQuick3DView3DRenderMode renderMode);
 
 private:
-    Q_DISABLE_COPY(QDemonView3D)
+    Q_DISABLE_COPY(QQuick3DView3D)
 
-    QDemonCamera *m_camera = nullptr;
-    QDemonSceneEnvironment *m_environment = nullptr;
-    QDemonNode *m_sceneRoot = nullptr;
-    QDemonNode *m_referencedScene = nullptr;
+    QQuick3DCamera *m_camera = nullptr;
+    QQuick3DSceneEnvironment *m_environment = nullptr;
+    QQuick3DNode *m_sceneRoot = nullptr;
+    QQuick3DNode *m_referencedScene = nullptr;
     mutable SGFramebufferObjectNode *m_node = nullptr;
-    mutable QDemonSGRenderNode *m_renderNode = nullptr;
-    mutable QDemonSGDirectRenderer *m_directRenderer = nullptr;
+    mutable QQuick3DSGRenderNode *m_renderNode = nullptr;
+    mutable QQuick3DSGDirectRenderer *m_directRenderer = nullptr;
     bool m_renderModeDirty = false;
-    QDemonView3DRenderMode m_renderMode = Texture;
+    QQuick3DView3DRenderMode m_renderMode = Texture;
 
     QHash<QObject*, QMetaObject::Connection> m_connections;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QDemonView3D)
+QML_DECLARE_TYPE(QQuick3DView3D)
 
 #endif // QDEMONVIEW3D_H

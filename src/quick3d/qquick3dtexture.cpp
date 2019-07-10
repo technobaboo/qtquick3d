@@ -27,83 +27,83 @@
 **
 ****************************************************************************/
 
-#include "qdemonimage.h"
+#include "qquick3dtexture.h"
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 #include <QtQml/QQmlFile>
 
-#include "qdemonobject_p.h"
+#include "qquick3dobject_p.h"
 
 QT_BEGIN_NAMESPACE
 /*!
-    \qmltype DemonImage
-    \inqmlmodule QtDemon
+    \qmltype Texture
+    \inqmlmodule QtQuick3D
     \brief Lets you add a texture image to the material
 */
-QDemonImage::QDemonImage() {}
+QQuick3DTexture::QQuick3DTexture() {}
 
-QDemonImage::~QDemonImage() {}
+QQuick3DTexture::~QQuick3DTexture() {}
 
-QUrl QDemonImage::source() const
+QUrl QQuick3DTexture::source() const
 {
     return m_source;
 }
 
-float QDemonImage::scaleU() const
+float QQuick3DTexture::scaleU() const
 {
     return m_scaleU;
 }
 
-float QDemonImage::scaleV() const
+float QQuick3DTexture::scaleV() const
 {
     return m_scaleV;
 }
 
-QDemonImage::MappingMode QDemonImage::mappingMode() const
+QQuick3DTexture::MappingMode QQuick3DTexture::mappingMode() const
 {
     return m_mappingMode;
 }
 
-QDemonImage::TilingMode QDemonImage::horizontalTiling() const
+QQuick3DTexture::TilingMode QQuick3DTexture::horizontalTiling() const
 {
     return m_tilingModeHorizontal;
 }
 
-QDemonImage::TilingMode QDemonImage::verticalTiling() const
+QQuick3DTexture::TilingMode QQuick3DTexture::verticalTiling() const
 {
     return m_tilingModeVertical;
 }
 
-float QDemonImage::rotationUV() const
+float QQuick3DTexture::rotationUV() const
 {
     return m_rotationUV;
 }
 
-float QDemonImage::positionU() const
+float QQuick3DTexture::positionU() const
 {
     return m_positionU;
 }
 
-float QDemonImage::positionV() const
+float QQuick3DTexture::positionV() const
 {
     return m_positionV;
 }
 
-float QDemonImage::pivotU() const
+float QQuick3DTexture::pivotU() const
 {
     return m_pivotU;
 }
 
-float QDemonImage::pivotV() const
+float QQuick3DTexture::pivotV() const
 {
     return m_pivotV;
 }
 
-QDemonObject::Type QDemonImage::type() const
+QQuick3DObject::Type QQuick3DTexture::type() const
 {
-    return QDemonObject::Image;
+    return QQuick3DObject::Image;
 }
 
-void QDemonImage::setSource(const QUrl &source)
+void QQuick3DTexture::setSource(const QUrl &source)
 {
     if (m_source == source)
         return;
@@ -113,7 +113,7 @@ void QDemonImage::setSource(const QUrl &source)
     update();
 }
 
-void QDemonImage::setScaleU(float scaleU)
+void QQuick3DTexture::setScaleU(float scaleU)
 {
     if (qFuzzyCompare(m_scaleU, scaleU))
         return;
@@ -123,7 +123,7 @@ void QDemonImage::setScaleU(float scaleU)
     update();
 }
 
-void QDemonImage::setScaleV(float scaleV)
+void QQuick3DTexture::setScaleV(float scaleV)
 {
     if (qFuzzyCompare(m_scaleV, scaleV))
         return;
@@ -133,7 +133,7 @@ void QDemonImage::setScaleV(float scaleV)
     update();
 }
 
-void QDemonImage::setMappingMode(QDemonImage::MappingMode mappingMode)
+void QQuick3DTexture::setMappingMode(QQuick3DTexture::MappingMode mappingMode)
 {
     if (m_mappingMode == mappingMode)
         return;
@@ -143,7 +143,7 @@ void QDemonImage::setMappingMode(QDemonImage::MappingMode mappingMode)
     update();
 }
 
-void QDemonImage::setHorizontalTiling(QDemonImage::TilingMode tilingModeHorizontal)
+void QQuick3DTexture::setHorizontalTiling(QQuick3DTexture::TilingMode tilingModeHorizontal)
 {
     if (m_tilingModeHorizontal == tilingModeHorizontal)
         return;
@@ -153,7 +153,7 @@ void QDemonImage::setHorizontalTiling(QDemonImage::TilingMode tilingModeHorizont
     update();
 }
 
-void QDemonImage::setVerticalTiling(QDemonImage::TilingMode tilingModeVertical)
+void QQuick3DTexture::setVerticalTiling(QQuick3DTexture::TilingMode tilingModeVertical)
 {
     if (m_tilingModeVertical == tilingModeVertical)
         return;
@@ -163,7 +163,7 @@ void QDemonImage::setVerticalTiling(QDemonImage::TilingMode tilingModeVertical)
     update();
 }
 
-void QDemonImage::setRotationUV(float rotationUV)
+void QQuick3DTexture::setRotationUV(float rotationUV)
 {
     if (qFuzzyCompare(m_rotationUV, rotationUV))
         return;
@@ -173,7 +173,7 @@ void QDemonImage::setRotationUV(float rotationUV)
     update();
 }
 
-void QDemonImage::setPositionU(float positionU)
+void QQuick3DTexture::setPositionU(float positionU)
 {
     if (qFuzzyCompare(m_positionU, positionU))
         return;
@@ -183,7 +183,7 @@ void QDemonImage::setPositionU(float positionU)
     update();
 }
 
-void QDemonImage::setPositionV(float positionV)
+void QQuick3DTexture::setPositionV(float positionV)
 {
     if (qFuzzyCompare(m_positionV, positionV))
         return;
@@ -193,7 +193,7 @@ void QDemonImage::setPositionV(float positionV)
     update();
 }
 
-void QDemonImage::setPivotU(float pivotU)
+void QQuick3DTexture::setPivotU(float pivotU)
 {
     if (qFuzzyCompare(m_pivotU, pivotU))
         return;
@@ -203,7 +203,7 @@ void QDemonImage::setPivotU(float pivotU)
     update();
 }
 
-void QDemonImage::setPivotV(float pivotV)
+void QQuick3DTexture::setPivotV(float pivotV)
 {
     if (qFuzzyCompare(m_pivotV, pivotV))
         return;
@@ -213,7 +213,7 @@ void QDemonImage::setPivotV(float pivotV)
     update();
 }
 
-void QDemonImage::setFormat(QDemonImage::Format format)
+void QQuick3DTexture::setFormat(QQuick3DTexture::Format format)
 {
     if (m_format == format)
         return;
@@ -223,7 +223,7 @@ void QDemonImage::setFormat(QDemonImage::Format format)
     update();
 }
 
-QDemonRenderGraphObject *QDemonImage::updateSpatialNode(QDemonRenderGraphObject *node)
+QDemonRenderGraphObject *QQuick3DTexture::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderImage();
@@ -246,13 +246,13 @@ QDemonRenderGraphObject *QDemonImage::updateSpatialNode(QDemonRenderGraphObject 
     return imageNode;
 }
 
-QDemonRenderImage *QDemonImage::getRenderImage()
+QDemonRenderImage *QQuick3DTexture::getRenderImage()
 {
-    QDemonObjectPrivate *p = QDemonObjectPrivate::get(this);
+    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(this);
     return static_cast<QDemonRenderImage *>(p->spatialNode);
 }
 
-QDemonImage::Format QDemonImage::format() const
+QQuick3DTexture::Format QQuick3DTexture::format() const
 {
     return m_format;
 }

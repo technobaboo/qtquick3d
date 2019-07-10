@@ -30,12 +30,12 @@
 #ifndef QDEMONCAMERA_H
 #define QDEMONCAMERA_H
 
-#include <QtQuick3d/qdemonnode.h>
+#include <QtQuick3D/QQuick3DNode>
 
 QT_BEGIN_NAMESPACE
 
 struct QDemonRenderCamera;
-class Q_QUICK3D_EXPORT QDemonCamera : public QDemonNode
+class Q_QUICK3D_EXPORT QQuick3DCamera : public QQuick3DNode
 {
     Q_OBJECT
     Q_PROPERTY(float clipNear READ clipNear WRITE setClipNear NOTIFY clipNearChanged)
@@ -75,7 +75,7 @@ public:
     };
     Q_ENUM(QDemonCameraProjectionMode)
 
-    QDemonCamera();
+    QQuick3DCamera();
 
     float clipNear() const;
     float clipFar() const;
@@ -83,7 +83,7 @@ public:
     bool isFieldOFViewHorizontal() const;
     QDemonCameraScaleModes scaleMode() const;
     QDemonCameraScaleAnchors scaleAnchor() const;
-    QDemonObject::Type type() const override;
+    QQuick3DObject::Type type() const override;
     QDemonCameraProjectionMode projectionMode() const;
     bool enableFrustumCulling() const;
 

@@ -30,13 +30,14 @@
 #ifndef QDEMONIMAGE_H
 #define QDEMONIMAGE_H
 
-#include <QtQuick3d/qdemonobject.h>
+#include <QtQuick3D/QQuick3DObject>
+
 #include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
 
 struct QDemonRenderImage;
-class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
+class Q_QUICK3D_EXPORT QQuick3DTexture : public QQuick3DObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
@@ -107,8 +108,8 @@ public:
     };
     Q_ENUM(Format)
 
-    QDemonImage();
-    ~QDemonImage() override;
+    QQuick3DTexture();
+    ~QQuick3DTexture() override;
 
     QUrl source() const;
     float scaleU() const;
@@ -121,7 +122,7 @@ public:
     float positionV() const;
     float pivotU() const;
     float pivotV() const;
-    QDemonObject::Type type() const override;
+    QQuick3DObject::Type type() const override;
 
     QDemonRenderImage *getRenderImage();
 

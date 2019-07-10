@@ -44,20 +44,20 @@
 #include <QtCore/QObject>
 #include <QtCore/QSet>
 
-#include <QtQuick3d/private/qtquick3dglobal_p.h>
+#include <QtQuick3D/private/qtquick3dglobal_p.h>
 
-#include "qdemonobject.h"
-#include "qdemonnode.h"
+#include "qquick3dobject.h"
+#include "qquick3dnode.h"
 
 QT_BEGIN_NAMESPACE
 
-class Q_QUICK3D_PRIVATE_EXPORT QDemonSceneManager : public QObject
+class Q_QUICK3D_PRIVATE_EXPORT QQuick3DSceneManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit QDemonSceneManager(QObject *parent = nullptr);
+    explicit QQuick3DSceneManager(QObject *parent = nullptr);
 
-    void dirtyItem(QDemonObject *item);
+    void dirtyItem(QQuick3DObject *item);
     void cleanup(QDemonRenderGraphObject *item);
 
     void polishItems();
@@ -65,20 +65,19 @@ public:
     void sync();
 
     void updateDirtyNodes();
-    void updateDirtyNode(QDemonObject *object);
-    void updateDirtyResource(QDemonObject *resourceObject);
-    void updateDirtySpatialNode(QDemonNode *spatialNode);
-    //void updateDirtyLayer(QDemonLayer *layerNode);
+    void updateDirtyNode(QQuick3DObject *object);
+    void updateDirtyResource(QQuick3DObject *resourceObject);
+    void updateDirtySpatialNode(QQuick3DNode *spatialNode);
 
     void cleanupNodes();
 
-    QDemonObject *dirtySpatialNodeList;
-    QDemonObject *dirtyResourceList;
-    QDemonObject *dirtyImageList;
-    QList<QDemonObject *> dirtyLightList;
+    QQuick3DObject *dirtySpatialNodeList;
+    QQuick3DObject *dirtyResourceList;
+    QQuick3DObject *dirtyImageList;
+    QList<QQuick3DObject *> dirtyLightList;
     QList<QDemonRenderGraphObject *> cleanupNodeList;
-    QSet<QDemonObject *> parentlessItems;
-    friend QDemonObject;
+    QSet<QQuick3DObject *> parentlessItems;
+    friend QQuick3DObject;
 
 Q_SIGNALS:
     void needsUpdate();
@@ -86,6 +85,6 @@ Q_SIGNALS:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QDemonSceneManager)
+QML_DECLARE_TYPE(QQuick3DSceneManager)
 
 #endif // QDEMONSCENEMANAGER_P_H

@@ -27,15 +27,15 @@
 **
 ****************************************************************************/
 
-#include "qdemonscenemanager_p.h"
-#include "qdemonobject_p.h"
-#include "qdemonview3d.h"
+#include "qquick3dscenemanager_p.h"
+#include "qquick3dobject_p.h"
+#include "qquick3dview3d.h"
 
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 QT_BEGIN_NAMESPACE
 
-QDemonSceneManager::QDemonSceneManager(QObject *parent)
+QQuick3DSceneManager::QQuick3DSceneManager(QObject *parent)
     : QObject(parent)
     , dirtySpatialNodeList(nullptr)
     , dirtyResourceList(nullptr)
@@ -43,44 +43,44 @@ QDemonSceneManager::QDemonSceneManager(QObject *parent)
 {
 }
 
-void QDemonSceneManager::dirtyItem(QDemonObject *item)
+void QQuick3DSceneManager::dirtyItem(QQuick3DObject *item)
 {
     Q_UNUSED(item)
     emit needsUpdate();
 }
 
-void QDemonSceneManager::cleanup(QDemonRenderGraphObject *item)
+void QQuick3DSceneManager::cleanup(QDemonRenderGraphObject *item)
 {
     Q_ASSERT(!cleanupNodeList.contains(item));
     cleanupNodeList.append(item);
 }
 
-void QDemonSceneManager::polishItems()
+void QQuick3DSceneManager::polishItems()
 {
 
 }
 
-void QDemonSceneManager::forcePolish()
+void QQuick3DSceneManager::forcePolish()
 {
 
 }
 
-void QDemonSceneManager::sync()
+void QQuick3DSceneManager::sync()
 {
 
 }
 
-void QDemonSceneManager::updateDirtyNodes()
+void QQuick3DSceneManager::updateDirtyNodes()
 {
     cleanupNodes();
 
-    auto updateNodes = [this](QDemonObject *updateList) {
+    auto updateNodes = [this](QQuick3DObject *updateList) {
         if (updateList)
-            QDemonObjectPrivate::get(updateList)->prevDirtyItem = &updateList;
+            QQuick3DObjectPrivate::get(updateList)->prevDirtyItem = &updateList;
 
         while (updateList) {
-            QDemonObject *item = updateList;
-            QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(item);
+            QQuick3DObject *item = updateList;
+            QQuick3DObjectPrivate *itemPriv = QQuick3DObjectPrivate::get(item);
             itemPriv->removeFromDirtyList();
 
             updateDirtyNode(item);
@@ -100,29 +100,29 @@ void QDemonSceneManager::updateDirtyNodes()
     dirtyLightList.clear();
 }
 
-void QDemonSceneManager::updateDirtyNode(QDemonObject *object)
+void QQuick3DSceneManager::updateDirtyNode(QQuick3DObject *object)
 {
     // Different processing for resource nodes vs hierarchical nodes
     switch (object->type()) {
-    case QDemonObject::Light:
-    case QDemonObject::Node:
-    case QDemonObject::Camera:
-    case QDemonObject::Model:
-    case QDemonObject::Text:
-    case QDemonObject::Path: {
+    case QQuick3DObject::Light:
+    case QQuick3DObject::Node:
+    case QQuick3DObject::Camera:
+    case QQuick3DObject::Model:
+    case QQuick3DObject::Text:
+    case QQuick3DObject::Path: {
         // handle hierarchical nodes
-        QDemonNode *spatialNode = qobject_cast<QDemonNode *>(object);
+        QQuick3DNode *spatialNode = qobject_cast<QQuick3DNode *>(object);
         if (spatialNode)
             updateDirtySpatialNode(spatialNode);
     } break;
-    case QDemonObject::SceneEnvironment:
-    case QDemonObject::DefaultMaterial:
-    case QDemonObject::Image:
-    case QDemonObject::Effect:
-    case QDemonObject::CustomMaterial:
-    case QDemonObject::ReferencedMaterial:
-    case QDemonObject::PathSubPath:
-    case QDemonObject::Lightmaps:
+    case QQuick3DObject::SceneEnvironment:
+    case QQuick3DObject::DefaultMaterial:
+    case QQuick3DObject::Image:
+    case QQuick3DObject::Effect:
+    case QQuick3DObject::CustomMaterial:
+    case QQuick3DObject::ReferencedMaterial:
+    case QQuick3DObject::PathSubPath:
+    case QQuick3DObject::Lightmaps:
         // handle resource nodes
         updateDirtyResource(object);
         break;
@@ -132,9 +132,9 @@ void QDemonSceneManager::updateDirtyNode(QDemonObject *object)
     }
 }
 
-void QDemonSceneManager::updateDirtyResource(QDemonObject *resourceObject)
+void QQuick3DSceneManager::updateDirtyResource(QQuick3DObject *resourceObject)
 {
-    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(resourceObject);
+    QQuick3DObjectPrivate *itemPriv = QQuick3DObjectPrivate::get(resourceObject);
     quint32 dirty = itemPriv->dirtyAttributes;
     Q_UNUSED(dirty)
     itemPriv->dirtyAttributes = 0;
@@ -143,9 +143,9 @@ void QDemonSceneManager::updateDirtyResource(QDemonObject *resourceObject)
     // resource nodes dont go in the tree, so we dont need to parent them
 }
 
-void QDemonSceneManager::updateDirtySpatialNode(QDemonNode *spatialNode)
+void QQuick3DSceneManager::updateDirtySpatialNode(QQuick3DNode *spatialNode)
 {
-    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(spatialNode);
+    QQuick3DObjectPrivate *itemPriv = QQuick3DObjectPrivate::get(spatialNode);
     quint32 dirty = itemPriv->dirtyAttributes;
     Q_UNUSED(dirty)
     itemPriv->dirtyAttributes = 0;
@@ -154,14 +154,14 @@ void QDemonSceneManager::updateDirtySpatialNode(QDemonNode *spatialNode)
     QDemonRenderNode *graphNode = static_cast<QDemonRenderNode *>(itemPriv->spatialNode);
 
     if (graphNode && graphNode->parent == nullptr) {
-        QDemonNode *nodeParent = qobject_cast<QDemonNode *>(spatialNode->parent());
+        QQuick3DNode *nodeParent = qobject_cast<QQuick3DNode *>(spatialNode->parent());
         if (nodeParent) {
-            QDemonRenderNode *parentGraphNode = static_cast<QDemonRenderNode *>(QDemonObjectPrivate::get(nodeParent)->spatialNode);
+            QDemonRenderNode *parentGraphNode = static_cast<QDemonRenderNode *>(QQuick3DObjectPrivate::get(nodeParent)->spatialNode);
             parentGraphNode->addChild(*graphNode);
         } else {
-            QDemonView3D *viewParent = qobject_cast<QDemonView3D *>(spatialNode->parent());
+            QQuick3DView3D *viewParent = qobject_cast<QQuick3DView3D *>(spatialNode->parent());
             if (viewParent) {
-                auto sceneRoot = QDemonObjectPrivate::get(viewParent->scene());
+                auto sceneRoot = QQuick3DObjectPrivate::get(viewParent->scene());
                 if (!sceneRoot->spatialNode) {
                     // must have a sceen root spatial node first
                     sceneRoot->spatialNode = viewParent->scene()->updateSpatialNode(sceneRoot->spatialNode);
@@ -172,7 +172,7 @@ void QDemonSceneManager::updateDirtySpatialNode(QDemonNode *spatialNode)
     }
 }
 
-void QDemonSceneManager::cleanupNodes()
+void QQuick3DSceneManager::cleanupNodes()
 {
     for (int ii = 0; ii < cleanupNodeList.count(); ++ii) {
         QDemonRenderGraphObject *node = cleanupNodeList.at(ii);

@@ -37,16 +37,16 @@
 #include <qsgrendernode.h>
 #include <QSGSimpleTextureNode>
 
-#include <QtQuick3d/qdemonview3d.h>
+#include <QtQuick3D/QQuick3DView3D>
 
 QT_BEGIN_NAMESPACE
 
 
-class QDemonSceneManager;
-class QDemonView3D;
+class QQuick3DSceneManager;
+class QQuick3DView3D;
 struct QDemonRenderLayer;
 
-class QDemonSceneRenderer
+class QQuick3DSceneRenderer
 {
 public:
     struct FramebufferObject {
@@ -59,21 +59,21 @@ public:
         QDemonRef<QDemonRenderTexture2D> depthStencil;
     };
 
-    QDemonSceneRenderer(QWindow *window);
-    ~QDemonSceneRenderer();
+    QQuick3DSceneRenderer(QWindow *window);
+    ~QQuick3DSceneRenderer();
 protected:
     GLuint render();
     void render(const QRect &viewport, bool clearFirst = false);
-    void synchronize(QDemonView3D *item, const QSize &size, bool useFBO = true);
+    void synchronize(QQuick3DView3D *item, const QSize &size, bool useFBO = true);
     void update();
     void invalidateFramebufferObject();
     QSize surfaceSize() const { return m_surfaceSize; }
 
 private:
-    void updateLayerNode(QDemonView3D *view3D);
+    void updateLayerNode(QQuick3DView3D *view3D);
     void addNodeToLayer(QDemonRenderNode *node);
     void removeNodeFromLayer(QDemonRenderNode *node);
-    QDemonSceneManager *m_sceneManager = nullptr;
+    QQuick3DSceneManager *m_sceneManager = nullptr;
     QDemonRenderLayer *m_layer = nullptr;
     QDemonRenderContextInterface::QDemonRenderContextInterfacePtr m_sgContext;
     QDemonRef<QDemonRenderContext> m_renderContext;
@@ -87,9 +87,9 @@ private:
     QDemonRenderNode *m_referencedRootNode = nullptr;
 
     friend class SGFramebufferObjectNode;
-    friend class QDemonSGRenderNode;
-    friend class QDemonSGDirectRenderer;
-    friend class QDemonView3D;
+    friend class QQuick3DSGRenderNode;
+    friend class QQuick3DSGDirectRenderer;
+    friend class QQuick3DView3D;
 };
 
 class QOpenGLVertexArrayObjectHelper;
@@ -115,8 +115,8 @@ public Q_SLOTS:
 
 public:
     QQuickWindow *window;
-    QDemonSceneRenderer *renderer;
-    QDemonView3D *quickFbo;
+    QQuick3DSceneRenderer *renderer;
+    QQuick3DView3D *quickFbo;
 
     bool renderPending;
     bool invalidatePending;
@@ -124,7 +124,7 @@ public:
     qreal devicePixelRatio;
 };
 
-class QDemonSGRenderNode : public QSGRenderNode
+class QQuick3DSGRenderNode : public QSGRenderNode
 {
 public:
 
@@ -134,21 +134,21 @@ public:
     RenderingFlags flags() const override;
 public:
     QQuickWindow *window = nullptr;
-    QDemonSceneRenderer *renderer = nullptr;
+    QQuick3DSceneRenderer *renderer = nullptr;
 };
 
-class QDemonSGDirectRenderer : public QObject
+class QQuick3DSGDirectRenderer : public QObject
 {
     Q_OBJECT
 public:
-    enum QDemonSGDirectRendererMode {
+    enum QQuick3DSGDirectRendererMode {
         Underlay,
         Overlay
     };
-    QDemonSGDirectRenderer(QDemonSceneRenderer *renderer, QQuickWindow *window, QDemonSGDirectRendererMode mode = Underlay);
-    ~QDemonSGDirectRenderer();
+    QQuick3DSGDirectRenderer(QQuick3DSceneRenderer *renderer, QQuickWindow *window, QQuick3DSGDirectRendererMode mode = Underlay);
+    ~QQuick3DSGDirectRenderer();
 
-    QDemonSceneRenderer *renderer() { return m_renderer; }
+    QQuick3DSceneRenderer *renderer() { return m_renderer; }
     void setViewport(const QRectF &viewport);
 
     void requestRender();
@@ -157,9 +157,9 @@ private Q_SLOTS:
     void render();
 
 private:
-    QDemonSceneRenderer *m_renderer = nullptr;
+    QQuick3DSceneRenderer *m_renderer = nullptr;
     QQuickWindow *m_window = nullptr;
-    QDemonSGDirectRendererMode m_mode;
+    QQuick3DSGDirectRendererMode m_mode;
     QRectF m_viewport;
 };
 

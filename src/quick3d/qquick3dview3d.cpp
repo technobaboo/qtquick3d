@@ -27,13 +27,13 @@
 **
 ****************************************************************************/
 
-#include "qdemonview3d.h"
-#include "qdemonsceneenvironment.h"
-#include "qdemonobject_p.h"
-#include "qdemonscenemanager_p.h"
-#include "qdemonimage.h"
-#include "qdemonscenerenderer.h"
-#include "qdemoncamera.h"
+#include "qquick3dview3d.h"
+#include "qquick3dsceneenvironment.h"
+#include "qquick3dobject_p.h"
+#include "qquick3dscenemanager_p.h"
+#include "qquick3dtexture.h"
+#include "qquick3dscenerenderer.h"
+#include "qquick3dcamera.h"
 #include <QtDemonRuntimeRender/QDemonRenderLayer>
 #include <QOpenGLFunctions>
 
@@ -47,55 +47,26 @@
 
 QT_BEGIN_NAMESPACE
 
-//static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *manager, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
-//    // disconnect previous destruction listern
-//    if (oldO) {
-//        if (manager)
-//            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
-
-//        auto connection = connections.find(oldO);
-//        if (connection != connections.end()) {
-//            QObject::disconnect(connection.value());
-//            connections.erase(connection);
-//        }
-//    }
-
-//    // listen for new map's destruction
-//    if (newO) {
-//        if (manager)
-//            QDemonObjectPrivate::get(newO)->refSceneRenderer(manager);
-//        auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
-//            callFn(nullptr);
-//        });
-//        connections.insert(newO, connection);
-//    }
-//}
 /*!
-    \class QDemonView3D
-    \inmodule QtQuick3D
-    \brief Provides the infrastructure to render 3D items
-
-*/
-/*!
-    \qmltype DemonView3D
-    \inqmlmodule QtDemon
+    \qmltype View3D
+    \inqmlmodule QtQuick3D
     \brief Provides the infrastructure to render 3D items
 
 */
 
-QDemonView3D::QDemonView3D(QQuickItem *parent)
+QQuick3DView3D::QQuick3DView3D(QQuickItem *parent)
     : QQuickItem(parent)
 {
     setFlag(ItemHasContents);
     m_camera = nullptr;
-    m_sceneRoot = new QDemonNode();
-    m_environment = new QDemonSceneEnvironment(m_sceneRoot);
-    QDemonObjectPrivate::get(m_sceneRoot)->sceneManager = new QDemonSceneManager(m_sceneRoot);
-    connect(QDemonObjectPrivate::get(m_sceneRoot)->sceneManager, &QDemonSceneManager::needsUpdate,
+    m_sceneRoot = new QQuick3DNode();
+    m_environment = new QQuick3DSceneEnvironment(m_sceneRoot);
+    QQuick3DObjectPrivate::get(m_sceneRoot)->sceneManager = new QQuick3DSceneManager(m_sceneRoot);
+    connect(QQuick3DObjectPrivate::get(m_sceneRoot)->sceneManager, &QQuick3DSceneManager::needsUpdate,
             this, &QQuickItem::update);
 }
 
-QDemonView3D::~QDemonView3D()
+QQuick3DView3D::~QQuick3DView3D()
 {
     for (const auto &connection : qAsConst(m_connections))
         disconnect(connection);
@@ -105,36 +76,36 @@ static void ssgn_append(QQmlListProperty<QObject> *property, QObject *obj)
 {
     if (!obj)
         return;
-    QDemonView3D *view3d = static_cast<QDemonView3D *>(property->object);
-    QQmlListProperty<QObject> itemProperty = QDemonObjectPrivate::get(view3d->scene())->data();
+    QQuick3DView3D *view3d = static_cast<QQuick3DView3D *>(property->object);
+    QQmlListProperty<QObject> itemProperty = QQuick3DObjectPrivate::get(view3d->scene())->data();
     itemProperty.append(&itemProperty, obj);
 }
 
 static int ssgn_count(QQmlListProperty<QObject> *property)
 {
-    QDemonView3D *view3d = static_cast<QDemonView3D *>(property->object);
-    if (!view3d || !view3d->scene() || !QDemonObjectPrivate::get(view3d->scene())->data().count)
+    QQuick3DView3D *view3d = static_cast<QQuick3DView3D *>(property->object);
+    if (!view3d || !view3d->scene() || !QQuick3DObjectPrivate::get(view3d->scene())->data().count)
         return 0;
-    QQmlListProperty<QObject> itemProperty = QDemonObjectPrivate::get(view3d->scene())->data();
+    QQmlListProperty<QObject> itemProperty = QQuick3DObjectPrivate::get(view3d->scene())->data();
     return itemProperty.count(&itemProperty);
 }
 
 static QObject *ssgn_at(QQmlListProperty<QObject> *property, int i)
 {
-    QDemonView3D *view3d = static_cast<QDemonView3D *>(property->object);
-    QQmlListProperty<QObject> itemProperty = QDemonObjectPrivate::get(view3d->scene())->data();
+    QQuick3DView3D *view3d = static_cast<QQuick3DView3D *>(property->object);
+    QQmlListProperty<QObject> itemProperty = QQuick3DObjectPrivate::get(view3d->scene())->data();
     return itemProperty.at(&itemProperty, i);
 }
 
 static void ssgn_clear(QQmlListProperty<QObject> *property)
 {
-    QDemonView3D *view3d = static_cast<QDemonView3D *>(property->object);
-    QQmlListProperty<QObject> itemProperty = QDemonObjectPrivate::get(view3d->scene())->data();
+    QQuick3DView3D *view3d = static_cast<QQuick3DView3D *>(property->object);
+    QQmlListProperty<QObject> itemProperty = QQuick3DObjectPrivate::get(view3d->scene())->data();
     return itemProperty.clear(&itemProperty);
 }
 
 
-QQmlListProperty<QObject> QDemonView3D::data()
+QQmlListProperty<QObject> QQuick3DView3D::data()
 {
     return QQmlListProperty<QObject>(this,
                                      nullptr,
@@ -144,46 +115,46 @@ QQmlListProperty<QObject> QDemonView3D::data()
                                      ssgn_clear);
 }
 
-QDemonCamera *QDemonView3D::camera() const
+QQuick3DCamera *QQuick3DView3D::camera() const
 {
     return m_camera;
 }
 
-QDemonSceneEnvironment *QDemonView3D::environment() const
+QQuick3DSceneEnvironment *QQuick3DView3D::environment() const
 {
     return m_environment;
 }
 
-QDemonNode *QDemonView3D::scene() const
+QQuick3DNode *QQuick3DView3D::scene() const
 {
     return m_sceneRoot;
 }
 
-QDemonNode *QDemonView3D::referencedScene() const
+QQuick3DNode *QQuick3DView3D::referencedScene() const
 {
     return m_referencedScene;
 }
 
-QDemonView3D::QDemonView3DRenderMode QDemonView3D::renderMode() const
+QQuick3DView3D::QQuick3DView3DRenderMode QQuick3DView3D::renderMode() const
 {
     return m_renderMode;
 }
 
-QDemonSceneRenderer *QDemonView3D::createRenderer() const
+QQuick3DSceneRenderer *QQuick3DView3D::createRenderer() const
 {
-    return new QDemonSceneRenderer(this->window());
+    return new QQuick3DSceneRenderer(this->window());
 }
 
-bool QDemonView3D::isTextureProvider() const
+bool QQuick3DView3D::isTextureProvider() const
 {
     // We can only be a texture provider if we are rendering to a texture first
-    if (m_renderMode == QDemonView3D::Texture)
+    if (m_renderMode == QQuick3DView3D::Texture)
         return true;
 
     return false;
 }
 
-QSGTextureProvider *QDemonView3D::textureProvider() const
+QSGTextureProvider *QQuick3DView3D::textureProvider() const
 {
     // When Item::layer::enabled == true, QQuickItem will be a texture
     // provider. In this case we should prefer to return the layer rather
@@ -192,7 +163,7 @@ QSGTextureProvider *QDemonView3D::textureProvider() const
         return QQuickItem::textureProvider();
 
     // We can only be a texture provider if we are rendering to a texture first
-    if (m_renderMode != QDemonView3D::Texture)
+    if (m_renderMode != QQuick3DView3D::Texture)
         return nullptr;
 
     QQuickWindow *w = window();
@@ -205,12 +176,12 @@ QSGTextureProvider *QDemonView3D::textureProvider() const
     return m_node;
 }
 
-void QDemonView3D::releaseResources()
+void QQuick3DView3D::releaseResources()
 {
     m_node = nullptr;
 }
 
-void QDemonView3D::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QQuick3DView3D::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 
@@ -218,7 +189,7 @@ void QDemonView3D::geometryChanged(const QRectF &newGeometry, const QRectF &oldG
         update();
 }
 
-QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *)
+QSGNode *QQuick3DView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *)
 {
     // When changing render modes
     if (m_renderModeDirty) {
@@ -269,7 +240,7 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
         return n;
     } else if (m_renderMode == Underlay) {
         if (!m_directRenderer)
-            m_directRenderer = new QDemonSGDirectRenderer(createRenderer(), window(), QDemonSGDirectRenderer::Underlay);
+            m_directRenderer = new QQuick3DSGDirectRenderer(createRenderer(), window(), QQuick3DSGDirectRenderer::Underlay);
         const QSizeF targetSize = window()->effectiveDevicePixelRatio() * QSizeF(width(), height());
         m_directRenderer->renderer()->synchronize(this, targetSize.toSize(), false);
         m_directRenderer->setViewport(QRectF(window()->effectiveDevicePixelRatio() * mapToScene(QPointF(0, 0)), targetSize));
@@ -280,7 +251,7 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
         return node; // node should be nullptr
     } else if (m_renderMode == Overlay) {
         if (!m_directRenderer)
-            m_directRenderer = new QDemonSGDirectRenderer(createRenderer(), window(), QDemonSGDirectRenderer::Overlay);
+            m_directRenderer = new QQuick3DSGDirectRenderer(createRenderer(), window(), QQuick3DSGDirectRenderer::Overlay);
         const QSizeF targetSize = window()->effectiveDevicePixelRatio() * QSizeF(width(), height());
         m_directRenderer->renderer()->synchronize(this, targetSize.toSize(), false);
         m_directRenderer->setViewport(QRectF(window()->effectiveDevicePixelRatio() * mapToScene(QPointF(0, 0)), targetSize));
@@ -288,10 +259,10 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
         return node; // node should be nullptr
     } else {
         // Render Node
-        QDemonSGRenderNode *n = static_cast<QDemonSGRenderNode *>(node);
+        QQuick3DSGRenderNode *n = static_cast<QQuick3DSGRenderNode *>(node);
         if (!n) {
             if (!m_renderNode)
-                m_renderNode = new QDemonSGRenderNode();
+                m_renderNode = new QQuick3DSGRenderNode();
             n = m_renderNode;
         }
 
@@ -310,7 +281,7 @@ QSGNode *QDemonView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNod
     }
 }
 
-void QDemonView3D::setCamera(QDemonCamera *camera)
+void QQuick3DView3D::setCamera(QQuick3DCamera *camera)
 {
     if (m_camera == camera)
         return;
@@ -320,7 +291,7 @@ void QDemonView3D::setCamera(QDemonCamera *camera)
     update();
 }
 
-void QDemonView3D::setEnvironment(QDemonSceneEnvironment *environment)
+void QQuick3DView3D::setEnvironment(QQuick3DSceneEnvironment *environment)
 {
     if (m_environment == environment)
         return;
@@ -332,28 +303,28 @@ void QDemonView3D::setEnvironment(QDemonSceneEnvironment *environment)
     update();
 }
 
-void QDemonView3D::setScene(QDemonNode *sceneRoot)
+void QQuick3DView3D::setScene(QQuick3DNode *sceneRoot)
 {
     // ### We may need consider the case where there is
     // already a scene tree here
     if (m_referencedScene) {
         // if there was previously a reference scene, disconnect
-        if (!QDemonObjectPrivate::get(m_referencedScene)->sceneManager)
-            disconnect(QDemonObjectPrivate::get(m_referencedScene)->sceneManager, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
+        if (!QQuick3DObjectPrivate::get(m_referencedScene)->sceneManager)
+            disconnect(QQuick3DObjectPrivate::get(m_referencedScene)->sceneManager, &QQuick3DSceneManager::needsUpdate, this, &QQuickItem::update);
     }
     m_referencedScene = sceneRoot;
     if (m_referencedScene) {
         // If the referenced scene doesn't have a manager, add one (scenes defined outside of an view3d)
-        auto privateObject = QDemonObjectPrivate::get(m_referencedScene);
+        auto privateObject = QQuick3DObjectPrivate::get(m_referencedScene);
         // ### BUG: This will probably leak, need to think harder about this
         if (!privateObject->sceneManager)
-            privateObject->refSceneRenderer(new QDemonSceneManager(m_referencedScene));
-        connect(QDemonObjectPrivate::get(m_referencedScene)->sceneManager, &QDemonSceneManager::needsUpdate, this, &QQuickItem::update);
+            privateObject->refSceneRenderer(new QQuick3DSceneManager(m_referencedScene));
+        connect(QQuick3DObjectPrivate::get(m_referencedScene)->sceneManager, &QQuick3DSceneManager::needsUpdate, this, &QQuickItem::update);
     }
 
 }
 
-void QDemonView3D::setRenderMode(QDemonView3D::QDemonView3DRenderMode renderMode)
+void QQuick3DView3D::setRenderMode(QQuick3DView3D::QQuick3DView3DRenderMode renderMode)
 {
     if (m_renderMode == renderMode)
         return;
@@ -448,7 +419,7 @@ static QSurfaceFormat findIdealGLESVersion()
     return fmt;
 }
 
-QSurfaceFormat QDemonView3D::idealSurfaceFormat()
+QSurfaceFormat QQuick3DView3D::idealSurfaceFormat()
 {
     static const QSurfaceFormat f = [] {
         QSurfaceFormat fmt;
@@ -474,7 +445,7 @@ QSurfaceFormat QDemonView3D::idealSurfaceFormat()
  *
  * \sa QDemonCamera::worldToViewport QDemonView3D::viewToWorld
  */
-QVector3D QDemonView3D::worldToView(const QVector3D &worldPos) const
+QVector3D QQuick3DView3D::worldToView(const QVector3D &worldPos) const
 {
     if (!m_camera) {
         qmlWarning(this) << "Cannot resolve view position without a camera assigned!";
@@ -495,7 +466,7 @@ QVector3D QDemonView3D::worldToView(const QVector3D &worldPos) const
  *
  * \sa QDemonCamera::viewportToWorld QDemonView3D::worldToView
  */
-QVector3D QDemonView3D::viewToWorld(const QVector3D &viewPos) const
+QVector3D QQuick3DView3D::viewToWorld(const QVector3D &viewPos) const
 {
     if (!m_camera) {
         qmlWarning(this) << "Cannot resolve world position without a camera assigned!";
@@ -506,7 +477,7 @@ QVector3D QDemonView3D::viewToWorld(const QVector3D &viewPos) const
     return m_camera->viewportToWorld(normalizedPos);
 }
 
-void QDemonView3D::invalidateSceneGraph()
+void QQuick3DView3D::invalidateSceneGraph()
 {
     m_node = nullptr;
 }

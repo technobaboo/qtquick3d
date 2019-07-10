@@ -27,13 +27,13 @@
 **
 ****************************************************************************/
 
-#include "qdemonscenerenderer.h"
-#include "qdemonsceneenvironment.h"
-#include "qdemonobject_p.h"
-#include "qdemonnode.h"
-#include "qdemonscenemanager_p.h"
-#include "qdemonimage.h"
-#include "qdemoncamera.h"
+#include "qquick3dscenerenderer.h"
+#include "qquick3dsceneenvironment.h"
+#include "qquick3dobject_p.h"
+#include "qquick3dnode.h"
+#include "qquick3dscenemanager_p.h"
+#include "qquick3dtexture.h"
+#include "qquick3dcamera.h"
 
 #include <private/qopenglvertexarrayobject_p.h>
 
@@ -138,7 +138,7 @@ void SGFramebufferObjectNode::handleScreenChange()
 }
 
 
-QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
+QQuick3DSceneRenderer::QQuick3DSceneRenderer(QWindow *window)
     : m_window(window)
 {
     QOpenGLContext *openGLContext = QOpenGLContext::currentContext();
@@ -162,12 +162,12 @@ QDemonSceneRenderer::QDemonSceneRenderer(QWindow *window)
         m_sgContext->renderer()->enableLayerGpuProfiling(true);
 }
 
-QDemonSceneRenderer::~QDemonSceneRenderer()
+QQuick3DSceneRenderer::~QQuick3DSceneRenderer()
 {
     delete m_layer;
 }
 
-GLuint QDemonSceneRenderer::render()
+GLuint QQuick3DSceneRenderer::render()
 {
     if (!m_layer)
         return 0;
@@ -192,7 +192,7 @@ GLuint QDemonSceneRenderer::render()
     return HandleToID_cast(GLuint, size_t, m_fbo->color0->handle());
 }
 
-void QDemonSceneRenderer::render(const QRect &viewport, bool clearFirst)
+void QQuick3DSceneRenderer::render(const QRect &viewport, bool clearFirst)
 {
     if (!m_layer)
         return;
@@ -220,7 +220,7 @@ void QDemonSceneRenderer::render(const QRect &viewport, bool clearFirst)
     }
 }
 
-void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size, bool useFBO)
+void QQuick3DSceneRenderer::synchronize(QQuick3DView3D *item, const QSize &size, bool useFBO)
 {
     if (!item)
         return;
@@ -233,12 +233,12 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size, boo
         m_surfaceSize = size;
     }
 
-    auto view3D = static_cast<QDemonView3D*>(item);
-    m_sceneManager = QDemonObjectPrivate::get(view3D->scene())->sceneManager;
+    auto view3D = static_cast<QQuick3DView3D*>(item);
+    m_sceneManager = QQuick3DObjectPrivate::get(view3D->scene())->sceneManager;
     m_sceneManager->updateDirtyNodes();
 
     if (view3D->referencedScene()) {
-        QDemonObjectPrivate::get(view3D->referencedScene())->sceneManager->updateDirtyNodes();
+        QQuick3DObjectPrivate::get(view3D->referencedScene())->sceneManager->updateDirtyNodes();
     }
 
     // Generate layer node
@@ -249,7 +249,7 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size, boo
     updateLayerNode(view3D);
 
     // Set the root item for the scene to the layer
-    auto rootNode = static_cast<QDemonRenderNode*>(QDemonObjectPrivate::get(view3D->scene())->spatialNode);
+    auto rootNode = static_cast<QDemonRenderNode*>(QQuick3DObjectPrivate::get(view3D->scene())->spatialNode);
     if (rootNode != m_sceneRootNode) {
         if (m_sceneRootNode)
             removeNodeFromLayer(m_sceneRootNode);
@@ -263,7 +263,7 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size, boo
     // Add the referenced scene root node to the layer as well if available
     QDemonRenderNode* referencedRootNode = nullptr;
     if (view3D->referencedScene())
-        referencedRootNode = static_cast<QDemonRenderNode*>(QDemonObjectPrivate::get(view3D->referencedScene())->spatialNode);
+        referencedRootNode = static_cast<QDemonRenderNode*>(QQuick3DObjectPrivate::get(view3D->referencedScene())->spatialNode);
     if (referencedRootNode != m_referencedRootNode) {
         if (m_referencedRootNode)
             removeNodeFromLayer(m_referencedRootNode);
@@ -290,19 +290,19 @@ void QDemonSceneRenderer::synchronize(QDemonView3D *item, const QSize &size, boo
 
 }
 
-void QDemonSceneRenderer::update()
+void QQuick3DSceneRenderer::update()
 {
     if (data)
         static_cast<SGFramebufferObjectNode *>(data)->scheduleRender();
 }
 
-void QDemonSceneRenderer::invalidateFramebufferObject()
+void QQuick3DSceneRenderer::invalidateFramebufferObject()
 {
     if (data)
         static_cast<SGFramebufferObjectNode *>(data)->invalidatePending = true;
 }
 
-void QDemonSceneRenderer::updateLayerNode(QDemonView3D *view3D)
+void QQuick3DSceneRenderer::updateLayerNode(QQuick3DView3D *view3D)
 {
     QDemonRenderLayer *layerNode = m_layer;
     layerNode->progressiveAAMode = QDemonRenderLayer::AAMode(view3D->environment()->progressiveAAMode());
@@ -372,7 +372,7 @@ void QDemonSceneRenderer::updateLayerNode(QDemonView3D *view3D)
     layerNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
 }
 
-void QDemonSceneRenderer::removeNodeFromLayer(QDemonRenderNode *node)
+void QQuick3DSceneRenderer::removeNodeFromLayer(QDemonRenderNode *node)
 {
     if (!m_layer)
         return;
@@ -380,7 +380,7 @@ void QDemonSceneRenderer::removeNodeFromLayer(QDemonRenderNode *node)
     m_layer->removeChild(*node);
 }
 
-void QDemonSceneRenderer::addNodeToLayer(QDemonRenderNode *node)
+void QQuick3DSceneRenderer::addNodeToLayer(QDemonRenderNode *node)
 {
     if (!m_layer)
         return;
@@ -388,7 +388,7 @@ void QDemonSceneRenderer::addNodeToLayer(QDemonRenderNode *node)
     m_layer->addChild(*node);
 }
 
-QDemonSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, const QDemonRef<QDemonRenderContext> &context)
+QQuick3DSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, const QDemonRef<QDemonRenderContext> &context)
 {
     size = s;
     renderContext = context;
@@ -402,12 +402,12 @@ QDemonSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, const 
     fbo->attach(QDemonRenderFrameBufferAttachment::DepthStencil, depthStencil);
 }
 
-QDemonSceneRenderer::FramebufferObject::~FramebufferObject()
+QQuick3DSceneRenderer::FramebufferObject::~FramebufferObject()
 {
 
 }
 
-QSGRenderNode::StateFlags QDemonSGRenderNode::changedStates() const
+QSGRenderNode::StateFlags QQuick3DSGRenderNode::changedStates() const
 {
     return BlendState | StencilState | DepthState | ScissorState | ColorState | CullState | ViewportState | RenderTargetState;
 }
@@ -423,7 +423,7 @@ QRect convertQtRectToGLViewport(const QRectF &rect, const QSize surfaceSize) {
 }
 }
 
-void QDemonSGRenderNode::render(const QSGRenderNode::RenderState *state)
+void QQuick3DSGRenderNode::render(const QSGRenderNode::RenderState *state)
 {
     QElapsedTimer renderTimer;
     renderTimer.start();
@@ -448,42 +448,42 @@ void QDemonSGRenderNode::render(const QSGRenderNode::RenderState *state)
     }
 }
 
-void QDemonSGRenderNode::releaseResources()
+void QQuick3DSGRenderNode::releaseResources()
 {
 }
 
-QSGRenderNode::RenderingFlags QDemonSGRenderNode::flags() const
+QSGRenderNode::RenderingFlags QQuick3DSGRenderNode::flags() const
 {
     return QSGRenderNode::RenderingFlags();
 }
 
-QDemonSGDirectRenderer::QDemonSGDirectRenderer(QDemonSceneRenderer *renderer, QQuickWindow *window, QDemonSGDirectRenderer::QDemonSGDirectRendererMode mode)
+QQuick3DSGDirectRenderer::QQuick3DSGDirectRenderer(QQuick3DSceneRenderer *renderer, QQuickWindow *window, QQuick3DSGDirectRenderer::QQuick3DSGDirectRendererMode mode)
     : m_renderer(renderer)
     , m_window(window)
     , m_mode(mode)
 {
     if (mode == Underlay)
-        connect(window, &QQuickWindow::beforeRendering, this, &QDemonSGDirectRenderer::render, Qt::DirectConnection);
+        connect(window, &QQuickWindow::beforeRendering, this, &QQuick3DSGDirectRenderer::render, Qt::DirectConnection);
     else
-        connect(window, &QQuickWindow::afterRendering, this, &QDemonSGDirectRenderer::render, Qt::DirectConnection);
+        connect(window, &QQuickWindow::afterRendering, this, &QQuick3DSGDirectRenderer::render, Qt::DirectConnection);
 }
 
-QDemonSGDirectRenderer::~QDemonSGDirectRenderer()
+QQuick3DSGDirectRenderer::~QQuick3DSGDirectRenderer()
 {
     delete m_renderer;
 }
 
-void QDemonSGDirectRenderer::setViewport(const QRectF &viewport)
+void QQuick3DSGDirectRenderer::setViewport(const QRectF &viewport)
 {
     m_viewport = viewport;
 }
 
-void QDemonSGDirectRenderer::requestRender()
+void QQuick3DSGDirectRenderer::requestRender()
 {
     m_window->update();
 }
 
-void QDemonSGDirectRenderer::render()
+void QQuick3DSGDirectRenderer::render()
 {
     QElapsedTimer renderTimer;
     renderTimer.start();

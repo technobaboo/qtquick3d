@@ -27,14 +27,14 @@
 **
 ****************************************************************************/
 
-#include "qdemoncustommaterial.h"
+#include "qquick3dcustommaterial.h"
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
-#include "qdemonobject_p.h"
-#include "qdemonview3d.h"
+#include "qquick3dobject_p.h"
+#include "qquick3dview3d.h"
 
-Q_DECLARE_OPAQUE_POINTER(QDemonCustomMaterialTexture)
+Q_DECLARE_OPAQUE_POINTER(QQuick3DCustomMaterialTexture)
 
 QT_BEGIN_NAMESPACE
 
@@ -85,51 +85,51 @@ struct ShaderType<QVariant::Vector4D>
     static QByteArray name() { return QByteArrayLiteral("vec4"); }
 };
 
-QDemonCustomMaterial::QDemonCustomMaterial() {}
+QQuick3DCustomMaterial::QQuick3DCustomMaterial() {}
 
-QDemonCustomMaterial::~QDemonCustomMaterial() {}
+QQuick3DCustomMaterial::~QQuick3DCustomMaterial() {}
 
-QDemonObject::Type QDemonCustomMaterial::type() const
+QQuick3DObject::Type QQuick3DCustomMaterial::type() const
 {
-    return QDemonObject::CustomMaterial;
+    return QQuick3DObject::CustomMaterial;
 }
 
-bool QDemonCustomMaterial::hasTransparency() const
+bool QQuick3DCustomMaterial::hasTransparency() const
 {
     return m_hasTransparency;
 }
 
-bool QDemonCustomMaterial::hasRefraction() const
+bool QQuick3DCustomMaterial::hasRefraction() const
 {
     return m_hasRefraction;
 }
 
-bool QDemonCustomMaterial::hasVolumetricDF() const
+bool QQuick3DCustomMaterial::hasVolumetricDF() const
 {
     return m_hasVolumetricDF;
 }
 
-QDemonCustomMaterialShaderInfo *QDemonCustomMaterial::shaderInfo() const
+QQuick3DCustomMaterialShaderInfo *QQuick3DCustomMaterial::shaderInfo() const
 {
     return m_shaderInfo;
 }
 
-QQmlListProperty<QDemonCustomMaterialRenderPass> QDemonCustomMaterial::passes()
+QQmlListProperty<QQuick3DCustomMaterialRenderPass> QQuick3DCustomMaterial::passes()
 {
-    return QQmlListProperty<QDemonCustomMaterialRenderPass>(this,
+    return QQmlListProperty<QQuick3DCustomMaterialRenderPass>(this,
                                                             nullptr,
-                                                            QDemonCustomMaterial::qmlAppendPass,
-                                                            QDemonCustomMaterial::qmlPassCount,
-                                                            QDemonCustomMaterial::qmlPassAt,
+                                                            QQuick3DCustomMaterial::qmlAppendPass,
+                                                            QQuick3DCustomMaterial::qmlPassCount,
+                                                            QQuick3DCustomMaterial::qmlPassAt,
                                                             nullptr);
 }
 
-bool QDemonCustomMaterial::alwaysDirty() const
+bool QQuick3DCustomMaterial::alwaysDirty() const
 {
     return m_alwaysDirty;
 }
 
-void QDemonCustomMaterial::setHasTransparency(bool hasTransparency)
+void QQuick3DCustomMaterial::setHasTransparency(bool hasTransparency)
 {
     if (m_hasTransparency == hasTransparency)
         return;
@@ -138,7 +138,7 @@ void QDemonCustomMaterial::setHasTransparency(bool hasTransparency)
     emit hasTransparencyChanged(m_hasTransparency);
 }
 
-void QDemonCustomMaterial::setHasRefraction(bool hasRefraction)
+void QQuick3DCustomMaterial::setHasRefraction(bool hasRefraction)
 {
     if (m_hasRefraction == hasRefraction)
         return;
@@ -147,7 +147,7 @@ void QDemonCustomMaterial::setHasRefraction(bool hasRefraction)
     emit hasRefractionChanged(m_hasRefraction);
 }
 
-void QDemonCustomMaterial::setHasVolumetricDF(bool hasVolumetricDF)
+void QQuick3DCustomMaterial::setHasVolumetricDF(bool hasVolumetricDF)
 {
     if (m_hasVolumetricDF == hasVolumetricDF)
         return;
@@ -156,7 +156,7 @@ void QDemonCustomMaterial::setHasVolumetricDF(bool hasVolumetricDF)
     emit hasVolumetricDFChanged(m_hasVolumetricDF);
 }
 
-void QDemonCustomMaterial::setSource(QString source)
+void QQuick3DCustomMaterial::setSource(QString source)
 {
     if (m_source == source)
         return;
@@ -165,12 +165,12 @@ void QDemonCustomMaterial::setSource(QString source)
     emit sourceChanged(m_source);
 }
 
-void QDemonCustomMaterial::setShaderInfo(QDemonCustomMaterialShaderInfo *shaderInfo)
+void QQuick3DCustomMaterial::setShaderInfo(QQuick3DCustomMaterialShaderInfo *shaderInfo)
 {
     m_shaderInfo = shaderInfo;
 }
 
-void QDemonCustomMaterial::setAlwaysDirty(bool alwaysDirty)
+void QQuick3DCustomMaterial::setAlwaysDirty(bool alwaysDirty)
 {
     if (m_alwaysDirty == alwaysDirty)
         return;
@@ -179,7 +179,7 @@ void QDemonCustomMaterial::setAlwaysDirty(bool alwaysDirty)
     emit alwaysDirtyChanged(m_alwaysDirty);
 }
 
-QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
+QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     static const auto updateShaderPrefix = [](QByteArray &shaderPrefix, const QByteArray &name) {
         const char *filter = "linear";
@@ -272,10 +272,10 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
 
     // Find the parent view
     QObject *p = this;
-    QDemonView3D *view = nullptr;
+    QQuick3DView3D *view = nullptr;
     while (p != nullptr && view == nullptr) {
         p = p->parent();
-        if ((view = qobject_cast<QDemonView3D *>(p)))
+        if ((view = qobject_cast<QQuick3DView3D *>(p)))
             break;
     }
 
@@ -283,7 +283,7 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
     QDemonRenderContextInterface::QDemonRenderContextInterfacePtr renderContext = QDemonRenderContextInterface::getRenderContextInterface(quintptr(view->window()));
 
     if (node)
-        QDemonMaterial::updateSpatialNode(node);
+        QQuick3DMaterial::updateSpatialNode(node);
 
     QDemonRenderCustomMaterial *customMaterial = static_cast<QDemonRenderCustomMaterial *>(node);
     if (!customMaterial) {
@@ -339,7 +339,7 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
                 appendShaderUniform(ShaderType<QVariant::Int>::name(), property.name(), &shaderInfo.shaderPrefix);
                 customMaterial->properties.push_back({ property.name(), property.read(this), ShaderType<QVariant::Int>::type(), i});
             } else if (property.type() == QVariant::UserType) {
-                if (property.userType() == qMetaTypeId<QDemonCustomMaterialTexture *>())
+                if (property.userType() == qMetaTypeId<QQuick3DCustomMaterialTexture *>())
                     userProperties.push_back(property);
             } else {
                 Q_ASSERT(0);
@@ -349,19 +349,19 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         // Textures
         for (const auto &userProperty : qAsConst(userProperties)) {
             QDemonRenderCustomMaterial::TextureProperty textureData;
-            QDemonCustomMaterialTexture *texture = userProperty.read(this).value<QDemonCustomMaterialTexture *>();
+            QQuick3DCustomMaterialTexture *texture = userProperty.read(this).value<QQuick3DCustomMaterialTexture *>();
             const QByteArray &name = userProperty.name();
             if (name.isEmpty()) // Warnings here will just drown in the shader error messages
                 continue;
-            QDemonImage *image = texture->image(); //
-            connect(texture, &QDemonCustomMaterialTexture::textureDirty, this, &QDemonCustomMaterial::onTextureDirty);
+            QQuick3DTexture *image = texture->image(); //
+            connect(texture, &QQuick3DCustomMaterialTexture::textureDirty, this, &QQuick3DCustomMaterial::onTextureDirty);
             textureData.name = name;
             if (texture->enabled)
                 textureData.texImage = image->getRenderImage();
             textureData.usageType = QDemonRenderTextureTypeValue(texture->type);
             textureData.shaderDataType = QDemonRenderShaderDataType::Texture2D;
-            textureData.clampType = image->horizontalTiling() == QDemonImage::Repeat ? QDemonRenderTextureCoordOp::Repeat
-                                                                                     : (image->horizontalTiling() == QDemonImage::ClampToEdge) ? QDemonRenderTextureCoordOp::ClampToEdge
+            textureData.clampType = image->horizontalTiling() == QQuick3DTexture::Repeat ? QDemonRenderTextureCoordOp::Repeat
+                                                                                     : (image->horizontalTiling() == QQuick3DTexture::ClampToEdge) ? QDemonRenderTextureCoordOp::ClampToEdge
                                                                                                                                                : QDemonRenderTextureCoordOp::MirroredRepeat;
             updateShaderPrefix(shaderInfo.shaderPrefix, textureData.name);
             customMaterial->textureProperties.push_back(textureData);
@@ -371,10 +371,10 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
         QByteArray vertex, geometry, fragment, shaderCode;
         if (!m_passes.isEmpty()) {
             for (const auto &pass : qAsConst(m_passes)) {
-                QDemonCustomMaterialShader *sharedShader = pass->m_shaders.at(int(QDemonCustomMaterialShader::Stage::Shared));
-                QDemonCustomMaterialShader *vertShader = pass->m_shaders.at(int(QDemonCustomMaterialShader::Stage::Vertex));
-                QDemonCustomMaterialShader *fragShader = pass->m_shaders.at(int(QDemonCustomMaterialShader::Stage::Fragment));
-                QDemonCustomMaterialShader *geomShader = pass->m_shaders.at(int(QDemonCustomMaterialShader::Stage::Geometry));
+                QQuick3DCustomMaterialShader *sharedShader = pass->m_shaders.at(int(QQuick3DCustomMaterialShader::Stage::Shared));
+                QQuick3DCustomMaterialShader *vertShader = pass->m_shaders.at(int(QQuick3DCustomMaterialShader::Stage::Vertex));
+                QQuick3DCustomMaterialShader *fragShader = pass->m_shaders.at(int(QQuick3DCustomMaterialShader::Stage::Fragment));
+                QQuick3DCustomMaterialShader *geomShader = pass->m_shaders.at(int(QQuick3DCustomMaterialShader::Stage::Geometry));
                 if (!sharedShader && !vertShader && !fragShader && !geomShader) {
                     qWarning("Pass with no shader attatched!");
                     continue;
@@ -400,7 +400,7 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
                 customMaterial->commands.push_back(new dynamic::QDemonApplyInstanceValue());
 
                 // Buffers
-                QDemonCustomMaterialBuffer *outputBuffer = pass->outputBuffer;
+                QQuick3DCustomMaterialBuffer *outputBuffer = pass->outputBuffer;
                 if (outputBuffer) {
                     const QByteArray &outBufferName = outputBuffer->name;
                     Q_ASSERT(!outBufferName.isEmpty());
@@ -444,109 +444,109 @@ QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGra
     return customMaterial;
 }
 
-void QDemonCustomMaterial::onPropertyDirty()
+void QQuick3DCustomMaterial::onPropertyDirty()
 {
     markDirty(Dirty::PropertyDirty);
     update();
 }
 
-void QDemonCustomMaterial::onTextureDirty(QDemonCustomMaterialTexture *texture)
+void QQuick3DCustomMaterial::onTextureDirty(QQuick3DCustomMaterialTexture *texture)
 {
     Q_UNUSED(texture)
     markDirty(Dirty::TextureDirty);
     update();
 }
 
-void QDemonCustomMaterial::qmlAppendPass(QQmlListProperty<QDemonCustomMaterialRenderPass> *list, QDemonCustomMaterialRenderPass *pass)
+void QQuick3DCustomMaterial::qmlAppendPass(QQmlListProperty<QQuick3DCustomMaterialRenderPass> *list, QQuick3DCustomMaterialRenderPass *pass)
 {
     if (!pass)
         return;
 
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
+    QQuick3DCustomMaterial *that = qobject_cast<QQuick3DCustomMaterial *>(list->object);
     that->m_passes.push_back(pass);
 }
 
-QDemonCustomMaterialRenderPass *QDemonCustomMaterial::qmlPassAt(QQmlListProperty<QDemonCustomMaterialRenderPass> *list, int index)
+QQuick3DCustomMaterialRenderPass *QQuick3DCustomMaterial::qmlPassAt(QQmlListProperty<QQuick3DCustomMaterialRenderPass> *list, int index)
 {
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
+    QQuick3DCustomMaterial *that = qobject_cast<QQuick3DCustomMaterial *>(list->object);
     return that->m_passes.at(index);
 }
 
-int QDemonCustomMaterial::qmlPassCount(QQmlListProperty<QDemonCustomMaterialRenderPass> *list)
+int QQuick3DCustomMaterial::qmlPassCount(QQmlListProperty<QQuick3DCustomMaterialRenderPass> *list)
 {
-    QDemonCustomMaterial *that = qobject_cast<QDemonCustomMaterial *>(list->object);
+    QQuick3DCustomMaterial *that = qobject_cast<QQuick3DCustomMaterial *>(list->object);
     return that->m_passes.count();
 }
 
-void QDemonCustomMaterialRenderPass::qmlAppendCommand(QQmlListProperty<QDemonCustomMaterialRenderCommand> *list, QDemonCustomMaterialRenderCommand *command)
+void QQuick3DCustomMaterialRenderPass::qmlAppendCommand(QQmlListProperty<QQuick3DCustomMaterialRenderCommand> *list, QQuick3DCustomMaterialRenderCommand *command)
 {
     if (!command)
         return;
 
-    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    QQuick3DCustomMaterialRenderPass *that = qobject_cast<QQuick3DCustomMaterialRenderPass *>(list->object);
     that->m_commands.push_back(command);
 }
 
-QDemonCustomMaterialRenderCommand *QDemonCustomMaterialRenderPass::qmlCommandAt(QQmlListProperty<QDemonCustomMaterialRenderCommand> *list, int index)
+QQuick3DCustomMaterialRenderCommand *QQuick3DCustomMaterialRenderPass::qmlCommandAt(QQmlListProperty<QQuick3DCustomMaterialRenderCommand> *list, int index)
 {
-    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    QQuick3DCustomMaterialRenderPass *that = qobject_cast<QQuick3DCustomMaterialRenderPass *>(list->object);
     return that->m_commands.at(index);
 }
 
-int QDemonCustomMaterialRenderPass::qmlCommandCount(QQmlListProperty<QDemonCustomMaterialRenderCommand> *list)
+int QQuick3DCustomMaterialRenderPass::qmlCommandCount(QQmlListProperty<QQuick3DCustomMaterialRenderCommand> *list)
 {
-    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    QQuick3DCustomMaterialRenderPass *that = qobject_cast<QQuick3DCustomMaterialRenderPass *>(list->object);
     return that->m_commands.count();
 }
 
-QQmlListProperty<QDemonCustomMaterialRenderCommand> QDemonCustomMaterialRenderPass::commands()
+QQmlListProperty<QQuick3DCustomMaterialRenderCommand> QQuick3DCustomMaterialRenderPass::commands()
 {
-    return QQmlListProperty<QDemonCustomMaterialRenderCommand>(this,
+    return QQmlListProperty<QQuick3DCustomMaterialRenderCommand>(this,
                                                                nullptr,
-                                                               QDemonCustomMaterialRenderPass::qmlAppendCommand,
-                                                               QDemonCustomMaterialRenderPass::qmlCommandCount,
-                                                               QDemonCustomMaterialRenderPass::qmlCommandAt,
+                                                               QQuick3DCustomMaterialRenderPass::qmlAppendCommand,
+                                                               QQuick3DCustomMaterialRenderPass::qmlCommandCount,
+                                                               QQuick3DCustomMaterialRenderPass::qmlCommandAt,
                                                                nullptr);
 }
 
-void QDemonCustomMaterialRenderPass::qmlAppendShader(QQmlListProperty<QDemonCustomMaterialShader> *list, QDemonCustomMaterialShader *shader)
+void QQuick3DCustomMaterialRenderPass::qmlAppendShader(QQmlListProperty<QQuick3DCustomMaterialShader> *list, QQuick3DCustomMaterialShader *shader)
 {
     if (!shader)
         return;
 
-    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    QQuick3DCustomMaterialRenderPass *that = qobject_cast<QQuick3DCustomMaterialRenderPass *>(list->object);
     that->m_shaders[int(shader->stage)] = shader;
 }
 
-QDemonCustomMaterialShader *QDemonCustomMaterialRenderPass::qmlShaderAt(QQmlListProperty<QDemonCustomMaterialShader> *list, int index)
+QQuick3DCustomMaterialShader *QQuick3DCustomMaterialRenderPass::qmlShaderAt(QQmlListProperty<QQuick3DCustomMaterialShader> *list, int index)
 {
-    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    QQuick3DCustomMaterialRenderPass *that = qobject_cast<QQuick3DCustomMaterialRenderPass *>(list->object);
     return that->m_shaders.at(index);
 }
 
-int QDemonCustomMaterialRenderPass::qmlShaderCount(QQmlListProperty<QDemonCustomMaterialShader> *list)
+int QQuick3DCustomMaterialRenderPass::qmlShaderCount(QQmlListProperty<QQuick3DCustomMaterialShader> *list)
 {
-    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    QQuick3DCustomMaterialRenderPass *that = qobject_cast<QQuick3DCustomMaterialRenderPass *>(list->object);
     return that->m_shaders.count();
 }
 
-void QDemonCustomMaterialRenderPass::qmlShaderClear(QQmlListProperty<QDemonCustomMaterialShader> *list)
+void QQuick3DCustomMaterialRenderPass::qmlShaderClear(QQmlListProperty<QQuick3DCustomMaterialShader> *list)
 {
-    QDemonCustomMaterialRenderPass *that = qobject_cast<QDemonCustomMaterialRenderPass *>(list->object);
+    QQuick3DCustomMaterialRenderPass *that = qobject_cast<QQuick3DCustomMaterialRenderPass *>(list->object);
     auto it = that->m_shaders.begin();
     const auto end = that->m_shaders.end();
     for (;it != end; ++it)
         *it = nullptr;
 }
 
-QQmlListProperty<QDemonCustomMaterialShader> QDemonCustomMaterialRenderPass::shaders()
+QQmlListProperty<QQuick3DCustomMaterialShader> QQuick3DCustomMaterialRenderPass::shaders()
 {
-    return QQmlListProperty<QDemonCustomMaterialShader>(this,
+    return QQmlListProperty<QQuick3DCustomMaterialShader>(this,
                                                         nullptr,
-                                                        QDemonCustomMaterialRenderPass::qmlAppendShader,
-                                                        QDemonCustomMaterialRenderPass::qmlShaderCount,
-                                                        QDemonCustomMaterialRenderPass::qmlShaderAt,
-                                                        QDemonCustomMaterialRenderPass::qmlShaderClear);
+                                                        QQuick3DCustomMaterialRenderPass::qmlAppendShader,
+                                                        QQuick3DCustomMaterialRenderPass::qmlShaderCount,
+                                                        QQuick3DCustomMaterialRenderPass::qmlShaderAt,
+                                                        QQuick3DCustomMaterialRenderPass::qmlShaderClear);
 }
 
 QT_END_NAMESPACE

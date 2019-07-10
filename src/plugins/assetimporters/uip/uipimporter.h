@@ -31,7 +31,8 @@
 #define UIPIMPORTER_H
 
 #include <QtDemonAssetImport/private/qdemonassetimporter_p.h>
-#include <QtDemonAssetImport/private/qdemonscenegraphtranslation_p.h>
+
+#include <QtCore/QTextStream>
 
 #include "uipparser.h"
 #include "uiaparser.h"

@@ -27,74 +27,74 @@
 **
 ****************************************************************************/
 
-#include "qdemonmodel.h"
-#include "qdemonobject_p.h"
+#include "qquick3dmodel.h"
+#include "qquick3dobject_p.h"
 
 #include <QtDemonRuntimeRender/QDemonRenderGraphObject>
 #include <QtDemonRuntimeRender/QDemonRenderCustomMaterial>
 #include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
-
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
+
 #include <QtQml/QQmlFile>
 
 QT_BEGIN_NAMESPACE
 
 /*!
-   \qmltype DemonModel
-   \inqmlmodule QtDemon
+   \qmltype Model
+   \inqmlmodule QtQuick3D
    \brief Lets you load a 3D model data
 */
-QDemonModel::QDemonModel() {}
+QQuick3DModel::QQuick3DModel() {}
 
-QDemonModel::~QDemonModel() {}
+QQuick3DModel::~QQuick3DModel() {}
 
-QDemonObject::Type QDemonModel::type() const
+QQuick3DObject::Type QQuick3DModel::type() const
 {
-    return QDemonObject::Model;
+    return QQuick3DObject::Model;
 }
 
-QUrl QDemonModel::source() const
+QUrl QQuick3DModel::source() const
 {
     return m_source;
 }
 
-int QDemonModel::skeletonRoot() const
+int QQuick3DModel::skeletonRoot() const
 {
     return m_skeletonRoot;
 }
 
-QDemonModel::QDemonTessModeValues QDemonModel::tesselationMode() const
+QQuick3DModel::QDemonTessModeValues QQuick3DModel::tesselationMode() const
 {
     return m_tesselationMode;
 }
 
-float QDemonModel::edgeTess() const
+float QQuick3DModel::edgeTess() const
 {
     return m_edgeTess;
 }
 
-float QDemonModel::innerTess() const
+float QQuick3DModel::innerTess() const
 {
     return m_innerTess;
 }
 
-bool QDemonModel::isWireframeMode() const
+bool QQuick3DModel::isWireframeMode() const
 {
     return m_isWireframeMode;
 }
 
-QQmlListProperty<QDemonMaterial> QDemonModel::materials()
+QQmlListProperty<QQuick3DMaterial> QQuick3DModel::materials()
 {
-    return QQmlListProperty<QDemonMaterial>(this,
+    return QQmlListProperty<QQuick3DMaterial>(this,
                                             nullptr,
-                                            QDemonModel::qmlAppendMaterial,
-                                            QDemonModel::qmlMaterialsCount,
-                                            QDemonModel::qmlMaterialAt,
-                                            QDemonModel::qmlClearMaterials);
+                                            QQuick3DModel::qmlAppendMaterial,
+                                            QQuick3DModel::qmlMaterialsCount,
+                                            QQuick3DModel::qmlMaterialAt,
+                                            QQuick3DModel::qmlClearMaterials);
 }
 
-void QDemonModel::setSource(const QUrl &source)
+void QQuick3DModel::setSource(const QUrl &source)
 {
     if (m_source == source)
         return;
@@ -104,7 +104,7 @@ void QDemonModel::setSource(const QUrl &source)
     markDirty(SourceDirty);
 }
 
-void QDemonModel::setSkeletonRoot(int skeletonRoot)
+void QQuick3DModel::setSkeletonRoot(int skeletonRoot)
 {
     if (m_skeletonRoot == skeletonRoot)
         return;
@@ -114,7 +114,7 @@ void QDemonModel::setSkeletonRoot(int skeletonRoot)
     markDirty(SkeletonRootDirty);
 }
 
-void QDemonModel::setTesselationMode(QDemonModel::QDemonTessModeValues tesselationMode)
+void QQuick3DModel::setTesselationMode(QQuick3DModel::QDemonTessModeValues tesselationMode)
 {
     if (m_tesselationMode == tesselationMode)
         return;
@@ -124,7 +124,7 @@ void QDemonModel::setTesselationMode(QDemonModel::QDemonTessModeValues tesselati
     markDirty(TesselationModeDirty);
 }
 
-void QDemonModel::setEdgeTess(float edgeTess)
+void QQuick3DModel::setEdgeTess(float edgeTess)
 {
     if (qFuzzyCompare(m_edgeTess, edgeTess))
         return;
@@ -134,7 +134,7 @@ void QDemonModel::setEdgeTess(float edgeTess)
     markDirty(TesselationEdgeDirty);
 }
 
-void QDemonModel::setInnerTess(float innerTess)
+void QQuick3DModel::setInnerTess(float innerTess)
 {
     if (qFuzzyCompare(m_innerTess, innerTess))
         return;
@@ -144,7 +144,7 @@ void QDemonModel::setInnerTess(float innerTess)
     markDirty(TesselationInnerDirty);
 }
 
-void QDemonModel::setIsWireframeMode(bool isWireframeMode)
+void QQuick3DModel::setIsWireframeMode(bool isWireframeMode)
 {
     if (m_isWireframeMode == isWireframeMode)
         return;
@@ -154,18 +154,18 @@ void QDemonModel::setIsWireframeMode(bool isWireframeMode)
     markDirty(WireframeDirty);
 }
 
-static QDemonRenderGraphObject *getMaterialNodeFromQDemonMaterial(QDemonMaterial *material)
+static QDemonRenderGraphObject *getMaterialNodeFromQDemonMaterial(QQuick3DMaterial *material)
 {
-    QDemonObjectPrivate *p = QDemonObjectPrivate::get(material);
+    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(material);
     return p->spatialNode;
 }
 
-QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject *node)
+QDemonRenderGraphObject *QQuick3DModel::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderModel();
 
-    QDemonNode::updateSpatialNode(node);
+    QQuick3DNode::updateSpatialNode(node);
 
     auto modelNode = static_cast<QDemonRenderModel *>(node);
     if (m_dirtyAttributes & SourceDirty)
@@ -216,7 +216,7 @@ QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject 
 // use of fragment syntax for specifiying primitives and sub-meshes
 // So we need to check for the fragment before translating to a qmlfile
 
-QString QDemonModel::translateSource()
+QString QQuick3DModel::translateSource()
 {
     QString fragment;
     if (m_source.hasFragment()) {
@@ -232,7 +232,7 @@ QString QDemonModel::translateSource()
     return QQmlFile::urlToLocalFileOrQrc(m_source) + fragment;
 }
 
-void QDemonModel::markDirty(QDemonModel::QDemonModelDirtyType type)
+void QQuick3DModel::markDirty(QQuick3DModel::QDemonModelDirtyType type)
 {
     if (!(m_dirtyAttributes & quint32(type))) {
         m_dirtyAttributes |= quint32(type);
@@ -240,35 +240,35 @@ void QDemonModel::markDirty(QDemonModel::QDemonModelDirtyType type)
     }
 }
 
-void QDemonModel::qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDemonMaterial *material)
+void QQuick3DModel::qmlAppendMaterial(QQmlListProperty<QQuick3DMaterial> *list, QQuick3DMaterial *material)
 {
     if (material == nullptr)
         return;
-    QDemonModel *self = static_cast<QDemonModel *>(list->object);
+    QQuick3DModel *self = static_cast<QQuick3DModel *>(list->object);
     self->m_materials.push_back(material);
-    self->markDirty(QDemonModel::MaterialsDirty);
+    self->markDirty(QQuick3DModel::MaterialsDirty);
 
     if(material->parentItem() == nullptr)
         material->setParentItem(self);
 }
 
-QDemonMaterial *QDemonModel::qmlMaterialAt(QQmlListProperty<QDemonMaterial> *list, int index)
+QQuick3DMaterial *QQuick3DModel::qmlMaterialAt(QQmlListProperty<QQuick3DMaterial> *list, int index)
 {
-    QDemonModel *self = static_cast<QDemonModel *>(list->object);
+    QQuick3DModel *self = static_cast<QQuick3DModel *>(list->object);
     return self->m_materials.at(index);
 }
 
-int QDemonModel::qmlMaterialsCount(QQmlListProperty<QDemonMaterial> *list)
+int QQuick3DModel::qmlMaterialsCount(QQmlListProperty<QQuick3DMaterial> *list)
 {
-    QDemonModel *self = static_cast<QDemonModel *>(list->object);
+    QQuick3DModel *self = static_cast<QQuick3DModel *>(list->object);
     return self->m_materials.count();
 }
 
-void QDemonModel::qmlClearMaterials(QQmlListProperty<QDemonMaterial> *list)
+void QQuick3DModel::qmlClearMaterials(QQmlListProperty<QQuick3DMaterial> *list)
 {
-    QDemonModel *self = static_cast<QDemonModel *>(list->object);
+    QQuick3DModel *self = static_cast<QQuick3DModel *>(list->object);
     self->m_materials.clear();
-    self->markDirty(QDemonModel::MaterialsDirty);
+    self->markDirty(QQuick3DModel::MaterialsDirty);
 }
 
 QT_END_NAMESPACE

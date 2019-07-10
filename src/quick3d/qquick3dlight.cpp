@@ -27,114 +27,114 @@
 **
 ****************************************************************************/
 
-#include "qdemonlight.h"
-#include "qdemonobject_p.h"
+#include "qquick3dlight.h"
+#include "qquick3dobject_p.h"
 
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmltype DemonLight
-    \inqmlmodule QtDemon
+    \qmltype Light
+    \inqmlmodule QtQuick3D
     \brief Lets you define the lighting for a 3D item
 */
 
-QDemonLight::QDemonLight() : m_diffuseColor(Qt::white), m_specularColor(Qt::white), m_ambientColor(Qt::black) {}
+QQuick3DLight::QQuick3DLight() : m_diffuseColor(Qt::white), m_specularColor(Qt::white), m_ambientColor(Qt::black) {}
 
-QDemonLight::~QDemonLight() {}
+QQuick3DLight::~QQuick3DLight() {}
 
-QDemonObject::Type QDemonLight::type() const
+QQuick3DObject::Type QQuick3DLight::type() const
 {
-    return QDemonObject::Light;
+    return QQuick3DObject::Light;
 }
 
-QDemonLight::QDemonRenderLightTypes QDemonLight::lightType() const
+QQuick3DLight::QDemonRenderLightTypes QQuick3DLight::lightType() const
 {
     return m_lightType;
 }
 
-QColor QDemonLight::diffuseColor() const
+QColor QQuick3DLight::diffuseColor() const
 {
     return m_diffuseColor;
 }
 
-QColor QDemonLight::specularColor() const
+QColor QQuick3DLight::specularColor() const
 {
     return m_specularColor;
 }
 
-QColor QDemonLight::ambientColor() const
+QColor QQuick3DLight::ambientColor() const
 {
     return m_ambientColor;
 }
 
-float QDemonLight::brightness() const
+float QQuick3DLight::brightness() const
 {
     return m_brightness;
 }
 
-float QDemonLight::linearFade() const
+float QQuick3DLight::linearFade() const
 {
     return m_linearFade;
 }
 
-float QDemonLight::exponentialFade() const
+float QQuick3DLight::exponentialFade() const
 {
     return m_exponentialFade;
 }
 
-float QDemonLight::areaWidth() const
+float QQuick3DLight::areaWidth() const
 {
     return m_areaWidth;
 }
 
-float QDemonLight::areaHeight() const
+float QQuick3DLight::areaHeight() const
 {
     return m_areaHeight;
 }
 
-bool QDemonLight::castShadow() const
+bool QQuick3DLight::castShadow() const
 {
     return m_castShadow;
 }
 
-float QDemonLight::shadowBias() const
+float QQuick3DLight::shadowBias() const
 {
     return m_shadowBias;
 }
 
-float QDemonLight::shadowFactor() const
+float QQuick3DLight::shadowFactor() const
 {
     return m_shadowFactor;
 }
 
-int QDemonLight::shadowMapResolution() const
+int QQuick3DLight::shadowMapResolution() const
 {
     return m_shadowMapResolution;
 }
 
-float QDemonLight::shadowMapFar() const
+float QQuick3DLight::shadowMapFar() const
 {
     return m_shadowMapFar;
 }
 
-float QDemonLight::shadowMapFieldOfView() const
+float QQuick3DLight::shadowMapFieldOfView() const
 {
     return m_shadowMapFieldOfView;
 }
 
-float QDemonLight::shadowFilter() const
+float QQuick3DLight::shadowFilter() const
 {
     return m_shadowFilter;
 }
 
-QDemonNode *QDemonLight::scope() const
+QQuick3DNode *QQuick3DLight::scope() const
 {
     return m_scope;
 }
 
-void QDemonLight::setLightType(QDemonLight::QDemonRenderLightTypes lightType)
+void QQuick3DLight::setLightType(QQuick3DLight::QDemonRenderLightTypes lightType)
 {
     if (m_lightType == lightType)
         return;
@@ -144,7 +144,7 @@ void QDemonLight::setLightType(QDemonLight::QDemonRenderLightTypes lightType)
     update();
 }
 
-void QDemonLight::setDiffuseColor(QColor diffuseColor)
+void QQuick3DLight::setDiffuseColor(QColor diffuseColor)
 {
     if (m_diffuseColor == diffuseColor)
         return;
@@ -154,7 +154,7 @@ void QDemonLight::setDiffuseColor(QColor diffuseColor)
     update();
 }
 
-void QDemonLight::setSpecularColor(QColor specularColor)
+void QQuick3DLight::setSpecularColor(QColor specularColor)
 {
     if (m_specularColor == specularColor)
         return;
@@ -164,7 +164,7 @@ void QDemonLight::setSpecularColor(QColor specularColor)
     update();
 }
 
-void QDemonLight::setAmbientColor(QColor ambientColor)
+void QQuick3DLight::setAmbientColor(QColor ambientColor)
 {
     if (m_ambientColor == ambientColor)
         return;
@@ -174,7 +174,7 @@ void QDemonLight::setAmbientColor(QColor ambientColor)
     update();
 }
 
-void QDemonLight::setBrightness(float brightness)
+void QQuick3DLight::setBrightness(float brightness)
 {
     if (qFuzzyCompare(m_brightness, brightness))
         return;
@@ -184,7 +184,7 @@ void QDemonLight::setBrightness(float brightness)
     update();
 }
 
-void QDemonLight::setLinearFade(float linearFade)
+void QQuick3DLight::setLinearFade(float linearFade)
 {
     if (qFuzzyCompare(m_linearFade, linearFade))
         return;
@@ -194,7 +194,7 @@ void QDemonLight::setLinearFade(float linearFade)
     update();
 }
 
-void QDemonLight::setExponentialFade(float exponentialFade)
+void QQuick3DLight::setExponentialFade(float exponentialFade)
 {
     if (qFuzzyCompare(m_exponentialFade, exponentialFade))
         return;
@@ -204,7 +204,7 @@ void QDemonLight::setExponentialFade(float exponentialFade)
     update();
 }
 
-void QDemonLight::setAreaWidth(float areaWidth)
+void QQuick3DLight::setAreaWidth(float areaWidth)
 {
     if (qFuzzyCompare(m_areaWidth, areaWidth))
         return;
@@ -214,7 +214,7 @@ void QDemonLight::setAreaWidth(float areaWidth)
     update();
 }
 
-void QDemonLight::setAreaHeight(float areaHeight)
+void QQuick3DLight::setAreaHeight(float areaHeight)
 {
     if (qFuzzyCompare(m_areaHeight, areaHeight))
         return;
@@ -224,7 +224,7 @@ void QDemonLight::setAreaHeight(float areaHeight)
     update();
 }
 
-void QDemonLight::setCastShadow(bool castShadow)
+void QQuick3DLight::setCastShadow(bool castShadow)
 {
     if (m_castShadow == castShadow)
         return;
@@ -234,7 +234,7 @@ void QDemonLight::setCastShadow(bool castShadow)
     update();
 }
 
-void QDemonLight::setShadowBias(float shadowBias)
+void QQuick3DLight::setShadowBias(float shadowBias)
 {
     if (qFuzzyCompare(m_shadowBias, shadowBias))
         return;
@@ -244,7 +244,7 @@ void QDemonLight::setShadowBias(float shadowBias)
     update();
 }
 
-void QDemonLight::setShadowFactor(float shadowFactor)
+void QQuick3DLight::setShadowFactor(float shadowFactor)
 {
     if (qFuzzyCompare(m_shadowFactor, shadowFactor))
         return;
@@ -254,7 +254,7 @@ void QDemonLight::setShadowFactor(float shadowFactor)
     update();
 }
 
-void QDemonLight::setShadowMapResolution(int shadowMapResolution)
+void QQuick3DLight::setShadowMapResolution(int shadowMapResolution)
 {
     if (m_shadowMapResolution == shadowMapResolution)
         return;
@@ -264,7 +264,7 @@ void QDemonLight::setShadowMapResolution(int shadowMapResolution)
     update();
 }
 
-void QDemonLight::setShadowMapFar(float shadowMapFar)
+void QQuick3DLight::setShadowMapFar(float shadowMapFar)
 {
     if (qFuzzyCompare(m_shadowMapFar, shadowMapFar))
         return;
@@ -274,7 +274,7 @@ void QDemonLight::setShadowMapFar(float shadowMapFar)
     update();
 }
 
-void QDemonLight::setShadowMapFieldOfView(float shadowMapFieldOfView)
+void QQuick3DLight::setShadowMapFieldOfView(float shadowMapFieldOfView)
 {
     if (qFuzzyCompare(m_shadowMapFieldOfView, shadowMapFieldOfView))
         return;
@@ -284,7 +284,7 @@ void QDemonLight::setShadowMapFieldOfView(float shadowMapFieldOfView)
     update();
 }
 
-void QDemonLight::setShadowFilter(float shadowFilter)
+void QQuick3DLight::setShadowFilter(float shadowFilter)
 {
     if (qFuzzyCompare(m_shadowFilter, shadowFilter))
         return;
@@ -294,7 +294,7 @@ void QDemonLight::setShadowFilter(float shadowFilter)
     update();
 }
 
-void QDemonLight::setScope(QDemonNode *scope)
+void QQuick3DLight::setScope(QQuick3DNode *scope)
 {
     if (m_scope == scope)
         return;
@@ -304,12 +304,12 @@ void QDemonLight::setScope(QDemonNode *scope)
     update();
 }
 
-QDemonRenderGraphObject *QDemonLight::updateSpatialNode(QDemonRenderGraphObject *node)
+QDemonRenderGraphObject *QQuick3DLight::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderLight();
 
-    QDemonNode::updateSpatialNode(node);
+    QQuick3DNode::updateSpatialNode(node);
 
     QDemonRenderLight *light = static_cast<QDemonRenderLight *>(node);
 
@@ -334,7 +334,7 @@ QDemonRenderGraphObject *QDemonLight::updateSpatialNode(QDemonRenderGraphObject 
     light->m_shadowFilter = m_shadowFilter;
 
     if (m_scope)
-        light->m_scope = static_cast<QDemonRenderNode*>(QDemonObjectPrivate::get(m_scope)->spatialNode);
+        light->m_scope = static_cast<QDemonRenderNode*>(QQuick3DObjectPrivate::get(m_scope)->spatialNode);
     else
         light->m_scope = nullptr;
 

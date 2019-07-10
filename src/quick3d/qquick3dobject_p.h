@@ -41,11 +41,11 @@
 // We mean it.
 //
 
-#include "qdemonobject.h"
+#include "qquick3dobject.h"
 
 #include "qtquick3dglobal_p.h"
 
-#include "qdemonobjectchangelistener_p.h"
+#include "qquick3dobjectchangelistener_p.h"
 
 #include <private/qobject_p.h>
 #include <private/qquickstate_p.h>
@@ -57,21 +57,21 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
 class QDemonRenderContext;
 
-class Q_QUICK3D_PRIVATE_EXPORT QDemonObjectPrivate : public QObjectPrivate
+class Q_QUICK3D_PRIVATE_EXPORT QQuick3DObjectPrivate : public QObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QDemonObject)
+    Q_DECLARE_PUBLIC(QQuick3DObject)
 public:
-    static QDemonObjectPrivate *get(QDemonObject *item) { return item->d_func(); }
-    static const QDemonObjectPrivate *get(const QDemonObject *item) { return item->d_func(); }
+    static QQuick3DObjectPrivate *get(QQuick3DObject *item) { return item->d_func(); }
+    static const QQuick3DObjectPrivate *get(const QQuick3DObject *item) { return item->d_func(); }
 
-    QDemonObjectPrivate();
-    ~QDemonObjectPrivate() override;
-    void init(QDemonObject *parent);
+    QQuick3DObjectPrivate();
+    ~QQuick3DObjectPrivate() override;
+    void init(QQuick3DObject *parent);
 
     QQmlListProperty<QObject> data();
     QQmlListProperty<QObject> resources();
-    QQmlListProperty<QDemonObject> children();
-    QQmlListProperty<QDemonObject> visibleChildren();
+    QQmlListProperty<QQuick3DObject> children();
+    QQmlListProperty<QQuick3DObject> visibleChildren();
 
     QQmlListProperty<QQuickState> states();
     QQmlListProperty<QQuickTransition> transitions();
@@ -92,15 +92,15 @@ public:
     static void resources_clear(QQmlListProperty<QObject> *);
 
     // children property
-    static void children_append(QQmlListProperty<QDemonObject> *, QDemonObject *);
-    static int children_count(QQmlListProperty<QDemonObject> *);
-    static QDemonObject *children_at(QQmlListProperty<QDemonObject> *, int);
-    static void children_clear(QQmlListProperty<QDemonObject> *);
+    static void children_append(QQmlListProperty<QQuick3DObject> *, QQuick3DObject *);
+    static int children_count(QQmlListProperty<QQuick3DObject> *);
+    static QQuick3DObject *children_at(QQmlListProperty<QQuick3DObject> *, int);
+    static void children_clear(QQmlListProperty<QQuick3DObject> *);
 
     // visibleChildren property
-    static void visibleChildren_append(QQmlListProperty<QDemonObject> *prop, QDemonObject *o);
-    static int visibleChildren_count(QQmlListProperty<QDemonObject> *prop);
-    static QDemonObject *visibleChildren_at(QQmlListProperty<QDemonObject> *prop, int index);
+    static void visibleChildren_append(QQmlListProperty<QQuick3DObject> *prop, QQuick3DObject *o);
+    static int visibleChildren_count(QQmlListProperty<QQuick3DObject> *prop);
+    static QQuick3DObject *visibleChildren_at(QQmlListProperty<QQuick3DObject> *prop, int index);
 
     void _q_resourceObjectDeleted(QObject *);
     quint64 _q_createJSWrapper(QV4::ExecutionEngine *engine);
@@ -123,21 +123,21 @@ public:
 
     struct ChangeListener
     {
-        using ChangeTypes = QDemonObjectPrivate::ChangeTypes;
+        using ChangeTypes = QQuick3DObjectPrivate::ChangeTypes;
 
-        ChangeListener(QDemonObjectChangeListener *l = nullptr, ChangeTypes t = nullptr) : listener(l), types(t) {}
+        ChangeListener(QQuick3DObjectChangeListener *l = nullptr, ChangeTypes t = nullptr) : listener(l), types(t) {}
 
-        ChangeListener(QDemonObjectChangeListener *l) : listener(l), types(Geometry) {}
+        ChangeListener(QQuick3DObjectChangeListener *l) : listener(l), types(Geometry) {}
 
         bool operator==(const ChangeListener &other) const
         {
             return listener == other.listener && types == other.types;
         }
 
-        QDemonObjectChangeListener *listener;
+        QQuick3DObjectChangeListener *listener;
         ChangeTypes types;
 
-        QVector<QDemonObjectPrivate::ChangeListener> changeListeners;
+        QVector<QQuick3DObjectPrivate::ChangeListener> changeListeners;
     };
 
     struct ExtraData
@@ -150,11 +150,11 @@ public:
     };
     QLazilyAllocated<ExtraData> extra;
 
-    QVector<QDemonObjectPrivate::ChangeListener> changeListeners;
+    QVector<QQuick3DObjectPrivate::ChangeListener> changeListeners;
 
-    void addItemChangeListener(QDemonObjectChangeListener *listener, ChangeTypes types);
-    void updateOrAddItemChangeListener(QDemonObjectChangeListener *listener, ChangeTypes types);
-    void removeItemChangeListener(QDemonObjectChangeListener *, ChangeTypes types);
+    void addItemChangeListener(QQuick3DObjectChangeListener *listener, ChangeTypes types);
+    void updateOrAddItemChangeListener(QQuick3DObjectChangeListener *listener, ChangeTypes types);
+    void removeItemChangeListener(QQuick3DObjectChangeListener *, ChangeTypes types);
 
     QQuickStateGroup *_states();
     QQuickStateGroup *_stateGroup;
@@ -195,37 +195,37 @@ public:
     void dirty(DirtyType);
     void addToDirtyList();
     void removeFromDirtyList();
-    QDemonObject *nextDirtyItem;
-    QDemonObject **prevDirtyItem;
+    QQuick3DObject *nextDirtyItem;
+    QQuick3DObject **prevDirtyItem;
 
     bool isResourceNode() const;
     bool isSpatialNode() const;
 
     void setCulled(bool);
 
-    QDemonSceneManager *sceneManager;
+    QQuick3DSceneManager *sceneManager;
     int windowRefCount;
 //    QDemonRenderContextInterface *sceneGraphContext() const;
 //    QDemonRenderContext *sceneGraphRenderContext() const;
 
-    QDemonObject *parentItem;
+    QQuick3DObject *parentItem;
 
-    QList<QDemonObject *> childItems;
-    mutable QList<QDemonObject *> *sortedChildItems;
-    QList<QDemonObject *> paintOrderChildItems() const;
-    void addChild(QDemonObject *);
-    void removeChild(QDemonObject *);
+    QList<QQuick3DObject *> childItems;
+    mutable QList<QQuick3DObject *> *sortedChildItems;
+    QList<QQuick3DObject *> paintOrderChildItems() const;
+    void addChild(QQuick3DObject *);
+    void removeChild(QQuick3DObject *);
     void siblingOrderChanged();
 
-    void markSortedChildrenDirty(QDemonObject *child);
+    void markSortedChildrenDirty(QQuick3DObject *child);
 
-    void refSceneRenderer(QDemonSceneManager *);
+    void refSceneRenderer(QQuick3DSceneManager *);
     void derefSceneRenderer();
 
-    QDemonObject *subFocusItem;
-    void updateSubFocusItem(QDemonObject *scope, bool focus);
+    QQuick3DObject *subFocusItem;
+    void updateSubFocusItem(QQuick3DObject *scope, bool focus);
 
-    void itemChange(QDemonObject::ItemChange, const QDemonObject::ItemChangeData &);
+    void itemChange(QQuick3DObject::ItemChange, const QQuick3DObject::ItemChangeData &);
 
     virtual void updatePolish() {}
 
@@ -235,8 +235,8 @@ public:
     bool culled;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonObjectPrivate::ChangeTypes)
-Q_DECLARE_TYPEINFO(QDemonObjectPrivate::ChangeListener, Q_PRIMITIVE_TYPE);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QQuick3DObjectPrivate::ChangeTypes)
+Q_DECLARE_TYPEINFO(QQuick3DObjectPrivate::ChangeListener, Q_PRIMITIVE_TYPE);
 
 QT_END_NAMESPACE
 

@@ -30,41 +30,44 @@
 #ifndef QDEMONOBJECT_H
 #define QDEMONOBJECT_H
 
-#include <QtQuick3d/qtquick3dglobal.h>
-#include <QtCore/QObject>
+#include <QtQuick3D/qtquick3dglobal.h>
+
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
+
 #include <QtQml/qqml.h>
 #include <QtQml/qqmlcomponent.h>
 
+#include <QtCore/QObject>
+
 QT_BEGIN_NAMESPACE
 
-class QDemonObjectPrivate;
-class QDemonSceneManager;
+class QQuick3DObjectPrivate;
+class QQuick3DSceneManager;
 
-class Q_QUICK3D_EXPORT QDemonObject : public QObject, public QQmlParserStatus
+class Q_QUICK3D_EXPORT QQuick3DObject : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
-    Q_DECLARE_PRIVATE(QDemonObject)
-    Q_DISABLE_COPY(QDemonObject)
+    Q_DECLARE_PRIVATE(QQuick3DObject)
+    Q_DISABLE_COPY(QQuick3DObject)
 
-    Q_PROPERTY(QDemonObject *parent READ parentItem WRITE setParentItem NOTIFY parentChanged DESIGNABLE false FINAL)
-    Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QObject> data READ data DESIGNABLE false)
-    Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QObject> resources READ resources DESIGNABLE false)
-    Q_PRIVATE_PROPERTY(QDemonObject::d_func(),
-                       QQmlListProperty<QDemonObject> children READ children NOTIFY childrenChanged DESIGNABLE false)
+    Q_PROPERTY(QQuick3DObject *parent READ parentItem WRITE setParentItem NOTIFY parentChanged DESIGNABLE false FINAL)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QObject> data READ data DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QObject> resources READ resources DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(),
+                       QQmlListProperty<QQuick3DObject> children READ children NOTIFY childrenChanged DESIGNABLE false)
 
     Q_PROPERTY(QByteArray id READ id CONSTANT)
     Q_PROPERTY(QString name READ name WRITE setName)
-    Q_PROPERTY(QDemonObject::Type type READ type CONSTANT)
+    Q_PROPERTY(QQuick3DObject::Type type READ type CONSTANT)
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged FINAL)
 
-    Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QQuickState> states READ states DESIGNABLE false)
-    Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QQuickTransition> transitions READ transitions DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QQuickState> states READ states DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QQuickTransition> transitions READ transitions DESIGNABLE false)
     Q_PROPERTY(QString state READ state WRITE setState NOTIFY stateChanged)
-    Q_PRIVATE_PROPERTY(QDemonObject::d_func(),
-                       QQmlListProperty<QDemonObject> visibleChildren READ visibleChildren NOTIFY visibleChildrenChanged DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(),
+                       QQmlListProperty<QQuick3DObject> visibleChildren READ visibleChildren NOTIFY visibleChildrenChanged DESIGNABLE false)
 
     Q_CLASSINFO("DefaultProperty", "data")
     Q_CLASSINFO("qt_QmlJSWrapperFactoryMethod", "_q_createJSWrapper(QV4::ExecutionEngine*)")
@@ -106,31 +109,31 @@ public:
     };
 
     union ItemChangeData {
-        ItemChangeData(QDemonObject *v) : item(v) {}
-        ItemChangeData(QDemonSceneManager *v) : sceneRenderer(v) {}
+        ItemChangeData(QQuick3DObject *v) : item(v) {}
+        ItemChangeData(QQuick3DSceneManager *v) : sceneRenderer(v) {}
         ItemChangeData(qreal v) : realValue(v) {}
         ItemChangeData(bool v) : boolValue(v) {}
 
-        QDemonObject *item;
-        QDemonSceneManager *sceneRenderer;
+        QQuick3DObject *item;
+        QQuick3DSceneManager *sceneRenderer;
         qreal realValue;
         bool boolValue;
     };
 
-    explicit QDemonObject(QDemonObject *parent = nullptr);
-    ~QDemonObject() override;
+    explicit QQuick3DObject(QQuick3DObject *parent = nullptr);
+    ~QQuick3DObject() override;
 
     QByteArray id() const;
     QString name() const;
-    virtual QDemonObject::Type type() const = 0;
+    virtual QQuick3DObject::Type type() const = 0;
 
     QString state() const;
     void setState(const QString &state);
 
-    QList<QDemonObject *> childItems() const;
+    QList<QQuick3DObject *> childItems() const;
 
-    QDemonSceneManager *sceneRenderer() const;
-    QDemonObject *parentItem() const;
+    QQuick3DSceneManager *sceneRenderer() const;
+    QQuick3DObject *parentItem() const;
 
     bool isEnabled() const;
     bool isVisible() const;
@@ -139,13 +142,13 @@ public Q_SLOTS:
     void setName(QString name);
     void update();
 
-    void setParentItem(QDemonObject *parentItem);
+    void setParentItem(QQuick3DObject *parentItem);
     void setEnabled(bool enabled);
     void setVisible(bool visible);
 
 Q_SIGNALS:
-    void sceneRendererChanged(QDemonSceneManager *sceneRenderer);
-    void parentChanged(QDemonObject *parent);
+    void sceneRendererChanged(QQuick3DSceneManager *sceneRenderer);
+    void parentChanged(QQuick3DObject *parent);
     void enabledChanged(bool enabled);
     void childrenChanged();
     void stateChanged(const QString &);
@@ -156,7 +159,7 @@ Q_SIGNALS:
 protected:
     virtual QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) = 0;
     virtual void itemChange(ItemChange, const ItemChangeData &);
-    QDemonObject(QDemonObjectPrivate &dd, QDemonObject *parent = nullptr);
+    QQuick3DObject(QQuick3DObjectPrivate &dd, QQuick3DObject *parent = nullptr);
 
     void classBegin() override;
     void componentComplete() override;
@@ -169,11 +172,11 @@ private:
     QString m_name;
     bool m_enabled;
     bool m_visible;
-    friend QDemonSceneManager;
+    friend QQuick3DSceneManager;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QDemonObject)
+QML_DECLARE_TYPE(QQuick3DObject)
 
 #endif // QDEMONOBJECT_H

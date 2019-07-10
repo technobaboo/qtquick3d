@@ -27,17 +27,17 @@
 **
 ****************************************************************************/
 
-#include "qdemonsceneenvironment.h"
-#include "qdemonobject_p.h"
-#include "qdemonimage.h"
+#include "qquick3dsceneenvironment.h"
+#include "qquick3dobject_p.h"
+#include "qquick3dtexture.h"
 
 QT_BEGIN_NAMESPACE
 
-static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *manager, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
+static void updateProperyListener(QQuick3DObject *newO, QQuick3DObject *oldO, QQuick3DSceneManager *manager, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QQuick3DObject *o)> callFn) {
     // disconnect previous destruction listern
     if (oldO) {
         if (manager)
-            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(oldO)->derefSceneRenderer();
 
         auto connection = connections.find(oldO);
         if (connection != connections.end()) {
@@ -49,7 +49,7 @@ static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemon
     // listen for new map's destruction
     if (newO) {
         if (manager)
-            QDemonObjectPrivate::get(newO)->refSceneRenderer(manager);
+            QQuick3DObjectPrivate::get(newO)->refSceneRenderer(manager);
         auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
             callFn(nullptr);
         });
@@ -58,173 +58,173 @@ static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemon
 }
 
 /*!
-    \qmltype DemonSceneEnvironment
-    \inqmlmodule QtDemon
+    \qmltype SceneEnvironment
+    \inqmlmodule QtQuick3D
     \brief Lets you configure the scene environment
 */
-QDemonSceneEnvironment::QDemonSceneEnvironment(QDemonObject *parent)
-    : QDemonObject(parent)
+QQuick3DSceneEnvironment::QQuick3DSceneEnvironment(QQuick3DObject *parent)
+    : QQuick3DObject(parent)
 {
 
 }
 
-QDemonSceneEnvironment::~QDemonSceneEnvironment()
+QQuick3DSceneEnvironment::~QQuick3DSceneEnvironment()
 {
     for (auto connection : m_connections)
         disconnect(connection);
 }
 
-QDemonSceneEnvironment::QDemonEnvironmentAAModeValues QDemonSceneEnvironment::progressiveAAMode() const
+QQuick3DSceneEnvironment::QQuick3DEnvironmentAAModeValues QQuick3DSceneEnvironment::progressiveAAMode() const
 {
     return m_progressiveAAMode;
 }
 
-QDemonSceneEnvironment::QDemonEnvironmentAAModeValues QDemonSceneEnvironment::multisampleAAMode() const
+QQuick3DSceneEnvironment::QQuick3DEnvironmentAAModeValues QQuick3DSceneEnvironment::multisampleAAMode() const
 {
     return m_multisampleAAMode;
 }
 
-QDemonSceneEnvironment::QDemonEnvironmentBackgroundTypes QDemonSceneEnvironment::backgroundMode() const
+QQuick3DSceneEnvironment::QQuick3DEnvironmentBackgroundTypes QQuick3DSceneEnvironment::backgroundMode() const
 {
     return m_backgroundMode;
 }
 
-QColor QDemonSceneEnvironment::clearColor() const
+QColor QQuick3DSceneEnvironment::clearColor() const
 {
     return m_clearColor;
 }
 
-QDemonSceneEnvironment::QDemonEnvironmentBlendTypes QDemonSceneEnvironment::blendType() const
+QQuick3DSceneEnvironment::QQuick3DEnvironmentBlendTypes QQuick3DSceneEnvironment::blendType() const
 {
     return m_blendType;
 }
 
-float QDemonSceneEnvironment::aoStrength() const
+float QQuick3DSceneEnvironment::aoStrength() const
 {
     return m_aoStrength;
 }
 
-float QDemonSceneEnvironment::aoDistance() const
+float QQuick3DSceneEnvironment::aoDistance() const
 {
     return m_aoDistance;
 }
 
-float QDemonSceneEnvironment::aoSoftness() const
+float QQuick3DSceneEnvironment::aoSoftness() const
 {
     return m_aoSoftness;
 }
 
-bool QDemonSceneEnvironment::aoDither() const
+bool QQuick3DSceneEnvironment::aoDither() const
 {
     return m_aoDither;
 }
 
-int QDemonSceneEnvironment::aoSampleRate() const
+int QQuick3DSceneEnvironment::aoSampleRate() const
 {
     return m_aoSampleRate;
 }
 
-float QDemonSceneEnvironment::aoBias() const
+float QQuick3DSceneEnvironment::aoBias() const
 {
     return m_aoBias;
 }
 
-float QDemonSceneEnvironment::shadowStrength() const
+float QQuick3DSceneEnvironment::shadowStrength() const
 {
     return m_shadowStrength;
 }
 
-float QDemonSceneEnvironment::shadowDistance() const
+float QQuick3DSceneEnvironment::shadowDistance() const
 {
     return m_shadowDistance;
 }
 
-float QDemonSceneEnvironment::shadowSoftness() const
+float QQuick3DSceneEnvironment::shadowSoftness() const
 {
     return m_shadowSoftness;
 }
 
-float QDemonSceneEnvironment::shadowBias() const
+float QQuick3DSceneEnvironment::shadowBias() const
 {
     return m_shadowBias;
 }
 
-QDemonImage *QDemonSceneEnvironment::lightProbe() const
+QQuick3DTexture *QQuick3DSceneEnvironment::lightProbe() const
 {
     return m_lightProbe;
 }
 
-float QDemonSceneEnvironment::probeBrightness() const
+float QQuick3DSceneEnvironment::probeBrightness() const
 {
     return m_probeBrightness;
 }
 
-bool QDemonSceneEnvironment::fastIBL() const
+bool QQuick3DSceneEnvironment::fastIBL() const
 {
     return m_fastIBL;
 }
 
-float QDemonSceneEnvironment::probeHorizon() const
+float QQuick3DSceneEnvironment::probeHorizon() const
 {
     return m_probeHorizon;
 }
 
-float QDemonSceneEnvironment::probeFieldOfView() const
+float QQuick3DSceneEnvironment::probeFieldOfView() const
 {
     return m_probeFieldOfView;
 }
 
-QDemonImage *QDemonSceneEnvironment::lightProbe2() const
+QQuick3DTexture *QQuick3DSceneEnvironment::lightProbe2() const
 {
     return m_lightProbe2;
 }
 
-float QDemonSceneEnvironment::probe2Fade() const
+float QQuick3DSceneEnvironment::probe2Fade() const
 {
     return m_probe2Fade;
 }
 
-float QDemonSceneEnvironment::probe2Window() const
+float QQuick3DSceneEnvironment::probe2Window() const
 {
     return m_probe2Window;
 }
 
-float QDemonSceneEnvironment::probe2Postion() const
+float QQuick3DSceneEnvironment::probe2Postion() const
 {
     return m_probe2Postion;
 }
 
-bool QDemonSceneEnvironment::temporalAAEnabled() const
+bool QQuick3DSceneEnvironment::temporalAAEnabled() const
 {
     return m_temporalAAEnabled;
 }
 
-QQmlListProperty<QDemonEffect> QDemonSceneEnvironment::effectsList()
+QQmlListProperty<QQuick3DEffect> QQuick3DSceneEnvironment::effectsList()
 {
-    return QQmlListProperty<QDemonEffect>(this,
+    return QQmlListProperty<QQuick3DEffect>(this,
                                           nullptr,
-                                          QDemonSceneEnvironment::qmlAppendEffect,
-                                          QDemonSceneEnvironment::qmlEffectsCount,
-                                          QDemonSceneEnvironment::qmlEffectAt,
-                                          QDemonSceneEnvironment::qmlClearEffects);
+                                          QQuick3DSceneEnvironment::qmlAppendEffect,
+                                          QQuick3DSceneEnvironment::qmlEffectsCount,
+                                          QQuick3DSceneEnvironment::qmlEffectAt,
+                                          QQuick3DSceneEnvironment::qmlClearEffects);
 }
 
-bool QDemonSceneEnvironment::isDepthTestDisabled() const
+bool QQuick3DSceneEnvironment::isDepthTestDisabled() const
 {
     return m_isDepthTestDisabled;
 }
 
-bool QDemonSceneEnvironment::isDepthPrePassDisabled() const
+bool QQuick3DSceneEnvironment::isDepthPrePassDisabled() const
 {
     return m_isDepthPrePassDisabled;
 }
 
-QDemonObject::Type QDemonSceneEnvironment::type() const
+QQuick3DObject::Type QQuick3DSceneEnvironment::type() const
 {
-    return QDemonObject::SceneEnvironment;
+    return QQuick3DObject::SceneEnvironment;
 }
 
-void QDemonSceneEnvironment::setProgressiveAAMode(QDemonSceneEnvironment::QDemonEnvironmentAAModeValues progressiveAAMode)
+void QQuick3DSceneEnvironment::setProgressiveAAMode(QQuick3DSceneEnvironment::QQuick3DEnvironmentAAModeValues progressiveAAMode)
 {
     if (m_progressiveAAMode == progressiveAAMode)
         return;
@@ -234,7 +234,7 @@ void QDemonSceneEnvironment::setProgressiveAAMode(QDemonSceneEnvironment::QDemon
     update();
 }
 
-void QDemonSceneEnvironment::setMultisampleAAMode(QDemonSceneEnvironment::QDemonEnvironmentAAModeValues multisampleAAMode)
+void QQuick3DSceneEnvironment::setMultisampleAAMode(QQuick3DSceneEnvironment::QQuick3DEnvironmentAAModeValues multisampleAAMode)
 {
     if (m_multisampleAAMode == multisampleAAMode)
         return;
@@ -244,7 +244,7 @@ void QDemonSceneEnvironment::setMultisampleAAMode(QDemonSceneEnvironment::QDemon
     update();
 }
 
-void QDemonSceneEnvironment::setBackgroundMode(QDemonSceneEnvironment::QDemonEnvironmentBackgroundTypes backgroundMode)
+void QQuick3DSceneEnvironment::setBackgroundMode(QQuick3DSceneEnvironment::QQuick3DEnvironmentBackgroundTypes backgroundMode)
 {
     if (m_backgroundMode == backgroundMode)
         return;
@@ -254,7 +254,7 @@ void QDemonSceneEnvironment::setBackgroundMode(QDemonSceneEnvironment::QDemonEnv
     update();
 }
 
-void QDemonSceneEnvironment::setClearColor(QColor clearColor)
+void QQuick3DSceneEnvironment::setClearColor(QColor clearColor)
 {
     if (m_clearColor == clearColor)
         return;
@@ -264,7 +264,7 @@ void QDemonSceneEnvironment::setClearColor(QColor clearColor)
     update();
 }
 
-void QDemonSceneEnvironment::setBlendType(QDemonSceneEnvironment::QDemonEnvironmentBlendTypes blendType)
+void QQuick3DSceneEnvironment::setBlendType(QQuick3DSceneEnvironment::QQuick3DEnvironmentBlendTypes blendType)
 {
     if (m_blendType == blendType)
         return;
@@ -274,7 +274,7 @@ void QDemonSceneEnvironment::setBlendType(QDemonSceneEnvironment::QDemonEnvironm
     update();
 }
 
-void QDemonSceneEnvironment::setAoStrength(float aoStrength)
+void QQuick3DSceneEnvironment::setAoStrength(float aoStrength)
 {
     if (qFuzzyCompare(m_aoStrength, aoStrength))
         return;
@@ -284,7 +284,7 @@ void QDemonSceneEnvironment::setAoStrength(float aoStrength)
     update();
 }
 
-void QDemonSceneEnvironment::setAoDistance(float aoDistance)
+void QQuick3DSceneEnvironment::setAoDistance(float aoDistance)
 {
     if (qFuzzyCompare(m_aoDistance, aoDistance))
         return;
@@ -294,7 +294,7 @@ void QDemonSceneEnvironment::setAoDistance(float aoDistance)
     update();
 }
 
-void QDemonSceneEnvironment::setAoSoftness(float aoSoftness)
+void QQuick3DSceneEnvironment::setAoSoftness(float aoSoftness)
 {
     if (qFuzzyCompare(m_aoSoftness, aoSoftness))
         return;
@@ -304,7 +304,7 @@ void QDemonSceneEnvironment::setAoSoftness(float aoSoftness)
     update();
 }
 
-void QDemonSceneEnvironment::setAoDither(bool aoDither)
+void QQuick3DSceneEnvironment::setAoDither(bool aoDither)
 {
     if (m_aoDither == aoDither)
         return;
@@ -314,7 +314,7 @@ void QDemonSceneEnvironment::setAoDither(bool aoDither)
     update();
 }
 
-void QDemonSceneEnvironment::setAoSampleRate(int aoSampleRate)
+void QQuick3DSceneEnvironment::setAoSampleRate(int aoSampleRate)
 {
     if (m_aoSampleRate == aoSampleRate)
         return;
@@ -324,7 +324,7 @@ void QDemonSceneEnvironment::setAoSampleRate(int aoSampleRate)
     update();
 }
 
-void QDemonSceneEnvironment::setAoBias(float aoBias)
+void QQuick3DSceneEnvironment::setAoBias(float aoBias)
 {
     if (qFuzzyCompare(m_aoBias, aoBias))
         return;
@@ -334,7 +334,7 @@ void QDemonSceneEnvironment::setAoBias(float aoBias)
     update();
 }
 
-void QDemonSceneEnvironment::setShadowStrength(float shadowStrength)
+void QQuick3DSceneEnvironment::setShadowStrength(float shadowStrength)
 {
     if (qFuzzyCompare(m_shadowStrength, shadowStrength))
         return;
@@ -344,7 +344,7 @@ void QDemonSceneEnvironment::setShadowStrength(float shadowStrength)
     update();
 }
 
-void QDemonSceneEnvironment::setShadowDistance(float shadowDistance)
+void QQuick3DSceneEnvironment::setShadowDistance(float shadowDistance)
 {
     if (qFuzzyCompare(m_shadowDistance, shadowDistance))
         return;
@@ -354,7 +354,7 @@ void QDemonSceneEnvironment::setShadowDistance(float shadowDistance)
     update();
 }
 
-void QDemonSceneEnvironment::setShadowSoftness(float shadowSoftness)
+void QQuick3DSceneEnvironment::setShadowSoftness(float shadowSoftness)
 {
     if (qFuzzyCompare(m_shadowSoftness, shadowSoftness))
         return;
@@ -364,7 +364,7 @@ void QDemonSceneEnvironment::setShadowSoftness(float shadowSoftness)
     update();
 }
 
-void QDemonSceneEnvironment::setShadowBias(float shadowBias)
+void QQuick3DSceneEnvironment::setShadowBias(float shadowBias)
 {
     if (qFuzzyCompare(m_shadowBias, shadowBias))
         return;
@@ -374,13 +374,13 @@ void QDemonSceneEnvironment::setShadowBias(float shadowBias)
     update();
 }
 
-void QDemonSceneEnvironment::setLightProbe(QDemonImage *lightProbe)
+void QQuick3DSceneEnvironment::setLightProbe(QQuick3DTexture *lightProbe)
 {
     if (m_lightProbe == lightProbe)
         return;
 
-    updateProperyListener(lightProbe, m_lightProbe, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setLightProbe(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(lightProbe, m_lightProbe, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setLightProbe(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_lightProbe = lightProbe;
@@ -388,7 +388,7 @@ void QDemonSceneEnvironment::setLightProbe(QDemonImage *lightProbe)
     update();
 }
 
-void QDemonSceneEnvironment::setProbeBrightness(float probeBrightness)
+void QQuick3DSceneEnvironment::setProbeBrightness(float probeBrightness)
 {
     if (qFuzzyCompare(m_probeBrightness, probeBrightness))
         return;
@@ -398,7 +398,7 @@ void QDemonSceneEnvironment::setProbeBrightness(float probeBrightness)
     update();
 }
 
-void QDemonSceneEnvironment::setFastIBL(bool fastIBL)
+void QQuick3DSceneEnvironment::setFastIBL(bool fastIBL)
 {
     if (m_fastIBL == fastIBL)
         return;
@@ -408,7 +408,7 @@ void QDemonSceneEnvironment::setFastIBL(bool fastIBL)
     update();
 }
 
-void QDemonSceneEnvironment::setProbeHorizon(float probeHorizon)
+void QQuick3DSceneEnvironment::setProbeHorizon(float probeHorizon)
 {
     if (qFuzzyCompare(m_probeHorizon, probeHorizon))
         return;
@@ -418,7 +418,7 @@ void QDemonSceneEnvironment::setProbeHorizon(float probeHorizon)
     update();
 }
 
-void QDemonSceneEnvironment::setProbeFieldOfView(float probeFieldOfView)
+void QQuick3DSceneEnvironment::setProbeFieldOfView(float probeFieldOfView)
 {
     if (qFuzzyCompare(m_probeFieldOfView, probeFieldOfView))
         return;
@@ -428,13 +428,13 @@ void QDemonSceneEnvironment::setProbeFieldOfView(float probeFieldOfView)
     update();
 }
 
-void QDemonSceneEnvironment::setLightProbe2(QDemonImage *lightProbe2)
+void QQuick3DSceneEnvironment::setLightProbe2(QQuick3DTexture *lightProbe2)
 {
     if (m_lightProbe2 == lightProbe2)
         return;
 
-    updateProperyListener(lightProbe2, m_lightProbe2, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setLightProbe2(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(lightProbe2, m_lightProbe2, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setLightProbe2(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_lightProbe2 = lightProbe2;
@@ -442,7 +442,7 @@ void QDemonSceneEnvironment::setLightProbe2(QDemonImage *lightProbe2)
     update();
 }
 
-void QDemonSceneEnvironment::setProbe2Fade(float probe2Fade)
+void QQuick3DSceneEnvironment::setProbe2Fade(float probe2Fade)
 {
     if (qFuzzyCompare(m_probe2Fade, probe2Fade))
         return;
@@ -452,7 +452,7 @@ void QDemonSceneEnvironment::setProbe2Fade(float probe2Fade)
     update();
 }
 
-void QDemonSceneEnvironment::setProbe2Window(float probe2Window)
+void QQuick3DSceneEnvironment::setProbe2Window(float probe2Window)
 {
     if (qFuzzyCompare(m_probe2Window, probe2Window))
         return;
@@ -462,7 +462,7 @@ void QDemonSceneEnvironment::setProbe2Window(float probe2Window)
     update();
 }
 
-void QDemonSceneEnvironment::setProbe2Postion(float probe2Postion)
+void QQuick3DSceneEnvironment::setProbe2Postion(float probe2Postion)
 {
     if (qFuzzyCompare(m_probe2Postion, probe2Postion))
         return;
@@ -472,7 +472,7 @@ void QDemonSceneEnvironment::setProbe2Postion(float probe2Postion)
     update();
 }
 
-void QDemonSceneEnvironment::setIsDepthTestDisabled(bool isDepthTestDisabled)
+void QQuick3DSceneEnvironment::setIsDepthTestDisabled(bool isDepthTestDisabled)
 {
     if (m_isDepthTestDisabled == isDepthTestDisabled)
         return;
@@ -482,7 +482,7 @@ void QDemonSceneEnvironment::setIsDepthTestDisabled(bool isDepthTestDisabled)
     update();
 }
 
-void QDemonSceneEnvironment::setIsDepthPrePassDisabled(bool isDepthPrePassDisabled)
+void QQuick3DSceneEnvironment::setIsDepthPrePassDisabled(bool isDepthPrePassDisabled)
 {
     if (m_isDepthPrePassDisabled == isDepthPrePassDisabled)
         return;
@@ -492,34 +492,34 @@ void QDemonSceneEnvironment::setIsDepthPrePassDisabled(bool isDepthPrePassDisabl
     update();
 }
 
-QDemonRenderGraphObject *QDemonSceneEnvironment::updateSpatialNode(QDemonRenderGraphObject *node)
+QDemonRenderGraphObject *QQuick3DSceneEnvironment::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     // Don't do anything, these properties get set by the scene renderer
     return node;
 }
 
-void QDemonSceneEnvironment::itemChange(QDemonObject::ItemChange change, const QDemonObject::ItemChangeData &value)
+void QQuick3DSceneEnvironment::itemChange(QQuick3DObject::ItemChange change, const QQuick3DObject::ItemChangeData &value)
 {
-    if (change == QDemonObject::ItemSceneChange)
+    if (change == QQuick3DObject::ItemSceneChange)
         updateSceneManager(value.sceneRenderer);
 }
 
-void QDemonSceneEnvironment::updateSceneManager(QDemonSceneManager *manager)
+void QQuick3DSceneEnvironment::updateSceneManager(QQuick3DSceneManager *manager)
 {
     if (manager) {
         if (m_lightProbe)
-            QDemonObjectPrivate::get(m_lightProbe)->refSceneRenderer(manager);
+            QQuick3DObjectPrivate::get(m_lightProbe)->refSceneRenderer(manager);
         if (m_lightProbe2)
-            QDemonObjectPrivate::get(m_lightProbe2)->refSceneRenderer(manager);
+            QQuick3DObjectPrivate::get(m_lightProbe2)->refSceneRenderer(manager);
     } else {
         if (m_lightProbe)
-            QDemonObjectPrivate::get(m_lightProbe)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_lightProbe)->derefSceneRenderer();
         if (m_lightProbe2)
-            QDemonObjectPrivate::get(m_lightProbe2)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_lightProbe2)->derefSceneRenderer();
     }
 }
 
-void QDemonSceneEnvironment::setTemporalAAEnabled(bool temporalAAEnabled)
+void QQuick3DSceneEnvironment::setTemporalAAEnabled(bool temporalAAEnabled)
 {
     if (m_temporalAAEnabled == temporalAAEnabled)
         return;
@@ -529,29 +529,29 @@ void QDemonSceneEnvironment::setTemporalAAEnabled(bool temporalAAEnabled)
     update();
 }
 
-void QDemonSceneEnvironment::qmlAppendEffect(QQmlListProperty<QDemonEffect> *list, QDemonEffect *effect)
+void QQuick3DSceneEnvironment::qmlAppendEffect(QQmlListProperty<QQuick3DEffect> *list, QQuick3DEffect *effect)
 {
     if (effect == nullptr)
         return;
-    QDemonSceneEnvironment *self = static_cast<QDemonSceneEnvironment *>(list->object);
+    QQuick3DSceneEnvironment *self = static_cast<QQuick3DSceneEnvironment *>(list->object);
     self->m_effects.push_back(effect);
 }
 
-QDemonEffect *QDemonSceneEnvironment::qmlEffectAt(QQmlListProperty<QDemonEffect> *list, int index)
+QQuick3DEffect *QQuick3DSceneEnvironment::qmlEffectAt(QQmlListProperty<QQuick3DEffect> *list, int index)
 {
-    QDemonSceneEnvironment *self = static_cast<QDemonSceneEnvironment *>(list->object);
+    QQuick3DSceneEnvironment *self = static_cast<QQuick3DSceneEnvironment *>(list->object);
     return self->m_effects.at(index);
 }
 
-int QDemonSceneEnvironment::qmlEffectsCount(QQmlListProperty<QDemonEffect> *list)
+int QQuick3DSceneEnvironment::qmlEffectsCount(QQmlListProperty<QQuick3DEffect> *list)
 {
-    QDemonSceneEnvironment *self = static_cast<QDemonSceneEnvironment *>(list->object);
+    QQuick3DSceneEnvironment *self = static_cast<QQuick3DSceneEnvironment *>(list->object);
     return self->m_effects.count();
 }
 
-void QDemonSceneEnvironment::qmlClearEffects(QQmlListProperty<QDemonEffect> *list)
+void QQuick3DSceneEnvironment::qmlClearEffects(QQmlListProperty<QQuick3DEffect> *list)
 {
-    QDemonSceneEnvironment *self = static_cast<QDemonSceneEnvironment *>(list->object);
+    QQuick3DSceneEnvironment *self = static_cast<QQuick3DSceneEnvironment *>(list->object);
     self->m_effects.clear();
 }
 

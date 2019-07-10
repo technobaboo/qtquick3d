@@ -27,34 +27,35 @@
 **
 ****************************************************************************/
 
-#include "qdemondefaultmaterial.h"
-#include "qdemonobject_p.h"
+#include "qquick3ddefaultmaterial.h"
+#include "qquick3dobject_p.h"
+
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmltype DemonDefualtMaterial
-    \inqmlmodule QtDemon
+    \qmltype DefualtMaterial
+    \inqmlmodule QtQuick3D
     \brief Lets you define material for the 3D item
 */
-QDemonDefaultMaterial::QDemonDefaultMaterial()
+QQuick3DDefaultMaterial::QQuick3DDefaultMaterial()
     : m_diffuseColor(Qt::white)
     , m_emissiveColor(Qt::white)
     , m_specularTint(Qt::white)
 {}
 
-QDemonDefaultMaterial::~QDemonDefaultMaterial()
+QQuick3DDefaultMaterial::~QQuick3DDefaultMaterial()
 {
     for(auto connection : m_connections.values())
         disconnect(connection);
 }
 
-static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *window, QDemonDefaultMaterial::ConnectionMap &connections, std::function<void(QDemonObject *o)> callFn) {
+static void updateProperyListener(QQuick3DObject *newO, QQuick3DObject *oldO, QQuick3DSceneManager *window, QQuick3DDefaultMaterial::ConnectionMap &connections, std::function<void(QQuick3DObject *o)> callFn) {
     // disconnect previous destruction listern
     if (oldO) {
         if (window)
-            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(oldO)->derefSceneRenderer();
 
         auto connection = connections.find(oldO);
         if (connection != connections.end()) {
@@ -66,7 +67,7 @@ static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemon
     // listen for new map's destruction
     if (newO) {
         if (window)
-            QDemonObjectPrivate::get(newO)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(newO)->refSceneRenderer(window);
         auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
             callFn(nullptr);
         });
@@ -74,147 +75,147 @@ static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemon
     }
 }
 
-QDemonObject::Type QDemonDefaultMaterial::type() const
+QQuick3DObject::Type QQuick3DDefaultMaterial::type() const
 {
-    return QDemonObject::DefaultMaterial;
+    return QQuick3DObject::DefaultMaterial;
 }
 
-QDemonDefaultMaterial::QDemonDefaultMaterialLighting QDemonDefaultMaterial::lighting() const
+QQuick3DDefaultMaterial::QDemonDefaultMaterialLighting QQuick3DDefaultMaterial::lighting() const
 {
     return m_lighting;
 }
 
-QDemonDefaultMaterial::QDemonDefaultMaterialBlendMode QDemonDefaultMaterial::blendMode() const
+QQuick3DDefaultMaterial::QDemonDefaultMaterialBlendMode QQuick3DDefaultMaterial::blendMode() const
 {
     return m_blendMode;
 }
 
-QColor QDemonDefaultMaterial::diffuseColor() const
+QColor QQuick3DDefaultMaterial::diffuseColor() const
 {
     return m_diffuseColor;
 }
 
-QDemonImage *QDemonDefaultMaterial::diffuseMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::diffuseMap() const
 {
     return m_diffuseMap;
 }
 
-QDemonImage *QDemonDefaultMaterial::diffuseMap2() const
+QQuick3DTexture *QQuick3DDefaultMaterial::diffuseMap2() const
 {
     return m_diffuseMap2;
 }
 
-QDemonImage *QDemonDefaultMaterial::diffuseMap3() const
+QQuick3DTexture *QQuick3DDefaultMaterial::diffuseMap3() const
 {
     return m_diffuseMap3;
 }
 
-float QDemonDefaultMaterial::emissivePower() const
+float QQuick3DDefaultMaterial::emissivePower() const
 {
     return m_emissivePower;
 }
 
-QDemonImage *QDemonDefaultMaterial::emissiveMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::emissiveMap() const
 {
     return m_emissiveMap;
 }
 
-QColor QDemonDefaultMaterial::emissiveColor() const
+QColor QQuick3DDefaultMaterial::emissiveColor() const
 {
     return m_emissiveColor;
 }
 
-QDemonImage *QDemonDefaultMaterial::specularReflectionMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::specularReflectionMap() const
 {
     return m_specularReflectionMap;
 }
 
-QDemonImage *QDemonDefaultMaterial::specularMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::specularMap() const
 {
     return m_specularMap;
 }
 
-QDemonDefaultMaterial::QDemonDefaultMaterialSpecularModel QDemonDefaultMaterial::specularModel() const
+QQuick3DDefaultMaterial::QDemonDefaultMaterialSpecularModel QQuick3DDefaultMaterial::specularModel() const
 {
     return m_specularModel;
 }
 
-QColor QDemonDefaultMaterial::specularTint() const
+QColor QQuick3DDefaultMaterial::specularTint() const
 {
     return m_specularTint;
 }
 
-float QDemonDefaultMaterial::indexOfRefraction() const
+float QQuick3DDefaultMaterial::indexOfRefraction() const
 {
     return m_indexOfRefraction;
 }
 
-float QDemonDefaultMaterial::fresnelPower() const
+float QQuick3DDefaultMaterial::fresnelPower() const
 {
     return m_fresnelPower;
 }
 
-float QDemonDefaultMaterial::specularAmount() const
+float QQuick3DDefaultMaterial::specularAmount() const
 {
     return m_specularAmount;
 }
 
-float QDemonDefaultMaterial::specularRoughness() const
+float QQuick3DDefaultMaterial::specularRoughness() const
 {
     return m_specularRoughness;
 }
 
-QDemonImage *QDemonDefaultMaterial::roughnessMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::roughnessMap() const
 {
     return m_roughnessMap;
 }
 
-float QDemonDefaultMaterial::opacity() const
+float QQuick3DDefaultMaterial::opacity() const
 {
     return m_opacity;
 }
 
-QDemonImage *QDemonDefaultMaterial::opacityMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::opacityMap() const
 {
     return m_opacityMap;
 }
 
-QDemonImage *QDemonDefaultMaterial::bumpMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::bumpMap() const
 {
     return m_bumpMap;
 }
 
-float QDemonDefaultMaterial::bumpAmount() const
+float QQuick3DDefaultMaterial::bumpAmount() const
 {
     return m_bumpAmount;
 }
 
-QDemonImage *QDemonDefaultMaterial::normalMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::normalMap() const
 {
     return m_normalMap;
 }
 
-QDemonImage *QDemonDefaultMaterial::translucencyMap() const
+QQuick3DTexture *QQuick3DDefaultMaterial::translucencyMap() const
 {
     return m_translucencyMap;
 }
 
-float QDemonDefaultMaterial::translucentFalloff() const
+float QQuick3DDefaultMaterial::translucentFalloff() const
 {
     return m_translucentFalloff;
 }
 
-float QDemonDefaultMaterial::diffuseLightWrap() const
+float QQuick3DDefaultMaterial::diffuseLightWrap() const
 {
     return m_diffuseLightWrap;
 }
 
-bool QDemonDefaultMaterial::vertexColors() const
+bool QQuick3DDefaultMaterial::vertexColors() const
 {
     return m_vertexColors;
 }
 
-void QDemonDefaultMaterial::setLighting(QDemonDefaultMaterial::QDemonDefaultMaterialLighting lighting)
+void QQuick3DDefaultMaterial::setLighting(QQuick3DDefaultMaterial::QDemonDefaultMaterialLighting lighting)
 {
     if (m_lighting == lighting)
         return;
@@ -224,7 +225,7 @@ void QDemonDefaultMaterial::setLighting(QDemonDefaultMaterial::QDemonDefaultMate
     markDirty(LightingModeDirty);
 }
 
-void QDemonDefaultMaterial::setBlendMode(QDemonDefaultMaterial::QDemonDefaultMaterialBlendMode blendMode)
+void QQuick3DDefaultMaterial::setBlendMode(QQuick3DDefaultMaterial::QDemonDefaultMaterialBlendMode blendMode)
 {
     if (m_blendMode == blendMode)
         return;
@@ -234,7 +235,7 @@ void QDemonDefaultMaterial::setBlendMode(QDemonDefaultMaterial::QDemonDefaultMat
     markDirty(BlendModeDirty);
 }
 
-void QDemonDefaultMaterial::setDiffuseColor(QColor diffuseColor)
+void QQuick3DDefaultMaterial::setDiffuseColor(QColor diffuseColor)
 {
     if (m_diffuseColor == diffuseColor)
         return;
@@ -244,13 +245,13 @@ void QDemonDefaultMaterial::setDiffuseColor(QColor diffuseColor)
     markDirty(DiffuseDirty);
 }
 
-void QDemonDefaultMaterial::setDiffuseMap(QDemonImage *diffuseMap)
+void QQuick3DDefaultMaterial::setDiffuseMap(QQuick3DTexture *diffuseMap)
 {
     if (m_diffuseMap == diffuseMap)
         return;
 
-    updateProperyListener(diffuseMap, m_diffuseMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setDiffuseMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(diffuseMap, m_diffuseMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setDiffuseMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_diffuseMap = diffuseMap;
@@ -258,13 +259,13 @@ void QDemonDefaultMaterial::setDiffuseMap(QDemonImage *diffuseMap)
     markDirty(DiffuseDirty);
 }
 
-void QDemonDefaultMaterial::setDiffuseMap2(QDemonImage *diffuseMap2)
+void QQuick3DDefaultMaterial::setDiffuseMap2(QQuick3DTexture *diffuseMap2)
 {
     if (m_diffuseMap2 == diffuseMap2)
         return;
 
-    updateProperyListener(diffuseMap2, m_diffuseMap2, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setDiffuseMap2(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(diffuseMap2, m_diffuseMap2, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setDiffuseMap2(qobject_cast<QQuick3DTexture *>(n));
     });
 
 
@@ -273,13 +274,13 @@ void QDemonDefaultMaterial::setDiffuseMap2(QDemonImage *diffuseMap2)
     markDirty(DiffuseDirty);
 }
 
-void QDemonDefaultMaterial::setDiffuseMap3(QDemonImage *diffuseMap3)
+void QQuick3DDefaultMaterial::setDiffuseMap3(QQuick3DTexture *diffuseMap3)
 {
     if (m_diffuseMap3 == diffuseMap3)
         return;
 
-    updateProperyListener(diffuseMap3, m_diffuseMap3, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setDiffuseMap3(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(diffuseMap3, m_diffuseMap3, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setDiffuseMap3(qobject_cast<QQuick3DTexture *>(n));
     });
 
 
@@ -288,7 +289,7 @@ void QDemonDefaultMaterial::setDiffuseMap3(QDemonImage *diffuseMap3)
     markDirty(DiffuseDirty);
 }
 
-void QDemonDefaultMaterial::setEmissivePower(float emissivePower)
+void QQuick3DDefaultMaterial::setEmissivePower(float emissivePower)
 {
     if (qFuzzyCompare(m_emissivePower, emissivePower))
         return;
@@ -298,14 +299,14 @@ void QDemonDefaultMaterial::setEmissivePower(float emissivePower)
     markDirty(EmissiveDirty);
 }
 
-void QDemonDefaultMaterial::setEmissiveMap(QDemonImage *emissiveMap)
+void QQuick3DDefaultMaterial::setEmissiveMap(QQuick3DTexture *emissiveMap)
 {
     if (m_emissiveMap == emissiveMap)
         return;
 
 
-    updateProperyListener(emissiveMap, m_emissiveMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setEmissiveMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(emissiveMap, m_emissiveMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setEmissiveMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_emissiveMap = emissiveMap;
@@ -313,7 +314,7 @@ void QDemonDefaultMaterial::setEmissiveMap(QDemonImage *emissiveMap)
     markDirty(EmissiveDirty);
 }
 
-void QDemonDefaultMaterial::setEmissiveColor(QColor emissiveColor)
+void QQuick3DDefaultMaterial::setEmissiveColor(QColor emissiveColor)
 {
     if (m_emissiveColor == emissiveColor)
         return;
@@ -323,13 +324,13 @@ void QDemonDefaultMaterial::setEmissiveColor(QColor emissiveColor)
     markDirty(EmissiveDirty);
 }
 
-void QDemonDefaultMaterial::setSpecularReflectionMap(QDemonImage *specularReflectionMap)
+void QQuick3DDefaultMaterial::setSpecularReflectionMap(QQuick3DTexture *specularReflectionMap)
 {
     if (m_specularReflectionMap == specularReflectionMap)
         return;
 
-    updateProperyListener(specularReflectionMap, m_specularReflectionMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setSpecularReflectionMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(specularReflectionMap, m_specularReflectionMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setSpecularReflectionMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_specularReflectionMap = specularReflectionMap;
@@ -337,13 +338,13 @@ void QDemonDefaultMaterial::setSpecularReflectionMap(QDemonImage *specularReflec
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setSpecularMap(QDemonImage *specularMap)
+void QQuick3DDefaultMaterial::setSpecularMap(QQuick3DTexture *specularMap)
 {
     if (m_specularMap == specularMap)
         return;
 
-    updateProperyListener(specularMap, m_specularMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setSpecularMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(specularMap, m_specularMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setSpecularMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_specularMap = specularMap;
@@ -351,7 +352,7 @@ void QDemonDefaultMaterial::setSpecularMap(QDemonImage *specularMap)
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setSpecularModel(QDemonDefaultMaterial::QDemonDefaultMaterialSpecularModel specularModel)
+void QQuick3DDefaultMaterial::setSpecularModel(QQuick3DDefaultMaterial::QDemonDefaultMaterialSpecularModel specularModel)
 {
     if (m_specularModel == specularModel)
         return;
@@ -361,7 +362,7 @@ void QDemonDefaultMaterial::setSpecularModel(QDemonDefaultMaterial::QDemonDefaul
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setSpecularTint(QColor specularTint)
+void QQuick3DDefaultMaterial::setSpecularTint(QColor specularTint)
 {
     if (m_specularTint == specularTint)
         return;
@@ -371,7 +372,7 @@ void QDemonDefaultMaterial::setSpecularTint(QColor specularTint)
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setIndexOfRefraction(float indexOfRefraction)
+void QQuick3DDefaultMaterial::setIndexOfRefraction(float indexOfRefraction)
 {
     if (qFuzzyCompare(m_indexOfRefraction, indexOfRefraction))
         return;
@@ -381,7 +382,7 @@ void QDemonDefaultMaterial::setIndexOfRefraction(float indexOfRefraction)
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setFresnelPower(float fresnelPower)
+void QQuick3DDefaultMaterial::setFresnelPower(float fresnelPower)
 {
     if (qFuzzyCompare(m_fresnelPower, fresnelPower))
         return;
@@ -391,7 +392,7 @@ void QDemonDefaultMaterial::setFresnelPower(float fresnelPower)
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setSpecularAmount(float specularAmount)
+void QQuick3DDefaultMaterial::setSpecularAmount(float specularAmount)
 {
     if (qFuzzyCompare(m_specularAmount, specularAmount))
         return;
@@ -401,7 +402,7 @@ void QDemonDefaultMaterial::setSpecularAmount(float specularAmount)
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setSpecularRoughness(float specularRoughness)
+void QQuick3DDefaultMaterial::setSpecularRoughness(float specularRoughness)
 {
     if (qFuzzyCompare(m_specularRoughness, specularRoughness))
         return;
@@ -411,13 +412,13 @@ void QDemonDefaultMaterial::setSpecularRoughness(float specularRoughness)
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setRoughnessMap(QDemonImage *roughnessMap)
+void QQuick3DDefaultMaterial::setRoughnessMap(QQuick3DTexture *roughnessMap)
 {
     if (m_roughnessMap == roughnessMap)
         return;
 
-    updateProperyListener(roughnessMap, m_roughnessMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setRoughnessMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(roughnessMap, m_roughnessMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setRoughnessMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
 
@@ -426,7 +427,7 @@ void QDemonDefaultMaterial::setRoughnessMap(QDemonImage *roughnessMap)
     markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setOpacity(float opacity)
+void QQuick3DDefaultMaterial::setOpacity(float opacity)
 {
     if (qFuzzyCompare(m_opacity, opacity))
         return;
@@ -442,13 +443,13 @@ void QDemonDefaultMaterial::setOpacity(float opacity)
     markDirty(OpacityDirty);
 }
 
-void QDemonDefaultMaterial::setOpacityMap(QDemonImage *opacityMap)
+void QQuick3DDefaultMaterial::setOpacityMap(QQuick3DTexture *opacityMap)
 {
     if (m_opacityMap == opacityMap)
         return;
 
-    updateProperyListener(opacityMap, m_opacityMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setOpacityMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(opacityMap, m_opacityMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setOpacityMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_opacityMap = opacityMap;
@@ -456,13 +457,13 @@ void QDemonDefaultMaterial::setOpacityMap(QDemonImage *opacityMap)
     markDirty(OpacityDirty);
 }
 
-void QDemonDefaultMaterial::setBumpMap(QDemonImage *bumpMap)
+void QQuick3DDefaultMaterial::setBumpMap(QQuick3DTexture *bumpMap)
 {
     if (m_bumpMap == bumpMap)
         return;
 
-    updateProperyListener(bumpMap, m_bumpMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setBumpMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(bumpMap, m_bumpMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setBumpMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_bumpMap = bumpMap;
@@ -470,7 +471,7 @@ void QDemonDefaultMaterial::setBumpMap(QDemonImage *bumpMap)
     markDirty(BumpDirty);
 }
 
-void QDemonDefaultMaterial::setBumpAmount(float bumpAmount)
+void QQuick3DDefaultMaterial::setBumpAmount(float bumpAmount)
 {
     if (qFuzzyCompare(m_bumpAmount, bumpAmount))
         return;
@@ -480,13 +481,13 @@ void QDemonDefaultMaterial::setBumpAmount(float bumpAmount)
     markDirty(BumpDirty);
 }
 
-void QDemonDefaultMaterial::setNormalMap(QDemonImage *normalMap)
+void QQuick3DDefaultMaterial::setNormalMap(QQuick3DTexture *normalMap)
 {
     if (m_normalMap == normalMap)
         return;
 
-    updateProperyListener(normalMap, m_normalMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setNormalMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(normalMap, m_normalMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setNormalMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_normalMap = normalMap;
@@ -494,13 +495,13 @@ void QDemonDefaultMaterial::setNormalMap(QDemonImage *normalMap)
     markDirty(NormalDirty);
 }
 
-void QDemonDefaultMaterial::setTranslucencyMap(QDemonImage *translucencyMap)
+void QQuick3DDefaultMaterial::setTranslucencyMap(QQuick3DTexture *translucencyMap)
 {
     if (m_translucencyMap == translucencyMap)
         return;
 
-    updateProperyListener(translucencyMap, m_translucencyMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
-        setTranslucencyMap(qobject_cast<QDemonImage *>(n));
+    updateProperyListener(translucencyMap, m_translucencyMap, sceneRenderer(), m_connections, [this](QQuick3DObject *n) {
+        setTranslucencyMap(qobject_cast<QQuick3DTexture *>(n));
     });
 
     m_translucencyMap = translucencyMap;
@@ -508,7 +509,7 @@ void QDemonDefaultMaterial::setTranslucencyMap(QDemonImage *translucencyMap)
     markDirty(TranslucencyDirty);
 }
 
-void QDemonDefaultMaterial::setTranslucentFalloff(float translucentFalloff)
+void QQuick3DDefaultMaterial::setTranslucentFalloff(float translucentFalloff)
 {
     if (qFuzzyCompare(m_translucentFalloff, translucentFalloff))
         return;
@@ -518,7 +519,7 @@ void QDemonDefaultMaterial::setTranslucentFalloff(float translucentFalloff)
     markDirty(TranslucencyDirty);
 }
 
-void QDemonDefaultMaterial::setDiffuseLightWrap(float diffuseLightWrap)
+void QQuick3DDefaultMaterial::setDiffuseLightWrap(float diffuseLightWrap)
 {
     if (qFuzzyCompare(m_diffuseLightWrap, diffuseLightWrap))
         return;
@@ -528,7 +529,7 @@ void QDemonDefaultMaterial::setDiffuseLightWrap(float diffuseLightWrap)
     markDirty(DiffuseDirty);
 }
 
-void QDemonDefaultMaterial::setVertexColors(bool vertexColors)
+void QQuick3DDefaultMaterial::setVertexColors(bool vertexColors)
 {
     if (m_vertexColors == vertexColors)
         return;
@@ -538,13 +539,13 @@ void QDemonDefaultMaterial::setVertexColors(bool vertexColors)
     markDirty(VertexColorsDirty);
 }
 
-QDemonRenderGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
+QDemonRenderGraphObject *QQuick3DDefaultMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderDefaultMaterial();
 
     // Set common material properties
-    QDemonMaterial::updateSpatialNode(node);
+    QQuick3DMaterial::updateSpatialNode(node);
 
     QDemonRenderDefaultMaterial *material = static_cast<QDemonRenderDefaultMaterial *>(node);
 
@@ -646,65 +647,65 @@ QDemonRenderGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonRenderGr
     return node;
 }
 
-void QDemonDefaultMaterial::itemChange(QDemonObject::ItemChange change, const QDemonObject::ItemChangeData &value)
+void QQuick3DDefaultMaterial::itemChange(QQuick3DObject::ItemChange change, const QQuick3DObject::ItemChangeData &value)
 {
-    if (change == QDemonObject::ItemSceneChange)
+    if (change == QQuick3DObject::ItemSceneChange)
         updateSceneRenderer(value.sceneRenderer);
 }
 
-void QDemonDefaultMaterial::updateSceneRenderer(QDemonSceneManager *window)
+void QQuick3DDefaultMaterial::updateSceneRenderer(QQuick3DSceneManager *window)
 {
     // Check all the resource value's windows, and update as necessary
     if (window) {
         if (m_diffuseMap)
-            QDemonObjectPrivate::get(m_diffuseMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_diffuseMap)->refSceneRenderer(window);
         if (m_diffuseMap2)
-            QDemonObjectPrivate::get(m_diffuseMap2)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_diffuseMap2)->refSceneRenderer(window);
         if (m_diffuseMap3)
-            QDemonObjectPrivate::get(m_diffuseMap3)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_diffuseMap3)->refSceneRenderer(window);
         if (m_emissiveMap)
-            QDemonObjectPrivate::get(m_emissiveMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_emissiveMap)->refSceneRenderer(window);
         if (m_specularReflectionMap)
-            QDemonObjectPrivate::get(m_specularReflectionMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_specularReflectionMap)->refSceneRenderer(window);
         if (m_specularMap)
-            QDemonObjectPrivate::get(m_specularMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_specularMap)->refSceneRenderer(window);
         if (m_roughnessMap)
-            QDemonObjectPrivate::get(m_roughnessMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_roughnessMap)->refSceneRenderer(window);
         if (m_opacityMap)
-            QDemonObjectPrivate::get(m_opacityMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_opacityMap)->refSceneRenderer(window);
         if (m_bumpMap)
-            QDemonObjectPrivate::get(m_bumpMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_bumpMap)->refSceneRenderer(window);
         if (m_normalMap)
-            QDemonObjectPrivate::get(m_normalMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_normalMap)->refSceneRenderer(window);
         if (m_translucencyMap)
-            QDemonObjectPrivate::get(m_translucencyMap)->refSceneRenderer(window);
+            QQuick3DObjectPrivate::get(m_translucencyMap)->refSceneRenderer(window);
     } else {
         if (m_diffuseMap)
-            QDemonObjectPrivate::get(m_diffuseMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_diffuseMap)->derefSceneRenderer();
         if (m_diffuseMap2)
-            QDemonObjectPrivate::get(m_diffuseMap2)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_diffuseMap2)->derefSceneRenderer();
         if (m_diffuseMap3)
-            QDemonObjectPrivate::get(m_diffuseMap3)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_diffuseMap3)->derefSceneRenderer();
         if (m_emissiveMap)
-            QDemonObjectPrivate::get(m_emissiveMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_emissiveMap)->derefSceneRenderer();
         if (m_specularReflectionMap)
-            QDemonObjectPrivate::get(m_specularReflectionMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_specularReflectionMap)->derefSceneRenderer();
         if (m_specularMap)
-            QDemonObjectPrivate::get(m_specularMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_specularMap)->derefSceneRenderer();
         if (m_roughnessMap)
-            QDemonObjectPrivate::get(m_roughnessMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_roughnessMap)->derefSceneRenderer();
         if (m_opacityMap)
-            QDemonObjectPrivate::get(m_opacityMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_opacityMap)->derefSceneRenderer();
         if (m_bumpMap)
-            QDemonObjectPrivate::get(m_bumpMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_bumpMap)->derefSceneRenderer();
         if (m_normalMap)
-            QDemonObjectPrivate::get(m_normalMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_normalMap)->derefSceneRenderer();
         if (m_translucencyMap)
-            QDemonObjectPrivate::get(m_translucencyMap)->derefSceneRenderer();
+            QQuick3DObjectPrivate::get(m_translucencyMap)->derefSceneRenderer();
     }
 }
 
-void QDemonDefaultMaterial::markDirty(QDemonDefaultMaterial::QDemonDefaultMaterialDirtyType type)
+void QQuick3DDefaultMaterial::markDirty(QQuick3DDefaultMaterial::QDemonDefaultMaterialDirtyType type)
 {
     if (!(m_dirtyAttributes & quint32(type))) {
         m_dirtyAttributes |= quint32(type);

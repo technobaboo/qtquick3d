@@ -41,7 +41,7 @@
 // We mean it.
 //
 
-#include <QtQuick3d/qtquick3dglobal.h>
+#include <QtQuick3D/qtquick3dglobal.h>
 
 #define Q_QUICK3D_PRIVATE_EXPORT Q_QUICK3D_EXPORT
 

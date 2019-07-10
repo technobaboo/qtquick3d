@@ -30,26 +30,29 @@
 #ifndef QDEMONSCENEENVIRONMENT_H
 #define QDEMONSCENEENVIRONMENT_H
 
-#include <QObject>
-#include <QColor>
-#include <QVector>
-#include <QtQuick3d/qdemonnode.h>
-#include <QtQuick3d/qdemoneffect.h>
+#include <QtCore/QObject>
+#include <QtCore/QVector>
+
+#include <QtGui/QColor>
+
+#include <QtQuick3D/QQuick3DNode>
+#include <QtQuick3D/QQuick3DEffect>
+
 #include <QtQml/QQmlListProperty>
 
 QT_BEGIN_NAMESPACE
 
-class QDemonImage;
-class Q_QUICK3D_EXPORT QDemonSceneEnvironment : public QDemonObject
+class QQuick3DTexture;
+class Q_QUICK3D_EXPORT QQuick3DSceneEnvironment : public QQuick3DObject
 {
     Q_OBJECT
-    Q_PROPERTY(QQmlListProperty<QDemonEffect> effects READ effectsList)
-    Q_PROPERTY(QDemonEnvironmentAAModeValues progressiveAAMode READ progressiveAAMode WRITE setProgressiveAAMode NOTIFY progressiveAAModeChanged)
-    Q_PROPERTY(QDemonEnvironmentAAModeValues multisampleAAMode READ multisampleAAMode WRITE setMultisampleAAMode NOTIFY multisampleAAModeChanged)
+    Q_PROPERTY(QQmlListProperty<QQuick3DEffect> effects READ effectsList)
+    Q_PROPERTY(QQuick3DEnvironmentAAModeValues progressiveAAMode READ progressiveAAMode WRITE setProgressiveAAMode NOTIFY progressiveAAModeChanged)
+    Q_PROPERTY(QQuick3DEnvironmentAAModeValues multisampleAAMode READ multisampleAAMode WRITE setMultisampleAAMode NOTIFY multisampleAAModeChanged)
     Q_PROPERTY(bool temporalAAEnabled READ temporalAAEnabled WRITE setTemporalAAEnabled NOTIFY temporalAAEnabledChanged)
-    Q_PROPERTY(QDemonEnvironmentBackgroundTypes backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
+    Q_PROPERTY(QQuick3DEnvironmentBackgroundTypes backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
     Q_PROPERTY(QColor clearColor READ clearColor WRITE setClearColor NOTIFY clearColorChanged)
-    Q_PROPERTY(QDemonEnvironmentBlendTypes blendType READ blendType WRITE setBlendType NOTIFY blendTypeChanged)
+    Q_PROPERTY(QQuick3DEnvironmentBlendTypes blendType READ blendType WRITE setBlendType NOTIFY blendTypeChanged)
     Q_PROPERTY(bool isDepthTestDisabled READ isDepthTestDisabled WRITE setIsDepthTestDisabled NOTIFY isDepthTestDisabledChanged)
     Q_PROPERTY(bool isDepthPrePassDisabled READ isDepthPrePassDisabled WRITE setIsDepthPrePassDisabled NOTIFY isDepthPrePassDisabledChanged)
 
@@ -65,35 +68,35 @@ class Q_QUICK3D_EXPORT QDemonSceneEnvironment : public QDemonObject
     Q_PROPERTY(float shadowSoftness READ shadowSoftness WRITE setShadowSoftness NOTIFY shadowSoftnessChanged)
     Q_PROPERTY(float shadowBias READ shadowBias WRITE setShadowBias NOTIFY shadowBiasChanged)
 
-    Q_PROPERTY(QDemonImage *lightProbe READ lightProbe WRITE setLightProbe NOTIFY lightProbeChanged)
+    Q_PROPERTY(QQuick3DTexture *lightProbe READ lightProbe WRITE setLightProbe NOTIFY lightProbeChanged)
     Q_PROPERTY(float probeBrightness READ probeBrightness WRITE setProbeBrightness NOTIFY probeBrightnessChanged)
     Q_PROPERTY(bool fastIBL READ fastIBL WRITE setFastIBL NOTIFY fastIBLChanged)
     Q_PROPERTY(float probeHorizon READ probeHorizon WRITE setProbeHorizon NOTIFY probeHorizonChanged)
     Q_PROPERTY(float probeFieldOfView READ probeFieldOfView WRITE setProbeFieldOfView NOTIFY probeFieldOfViewChanged)
 
-    Q_PROPERTY(QDemonImage *lightProbe2 READ lightProbe2 WRITE setLightProbe2 NOTIFY lightProbe2Changed)
+    Q_PROPERTY(QQuick3DTexture *lightProbe2 READ lightProbe2 WRITE setLightProbe2 NOTIFY lightProbe2Changed)
     Q_PROPERTY(float probe2Fade READ probe2Fade WRITE setProbe2Fade NOTIFY probe2FadeChanged)
     Q_PROPERTY(float probe2Window READ probe2Window WRITE setProbe2Window NOTIFY probe2WindowChanged)
     Q_PROPERTY(float probe2Postion READ probe2Postion WRITE setProbe2Postion NOTIFY probe2PostionChanged)
 
 public:
-    enum QDemonEnvironmentAAModeValues {
+    enum QQuick3DEnvironmentAAModeValues {
         NoAA = 0,
         SSAA = 1,
         X2 = 2,
         X4 = 4,
         X8 = 8
     };
-    Q_ENUM(QDemonEnvironmentAAModeValues)
-    enum QDemonEnvironmentBackgroundTypes {
+    Q_ENUM(QQuick3DEnvironmentAAModeValues)
+    enum QQuick3DEnvironmentBackgroundTypes {
         Transparent = 0,
         Unspecified,
         Color,
         SkyBox
     };
-    Q_ENUM(QDemonEnvironmentBackgroundTypes)
+    Q_ENUM(QQuick3DEnvironmentBackgroundTypes)
 
-    enum QDemonEnvironmentBlendTypes {
+    enum QQuick3DEnvironmentBlendTypes {
         Normal = 0,
         Screen,
         Multiply,
@@ -103,19 +106,19 @@ public:
         ColorBurn,
         ColorDodge
     };
-    Q_ENUM(QDemonEnvironmentBlendTypes)
+    Q_ENUM(QQuick3DEnvironmentBlendTypes)
 
 
-    explicit QDemonSceneEnvironment(QDemonObject *parent = nullptr);
-    ~QDemonSceneEnvironment() override;
+    explicit QQuick3DSceneEnvironment(QQuick3DObject *parent = nullptr);
+    ~QQuick3DSceneEnvironment() override;
 
-    QDemonEnvironmentAAModeValues progressiveAAMode() const;
-    QDemonEnvironmentAAModeValues multisampleAAMode() const;
+    QQuick3DEnvironmentAAModeValues progressiveAAMode() const;
+    QQuick3DEnvironmentAAModeValues multisampleAAMode() const;
     bool temporalAAEnabled() const;
 
-    QDemonEnvironmentBackgroundTypes backgroundMode() const;
+    QQuick3DEnvironmentBackgroundTypes backgroundMode() const;
     QColor clearColor() const;
-    QDemonEnvironmentBlendTypes blendType() const;
+    QQuick3DEnvironmentBlendTypes blendType() const;
 
     float aoStrength() const;
     float aoDistance() const;
@@ -129,32 +132,32 @@ public:
     float shadowSoftness() const;
     float shadowBias() const;
 
-    QDemonImage *lightProbe() const;
+    QQuick3DTexture *lightProbe() const;
     float probeBrightness() const;
     bool fastIBL() const;
     float probeHorizon() const;
     float probeFieldOfView() const;
 
-    QDemonImage *lightProbe2() const;
+    QQuick3DTexture *lightProbe2() const;
     float probe2Fade() const;
     float probe2Window() const;
     float probe2Postion() const;
 
-    QQmlListProperty<QDemonEffect> effectsList();
+    QQmlListProperty<QQuick3DEffect> effectsList();
 
     bool isDepthTestDisabled() const;
     bool isDepthPrePassDisabled() const;
 
-    QDemonObject::Type type() const override;
+    QQuick3DObject::Type type() const override;
 
 public Q_SLOTS:
-    void setProgressiveAAMode(QDemonEnvironmentAAModeValues progressiveAAMode);
-    void setMultisampleAAMode(QDemonEnvironmentAAModeValues multisampleAAMode);
+    void setProgressiveAAMode(QQuick3DEnvironmentAAModeValues progressiveAAMode);
+    void setMultisampleAAMode(QQuick3DEnvironmentAAModeValues multisampleAAMode);
     void setTemporalAAEnabled(bool temporalAAEnabled);
 
-    void setBackgroundMode(QDemonEnvironmentBackgroundTypes backgroundMode);
+    void setBackgroundMode(QQuick3DEnvironmentBackgroundTypes backgroundMode);
     void setClearColor(QColor clearColor);
-    void setBlendType(QDemonEnvironmentBlendTypes blendType);
+    void setBlendType(QQuick3DEnvironmentBlendTypes blendType);
 
     void setAoStrength(float aoStrength);
     void setAoDistance(float aoDistance);
@@ -168,13 +171,13 @@ public Q_SLOTS:
     void setShadowSoftness(float shadowSoftness);
     void setShadowBias(float shadowBias);
 
-    void setLightProbe(QDemonImage *lightProbe);
+    void setLightProbe(QQuick3DTexture *lightProbe);
     void setProbeBrightness(float probeBrightness);
     void setFastIBL(bool fastIBL);
     void setProbeHorizon(float probeHorizon);
     void setProbeFieldOfView(float probeFieldOfView);
 
-    void setLightProbe2(QDemonImage *lightProbe2);
+    void setLightProbe2(QQuick3DTexture *lightProbe2);
     void setProbe2Fade(float probe2Fade);
     void setProbe2Window(float probe2Window);
     void setProbe2Postion(float probe2Postion);
@@ -183,13 +186,13 @@ public Q_SLOTS:
     void setIsDepthPrePassDisabled(bool isDepthPrePassDisabled);
 
 Q_SIGNALS:
-    void progressiveAAModeChanged(QDemonEnvironmentAAModeValues progressiveAAMode);
-    void multisampleAAModeChanged(QDemonEnvironmentAAModeValues multisampleAAMode);
+    void progressiveAAModeChanged(QQuick3DEnvironmentAAModeValues progressiveAAMode);
+    void multisampleAAModeChanged(QQuick3DEnvironmentAAModeValues multisampleAAMode);
     void temporalAAEnabledChanged(bool temporalAAEnabled);
 
-    void backgroundModeChanged(QDemonEnvironmentBackgroundTypes backgroundMode);
+    void backgroundModeChanged(QQuick3DEnvironmentBackgroundTypes backgroundMode);
     void clearColorChanged(QColor clearColor);
-    void blendTypeChanged(QDemonEnvironmentBlendTypes blendType);
+    void blendTypeChanged(QQuick3DEnvironmentBlendTypes blendType);
 
     void aoStrengthChanged(float aoStrength);
     void aoDistanceChanged(float aoDistance);
@@ -203,13 +206,13 @@ Q_SIGNALS:
     void shadowSoftnessChanged(float shadowSoftness);
     void shadowBiasChanged(float shadowBias);
 
-    void lightProbeChanged(QDemonImage *lightProbe);
+    void lightProbeChanged(QQuick3DTexture *lightProbe);
     void probeBrightnessChanged(float probeBrightness);
     void fastIBLChanged(bool fastIBL);
     void probeHorizonChanged(float probeHorizon);
     void probeFieldOfViewChanged(float probeFieldOfView);
 
-    void lightProbe2Changed(QDemonImage *lightProbe2);
+    void lightProbe2Changed(QQuick3DTexture *lightProbe2);
     void probe2FadeChanged(float probe2Fade);
     void probe2WindowChanged(float probe2Window);
     void probe2PostionChanged(float probe2Postion);
@@ -222,15 +225,15 @@ protected:
     void itemChange(ItemChange, const ItemChangeData &) override;
 
 private:
-    void updateSceneManager(QDemonSceneManager *manager);
+    void updateSceneManager(QQuick3DSceneManager *manager);
 
-    QDemonEnvironmentAAModeValues m_progressiveAAMode = NoAA;
-    QDemonEnvironmentAAModeValues m_multisampleAAMode = NoAA;
+    QQuick3DEnvironmentAAModeValues m_progressiveAAMode = NoAA;
+    QQuick3DEnvironmentAAModeValues m_multisampleAAMode = NoAA;
     bool m_temporalAAEnabled = false;
 
-    QDemonEnvironmentBackgroundTypes m_backgroundMode = Transparent;
+    QQuick3DEnvironmentBackgroundTypes m_backgroundMode = Transparent;
     QColor m_clearColor = Qt::black;
-    QDemonEnvironmentBlendTypes m_blendType = Normal;
+    QQuick3DEnvironmentBlendTypes m_blendType = Normal;
 
     float m_aoStrength = 0.0f;
     float m_aoDistance = 5.0f;
@@ -242,22 +245,22 @@ private:
     float m_shadowDistance = 10.0f;
     float m_shadowSoftness = 100.0f;
     float m_shadowBias = 0.0f;
-    QDemonImage *m_lightProbe = nullptr;
+    QQuick3DTexture *m_lightProbe = nullptr;
     float m_probeBrightness = 100.0f;
     bool m_fastIBL = false;
     float m_probeHorizon = -1.0f;
     float m_probeFieldOfView = 180.0f;
-    QDemonImage *m_lightProbe2 = nullptr;
+    QQuick3DTexture *m_lightProbe2 = nullptr;
     float m_probe2Fade = 1.0f;
     float m_probe2Window = 1.0f;
     float m_probe2Postion = 0.5f;
 
-    QVector<QDemonEffect *> m_effects;
+    QVector<QQuick3DEffect *> m_effects;
 
-    static void qmlAppendEffect(QQmlListProperty<QDemonEffect> *list, QDemonEffect *effect);
-    static QDemonEffect *qmlEffectAt(QQmlListProperty<QDemonEffect> *list, int index);
-    static int qmlEffectsCount(QQmlListProperty<QDemonEffect> *list);
-    static void qmlClearEffects(QQmlListProperty<QDemonEffect> *list);
+    static void qmlAppendEffect(QQmlListProperty<QQuick3DEffect> *list, QQuick3DEffect *effect);
+    static QQuick3DEffect *qmlEffectAt(QQmlListProperty<QQuick3DEffect> *list, int index);
+    static int qmlEffectsCount(QQmlListProperty<QQuick3DEffect> *list);
+    static void qmlClearEffects(QQmlListProperty<QQuick3DEffect> *list);
 
     QHash<QObject*, QMetaObject::Connection> m_connections;
     bool m_isDepthTestDisabled = false;

@@ -27,7 +27,7 @@
 **
 ****************************************************************************/
 
-#include "qdemonnode.h"
+#include "qquick3dnode.h"
 
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemon/qdemonutils.h>
@@ -37,77 +37,77 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmltype DemonNode
-    \inqmlmodule QtDemon
+    \qmltype Node
+    \inqmlmodule QtQuick3D
     \brief Lets you define a 3D item with necessary properties
 */
-QDemonNode::QDemonNode()
+QQuick3DNode::QQuick3DNode()
 {
 }
 
-QDemonNode::~QDemonNode() {}
+QQuick3DNode::~QQuick3DNode() {}
 
-float QDemonNode::x() const
+float QQuick3DNode::x() const
 {
     return m_position.x();
 }
 
-float QDemonNode::y() const
+float QQuick3DNode::y() const
 {
     return m_position.y();
 }
 
-float QDemonNode::z() const
+float QQuick3DNode::z() const
 {
     return m_position.z();
 }
 
-QVector3D QDemonNode::rotation() const
+QVector3D QQuick3DNode::rotation() const
 {
     return m_rotation;
 }
 
-QVector3D QDemonNode::position() const
+QVector3D QQuick3DNode::position() const
 {
     return m_position;
 }
 
-QVector3D QDemonNode::scale() const
+QVector3D QQuick3DNode::scale() const
 {
     return m_scale;
 }
 
-QVector3D QDemonNode::pivot() const
+QVector3D QQuick3DNode::pivot() const
 {
     return m_pivot;
 }
 
-float QDemonNode::localOpacity() const
+float QQuick3DNode::localOpacity() const
 {
     return m_opacity;
 }
 
-qint32 QDemonNode::skeletonId() const
+qint32 QQuick3DNode::skeletonId() const
 {
     return m_boneid;
 }
 
-QDemonNode::RotationOrder QDemonNode::rotationOrder() const
+QQuick3DNode::RotationOrder QQuick3DNode::rotationOrder() const
 {
     return m_rotationorder;
 }
 
-QDemonNode::Orientation QDemonNode::orientation() const
+QQuick3DNode::Orientation QQuick3DNode::orientation() const
 {
     return m_orientation;
 }
 
-bool QDemonNode::visible() const
+bool QQuick3DNode::visible() const
 {
     return m_visible;
 }
 
-QVector3D QDemonNode::forward() const
+QVector3D QQuick3DNode::forward() const
 {
     QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
@@ -116,7 +116,7 @@ QVector3D QDemonNode::forward() const
     return mat33::transform(theDirMatrix, frontVector).normalized();
 }
 
-QVector3D QDemonNode::up() const
+QVector3D QQuick3DNode::up() const
 {
     QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
@@ -125,7 +125,7 @@ QVector3D QDemonNode::up() const
     return mat33::transform(theDirMatrix, upVector).normalized();
 }
 
-QVector3D QDemonNode::right() const
+QVector3D QQuick3DNode::right() const
 {
     QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
@@ -134,22 +134,22 @@ QVector3D QDemonNode::right() const
     return mat33::transform(theDirMatrix, rightVector).normalized();
 }
 
-QVector3D QDemonNode::globalPosition() const
+QVector3D QQuick3DNode::globalPosition() const
 {
     return QVector3D(m_globalTransform(0, 3), m_globalTransform(1, 3), m_globalTransform(2, 3));
 }
 
-QMatrix4x4 QDemonNode::globalTransform() const
+QMatrix4x4 QQuick3DNode::globalTransform() const
 {
     return m_globalTransform;
 }
 
-QDemonObject::Type QDemonNode::type() const
+QQuick3DObject::Type QQuick3DNode::type() const
 {
-    return QDemonObject::Node;
+    return QQuick3DObject::Node;
 }
 
-void QDemonNode::setX(float x)
+void QQuick3DNode::setX(float x)
 {
     if (qFuzzyCompare(m_position.x(), x))
         return;
@@ -160,7 +160,7 @@ void QDemonNode::setX(float x)
     update();
 }
 
-void QDemonNode::setY(float y)
+void QQuick3DNode::setY(float y)
 {
     if (qFuzzyCompare(m_position.y(), y))
         return;
@@ -171,7 +171,7 @@ void QDemonNode::setY(float y)
     update();
 }
 
-void QDemonNode::setZ(float z)
+void QQuick3DNode::setZ(float z)
 {
     if (qFuzzyCompare(m_position.z(), z))
         return;
@@ -182,7 +182,7 @@ void QDemonNode::setZ(float z)
     update();
 }
 
-void QDemonNode::setRotation(QVector3D rotation)
+void QQuick3DNode::setRotation(QVector3D rotation)
 {
     if (m_rotation == rotation)
         return;
@@ -192,7 +192,7 @@ void QDemonNode::setRotation(QVector3D rotation)
     update();
 }
 
-void QDemonNode::setPosition(QVector3D position)
+void QQuick3DNode::setPosition(QVector3D position)
 {
     if (m_position == position)
         return;
@@ -214,7 +214,7 @@ void QDemonNode::setPosition(QVector3D position)
     update();
 }
 
-void QDemonNode::setScale(QVector3D scale)
+void QQuick3DNode::setScale(QVector3D scale)
 {
     if (m_scale == scale)
         return;
@@ -224,7 +224,7 @@ void QDemonNode::setScale(QVector3D scale)
     update();
 }
 
-void QDemonNode::setPivot(QVector3D pivot)
+void QQuick3DNode::setPivot(QVector3D pivot)
 {
     if (m_pivot == pivot)
         return;
@@ -234,7 +234,7 @@ void QDemonNode::setPivot(QVector3D pivot)
     update();
 }
 
-void QDemonNode::setLocalOpacity(float opacity)
+void QQuick3DNode::setLocalOpacity(float opacity)
 {
     if (qFuzzyCompare(m_opacity, opacity))
         return;
@@ -244,7 +244,7 @@ void QDemonNode::setLocalOpacity(float opacity)
     update();
 }
 
-void QDemonNode::setSkeletonId(qint32 boneid)
+void QQuick3DNode::setSkeletonId(qint32 boneid)
 {
     if (m_boneid == boneid)
         return;
@@ -254,7 +254,7 @@ void QDemonNode::setSkeletonId(qint32 boneid)
     update();
 }
 
-void QDemonNode::setRotationOrder(QDemonNode::RotationOrder rotationorder)
+void QQuick3DNode::setRotationOrder(QQuick3DNode::RotationOrder rotationorder)
 {
     if (m_rotationorder == rotationorder)
         return;
@@ -264,7 +264,7 @@ void QDemonNode::setRotationOrder(QDemonNode::RotationOrder rotationorder)
     update();
 }
 
-void QDemonNode::setOrientation(QDemonNode::Orientation orientation)
+void QQuick3DNode::setOrientation(QQuick3DNode::Orientation orientation)
 {
     if (m_orientation == orientation)
         return;
@@ -274,7 +274,7 @@ void QDemonNode::setOrientation(QDemonNode::Orientation orientation)
     update();
 }
 
-void QDemonNode::setVisible(bool visible)
+void QQuick3DNode::setVisible(bool visible)
 {
     if (m_visible == visible)
         return;
@@ -284,7 +284,7 @@ void QDemonNode::setVisible(bool visible)
     update();
 }
 
-QDemonRenderGraphObject *QDemonNode::updateSpatialNode(QDemonRenderGraphObject *node)
+QDemonRenderGraphObject *QQuick3DNode::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderNode();

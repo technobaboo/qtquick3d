@@ -30,43 +30,43 @@
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
 
-#include <QtQuick3d/qdemoncamera.h>
-#include <QtQuick3d/qdemoncustommaterial.h>
-#include <QtQuick3d/qdemondefaultmaterial.h>
-#include <QtQuick3d/qdemoneffect.h>
-#include <QtQuick3d/qdemonimage.h>
-#include <QtQuick3d/qdemonlight.h>
-#include <QtQuick3d/qdemonmaterial.h>
-#include <QtQuick3d/qdemonmodel.h>
-#include <QtQuick3d/qdemonnode.h>
-#include <QtQuick3d/qdemonobject.h>
-#include <QtQuick3d/qdemonview3d.h>
-#include <QtQuick3d/qdemonsceneenvironment.h>
+#include <QtQuick3D/QQuick3DCamera>
+#include <QtQuick3D/QQuick3DCustomMaterial>
+#include <QtQuick3D/QQuick3DDefaultMaterial>
+#include <QtQuick3D/QQuick3DEffect>
+#include <QtQuick3D/QQuick3DTexture>
+#include <QtQuick3D/QQuick3DLight>
+#include <QtQuick3D/QQuick3DMaterial>
+#include <QtQuick3D/QQuick3DModel>
+#include <QtQuick3D/QQuick3DNode>
+#include <QtQuick3D/QQuick3DObject>
+#include <QtQuick3D/QQuick3DView3D>
+#include <QtQuick3D/QQuick3DSceneEnvironment>
 
 #include <private/qqmlglobal_p.h>
 
 static void initResources()
 {
 #ifdef QT_STATIC
-    Q_INIT_RESOURCE(qmake_QtDemon);
+    Q_INIT_RESOURCE(qmake_QtQuick3D);
 #endif
 }
 
 QT_BEGIN_NAMESPACE
 
-static QQmlPrivate::AutoParentResult qdemonobject_autoParent(QObject *obj, QObject *parent)
+static QQmlPrivate::AutoParentResult qquick3dobject_autoParent(QObject *obj, QObject *parent)
 {
     // When setting a parent (especially during dynamic object creation) in QML,
     // also try to set up the analogous item/window relationship.
-    if (QDemonObject *parentItem = qmlobject_cast<QDemonObject *>(parent)) {
-        QDemonObject *item = qmlobject_cast<QDemonObject *>(obj);
+    if (QQuick3DObject *parentItem = qmlobject_cast<QQuick3DObject *>(parent)) {
+        QQuick3DObject *item = qmlobject_cast<QQuick3DObject *>(obj);
         if (item) {
             // An Item has another Item
             item->setParentItem(parentItem);
             return QQmlPrivate::Parented;
         }
         return QQmlPrivate::IncompatibleObject;
-    } else if (qmlobject_cast<QDemonObject *>(obj)) {
+    } else if (qmlobject_cast<QQuick3DObject *>(obj)) {
         return QQmlPrivate::IncompatibleParent;
     }
     return QQmlPrivate::IncompatibleObject;
@@ -81,31 +81,31 @@ public:
     QQuick3DPlugin(QObject *parent = nullptr) : QQmlExtensionPlugin(parent) { initResources(); }
     void registerTypes(const char *uri) override
     {
-        QQmlPrivate::RegisterAutoParent autoparent = { 0, &qdemonobject_autoParent };
+        QQmlPrivate::RegisterAutoParent autoparent = { 0, &qquick3dobject_autoParent };
         QQmlPrivate::qmlregister(QQmlPrivate::AutoParentRegistration, &autoparent);
 
-        qmlRegisterType<QDemonCamera>(uri, 1, 0, "Camera");
-        qmlRegisterType<QDemonCustomMaterial>(uri, 1, 0, "CustomMaterial");
-        qmlRegisterType<QDemonCustomMaterialShader>(uri, 1, 0, "CustomMaterialShader");
-        qmlRegisterType<QDemonCustomMaterialShaderInfo>(uri, 1, 0, "CustomMaterialShaderInfo");
-        qmlRegisterType<QDemonCustomMaterialTexture>(uri, 1, 0, "CustomMaterialTexture");
-        qmlRegisterType<QDemonCustomMaterialRenderPass>(uri, 1, 0, "CustomMaterialPass");
-        qmlRegisterType<QDemonCustomMaterialRenderCommand>(uri, 1, 0, "CustomMaterialCommand");
-        qmlRegisterType<QDemonCustomMaterialBufferInput>(uri, 1, 0, "CustomMaterialBufferInput");
-        qmlRegisterType<QDemonCustomMaterialBufferBlit>(uri, 1, 0, "CustomMaterialBufferBlit");
-        qmlRegisterType<QDemonCustomMaterialBlending>(uri, 1, 0, "CustomMaterialBlending");
-        qmlRegisterType<QDemonCustomMaterialBuffer>(uri, 1, 0, "CustomMaterialBuffer");
-        qmlRegisterType<QDemonCustomMaterialRenderState>(uri, 1, 0, "CustomMaterialRenderState");
-        qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DefaultMaterial");
-        qmlRegisterType<QDemonEffect>(uri, 1, 0, "Effect");
-        qmlRegisterType<QDemonImage>(uri, 1, 0, "Texture");
-        qmlRegisterType<QDemonLight>(uri, 1, 0, "Light");
-        qmlRegisterUncreatableType<QDemonMaterial>(uri, 1, 0, "Material", QLatin1String("Material is Abstract"));
-        qmlRegisterType<QDemonModel>(uri, 1, 0, "Model");
-        qmlRegisterType<QDemonNode>(uri, 1, 0, "Node");
-        qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "Object3D", QLatin1String("Object3D is Abtract"));
-        qmlRegisterType<QDemonView3D>(uri, 1, 0, "View3D");
-        qmlRegisterType<QDemonSceneEnvironment>(uri, 1, 0, "SceneEnvironment");
+        qmlRegisterType<QQuick3DCamera>(uri, 1, 0, "Camera");
+        qmlRegisterType<QQuick3DCustomMaterial>(uri, 1, 0, "CustomMaterial");
+        qmlRegisterType<QQuick3DCustomMaterialShader>(uri, 1, 0, "CustomMaterialShader");
+        qmlRegisterType<QQuick3DCustomMaterialShaderInfo>(uri, 1, 0, "CustomMaterialShaderInfo");
+        qmlRegisterType<QQuick3DCustomMaterialTexture>(uri, 1, 0, "CustomMaterialTexture");
+        qmlRegisterType<QQuick3DCustomMaterialRenderPass>(uri, 1, 0, "CustomMaterialPass");
+        qmlRegisterType<QQuick3DCustomMaterialRenderCommand>(uri, 1, 0, "CustomMaterialCommand");
+        qmlRegisterType<QQuick3DCustomMaterialBufferInput>(uri, 1, 0, "CustomMaterialBufferInput");
+        qmlRegisterType<QQuick3DCustomMaterialBufferBlit>(uri, 1, 0, "CustomMaterialBufferBlit");
+        qmlRegisterType<QQuick3DCustomMaterialBlending>(uri, 1, 0, "CustomMaterialBlending");
+        qmlRegisterType<QQuick3DCustomMaterialBuffer>(uri, 1, 0, "CustomMaterialBuffer");
+        qmlRegisterType<QQuick3DCustomMaterialRenderState>(uri, 1, 0, "CustomMaterialRenderState");
+        qmlRegisterType<QQuick3DDefaultMaterial>(uri, 1, 0, "DefaultMaterial");
+        qmlRegisterType<QQuick3DEffect>(uri, 1, 0, "Effect");
+        qmlRegisterType<QQuick3DTexture>(uri, 1, 0, "Texture");
+        qmlRegisterType<QQuick3DLight>(uri, 1, 0, "Light");
+        qmlRegisterUncreatableType<QQuick3DMaterial>(uri, 1, 0, "Material", QLatin1String("Material is Abstract"));
+        qmlRegisterType<QQuick3DModel>(uri, 1, 0, "Model");
+        qmlRegisterType<QQuick3DNode>(uri, 1, 0, "Node");
+        qmlRegisterUncreatableType<QQuick3DObject>(uri, 1, 0, "Object3D", QLatin1String("Object3D is Abtract"));
+        qmlRegisterType<QQuick3DView3D>(uri, 1, 0, "View3D");
+        qmlRegisterType<QQuick3DSceneEnvironment>(uri, 1, 0, "SceneEnvironment");
 
         qmlRegisterModule(uri, 1, QT_VERSION_MINOR);
     }

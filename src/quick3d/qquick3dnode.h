@@ -30,16 +30,16 @@
 #ifndef QDEMONNODE_H
 #define QDEMONNODE_H
 
-#include <QtQuick3d/qdemonobject.h>
+#include <QtQuick3D/QQuick3DObject>
 
-#include <QVector3D>
-#include <QMatrix4x4>
+#include <QtGui/QVector3D>
+#include <QtGui/QMatrix4x4>
 
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
 QT_BEGIN_NAMESPACE
 struct QDemonRenderNode;
-class Q_QUICK3D_EXPORT QDemonNode : public QDemonObject
+class Q_QUICK3D_EXPORT QQuick3DNode : public QQuick3DObject
 {
     Q_OBJECT
     Q_PROPERTY(float x READ x WRITE setX NOTIFY xChanged)
@@ -79,8 +79,8 @@ public:
 
     enum Orientation { LeftHanded = 0, RightHanded };
     Q_ENUM(Orientation)
-    QDemonNode();
-    ~QDemonNode() override;
+    QQuick3DNode();
+    ~QQuick3DNode() override;
 
     float x() const;
     float y() const;
@@ -101,7 +101,7 @@ public:
     QVector3D globalPosition() const;
     QMatrix4x4 globalTransform() const;
 
-    QDemonObject::Type type() const override;
+    QQuick3DObject::Type type() const override;
 
 public Q_SLOTS:
     void setX(float x);
@@ -146,7 +146,7 @@ private:
     Orientation m_orientation = LeftHanded;
     bool m_visible = true;
     QMatrix4x4 m_globalTransform;
-    friend QDemonSceneManager;
+    friend QQuick3DSceneManager;
 };
 
 QT_END_NAMESPACE

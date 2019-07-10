@@ -27,7 +27,7 @@
 **
 ****************************************************************************/
 
-#include "qdemoncamera.h"
+#include "qquick3dcamera.h"
 
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 
@@ -36,58 +36,58 @@
 
 QT_BEGIN_NAMESPACE
 /*!
-    \qmltype DemonCamera
-    \inqmlmodule QtDemon
+    \qmltype Camera
+    \inqmlmodule QtQuick3D
     \brief Lets you add a camera to view the 3D content
 */
-QDemonCamera::QDemonCamera() {}
+QQuick3DCamera::QQuick3DCamera() {}
 
-float QDemonCamera::clipNear() const
+float QQuick3DCamera::clipNear() const
 {
     return m_clipNear;
 }
 
-float QDemonCamera::clipFar() const
+float QQuick3DCamera::clipFar() const
 {
     return m_clipFar;
 }
 
-float QDemonCamera::fieldOfView() const
+float QQuick3DCamera::fieldOfView() const
 {
     return m_fieldOfView;
 }
 
-bool QDemonCamera::isFieldOFViewHorizontal() const
+bool QQuick3DCamera::isFieldOFViewHorizontal() const
 {
     return m_isFieldOFViewHorizontal;
 }
 
-QDemonCamera::QDemonCameraScaleModes QDemonCamera::scaleMode() const
+QQuick3DCamera::QDemonCameraScaleModes QQuick3DCamera::scaleMode() const
 {
     return m_scaleMode;
 }
 
-QDemonCamera::QDemonCameraScaleAnchors QDemonCamera::scaleAnchor() const
+QQuick3DCamera::QDemonCameraScaleAnchors QQuick3DCamera::scaleAnchor() const
 {
     return m_scaleAnchor;
 }
 
-QDemonObject::Type QDemonCamera::type() const
+QQuick3DObject::Type QQuick3DCamera::type() const
 {
-    return QDemonObject::Camera;
+    return QQuick3DObject::Camera;
 }
 
-QDemonRenderCamera *QDemonCamera::getCameraNode() const
+QDemonRenderCamera *QQuick3DCamera::getCameraNode() const
 {
     return m_cameraNode;
 }
 
-QDemonCamera::QDemonCameraProjectionMode QDemonCamera::projectionMode() const
+QQuick3DCamera::QDemonCameraProjectionMode QQuick3DCamera::projectionMode() const
 {
     return m_projectionMode;
 }
 
-void QDemonCamera::setClipNear(float clipNear)
+void QQuick3DCamera::setClipNear(float clipNear)
 {
     if (qFuzzyCompare(m_clipNear, clipNear))
         return;
@@ -97,7 +97,7 @@ void QDemonCamera::setClipNear(float clipNear)
     update();
 }
 
-void QDemonCamera::setClipFar(float clipFar)
+void QQuick3DCamera::setClipFar(float clipFar)
 {
     if (qFuzzyCompare(m_clipFar, clipFar))
         return;
@@ -107,7 +107,7 @@ void QDemonCamera::setClipFar(float clipFar)
     update();
 }
 
-void QDemonCamera::setFieldOfView(float fieldOfView)
+void QQuick3DCamera::setFieldOfView(float fieldOfView)
 {
     if (qFuzzyCompare(m_fieldOfView, fieldOfView))
         return;
@@ -117,7 +117,7 @@ void QDemonCamera::setFieldOfView(float fieldOfView)
     update();
 }
 
-void QDemonCamera::setIsFieldOFViewHorizontal(bool isFieldOFViewHorizontal)
+void QQuick3DCamera::setIsFieldOFViewHorizontal(bool isFieldOFViewHorizontal)
 {
     if (m_isFieldOFViewHorizontal == isFieldOFViewHorizontal)
         return;
@@ -127,7 +127,7 @@ void QDemonCamera::setIsFieldOFViewHorizontal(bool isFieldOFViewHorizontal)
     update();
 }
 
-void QDemonCamera::setScaleMode(QDemonCamera::QDemonCameraScaleModes scaleMode)
+void QQuick3DCamera::setScaleMode(QQuick3DCamera::QDemonCameraScaleModes scaleMode)
 {
     if (m_scaleMode == scaleMode)
         return;
@@ -137,7 +137,7 @@ void QDemonCamera::setScaleMode(QDemonCamera::QDemonCameraScaleModes scaleMode)
     update();
 }
 
-void QDemonCamera::setScaleAnchor(QDemonCamera::QDemonCameraScaleAnchors scaleAnchor)
+void QQuick3DCamera::setScaleAnchor(QQuick3DCamera::QDemonCameraScaleAnchors scaleAnchor)
 {
     if (m_scaleAnchor == scaleAnchor)
         return;
@@ -148,7 +148,7 @@ void QDemonCamera::setScaleAnchor(QDemonCamera::QDemonCameraScaleAnchors scaleAn
 }
 
 
-void QDemonCamera::setProjectionMode(QDemonCamera::QDemonCameraProjectionMode projectionMode)
+void QQuick3DCamera::setProjectionMode(QQuick3DCamera::QDemonCameraProjectionMode projectionMode)
 {
     if (m_projectionMode == projectionMode)
         return;
@@ -158,7 +158,7 @@ void QDemonCamera::setProjectionMode(QDemonCamera::QDemonCameraProjectionMode pr
     update();
 }
 
-void QDemonCamera::setEnableFrustumCulling(bool enableFrustumCulling)
+void QQuick3DCamera::setEnableFrustumCulling(bool enableFrustumCulling)
 {
     if (m_enableFrustumCulling == enableFrustumCulling)
         return;
@@ -177,7 +177,7 @@ void QDemonCamera::setEnableFrustumCulling(bool enableFrustumCulling)
  *
  * \sa QDemonView3D::worldToView QDemonCamera::viewportToWorld
  */
-QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
+QVector3D QQuick3DCamera::worldToViewport(const QVector3D &worldPos) const
 {
     if (!m_cameraNode)
         return QVector3D(-1, -1, -1);
@@ -222,7 +222,7 @@ QVector3D QDemonCamera::worldToViewport(const QVector3D &worldPos) const
  *
  * \sa QDemonView3D::viewToWorld QDemonCamera::worldToViewport
  */
-QVector3D QDemonCamera::viewportToWorld(const QVector3D &viewportPos) const
+QVector3D QQuick3DCamera::viewportToWorld(const QVector3D &viewportPos) const
 {
     if (!m_cameraNode)
         return QVector3D(-1, -1, -1);
@@ -262,17 +262,17 @@ QVector3D QDemonCamera::viewportToWorld(const QVector3D &viewportPos) const
     return worldPos;
 }
 
-bool QDemonCamera::enableFrustumCulling() const
+bool QQuick3DCamera::enableFrustumCulling() const
 {
     return m_enableFrustumCulling;
 }
 
-QDemonRenderGraphObject *QDemonCamera::updateSpatialNode(QDemonRenderGraphObject *node)
+QDemonRenderGraphObject *QQuick3DCamera::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderCamera();
 
-    QDemonNode::updateSpatialNode(node);
+    QQuick3DNode::updateSpatialNode(node);
 
     QDemonRenderCamera *camera = static_cast<QDemonRenderCamera *>(node);
 

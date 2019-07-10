@@ -30,15 +30,17 @@
 #ifndef QDEMONMODEL_H
 #define QDEMONMODEL_H
 
-#include <QtQuick3d/qdemonnode.h>
+#include <QtQuick3D/QQuick3DNode>
+#include <QtQuick3D/QQuick3DMaterial>
+
 #include <QtQml/QQmlListProperty>
-#include <QtQuick3d/QDemonMaterial>
+
 #include <QtCore/QVector>
 #include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
 
-class Q_QUICK3D_EXPORT QDemonModel : public QDemonNode
+class Q_QUICK3D_EXPORT QQuick3DModel : public QQuick3DNode
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
@@ -47,7 +49,7 @@ class Q_QUICK3D_EXPORT QDemonModel : public QDemonNode
     Q_PROPERTY(float edgeTess READ edgeTess WRITE setEdgeTess NOTIFY edgeTessChanged)
     Q_PROPERTY(float innerTess READ innerTess WRITE setInnerTess NOTIFY innerTessChanged)
     Q_PROPERTY(bool isWireframeMode READ isWireframeMode WRITE setIsWireframeMode NOTIFY isWireframeModeChanged)
-    Q_PROPERTY(QQmlListProperty<QDemonMaterial> materials READ materials)
+    Q_PROPERTY(QQmlListProperty<QQuick3DMaterial> materials READ materials)
 
 public:
     enum QDemonTessModeValues {
@@ -59,10 +61,10 @@ public:
     Q_ENUM(QDemonTessModeValues)
 
 
-    QDemonModel();
-    ~QDemonModel() override;
+    QQuick3DModel();
+    ~QQuick3DModel() override;
 
-    QDemonObject::Type type() const override;
+    QQuick3DObject::Type type() const override;
 
     QUrl source() const;
     int skeletonRoot() const;
@@ -71,7 +73,7 @@ public:
     float innerTess() const;
     bool isWireframeMode() const;
 
-    QQmlListProperty<QDemonMaterial> materials();
+    QQmlListProperty<QQuick3DMaterial> materials();
 
 public Q_SLOTS:
     void setSource(const QUrl &source);
@@ -114,12 +116,12 @@ private:
     quint32 m_dirtyAttributes = 0xffffffff; // all dirty by default
     void markDirty(QDemonModelDirtyType type);
 
-    static void qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDemonMaterial *material);
-    static QDemonMaterial *qmlMaterialAt(QQmlListProperty<QDemonMaterial> *list, int index);
-    static int qmlMaterialsCount(QQmlListProperty<QDemonMaterial> *list);
-    static void qmlClearMaterials(QQmlListProperty<QDemonMaterial> *list);
+    static void qmlAppendMaterial(QQmlListProperty<QQuick3DMaterial> *list, QQuick3DMaterial *material);
+    static QQuick3DMaterial *qmlMaterialAt(QQmlListProperty<QQuick3DMaterial> *list, int index);
+    static int qmlMaterialsCount(QQmlListProperty<QQuick3DMaterial> *list);
+    static void qmlClearMaterials(QQmlListProperty<QQuick3DMaterial> *list);
 
-    QVector<QDemonMaterial *> m_materials;
+    QVector<QQuick3DMaterial *> m_materials;
 };
 
 QT_END_NAMESPACE

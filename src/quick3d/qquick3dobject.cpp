@@ -27,9 +27,9 @@
 **
 ****************************************************************************/
 
-#include "qdemonobject.h"
-#include "qdemonobject_p.h"
-#include "qdemonscenemanager_p.h"
+#include "qquick3dobject.h"
+#include "qquick3dobject_p.h"
+#include "qquick3dscenemanager_p.h"
 
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQuick/private/qquickstategroup_p.h>
@@ -40,16 +40,16 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonObject::QDemonObject(QDemonObject *parent)
-    : QObject(*(new QDemonObjectPrivate), parent)
+QQuick3DObject::QQuick3DObject(QQuick3DObject *parent)
+    : QObject(*(new QQuick3DObjectPrivate), parent)
 {
-    Q_D(QDemonObject);
+    Q_D(QQuick3DObject);
     d->init(parent);
 }
 
-QDemonObject::~QDemonObject()
+QQuick3DObject::~QQuick3DObject()
 {
-    Q_D(QDemonObject);
+    Q_D(QQuick3DObject);
     if (d->windowRefCount > 1)
         d->windowRefCount = 1; // Make sure window is set to null in next call to derefWindow().
     if (d->parentItem)
@@ -65,20 +65,20 @@ QDemonObject::~QDemonObject()
     d->_stateGroup = nullptr;
 }
 
-void QDemonObject::update()
+void QQuick3DObject::update()
 {
-    Q_D(QDemonObject);
-    d->dirty(QDemonObjectPrivate::Content);
+    Q_D(QQuick3DObject);
+    d->dirty(QQuick3DObjectPrivate::Content);
 }
 
-void QDemonObject::setParentItem(QDemonObject *parentItem)
+void QQuick3DObject::setParentItem(QQuick3DObject *parentItem)
 {
-    Q_D(QDemonObject);
+    Q_D(QQuick3DObject);
     if (parentItem == d->parentItem)
         return;
 
     if (parentItem) {
-        QDemonObject *itemAncestor = parentItem;
+        QQuick3DObject *itemAncestor = parentItem;
         while (itemAncestor != nullptr) {
             if (Q_UNLIKELY(itemAncestor == this)) {
                 qWarning() << "QDemonObject::setParentItem: Parent" << parentItem << "is already part of the subtree of" << this;
@@ -90,10 +90,10 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
 
     d->removeFromDirtyList();
 
-    QDemonObject *oldParentItem = d->parentItem;
+    QQuick3DObject *oldParentItem = d->parentItem;
 
     if (oldParentItem) {
-        QDemonObjectPrivate *op = QDemonObjectPrivate::get(oldParentItem);
+        QQuick3DObjectPrivate *op = QQuick3DObjectPrivate::get(oldParentItem);
 
         const bool wasVisible = isVisible();
         op->removeChild(this);
@@ -104,7 +104,7 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
         d->sceneManager->parentlessItems.remove(this);
     }
 
-    QDemonSceneManager *parentSceneRenderer = parentItem ? QDemonObjectPrivate::get(parentItem)->sceneManager : nullptr;
+    QQuick3DSceneManager *parentSceneRenderer = parentItem ? QQuick3DObjectPrivate::get(parentItem)->sceneManager : nullptr;
     if (d->sceneManager == parentSceneRenderer) {
         // Avoid freeing and reallocating resources if the window stays the same.
         d->parentItem = parentItem;
@@ -116,10 +116,10 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
             d->refSceneRenderer(parentSceneRenderer);
     }
 
-    d->dirty(QDemonObjectPrivate::ParentChanged);
+    d->dirty(QQuick3DObjectPrivate::ParentChanged);
 
     if (d->parentItem)
-        QDemonObjectPrivate::get(d->parentItem)->addChild(this);
+        QQuick3DObjectPrivate::get(d->parentItem)->addChild(this);
     else if (d->sceneManager)
         d->sceneManager->parentlessItems.insert(this);
 
@@ -130,7 +130,7 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
         emit d->parentItem->visibleChildrenChanged();
 }
 
-void QDemonObject::setEnabled(bool enabled)
+void QQuick3DObject::setEnabled(bool enabled)
 {
     if (m_enabled == enabled)
         return;
@@ -139,7 +139,7 @@ void QDemonObject::setEnabled(bool enabled)
     emit enabledChanged(m_enabled);
 }
 
-void QDemonObject::setVisible(bool visible)
+void QQuick3DObject::setVisible(bool visible)
 {
     if (m_visible == visible)
         return;
@@ -148,84 +148,84 @@ void QDemonObject::setVisible(bool visible)
     emit visibleChanged(m_visible);
 }
 
-QByteArray QDemonObject::id() const
+QByteArray QQuick3DObject::id() const
 {
     return m_id;
 }
 
-QString QDemonObject::name() const
+QString QQuick3DObject::name() const
 {
     return m_name;
 }
 
-QString QDemonObject::state() const
+QString QQuick3DObject::state() const
 {
-    Q_D(const QDemonObject);
+    Q_D(const QQuick3DObject);
     return d->state();
 }
 
-void QDemonObject::setState(const QString &state)
+void QQuick3DObject::setState(const QString &state)
 {
-    Q_D(QDemonObject);
+    Q_D(QQuick3DObject);
     d->setState(state);
 }
 
-QList<QDemonObject *> QDemonObject::childItems() const
+QList<QQuick3DObject *> QQuick3DObject::childItems() const
 {
-    Q_D(const QDemonObject);
+    Q_D(const QQuick3DObject);
     return d->childItems;
 }
 
-QDemonSceneManager *QDemonObject::sceneRenderer() const
+QQuick3DSceneManager *QQuick3DObject::sceneRenderer() const
 {
-    Q_D(const QDemonObject);
+    Q_D(const QQuick3DObject);
     return d->sceneManager;
 }
 
-QDemonObject *QDemonObject::parentItem() const
+QQuick3DObject *QQuick3DObject::parentItem() const
 {
-    Q_D(const QDemonObject);
+    Q_D(const QQuick3DObject);
     return d->parentItem;
 }
 
-bool QDemonObject::isEnabled() const
+bool QQuick3DObject::isEnabled() const
 {
     return m_enabled;
 }
 
-bool QDemonObject::isVisible() const
+bool QQuick3DObject::isVisible() const
 {
     return m_visible;
 }
 
-void QDemonObject::setName(QString name)
+void QQuick3DObject::setName(QString name)
 {
     m_name = name;
 }
 
-void QDemonObject::itemChange(QDemonObject::ItemChange change, const QDemonObject::ItemChangeData &value)
+void QQuick3DObject::itemChange(QQuick3DObject::ItemChange change, const QQuick3DObject::ItemChangeData &value)
 {
     if (change == ItemSceneChange)
         emit sceneRendererChanged(value.sceneRenderer);
 }
 
-QDemonObject::QDemonObject(QDemonObjectPrivate &dd, QDemonObject *parent) : QObject(dd, parent)
+QQuick3DObject::QQuick3DObject(QQuick3DObjectPrivate &dd, QQuick3DObject *parent) : QObject(dd, parent)
 {
-    Q_D(QDemonObject);
+    Q_D(QQuick3DObject);
     d->init(parent);
 }
 
-void QDemonObject::classBegin()
+void QQuick3DObject::classBegin()
 {
-    Q_D(QDemonObject);
+    Q_D(QQuick3DObject);
     d->componentComplete = false;
     if (d->_stateGroup)
         d->_stateGroup->classBegin();
 }
 
-void QDemonObject::componentComplete()
+void QQuick3DObject::componentComplete()
 {
-    Q_D(QDemonObject);
+    Q_D(QQuick3DObject);
     d->componentComplete = true;
     if (d->_stateGroup)
         d->_stateGroup->componentComplete();
@@ -236,7 +236,7 @@ void QDemonObject::componentComplete()
     }
 }
 
-QDemonObjectPrivate::QDemonObjectPrivate()
+QQuick3DObjectPrivate::QQuick3DObjectPrivate()
     : _stateGroup(nullptr)
     , dirtyAttributes(0)
     , nextDirtyItem(nullptr)
@@ -249,66 +249,66 @@ QDemonObjectPrivate::QDemonObjectPrivate()
 {
 }
 
-QDemonObjectPrivate::~QDemonObjectPrivate()
+QQuick3DObjectPrivate::~QQuick3DObjectPrivate()
 {
     if (sortedChildItems != &childItems)
         delete sortedChildItems;
 }
 
-void QDemonObjectPrivate::init(QDemonObject *parent)
+void QQuick3DObjectPrivate::init(QQuick3DObject *parent)
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
 
     if (parent)
         q->setParentItem(parent);
 }
 
-QQmlListProperty<QObject> QDemonObjectPrivate::data()
+QQmlListProperty<QObject> QQuick3DObjectPrivate::data()
 {
     return QQmlListProperty<QObject>(q_func(),
                                      nullptr,
-                                     QDemonObjectPrivate::data_append,
-                                     QDemonObjectPrivate::data_count,
-                                     QDemonObjectPrivate::data_at,
-                                     QDemonObjectPrivate::data_clear);
+                                     QQuick3DObjectPrivate::data_append,
+                                     QQuick3DObjectPrivate::data_count,
+                                     QQuick3DObjectPrivate::data_at,
+                                     QQuick3DObjectPrivate::data_clear);
 }
 
-QQmlListProperty<QObject> QDemonObjectPrivate::resources()
+QQmlListProperty<QObject> QQuick3DObjectPrivate::resources()
 {
     return QQmlListProperty<QObject>(q_func(),
                                      nullptr,
-                                     QDemonObjectPrivate::resources_append,
-                                     QDemonObjectPrivate::resources_count,
-                                     QDemonObjectPrivate::resources_at,
-                                     QDemonObjectPrivate::resources_clear);
+                                     QQuick3DObjectPrivate::resources_append,
+                                     QQuick3DObjectPrivate::resources_count,
+                                     QQuick3DObjectPrivate::resources_at,
+                                     QQuick3DObjectPrivate::resources_clear);
 }
 
-QQmlListProperty<QDemonObject> QDemonObjectPrivate::children()
+QQmlListProperty<QQuick3DObject> QQuick3DObjectPrivate::children()
 {
-    return QQmlListProperty<QDemonObject>(q_func(),
+    return QQmlListProperty<QQuick3DObject>(q_func(),
                                           nullptr,
-                                          QDemonObjectPrivate::children_append,
-                                          QDemonObjectPrivate::children_count,
-                                          QDemonObjectPrivate::children_at,
-                                          QDemonObjectPrivate::children_clear);
+                                          QQuick3DObjectPrivate::children_append,
+                                          QQuick3DObjectPrivate::children_count,
+                                          QQuick3DObjectPrivate::children_at,
+                                          QQuick3DObjectPrivate::children_clear);
 }
 
-QQmlListProperty<QDemonObject> QDemonObjectPrivate::visibleChildren()
+QQmlListProperty<QQuick3DObject> QQuick3DObjectPrivate::visibleChildren()
 {
-    return QQmlListProperty<QDemonObject>(q_func(), nullptr, QDemonObjectPrivate::visibleChildren_count, QDemonObjectPrivate::visibleChildren_at);
+    return QQmlListProperty<QQuick3DObject>(q_func(), nullptr, QQuick3DObjectPrivate::visibleChildren_count, QQuick3DObjectPrivate::visibleChildren_at);
 }
 
-QQmlListProperty<QQuickState> QDemonObjectPrivate::states()
+QQmlListProperty<QQuickState> QQuick3DObjectPrivate::states()
 {
     return _states()->statesProperty();
 }
 
-QQmlListProperty<QQuickTransition> QDemonObjectPrivate::transitions()
+QQmlListProperty<QQuickTransition> QQuick3DObjectPrivate::transitions()
 {
     return _states()->transitionsProperty();
 }
 
-QString QDemonObjectPrivate::state() const
+QString QQuick3DObjectPrivate::state() const
 {
     if (!_stateGroup)
         return QString();
@@ -316,19 +316,19 @@ QString QDemonObjectPrivate::state() const
         return _stateGroup->state();
 }
 
-void QDemonObjectPrivate::setState(const QString &state)
+void QQuick3DObjectPrivate::setState(const QString &state)
 {
     _states()->setState(state);
 }
 
-void QDemonObjectPrivate::data_append(QQmlListProperty<QObject> *prop, QObject *o)
+void QQuick3DObjectPrivate::data_append(QQmlListProperty<QObject> *prop, QObject *o)
 {
     if (!o)
         return;
 
-    QDemonObject *that = static_cast<QDemonObject *>(prop->object);
+    QQuick3DObject *that = static_cast<QQuick3DObject *>(prop->object);
 
-    if (QDemonObject *item = qmlobject_cast<QDemonObject *>(o)) {
+    if (QQuick3DObject *item = qmlobject_cast<QQuick3DObject *>(o)) {
         item->setParentItem(that);
     } else {
 //        QDemonSceneRenderer *thisSceneRenderer = qmlobject_cast<QDemonSceneRenderer *>(o);
@@ -353,22 +353,22 @@ void QDemonObjectPrivate::data_append(QQmlListProperty<QObject> *prop, QObject *
     resources_append(prop, o);
 }
 
-int QDemonObjectPrivate::data_count(QQmlListProperty<QObject> *property)
+int QQuick3DObjectPrivate::data_count(QQmlListProperty<QObject> *property)
 {
-    QDemonObject *item = static_cast<QDemonObject *>(property->object);
-    QDemonObjectPrivate *privateItem = QDemonObjectPrivate::get(item);
+    QQuick3DObject *item = static_cast<QQuick3DObject *>(property->object);
+    QQuick3DObjectPrivate *privateItem = QQuick3DObjectPrivate::get(item);
     QQmlListProperty<QObject> resourcesProperty = privateItem->resources();
-    QQmlListProperty<QDemonObject> childrenProperty = privateItem->children();
+    QQmlListProperty<QQuick3DObject> childrenProperty = privateItem->children();
 
     return resources_count(&resourcesProperty) + children_count(&childrenProperty);
 }
 
-QObject *QDemonObjectPrivate::data_at(QQmlListProperty<QObject> *property, int i)
+QObject *QQuick3DObjectPrivate::data_at(QQmlListProperty<QObject> *property, int i)
 {
-    QDemonObject *item = static_cast<QDemonObject *>(property->object);
-    QDemonObjectPrivate *privateItem = QDemonObjectPrivate::get(item);
+    QQuick3DObject *item = static_cast<QQuick3DObject *>(property->object);
+    QQuick3DObjectPrivate *privateItem = QQuick3DObjectPrivate::get(item);
     QQmlListProperty<QObject> resourcesProperty = privateItem->resources();
-    QQmlListProperty<QDemonObject> childrenProperty = privateItem->children();
+    QQmlListProperty<QQuick3DObject> childrenProperty = privateItem->children();
 
     int resourcesCount = resources_count(&resourcesProperty);
     if (i < resourcesCount)
@@ -379,95 +379,95 @@ QObject *QDemonObjectPrivate::data_at(QQmlListProperty<QObject> *property, int i
     return nullptr;
 }
 
-void QDemonObjectPrivate::data_clear(QQmlListProperty<QObject> *property)
+void QQuick3DObjectPrivate::data_clear(QQmlListProperty<QObject> *property)
 {
-    QDemonObject *item = static_cast<QDemonObject *>(property->object);
-    QDemonObjectPrivate *privateItem = QDemonObjectPrivate::get(item);
+    QQuick3DObject *item = static_cast<QQuick3DObject *>(property->object);
+    QQuick3DObjectPrivate *privateItem = QQuick3DObjectPrivate::get(item);
     QQmlListProperty<QObject> resourcesProperty = privateItem->resources();
-    QQmlListProperty<QDemonObject> childrenProperty = privateItem->children();
+    QQmlListProperty<QQuick3DObject> childrenProperty = privateItem->children();
 
     resources_clear(&resourcesProperty);
     children_clear(&childrenProperty);
 }
 
-QObject *QDemonObjectPrivate::resources_at(QQmlListProperty<QObject> *prop, int index)
+QObject *QQuick3DObjectPrivate::resources_at(QQmlListProperty<QObject> *prop, int index)
 {
-    QDemonObjectPrivate *quickItemPrivate = QDemonObjectPrivate::get(static_cast<QDemonObject *>(prop->object));
+    QQuick3DObjectPrivate *quickItemPrivate = QQuick3DObjectPrivate::get(static_cast<QQuick3DObject *>(prop->object));
     return quickItemPrivate->extra.isAllocated() ? quickItemPrivate->extra->resourcesList.value(index) : 0;
 }
 
-void QDemonObjectPrivate::resources_append(QQmlListProperty<QObject> *prop, QObject *object)
+void QQuick3DObjectPrivate::resources_append(QQmlListProperty<QObject> *prop, QObject *object)
 {
-    QDemonObject *quickItem = static_cast<QDemonObject *>(prop->object);
-    QDemonObjectPrivate *quickItemPrivate = QDemonObjectPrivate::get(quickItem);
+    QQuick3DObject *quickItem = static_cast<QQuick3DObject *>(prop->object);
+    QQuick3DObjectPrivate *quickItemPrivate = QQuick3DObjectPrivate::get(quickItem);
     if (!quickItemPrivate->extra.value().resourcesList.contains(object)) {
         quickItemPrivate->extra.value().resourcesList.append(object);
         // clang-format off
         qmlobject_connect(object, QObject, SIGNAL(destroyed(QObject*)),
-                          quickItem, QDemonObject, SLOT(_q_resourceObjectDeleted(QObject*)));
+                          quickItem, QQuick3DObject, SLOT(_q_resourceObjectDeleted(QObject*)));
         // clang-format on
     }
 }
 
-int QDemonObjectPrivate::resources_count(QQmlListProperty<QObject> *prop)
+int QQuick3DObjectPrivate::resources_count(QQmlListProperty<QObject> *prop)
 {
-    QDemonObjectPrivate *quickItemPrivate = QDemonObjectPrivate::get(static_cast<QDemonObject *>(prop->object));
+    QQuick3DObjectPrivate *quickItemPrivate = QQuick3DObjectPrivate::get(static_cast<QQuick3DObject *>(prop->object));
     return quickItemPrivate->extra.isAllocated() ? quickItemPrivate->extra->resourcesList.count() : 0;
 }
 
-void QDemonObjectPrivate::resources_clear(QQmlListProperty<QObject> *prop)
+void QQuick3DObjectPrivate::resources_clear(QQmlListProperty<QObject> *prop)
 {
-    QDemonObject *quickItem = static_cast<QDemonObject *>(prop->object);
-    QDemonObjectPrivate *quickItemPrivate = QDemonObjectPrivate::get(quickItem);
+    QQuick3DObject *quickItem = static_cast<QQuick3DObject *>(prop->object);
+    QQuick3DObjectPrivate *quickItemPrivate = QQuick3DObjectPrivate::get(quickItem);
     if (quickItemPrivate->extra.isAllocated()) { // If extra is not allocated resources is empty.
         for (QObject *object : qAsConst(quickItemPrivate->extra->resourcesList)) {
             // clang-format off
             qmlobject_disconnect(object, QObject, SIGNAL(destroyed(QObject*)),
-                                 quickItem, QDemonObject, SLOT(_q_resourceObjectDeleted(QObject*)));
+                                 quickItem, QQuick3DObject, SLOT(_q_resourceObjectDeleted(QObject*)));
             // clang-format on
         }
         quickItemPrivate->extra->resourcesList.clear();
     }
 }
 
-void QDemonObjectPrivate::children_append(QQmlListProperty<QDemonObject> *prop, QDemonObject *o)
+void QQuick3DObjectPrivate::children_append(QQmlListProperty<QQuick3DObject> *prop, QQuick3DObject *o)
 {
     if (!o)
         return;
 
-    QDemonObject *that = static_cast<QDemonObject *>(prop->object);
+    QQuick3DObject *that = static_cast<QQuick3DObject *>(prop->object);
     if (o->parentItem() == that)
         o->setParentItem(nullptr);
 
     o->setParentItem(that);
 }
 
-int QDemonObjectPrivate::children_count(QQmlListProperty<QDemonObject> *prop)
+int QQuick3DObjectPrivate::children_count(QQmlListProperty<QQuick3DObject> *prop)
 {
-    QDemonObjectPrivate *p = QDemonObjectPrivate::get(static_cast<QDemonObject *>(prop->object));
+    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(static_cast<QQuick3DObject *>(prop->object));
     return p->childItems.count();
 }
 
-QDemonObject *QDemonObjectPrivate::children_at(QQmlListProperty<QDemonObject> *prop, int index)
+QQuick3DObject *QQuick3DObjectPrivate::children_at(QQmlListProperty<QQuick3DObject> *prop, int index)
 {
-    QDemonObjectPrivate *p = QDemonObjectPrivate::get(static_cast<QDemonObject *>(prop->object));
+    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(static_cast<QQuick3DObject *>(prop->object));
     if (index >= p->childItems.count() || index < 0)
         return nullptr;
     else
         return p->childItems.at(index);
 }
 
-void QDemonObjectPrivate::children_clear(QQmlListProperty<QDemonObject> *prop)
+void QQuick3DObjectPrivate::children_clear(QQmlListProperty<QQuick3DObject> *prop)
 {
-    QDemonObject *that = static_cast<QDemonObject *>(prop->object);
-    QDemonObjectPrivate *p = QDemonObjectPrivate::get(that);
+    QQuick3DObject *that = static_cast<QQuick3DObject *>(prop->object);
+    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(that);
     while (!p->childItems.isEmpty())
         p->childItems.at(0)->setParentItem(nullptr);
 }
 
-int QDemonObjectPrivate::visibleChildren_count(QQmlListProperty<QDemonObject> *prop)
+int QQuick3DObjectPrivate::visibleChildren_count(QQmlListProperty<QQuick3DObject> *prop)
 {
-    QDemonObjectPrivate *p = QDemonObjectPrivate::get(static_cast<QDemonObject *>(prop->object));
+    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(static_cast<QQuick3DObject *>(prop->object));
     int visibleCount = 0;
     int c = p->childItems.count();
     while (c--) {
@@ -478,9 +478,9 @@ int QDemonObjectPrivate::visibleChildren_count(QQmlListProperty<QDemonObject> *p
     return visibleCount;
 }
 
-QDemonObject *QDemonObjectPrivate::visibleChildren_at(QQmlListProperty<QDemonObject> *prop, int index)
+QQuick3DObject *QQuick3DObjectPrivate::visibleChildren_at(QQmlListProperty<QQuick3DObject> *prop, int index)
 {
-    QDemonObjectPrivate *p = QDemonObjectPrivate::get(static_cast<QDemonObject *>(prop->object));
+    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(static_cast<QQuick3DObject *>(prop->object));
     const int childCount = p->childItems.count();
     if (index >= childCount || index < 0)
         return nullptr;
@@ -495,18 +495,18 @@ QDemonObject *QDemonObjectPrivate::visibleChildren_at(QQmlListProperty<QDemonObj
     return nullptr;
 }
 
-void QDemonObjectPrivate::_q_resourceObjectDeleted(QObject *object)
+void QQuick3DObjectPrivate::_q_resourceObjectDeleted(QObject *object)
 {
     if (extra.isAllocated() && extra->resourcesList.contains(object))
         extra->resourcesList.removeAll(object);
 }
 
-void QDemonObjectPrivate::addItemChangeListener(QDemonObjectChangeListener *listener, ChangeTypes types)
+void QQuick3DObjectPrivate::addItemChangeListener(QQuick3DObjectChangeListener *listener, ChangeTypes types)
 {
     changeListeners.append(ChangeListener(listener, types));
 }
 
-void QDemonObjectPrivate::updateOrAddItemChangeListener(QDemonObjectChangeListener *listener, ChangeTypes types)
+void QQuick3DObjectPrivate::updateOrAddItemChangeListener(QQuick3DObjectChangeListener *listener, ChangeTypes types)
 {
     const ChangeListener changeListener(listener, types);
     const int index = changeListeners.indexOf(changeListener);
@@ -516,29 +516,29 @@ void QDemonObjectPrivate::updateOrAddItemChangeListener(QDemonObjectChangeListen
         changeListeners.append(changeListener);
 }
 
-void QDemonObjectPrivate::removeItemChangeListener(QDemonObjectChangeListener *listener, ChangeTypes types)
+void QQuick3DObjectPrivate::removeItemChangeListener(QQuick3DObjectChangeListener *listener, ChangeTypes types)
 {
     ChangeListener change(listener, types);
     changeListeners.removeOne(change);
 }
 
-QQuickStateGroup *QDemonObjectPrivate::_states()
+QQuickStateGroup *QQuick3DObjectPrivate::_states()
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
     if (!_stateGroup) {
         _stateGroup = new QQuickStateGroup;
         if (!componentComplete)
             _stateGroup->classBegin();
         // clang-format off
         qmlobject_connect(_stateGroup, QQuickStateGroup, SIGNAL(stateChanged(QString)),
-                          q, QDemonObject, SIGNAL(stateChanged(QString)))
+                          q, QQuick3DObject, SIGNAL(stateChanged(QString)))
         // clang-format on
     }
 
     return _stateGroup;
 }
 
-QString QDemonObjectPrivate::dirtyToString() const
+QString QQuick3DObjectPrivate::dirtyToString() const
 {
 #define DIRTY_TO_STRING(value)                                                                                         \
     if (dirtyAttributes & value) {                                                                                     \
@@ -572,9 +572,9 @@ QString QDemonObjectPrivate::dirtyToString() const
     return rv;
 }
 
-void QDemonObjectPrivate::dirty(QDemonObjectPrivate::DirtyType type)
+void QQuick3DObjectPrivate::dirty(QQuick3DObjectPrivate::DirtyType type)
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
     if (!(dirtyAttributes & type) || (sceneManager && !prevDirtyItem)) {
         dirtyAttributes |= type;
         if (sceneManager && componentComplete) {
@@ -584,39 +584,39 @@ void QDemonObjectPrivate::dirty(QDemonObjectPrivate::DirtyType type)
     }
 }
 
-void QDemonObjectPrivate::addToDirtyList()
+void QQuick3DObjectPrivate::addToDirtyList()
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
 
     Q_ASSERT(sceneManager);
     if (!prevDirtyItem) {
         Q_ASSERT(!nextDirtyItem);
 
         if (isResourceNode()) {
-            if (q->type() == QDemonObject::Image) {
+            if (q->type() == QQuick3DObject::Image) {
                 // Will likely need to refactor this, but images need to come before other
                 // resources
                 nextDirtyItem = sceneManager->dirtyImageList;
                 if (nextDirtyItem)
-                    QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
+                    QQuick3DObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
                 prevDirtyItem = &sceneManager->dirtyImageList;
                 sceneManager->dirtyImageList = q;
             } else {
                 nextDirtyItem = sceneManager->dirtyResourceList;
                 if (nextDirtyItem)
-                    QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
+                    QQuick3DObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
                 prevDirtyItem = &sceneManager->dirtyResourceList;
                 sceneManager->dirtyResourceList = q;
             }
         } else {
-            if (q->type() == QDemonObject::Light) {
+            if (q->type() == QQuick3DObject::Light) {
                 // needed for scoped lights second pass
                sceneManager->dirtyLightList.append(q);
             }
 
             nextDirtyItem = sceneManager->dirtySpatialNodeList;
             if (nextDirtyItem)
-                QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
+                QQuick3DObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
             prevDirtyItem = &sceneManager->dirtySpatialNodeList;
             sceneManager->dirtySpatialNodeList = q;
         }
@@ -626,11 +626,11 @@ void QDemonObjectPrivate::addToDirtyList()
     Q_ASSERT(prevDirtyItem);
 }
 
-void QDemonObjectPrivate::removeFromDirtyList()
+void QQuick3DObjectPrivate::removeFromDirtyList()
 {
     if (prevDirtyItem) {
         if (nextDirtyItem)
-            QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = prevDirtyItem;
+            QQuick3DObjectPrivate::get(nextDirtyItem)->prevDirtyItem = prevDirtyItem;
         *prevDirtyItem = nextDirtyItem;
         prevDirtyItem = nullptr;
         nextDirtyItem = nullptr;
@@ -639,58 +639,58 @@ void QDemonObjectPrivate::removeFromDirtyList()
     Q_ASSERT(!nextDirtyItem);
 }
 
-bool QDemonObjectPrivate::isResourceNode() const
+bool QQuick3DObjectPrivate::isResourceNode() const
 {
-    Q_Q(const QDemonObject);
+    Q_Q(const QQuick3DObject);
     switch (q->type()) {
-    case QDemonObject::Layer:
-    case QDemonObject::Node:
-    case QDemonObject::Light:
-    case QDemonObject::Camera:
-    case QDemonObject::Model:
-    case QDemonObject::Text:
-    case QDemonObject::Path:
+    case QQuick3DObject::Layer:
+    case QQuick3DObject::Node:
+    case QQuick3DObject::Light:
+    case QQuick3DObject::Camera:
+    case QQuick3DObject::Model:
+    case QQuick3DObject::Text:
+    case QQuick3DObject::Path:
         return false;
-    case QDemonObject::SceneEnvironment:
-    case QDemonObject::DefaultMaterial:
-    case QDemonObject::Image:
-    case QDemonObject::Effect:
-    case QDemonObject::CustomMaterial:
-    case QDemonObject::ReferencedMaterial:
-    case QDemonObject::PathSubPath:
-    case QDemonObject::Lightmaps:
+    case QQuick3DObject::SceneEnvironment:
+    case QQuick3DObject::DefaultMaterial:
+    case QQuick3DObject::Image:
+    case QQuick3DObject::Effect:
+    case QQuick3DObject::CustomMaterial:
+    case QQuick3DObject::ReferencedMaterial:
+    case QQuick3DObject::PathSubPath:
+    case QQuick3DObject::Lightmaps:
         return true;
     default:
         return false;
     }
 }
 
-bool QDemonObjectPrivate::isSpatialNode() const
+bool QQuick3DObjectPrivate::isSpatialNode() const
 {
-    Q_Q(const QDemonObject);
+    Q_Q(const QQuick3DObject);
     switch (q->type()) {
-    case QDemonObject::Layer:
-    case QDemonObject::Node:
-    case QDemonObject::Light:
-    case QDemonObject::Camera:
-    case QDemonObject::Model:
-    case QDemonObject::Text:
-    case QDemonObject::Path:
+    case QQuick3DObject::Layer:
+    case QQuick3DObject::Node:
+    case QQuick3DObject::Light:
+    case QQuick3DObject::Camera:
+    case QQuick3DObject::Model:
+    case QQuick3DObject::Text:
+    case QQuick3DObject::Path:
         return true;
-    case QDemonObject::SceneEnvironment:
-    case QDemonObject::DefaultMaterial:
-    case QDemonObject::Image:
-    case QDemonObject::Effect:
-    case QDemonObject::CustomMaterial:
-    case QDemonObject::ReferencedMaterial:
-    case QDemonObject::PathSubPath:
-    case QDemonObject::Lightmaps:
+    case QQuick3DObject::SceneEnvironment:
+    case QQuick3DObject::DefaultMaterial:
+    case QQuick3DObject::Image:
+    case QQuick3DObject::Effect:
+    case QQuick3DObject::CustomMaterial:
+    case QQuick3DObject::ReferencedMaterial:
+    case QQuick3DObject::PathSubPath:
+    case QQuick3DObject::Lightmaps:
     default:
         return false;
     }
 }
 
-void QDemonObjectPrivate::setCulled(bool cull)
+void QQuick3DObjectPrivate::setCulled(bool cull)
 {
     if (cull == culled)
         return;
@@ -700,35 +700,35 @@ void QDemonObjectPrivate::setCulled(bool cull)
         dirty(HideReference);
 }
 
-QList<QDemonObject *> QDemonObjectPrivate::paintOrderChildItems() const
+QList<QQuick3DObject *> QQuick3DObjectPrivate::paintOrderChildItems() const
 {
     if (sortedChildItems)
         return *sortedChildItems;
 
-    sortedChildItems = const_cast<QList<QDemonObject *> *>(&childItems);
+    sortedChildItems = const_cast<QList<QQuick3DObject *> *>(&childItems);
 
     return childItems;
 }
 
-void QDemonObjectPrivate::addChild(QDemonObject *child)
+void QQuick3DObjectPrivate::addChild(QQuick3DObject *child)
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
 
     Q_ASSERT(!childItems.contains(child));
 
     childItems.append(child);
 
     markSortedChildrenDirty(child);
-    dirty(QDemonObjectPrivate::ChildrenChanged);
+    dirty(QQuick3DObjectPrivate::ChildrenChanged);
 
-    itemChange(QDemonObject::ItemChildAddedChange, child);
+    itemChange(QQuick3DObject::ItemChildAddedChange, child);
 
     emit q->childrenChanged();
 }
 
-void QDemonObjectPrivate::removeChild(QDemonObject *child)
+void QQuick3DObjectPrivate::removeChild(QQuick3DObject *child)
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
 
     Q_ASSERT(child);
     Q_ASSERT(childItems.contains(child));
@@ -736,32 +736,32 @@ void QDemonObjectPrivate::removeChild(QDemonObject *child)
     Q_ASSERT(!childItems.contains(child));
 
     markSortedChildrenDirty(child);
-    dirty(QDemonObjectPrivate::ChildrenChanged);
+    dirty(QQuick3DObjectPrivate::ChildrenChanged);
 
-    itemChange(QDemonObject::ItemChildRemovedChange, child);
+    itemChange(QQuick3DObject::ItemChildRemovedChange, child);
 
     emit q->childrenChanged();
 }
 
-void QDemonObjectPrivate::siblingOrderChanged()
+void QQuick3DObjectPrivate::siblingOrderChanged()
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
     if (!changeListeners.isEmpty()) {
         const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
-        for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
-            if (change.types & QDemonObjectPrivate::SiblingOrder) {
+        for (const QQuick3DObjectPrivate::ChangeListener &change : listeners) {
+            if (change.types & QQuick3DObjectPrivate::SiblingOrder) {
                 change.listener->itemSiblingOrderChanged(q);
             }
         }
     }
 }
 
-void QDemonObjectPrivate::markSortedChildrenDirty(QDemonObject *child)
+void QQuick3DObjectPrivate::markSortedChildrenDirty(QQuick3DObject *child)
 {
     Q_UNUSED(child);
 }
 
-void QDemonObjectPrivate::refSceneRenderer(QDemonSceneManager *c)
+void QQuick3DObjectPrivate::refSceneRenderer(QQuick3DSceneManager *c)
 {
     // An item needs a window if it is referenced by another item which has a window.
     // Typically the item is referenced by a parent, but can also be referenced by a
@@ -772,7 +772,7 @@ void QDemonObjectPrivate::refSceneRenderer(QDemonSceneManager *c)
     // refWindow() increments the reference count.
     // derefWindow() decrements the reference count.
 
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
     Q_ASSERT((sceneManager != nullptr) == (windowRefCount > 0));
     Q_ASSERT(c);
     if (++windowRefCount > 1) {
@@ -791,18 +791,18 @@ void QDemonObjectPrivate::refSceneRenderer(QDemonSceneManager *c)
         sceneManager->parentlessItems.insert(q);
 
     for (int ii = 0; ii < childItems.count(); ++ii) {
-        QDemonObject *child = childItems.at(ii);
-        QDemonObjectPrivate::get(child)->refSceneRenderer(c);
+        QQuick3DObject *child = childItems.at(ii);
+        QQuick3DObjectPrivate::get(child)->refSceneRenderer(c);
     }
 
     dirty(Window);
 
-    itemChange(QDemonObject::ItemSceneChange, c);
+    itemChange(QQuick3DObject::ItemSceneChange, c);
 }
 
-void QDemonObjectPrivate::derefSceneRenderer()
+void QQuick3DObjectPrivate::derefSceneRenderer()
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
 
     if (!sceneManager)
         return; // This can happen when destroying recursive shader effect sources.
@@ -811,7 +811,7 @@ void QDemonObjectPrivate::derefSceneRenderer()
         return; // There are still other references, so don't set window to null yet.
 
     removeFromDirtyList();
-    QDemonSceneManager *c = sceneManager;
+    QQuick3DSceneManager *c = sceneManager;
 
     if (spatialNode)
         c->cleanup(spatialNode);
@@ -823,37 +823,37 @@ void QDemonObjectPrivate::derefSceneRenderer()
     spatialNode = nullptr;
 
     for (int ii = 0; ii < childItems.count(); ++ii) {
-        QDemonObject *child = childItems.at(ii);
-        QDemonObjectPrivate::get(child)->derefSceneRenderer();
+        QQuick3DObject *child = childItems.at(ii);
+        QQuick3DObjectPrivate::get(child)->derefSceneRenderer();
     }
 
     dirty(Window);
 
-    itemChange(QDemonObject::ItemSceneChange, (QDemonSceneManager *)nullptr);
+    itemChange(QQuick3DObject::ItemSceneChange, (QQuick3DSceneManager *)nullptr);
 }
 
-void QDemonObjectPrivate::updateSubFocusItem(QDemonObject *scope, bool focus)
+void QQuick3DObjectPrivate::updateSubFocusItem(QQuick3DObject *scope, bool focus)
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
     Q_ASSERT(scope);
 
-    QDemonObjectPrivate *scopePrivate = QDemonObjectPrivate::get(scope);
+    QQuick3DObjectPrivate *scopePrivate = QQuick3DObjectPrivate::get(scope);
 
-    QDemonObject *oldSubFocusItem = scopePrivate->subFocusItem;
+    QQuick3DObject *oldSubFocusItem = scopePrivate->subFocusItem;
     // Correct focus chain in scope
     if (oldSubFocusItem) {
-        QDemonObject *sfi = scopePrivate->subFocusItem->parentItem();
+        QQuick3DObject *sfi = scopePrivate->subFocusItem->parentItem();
         while (sfi && sfi != scope) {
-            QDemonObjectPrivate::get(sfi)->subFocusItem = nullptr;
+            QQuick3DObjectPrivate::get(sfi)->subFocusItem = nullptr;
             sfi = sfi->parentItem();
         }
     }
 
     if (focus) {
         scopePrivate->subFocusItem = q;
-        QDemonObject *sfi = scopePrivate->subFocusItem->parentItem();
+        QQuick3DObject *sfi = scopePrivate->subFocusItem->parentItem();
         while (sfi && sfi != scope) {
-            QDemonObjectPrivate::get(sfi)->subFocusItem = q;
+            QQuick3DObjectPrivate::get(sfi)->subFocusItem = q;
             sfi = sfi->parentItem();
         }
     } else {
@@ -861,95 +861,95 @@ void QDemonObjectPrivate::updateSubFocusItem(QDemonObject *scope, bool focus)
     }
 }
 
-void QDemonObjectPrivate::itemChange(QDemonObject::ItemChange change, const QDemonObject::ItemChangeData &data)
+void QQuick3DObjectPrivate::itemChange(QQuick3DObject::ItemChange change, const QQuick3DObject::ItemChangeData &data)
 {
-    Q_Q(QDemonObject);
+    Q_Q(QQuick3DObject);
     switch (change) {
-    case QDemonObject::ItemRotationHasChanged:
+    case QQuick3DObject::ItemRotationHasChanged:
         // TODO:
         qWarning("ItemRoationHasChange is unhandled!!!!");
         break;
-    case QDemonObject::ItemChildAddedChange: {
+    case QQuick3DObject::ItemChildAddedChange: {
         q->itemChange(change, data);
         if (!changeListeners.isEmpty()) {
             const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
-            for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
-                if (change.types & QDemonObjectPrivate::Children) {
+            for (const QQuick3DObjectPrivate::ChangeListener &change : listeners) {
+                if (change.types & QQuick3DObjectPrivate::Children) {
                     change.listener->itemChildAdded(q, data.item);
                 }
             }
         }
         break;
     }
-    case QDemonObject::ItemChildRemovedChange: {
+    case QQuick3DObject::ItemChildRemovedChange: {
         q->itemChange(change, data);
         if (!changeListeners.isEmpty()) {
             const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
-            for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
-                if (change.types & QDemonObjectPrivate::Children) {
+            for (const QQuick3DObjectPrivate::ChangeListener &change : listeners) {
+                if (change.types & QQuick3DObjectPrivate::Children) {
                     change.listener->itemChildRemoved(q, data.item);
                 }
             }
         }
         break;
     }
-    case QDemonObject::ItemSceneChange:
+    case QQuick3DObject::ItemSceneChange:
         q->itemChange(change, data);
         break;
-    case QDemonObject::ItemVisibleHasChanged: {
+    case QQuick3DObject::ItemVisibleHasChanged: {
         q->itemChange(change, data);
         if (!changeListeners.isEmpty()) {
             const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
-            for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
-                if (change.types & QDemonObjectPrivate::Visibility) {
+            for (const QQuick3DObjectPrivate::ChangeListener &change : listeners) {
+                if (change.types & QQuick3DObjectPrivate::Visibility) {
                     change.listener->itemVisibilityChanged(q);
                 }
             }
         }
         break;
     }
-    case QDemonObject::ItemEnabledHasChanged: {
+    case QQuick3DObject::ItemEnabledHasChanged: {
         q->itemChange(change, data);
         if (!changeListeners.isEmpty()) {
             const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
-            for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
-                if (change.types & QDemonObjectPrivate::Enabled) {
+            for (const QQuick3DObjectPrivate::ChangeListener &change : listeners) {
+                if (change.types & QQuick3DObjectPrivate::Enabled) {
                     change.listener->itemEnabledChanged(q);
                 }
             }
         }
         break;
     }
-    case QDemonObject::ItemParentHasChanged: {
+    case QQuick3DObject::ItemParentHasChanged: {
         q->itemChange(change, data);
         if (!changeListeners.isEmpty()) {
             const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
-            for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
-                if (change.types & QDemonObjectPrivate::Parent) {
+            for (const QQuick3DObjectPrivate::ChangeListener &change : listeners) {
+                if (change.types & QQuick3DObjectPrivate::Parent) {
                     change.listener->itemParentChanged(q, data.item);
                 }
             }
         }
         break;
     }
-    case QDemonObject::ItemOpacityHasChanged: {
+    case QQuick3DObject::ItemOpacityHasChanged: {
         q->itemChange(change, data);
         if (!changeListeners.isEmpty()) {
             const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
-            for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
-                if (change.types & QDemonObjectPrivate::Opacity) {
+            for (const QQuick3DObjectPrivate::ChangeListener &change : listeners) {
+                if (change.types & QQuick3DObjectPrivate::Opacity) {
                     change.listener->itemOpacityChanged(q);
                 }
             }
         }
         break;
     }
-    case QDemonObject::ItemActiveFocusHasChanged:
+    case QQuick3DObject::ItemActiveFocusHasChanged:
         q->itemChange(change, data);
         break;
-    case QDemonObject::ItemAntialiasingHasChanged:
+    case QQuick3DObject::ItemAntialiasingHasChanged:
         // fall through
-    case QDemonObject::ItemDevicePixelRatioHasChanged:
+    case QQuick3DObject::ItemDevicePixelRatioHasChanged:
         q->itemChange(change, data);
         break;
     }
@@ -974,20 +974,20 @@ DEFINE_OBJECT_VTABLE(QDemonItemWrapper);
 void QV4::Heap::QDemonItemWrapper::markObjects(QV4::Heap::Base *that, QV4::MarkStack *markStack)
 {
     QObjectWrapper *This = static_cast<QObjectWrapper *>(that);
-    if (QDemonObject *item = static_cast<QDemonObject *>(This->object())) {
-        for (QDemonObject *child : qAsConst(QDemonObjectPrivate::get(item)->childItems))
+    if (QQuick3DObject *item = static_cast<QQuick3DObject *>(This->object())) {
+        for (QQuick3DObject *child : qAsConst(QQuick3DObjectPrivate::get(item)->childItems))
             QV4::QObjectWrapper::markWrapper(child, markStack);
     }
     QObjectWrapper::markObjects(that, markStack);
 }
 
-quint64 QDemonObjectPrivate::_q_createJSWrapper(QV4::ExecutionEngine *engine)
+quint64 QQuick3DObjectPrivate::_q_createJSWrapper(QV4::ExecutionEngine *engine)
 {
     return (engine->memoryManager->allocate<QDemonItemWrapper>(q_func()))->asReturnedValue();
 }
 
-QDemonObjectPrivate::ExtraData::ExtraData() : hideRefCount(0) {}
+QQuick3DObjectPrivate::ExtraData::ExtraData() : hideRefCount(0) {}
 
 QT_END_NAMESPACE
 
-#include <moc_qdemonobject.cpp>
+#include <moc_qquick3dobject.cpp>
