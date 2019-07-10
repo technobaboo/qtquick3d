@@ -79,19 +79,19 @@ void tst_assetimport::importFile_data()
     QTest::addColumn<QByteArray>("expectedHash");
 
 #ifdef __linux__
-    QTest::newRow("fbx") << QString("fbx") << true << QByteArray("c9353c3c2f9681d9053d5145d2fe859e");
-    QTest::newRow("dae") << QString("dae") << true << QByteArray("affb0aa717928fedebb8ab3edbbd4e00");
-    QTest::newRow("obj") << QString("obj") << true << QByteArray("890b94fe5315c9595d97561f8d879464");
-    QTest::newRow("blend") << QString("blend") << true << QByteArray("fb6049cbd40c2dee06c0165b0faaf6f5");
-    QTest::newRow("gltf") << QString("gltf") << true << QByteArray("2a804e289ce699db8d0c3cc6a72bfc6f");
-    QTest::newRow("glb") << QString("glb") << true << QByteArray("2a804e289ce699db8d0c3cc6a72bfc6f");
+    QTest::newRow("fbx") << QString("fbx") << true << QByteArray("7b89122509ae5a7d86d749083c7f95e8");
+    QTest::newRow("dae") << QString("dae") << true << QByteArray("28ac67e113d30797e6c4b1d9db68e0b0");
+    QTest::newRow("obj") << QString("obj") << true << QByteArray("1dec3ac86c87ada356e1725aa73e66bd");
+    QTest::newRow("blend") << QString("blend") << true << QByteArray("1ba292fb957d1beac3f3b4e62f0afff5");
+    QTest::newRow("gltf") << QString("gltf") << true << QByteArray("3d66f10412546f5bc2993d8278f19093");
+    QTest::newRow("glb") << QString("glb") << true << QByteArray("3d66f10412546f5bc2993d8278f19093");
 #elif _WIN32
-    QTest::newRow("fbx") << QString("fbx") << true << QByteArray("44960575115bdedd344d0cbbf037cf2c");
-    QTest::newRow("dae") << QString("dae") << true << QByteArray("affb0aa717928fedebb8ab3edbbd4e00");
-    QTest::newRow("obj") << QString("obj") << true << QByteArray("ee7d36950d4677ac2a01e97c406d1b51");
-    QTest::newRow("blend") << QString("blend") << true << QByteArray("6b519f1f36da183a06655ac460cd66e6");
-    QTest::newRow("gltf") << QString("gltf") << true << QByteArray("2a804e289ce699db8d0c3cc6a72bfc6f");
-    QTest::newRow("glb") << QString("glb") << true << QByteArray("2a804e289ce699db8d0c3cc6a72bfc6f");
+    QTest::newRow("fbx") << QString("fbx") << true << QByteArray("354564bca4d704245b239a1c7e4b08c8");
+    QTest::newRow("dae") << QString("dae") << true << QByteArray("28ac67e113d30797e6c4b1d9db68e0b0");
+    QTest::newRow("obj") << QString("obj") << true << QByteArray("de4ccf172258b7a7a419fc90980fa6db");
+    QTest::newRow("blend") << QString("blend") << true << QByteArray("77c4703c3eddb004c4ab4b2968046b64");
+    QTest::newRow("gltf") << QString("gltf") << true << QByteArray("3d66f10412546f5bc2993d8278f19093");
+    QTest::newRow("glb") << QString("glb") << true << QByteArray("3d66f10412546f5bc2993d8278f19093");
 #else
     QSKIP("Test not configured for this platform.")
 #endif
