@@ -71,13 +71,13 @@ bool QDemonAssetImportManager::importFile(const QString &filename, const QDir &o
 
     // Do we have a importer to load the file?
     const auto extension = fileInfo.completeSuffix();
-    if (!m_extensionsMap.keys().contains(extension)) {
+    auto importer = m_extensionsMap.value(extension, nullptr);
+    if (!importer) {
         if (error)
             *error = QStringLiteral("unsupported file extension %1").arg(extension);
         return false;
     }
 
-    auto importer = m_extensionsMap[extension];
     QStringList generatedFiles;
     auto errorString = importer->import(fileInfo.absoluteFilePath(), outputPath, QVariantMap(), &generatedFiles);
 
