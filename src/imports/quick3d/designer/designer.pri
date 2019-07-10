@@ -7,8 +7,8 @@ AUX_QML_FILES += \
     $$PWD/CustomMaterialSpecifics.qml \
     $$PWD/DefaultMaterialSection.qml \
     $$PWD/DefaultMaterialSpecifics.qml \
-    $$PWD/ImageSection.qml \
-    $$PWD/ImageSpecifics.qml \
+    $$PWD/TextureSection.qml \
+    $$PWD/TextureSpecifics.qml \
     $$PWD/LightSection.qml \
     $$PWD/LightSpecifics.qml \
     $$PWD/MaterialSection.qml \
