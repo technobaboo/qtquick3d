@@ -21,7 +21,7 @@ SOURCES += \
     qquick3dscenemanager.cpp \
     qquick3dscenerenderer.cpp \
     qquick3dtexture.cpp \
-    qquick3dview3d.cpp
+    qquick3dviewport.cpp
 
 HEADERS += \
     qquick3dcamera.h \
@@ -39,7 +39,7 @@ HEADERS += \
     qquick3dscenemanager_p.h \
     qquick3dscenerenderer.h \
     qquick3dtexture.h \
-    qquick3dview3d.h \
+    qquick3dviewport.h \
     qtquick3dglobal.h \
     qtquick3dglobal_p.h
 

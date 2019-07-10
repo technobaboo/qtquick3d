@@ -37,13 +37,13 @@
 #include <qsgrendernode.h>
 #include <QSGSimpleTextureNode>
 
-#include <QtQuick3D/QQuick3DView3D>
+#include <QtQuick3D/QQuick3DViewport>
 
 QT_BEGIN_NAMESPACE
 
 
 class QQuick3DSceneManager;
-class QQuick3DView3D;
+class QQuick3DViewport;
 struct QDemonRenderLayer;
 
 class QQuick3DSceneRenderer
@@ -64,13 +64,13 @@ public:
 protected:
     GLuint render();
     void render(const QRect &viewport, bool clearFirst = false);
-    void synchronize(QQuick3DView3D *item, const QSize &size, bool useFBO = true);
+    void synchronize(QQuick3DViewport *item, const QSize &size, bool useFBO = true);
     void update();
     void invalidateFramebufferObject();
     QSize surfaceSize() const { return m_surfaceSize; }
 
 private:
-    void updateLayerNode(QQuick3DView3D *view3D);
+    void updateLayerNode(QQuick3DViewport *view3D);
     void addNodeToLayer(QDemonRenderNode *node);
     void removeNodeFromLayer(QDemonRenderNode *node);
     QQuick3DSceneManager *m_sceneManager = nullptr;
@@ -89,7 +89,7 @@ private:
     friend class SGFramebufferObjectNode;
     friend class QQuick3DSGRenderNode;
     friend class QQuick3DSGDirectRenderer;
-    friend class QQuick3DView3D;
+    friend class QQuick3DViewport;
 };
 
 class QOpenGLVertexArrayObjectHelper;
@@ -116,7 +116,7 @@ public Q_SLOTS:
 public:
     QQuickWindow *window;
     QQuick3DSceneRenderer *renderer;
-    QQuick3DView3D *quickFbo;
+    QQuick3DViewport *quickFbo;
 
     bool renderPending;
     bool invalidatePending;

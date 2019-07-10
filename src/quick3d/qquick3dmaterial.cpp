@@ -36,6 +36,55 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype Material
+    \inqmlmodule QtQuick3D
+    \brief Lets you define material for the 3D item.
+*/
+
+/*!
+ * \qmlproperty Texture Material::lightmapIndirect
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture Material::lightmapRadiosity
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture Material::lightmapShadow
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture Material::iblProbe
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture Material::emissiveMap2
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture Material::displacementMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Material::displacementAmount
+ *
+ *
+ */
+
+
 QQuick3DMaterial::QQuick3DMaterial() {}
 
 QQuick3DMaterial::~QQuick3DMaterial()

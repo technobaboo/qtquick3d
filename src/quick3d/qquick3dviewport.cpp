@@ -27,7 +27,7 @@
 **
 ****************************************************************************/
 
-#include "qquick3dview3d.h"
+#include "qquick3dviewport.h"
 #include "qquick3dsceneenvironment.h"
 #include "qquick3dobject_p.h"
 #include "qquick3dscenemanager_p.h"
@@ -50,11 +50,11 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype View3D
     \inqmlmodule QtQuick3D
-    \brief Provides the infrastructure to render 3D items
+    \brief Provides the infrastructure to render 3D items.
 
 */
 
-QQuick3DView3D::QQuick3DView3D(QQuickItem *parent)
+QQuick3DViewport::QQuick3DViewport(QQuickItem *parent)
     : QQuickItem(parent)
 {
     setFlag(ItemHasContents);
@@ -66,7 +66,7 @@ QQuick3DView3D::QQuick3DView3D(QQuickItem *parent)
             this, &QQuickItem::update);
 }
 
-QQuick3DView3D::~QQuick3DView3D()
+QQuick3DViewport::~QQuick3DViewport()
 {
     for (const auto &connection : qAsConst(m_connections))
         disconnect(connection);
@@ -76,14 +76,14 @@ static void ssgn_append(QQmlListProperty<QObject> *property, QObject *obj)
 {
     if (!obj)
         return;
-    QQuick3DView3D *view3d = static_cast<QQuick3DView3D *>(property->object);
+    QQuick3DViewport *view3d = static_cast<QQuick3DViewport *>(property->object);
     QQmlListProperty<QObject> itemProperty = QQuick3DObjectPrivate::get(view3d->scene())->data();
     itemProperty.append(&itemProperty, obj);
 }
 
 static int ssgn_count(QQmlListProperty<QObject> *property)
 {
-    QQuick3DView3D *view3d = static_cast<QQuick3DView3D *>(property->object);
+    QQuick3DViewport *view3d = static_cast<QQuick3DViewport *>(property->object);
     if (!view3d || !view3d->scene() || !QQuick3DObjectPrivate::get(view3d->scene())->data().count)
         return 0;
     QQmlListProperty<QObject> itemProperty = QQuick3DObjectPrivate::get(view3d->scene())->data();
@@ -92,20 +92,20 @@ static int ssgn_count(QQmlListProperty<QObject> *property)
 
 static QObject *ssgn_at(QQmlListProperty<QObject> *property, int i)
 {
-    QQuick3DView3D *view3d = static_cast<QQuick3DView3D *>(property->object);
+    QQuick3DViewport *view3d = static_cast<QQuick3DViewport *>(property->object);
     QQmlListProperty<QObject> itemProperty = QQuick3DObjectPrivate::get(view3d->scene())->data();
     return itemProperty.at(&itemProperty, i);
 }
 
 static void ssgn_clear(QQmlListProperty<QObject> *property)
 {
-    QQuick3DView3D *view3d = static_cast<QQuick3DView3D *>(property->object);
+    QQuick3DViewport *view3d = static_cast<QQuick3DViewport *>(property->object);
     QQmlListProperty<QObject> itemProperty = QQuick3DObjectPrivate::get(view3d->scene())->data();
     return itemProperty.clear(&itemProperty);
 }
 
 
-QQmlListProperty<QObject> QQuick3DView3D::data()
+QQmlListProperty<QObject> QQuick3DViewport::data()
 {
     return QQmlListProperty<QObject>(this,
                                      nullptr,
@@ -115,46 +115,46 @@ QQmlListProperty<QObject> QQuick3DView3D::data()
                                      ssgn_clear);
 }
 
-QQuick3DCamera *QQuick3DView3D::camera() const
+QQuick3DCamera *QQuick3DViewport::camera() const
 {
     return m_camera;
 }
 
-QQuick3DSceneEnvironment *QQuick3DView3D::environment() const
+QQuick3DSceneEnvironment *QQuick3DViewport::environment() const
 {
     return m_environment;
 }
 
-QQuick3DNode *QQuick3DView3D::scene() const
+QQuick3DNode *QQuick3DViewport::scene() const
 {
     return m_sceneRoot;
 }
 
-QQuick3DNode *QQuick3DView3D::referencedScene() const
+QQuick3DNode *QQuick3DViewport::referencedScene() const
 {
     return m_referencedScene;
 }
 
-QQuick3DView3D::QQuick3DView3DRenderMode QQuick3DView3D::renderMode() const
+QQuick3DViewport::QQuick3DViewportRenderMode QQuick3DViewport::renderMode() const
 {
     return m_renderMode;
 }
 
-QQuick3DSceneRenderer *QQuick3DView3D::createRenderer() const
+QQuick3DSceneRenderer *QQuick3DViewport::createRenderer() const
 {
     return new QQuick3DSceneRenderer(this->window());
 }
 
-bool QQuick3DView3D::isTextureProvider() const
+bool QQuick3DViewport::isTextureProvider() const
 {
     // We can only be a texture provider if we are rendering to a texture first
-    if (m_renderMode == QQuick3DView3D::Texture)
+    if (m_renderMode == QQuick3DViewport::Texture)
         return true;
 
     return false;
 }
 
-QSGTextureProvider *QQuick3DView3D::textureProvider() const
+QSGTextureProvider *QQuick3DViewport::textureProvider() const
 {
     // When Item::layer::enabled == true, QQuickItem will be a texture
     // provider. In this case we should prefer to return the layer rather
@@ -163,7 +163,7 @@ QSGTextureProvider *QQuick3DView3D::textureProvider() const
         return QQuickItem::textureProvider();
 
     // We can only be a texture provider if we are rendering to a texture first
-    if (m_renderMode != QQuick3DView3D::Texture)
+    if (m_renderMode != QQuick3DViewport::Texture)
         return nullptr;
 
     QQuickWindow *w = window();
@@ -176,12 +176,12 @@ QSGTextureProvider *QQuick3DView3D::textureProvider() const
     return m_node;
 }
 
-void QQuick3DView3D::releaseResources()
+void QQuick3DViewport::releaseResources()
 {
     m_node = nullptr;
 }
 
-void QQuick3DView3D::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QQuick3DViewport::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 
@@ -189,7 +189,7 @@ void QQuick3DView3D::geometryChanged(const QRectF &newGeometry, const QRectF &ol
         update();
 }
 
-QSGNode *QQuick3DView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *)
+QSGNode *QQuick3DViewport::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintNodeData *)
 {
     // When changing render modes
     if (m_renderModeDirty) {
@@ -281,7 +281,7 @@ QSGNode *QQuick3DView3D::updatePaintNode(QSGNode *node, QQuickItem::UpdatePaintN
     }
 }
 
-void QQuick3DView3D::setCamera(QQuick3DCamera *camera)
+void QQuick3DViewport::setCamera(QQuick3DCamera *camera)
 {
     if (m_camera == camera)
         return;
@@ -291,7 +291,7 @@ void QQuick3DView3D::setCamera(QQuick3DCamera *camera)
     update();
 }
 
-void QQuick3DView3D::setEnvironment(QQuick3DSceneEnvironment *environment)
+void QQuick3DViewport::setEnvironment(QQuick3DSceneEnvironment *environment)
 {
     if (m_environment == environment)
         return;
@@ -303,7 +303,7 @@ void QQuick3DView3D::setEnvironment(QQuick3DSceneEnvironment *environment)
     update();
 }
 
-void QQuick3DView3D::setScene(QQuick3DNode *sceneRoot)
+void QQuick3DViewport::setScene(QQuick3DNode *sceneRoot)
 {
     // ### We may need consider the case where there is
     // already a scene tree here
@@ -324,7 +324,7 @@ void QQuick3DView3D::setScene(QQuick3DNode *sceneRoot)
 
 }
 
-void QQuick3DView3D::setRenderMode(QQuick3DView3D::QQuick3DView3DRenderMode renderMode)
+void QQuick3DViewport::setRenderMode(QQuick3DViewport::QQuick3DViewportRenderMode renderMode)
 {
     if (m_renderMode == renderMode)
         return;
@@ -419,7 +419,7 @@ static QSurfaceFormat findIdealGLESVersion()
     return fmt;
 }
 
-QSurfaceFormat QQuick3DView3D::idealSurfaceFormat()
+QSurfaceFormat QQuick3DViewport::idealSurfaceFormat()
 {
     static const QSurfaceFormat f = [] {
         QSurfaceFormat fmt;
@@ -443,9 +443,9 @@ QSurfaceFormat QQuick3DView3D::idealSurfaceFormat()
  * If \a worldPos cannot be mapped to a position in the world, a position of [0, 0, 0] is
  * returned. This function requires that a camera is assigned to the view.
  *
- * \sa QDemonCamera::worldToViewport QDemonView3D::viewToWorld
+ * \sa QQuick3DCamera::worldToViewport QQuick3DViewport::viewToWorld
  */
-QVector3D QQuick3DView3D::worldToView(const QVector3D &worldPos) const
+QVector3D QQuick3DViewport::worldToView(const QVector3D &worldPos) const
 {
     if (!m_camera) {
         qmlWarning(this) << "Cannot resolve view position without a camera assigned!";
@@ -464,9 +464,9 @@ QVector3D QQuick3DView3D::worldToView(const QVector3D &worldPos) const
  * the distance from the back of the frustum (clipNear) into the world. If \a viewPos
  * cannot be mapped to a position in the world, a position of [0, 0, 0] is returned.
  *
- * \sa QDemonCamera::viewportToWorld QDemonView3D::worldToView
+ * \sa QQuick3DCamera::viewportToWorld QQuick3DViewport::worldToView
  */
-QVector3D QQuick3DView3D::viewToWorld(const QVector3D &viewPos) const
+QVector3D QQuick3DViewport::viewToWorld(const QVector3D &viewPos) const
 {
     if (!m_camera) {
         qmlWarning(this) << "Cannot resolve world position without a camera assigned!";
@@ -477,7 +477,7 @@ QVector3D QQuick3DView3D::viewToWorld(const QVector3D &viewPos) const
     return m_camera->viewportToWorld(normalizedPos);
 }
 
-void QQuick3DView3D::invalidateSceneGraph()
+void QQuick3DViewport::invalidateSceneGraph()
 {
     m_node = nullptr;
 }

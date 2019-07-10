@@ -37,8 +37,110 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype Light
     \inqmlmodule QtQuick3D
-    \brief Lets you define the lighting for a 3D item
+    \brief Lets you define the lighting for a 3D item.
 */
+
+/*!
+ * \qmlproperty enumeration Light::lightType
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty color Light::diffuseColor
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty color Light::specularColor
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty color Light::ambientColor
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::brightness
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::linearFade
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::exponentialFade
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::areaWidth
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::areaHeight
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty bool Light::castShadow
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::shadowBias
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::shadowFactor
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty int Light::shadowMapResolution
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::shadowMapFar
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::shadowMapFieldOFView
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real Light::shadowFilter
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Node Light::scope
+ *
+ *
+ */
 
 QQuick3DLight::QQuick3DLight() : m_diffuseColor(Qt::white), m_specularColor(Qt::white), m_ambientColor(Qt::black) {}
 

@@ -220,7 +220,7 @@ void QQuick3DSceneRenderer::render(const QRect &viewport, bool clearFirst)
     }
 }
 
-void QQuick3DSceneRenderer::synchronize(QQuick3DView3D *item, const QSize &size, bool useFBO)
+void QQuick3DSceneRenderer::synchronize(QQuick3DViewport *item, const QSize &size, bool useFBO)
 {
     if (!item)
         return;
@@ -233,7 +233,7 @@ void QQuick3DSceneRenderer::synchronize(QQuick3DView3D *item, const QSize &size,
         m_surfaceSize = size;
     }
 
-    auto view3D = static_cast<QQuick3DView3D*>(item);
+    auto view3D = static_cast<QQuick3DViewport*>(item);
     m_sceneManager = QQuick3DObjectPrivate::get(view3D->scene())->sceneManager;
     m_sceneManager->updateDirtyNodes();
 
@@ -302,7 +302,7 @@ void QQuick3DSceneRenderer::invalidateFramebufferObject()
         static_cast<SGFramebufferObjectNode *>(data)->invalidatePending = true;
 }
 
-void QQuick3DSceneRenderer::updateLayerNode(QQuick3DView3D *view3D)
+void QQuick3DSceneRenderer::updateLayerNode(QQuick3DViewport *view3D)
 {
     QDemonRenderLayer *layerNode = m_layer;
     layerNode->progressiveAAMode = QDemonRenderLayer::AAMode(view3D->environment()->progressiveAAMode());

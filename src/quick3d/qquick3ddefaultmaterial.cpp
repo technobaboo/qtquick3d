@@ -34,11 +34,175 @@
 
 QT_BEGIN_NAMESPACE
 
+
 /*!
-    \qmltype DefualtMaterial
+    \qmltype DefaultMaterial
     \inqmlmodule QtQuick3D
-    \brief Lets you define material for the 3D item
+    \brief Lets you define material for the 3D item.
 */
+
+/*!
+ * \qmlproperty enumeration DefaultMaterial::lighting
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty enumeration DefaultMaterial::blendMode
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty color DefaultMaterial::diffuseColor
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::diffuseMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::diffuseMap2
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::diffuseMap3
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::emissivePower
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::emissiveMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty color DefaultMaterial::emissiveColor
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::specularReflectionMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::specularMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty enumeration DefaultMaterial::specularModel
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::specularTint
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::indexOfRefraction
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::fresnelPower
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::specularAmount
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::specularRoughness
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::roughnessMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::opacity
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::opacityMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::bumpMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::bumpAmount
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::normalMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty Texture DefaultMaterial::translucencyMap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::translucentFalloff
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::diffuseLightWrap
+ *
+ *
+ */
+
+/*!
+ * \qmlproperty real DefaultMaterial::vertexColors
+ *
+ *
+ */
+
 QQuick3DDefaultMaterial::QQuick3DDefaultMaterial()
     : m_diffuseColor(Qt::white)
     , m_emissiveColor(Qt::white)

@@ -52,7 +52,7 @@
 #include <QQmlApplicationEngine>
 
 #include <QtGui>
-#include <QtQuick3D/QQuick3DView3D>
+#include <QtQuick3D/QQuick3DViewport>
 
 int main(int argc, char *argv[])
 {
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    QSurfaceFormat::setDefaultFormat(QQuick3DView3D::idealSurfaceFormat());
+    QSurfaceFormat::setDefaultFormat(QQuick3DViewport::idealSurfaceFormat());
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

@@ -41,7 +41,7 @@ class Q_QUICK3D_EXPORT QQuick3DCamera : public QQuick3DNode
     Q_PROPERTY(float clipNear READ clipNear WRITE setClipNear NOTIFY clipNearChanged)
     Q_PROPERTY(float clipFar READ clipFar WRITE setClipFar NOTIFY clipFarChanged)
     Q_PROPERTY(float fieldOfView READ fieldOfView WRITE setFieldOfView NOTIFY fieldOfViewChanged)
-    Q_PROPERTY(bool isFieldOFViewHorizontal READ isFieldOFViewHorizontal WRITE setIsFieldOFViewHorizontal NOTIFY isFieldOFViewHorizontalChanged)
+    Q_PROPERTY(bool isFieldOfViewHorizontal READ isFieldOfViewHorizontal WRITE setIsFieldOfViewHorizontal NOTIFY isFieldOfViewHorizontalChanged)
     Q_PROPERTY(QDemonCameraProjectionMode projectionMode READ projectionMode WRITE setProjectionMode NOTIFY projectionModeChanged)
     Q_PROPERTY(QDemonCameraScaleModes scaleMode READ scaleMode WRITE setScaleMode NOTIFY scaleModeChanged)
     Q_PROPERTY(QDemonCameraScaleAnchors scaleAnchor READ scaleAnchor WRITE setScaleAnchor NOTIFY scaleAnchorChanged)
@@ -80,7 +80,7 @@ public:
     float clipNear() const;
     float clipFar() const;
     float fieldOfView() const;
-    bool isFieldOFViewHorizontal() const;
+    bool isFieldOfViewHorizontal() const;
     QDemonCameraScaleModes scaleMode() const;
     QDemonCameraScaleAnchors scaleAnchor() const;
     QQuick3DObject::Type type() const override;
@@ -96,7 +96,7 @@ public Q_SLOTS:
     void setClipNear(float clipNear);
     void setClipFar(float clipFar);
     void setFieldOfView(float fieldOfView);
-    void setIsFieldOFViewHorizontal(bool isFieldOFViewHorizontal);
+    void setIsFieldOfViewHorizontal(bool isFieldOFViewHorizontal);
     void setScaleMode(QDemonCameraScaleModes scaleMode);
     void setScaleAnchor(QDemonCameraScaleAnchors scaleAnchor);
     void setProjectionMode(QDemonCameraProjectionMode projectionMode);
@@ -106,7 +106,7 @@ Q_SIGNALS:
     void clipNearChanged(float clipNear);
     void clipFarChanged(float clipFar);
     void fieldOfViewChanged(float fieldOfView);
-    void isFieldOFViewHorizontalChanged(bool isFieldOFViewHorizontal);
+    void isFieldOfViewHorizontalChanged(bool isFieldOfViewHorizontal);
     void scaleModeChanged(QDemonCameraScaleModes scaleMode);
     void scaleAnchorChanged(QDemonCameraScaleAnchors scaleAnchor);
     void projectionModeChanged(QDemonCameraProjectionMode projectionMode);
@@ -121,7 +121,7 @@ private:
     float m_fieldOfView = 60.0f;
     QDemonCameraScaleModes m_scaleMode = QDemonCameraScaleModes::Fit;
     QDemonCameraScaleAnchors m_scaleAnchor = QDemonCameraScaleAnchors::Center;
-    bool m_isFieldOFViewHorizontal = false;
+    bool m_isFieldOfViewHorizontal = false;
 
     QDemonRenderCamera *m_cameraNode = nullptr;
     QDemonCameraProjectionMode m_projectionMode = QDemonCameraProjectionMode::Perspective;

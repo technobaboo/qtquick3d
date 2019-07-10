@@ -60,8 +60,9 @@ static void updateProperyListener(QQuick3DObject *newO, QQuick3DObject *oldO, QQ
 /*!
     \qmltype SceneEnvironment
     \inqmlmodule QtQuick3D
-    \brief Lets you configure the scene environment
+    \brief Lets you configure the scene environment.
 */
+
 QQuick3DSceneEnvironment::QQuick3DSceneEnvironment(QQuick3DObject *parent)
     : QQuick3DObject(parent)
 {

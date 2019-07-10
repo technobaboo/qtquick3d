@@ -43,8 +43,9 @@ QT_BEGIN_NAMESPACE
 /*!
    \qmltype Model
    \inqmlmodule QtQuick3D
-   \brief Lets you load a 3D model data
+   \brief Lets you load a 3D model data.
 */
+
 QQuick3DModel::QQuick3DModel() {}
 
 QQuick3DModel::~QQuick3DModel() {}

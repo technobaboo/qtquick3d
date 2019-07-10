@@ -68,25 +68,6 @@ public:
     };
     Q_ENUM(TextureType)
 
-//    enum UsageType {
-//        Diffuse,
-//        Specular,
-//        Roughness,
-//        Bump,
-//        Environment,
-//        Shadow,
-//        Displacement,
-//        Emissive,
-//        EmissiveMask,
-//        Anisotropy,
-//        Gradient,
-//        Storage,
-//        Brush,
-//        Cutout,
-//        Transmission
-//    };
-//    Q_ENUM(UsageType)
-
     QQuick3DCustomMaterialTexture() = default;
     virtual ~QQuick3DCustomMaterialTexture() = default;
     QQuick3DTexture *m_image = nullptr;

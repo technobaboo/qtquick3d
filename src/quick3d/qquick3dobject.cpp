@@ -40,6 +40,13 @@
 
 QT_BEGIN_NAMESPACE
 
+
+/*!
+    \qmltype Object3D
+    \inqmlmodule QtQuick3D
+    \brief Abstact Subclass of all 3D nodes and resources.
+*/
+
 QQuick3DObject::QQuick3DObject(QQuick3DObject *parent)
     : QObject(*(new QQuick3DObjectPrivate), parent)
 {

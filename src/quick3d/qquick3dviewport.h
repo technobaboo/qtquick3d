@@ -49,26 +49,26 @@ class SGFramebufferObjectNode;
 class QQuick3DSGRenderNode;
 class QQuick3DSGDirectRenderer;
 
-class Q_QUICK3D_EXPORT QQuick3DView3D : public QQuickItem
+class Q_QUICK3D_EXPORT QQuick3DViewport : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<QObject> data READ data)
     Q_PROPERTY(QQuick3DCamera *camera READ camera WRITE setCamera NOTIFY cameraChanged)
     Q_PROPERTY(QQuick3DSceneEnvironment *environment READ environment WRITE setEnvironment NOTIFY environmentChanged)
     Q_PROPERTY(QQuick3DNode* scene READ scene WRITE setScene NOTIFY sceneChanged)
-    Q_PROPERTY(QQuick3DView3DRenderMode renderMode READ renderMode WRITE setRenderMode NOTIFY renderModeChanged)
+    Q_PROPERTY(QQuick3DViewportRenderMode renderMode READ renderMode WRITE setRenderMode NOTIFY renderModeChanged)
     Q_CLASSINFO("DefaultProperty", "data")
 public:
-    enum QQuick3DView3DRenderMode {
+    enum QQuick3DViewportRenderMode {
         Texture,
         Underlay,
         Overlay,
         RenderNode
     };
-    Q_ENUM(QQuick3DView3DRenderMode)
+    Q_ENUM(QQuick3DViewportRenderMode)
 
-    explicit QQuick3DView3D(QQuickItem *parent = nullptr);
-    ~QQuick3DView3D() override;
+    explicit QQuick3DViewport(QQuickItem *parent = nullptr);
+    ~QQuick3DViewport() override;
 
     QQmlListProperty<QObject> data();
 
@@ -76,7 +76,7 @@ public:
     QQuick3DSceneEnvironment *environment() const;
     QQuick3DNode *scene() const;
     QQuick3DNode *referencedScene() const;
-    QQuick3DView3DRenderMode renderMode() const;
+    QQuick3DViewportRenderMode renderMode() const;
 
     QQuick3DSceneRenderer *createRenderer() const;
 
@@ -97,7 +97,7 @@ public Q_SLOTS:
     void setCamera(QQuick3DCamera *camera);
     void setEnvironment(QQuick3DSceneEnvironment * environment);
     void setScene(QQuick3DNode *sceneRoot);
-    void setRenderMode(QQuick3DView3DRenderMode renderMode);
+    void setRenderMode(QQuick3DViewportRenderMode renderMode);
 
 private Q_SLOTS:
     void invalidateSceneGraph();
@@ -106,10 +106,10 @@ Q_SIGNALS:
     void cameraChanged(QQuick3DCamera *camera);
     void environmentChanged(QQuick3DSceneEnvironment * environment);
     void sceneChanged(QQuick3DNode *sceneRoot);
-    void renderModeChanged(QQuick3DView3DRenderMode renderMode);
+    void renderModeChanged(QQuick3DViewportRenderMode renderMode);
 
 private:
-    Q_DISABLE_COPY(QQuick3DView3D)
+    Q_DISABLE_COPY(QQuick3DViewport)
 
     QQuick3DCamera *m_camera = nullptr;
     QQuick3DSceneEnvironment *m_environment = nullptr;
@@ -119,13 +119,13 @@ private:
     mutable QQuick3DSGRenderNode *m_renderNode = nullptr;
     mutable QQuick3DSGDirectRenderer *m_directRenderer = nullptr;
     bool m_renderModeDirty = false;
-    QQuick3DView3DRenderMode m_renderMode = Texture;
+    QQuick3DViewportRenderMode m_renderMode = Texture;
 
     QHash<QObject*, QMetaObject::Connection> m_connections;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QQuick3DView3D)
+QML_DECLARE_TYPE(QQuick3DViewport)
 
 #endif // QDEMONVIEW3D_H

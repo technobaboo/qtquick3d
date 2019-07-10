@@ -33,6 +33,13 @@
 
 QT_BEGIN_NAMESPACE
 
+// Disable for no since this class doesn't actually do anything yet
+///*!
+//    \qmltype Effect
+//    \inqmlmodule QtQuick3D
+//    \brief Lets you define a post processing effect on a 3D scene.
+//*/
+
 QQuick3DEffect::QQuick3DEffect() {}
 
 QQuick3DEffect::~QQuick3DEffect() {}

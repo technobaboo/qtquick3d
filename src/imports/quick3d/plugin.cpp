@@ -40,7 +40,7 @@
 #include <QtQuick3D/QQuick3DModel>
 #include <QtQuick3D/QQuick3DNode>
 #include <QtQuick3D/QQuick3DObject>
-#include <QtQuick3D/QQuick3DView3D>
+#include <QtQuick3D/QQuick3DViewport>
 #include <QtQuick3D/QQuick3DSceneEnvironment>
 
 #include <private/qqmlglobal_p.h>
@@ -104,7 +104,7 @@ public:
         qmlRegisterType<QQuick3DModel>(uri, 1, 0, "Model");
         qmlRegisterType<QQuick3DNode>(uri, 1, 0, "Node");
         qmlRegisterUncreatableType<QQuick3DObject>(uri, 1, 0, "Object3D", QLatin1String("Object3D is Abtract"));
-        qmlRegisterType<QQuick3DView3D>(uri, 1, 0, "View3D");
+        qmlRegisterType<QQuick3DViewport>(uri, 1, 0, "View3D");
         qmlRegisterType<QQuick3DSceneEnvironment>(uri, 1, 0, "SceneEnvironment");
 
         qmlRegisterModule(uri, 1, QT_VERSION_MINOR);

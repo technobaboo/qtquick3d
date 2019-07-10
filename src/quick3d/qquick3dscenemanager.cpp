@@ -29,7 +29,7 @@
 
 #include "qquick3dscenemanager_p.h"
 #include "qquick3dobject_p.h"
-#include "qquick3dview3d.h"
+#include "qquick3dviewport.h"
 
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
@@ -159,7 +159,7 @@ void QQuick3DSceneManager::updateDirtySpatialNode(QQuick3DNode *spatialNode)
             QDemonRenderNode *parentGraphNode = static_cast<QDemonRenderNode *>(QQuick3DObjectPrivate::get(nodeParent)->spatialNode);
             parentGraphNode->addChild(*graphNode);
         } else {
-            QQuick3DView3D *viewParent = qobject_cast<QQuick3DView3D *>(spatialNode->parent());
+            QQuick3DViewport *viewParent = qobject_cast<QQuick3DViewport *>(spatialNode->parent());
             if (viewParent) {
                 auto sceneRoot = QQuick3DObjectPrivate::get(viewParent->scene());
                 if (!sceneRoot->spatialNode) {

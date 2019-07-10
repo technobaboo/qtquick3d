@@ -39,8 +39,9 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype Node
     \inqmlmodule QtQuick3D
-    \brief Lets you define a 3D item with necessary properties
+    \brief Lets you define a 3D item with necessary properties.
 */
+
 QQuick3DNode::QQuick3DNode()
 {
 }

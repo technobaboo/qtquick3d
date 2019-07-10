@@ -32,7 +32,7 @@
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 #include "qquick3dobject_p.h"
-#include "qquick3dview3d.h"
+#include "qquick3dviewport.h"
 
 Q_DECLARE_OPAQUE_POINTER(QQuick3DCustomMaterialTexture)
 
@@ -84,6 +84,112 @@ struct ShaderType<QVariant::Vector4D>
     static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec4; }
     static QByteArray name() { return QByteArrayLiteral("vec4"); }
 };
+
+/*!
+    \qmltype CustomMaterial
+    \inqmlmodule QtQuick3D
+    \brief Base component for creating custom materials used to shade models.
+*/
+
+
+
+/*!
+    \qmltype CustomMaterialShader
+    \inqmlmodule QtQuick3D
+    \brief Container component for defining shader code used by CustomMaterials.
+*/
+
+/*!
+    \qmltype CustomMaterialShaderInfo
+    \inqmlmodule QtQuick3D
+    \brief Defines basic information about custom shader code for CustomMaterials.
+*/
+
+/*!
+    \qmltype CustomMaterialTexture
+    \inqmlmodule QtQuick3D
+    \brief Defines a texture channel for a Custom Material.
+*/
+
+/*!
+ * \qmlproperty Texture CustomMaterialTexture::image
+ *
+ * The property defines the source Texture
+ *
+ */
+
+/*!
+ * \qmlproperty enumeration CustomMaterialTexture::type
+ *
+ * The property defines what channel the texture is being used for.
+ *
+ * \list
+ * \li CustomMaterialTexture.Unknown
+ * \li CustomMaterialTexture.Diffuse
+ * \li CustomMaterialTexture.Specular
+ * \li CustomMaterialTexture.Environment
+ * \li CustomMaterialTexture.Bump
+ * \li CustomMaterialTexture.Normal
+ * \li CustomMaterialTexture.Displace
+ * \li CustomMaterialTexture.Emissive
+ * \li CustomMaterialTexture.Emissive2
+ * \li CustomMaterialTexture.Anisotropy
+ * \li CustomMaterialTexture.Translucent
+ * \li CustomMaterialTexture.LightmapIndirect
+ * \li CustomMaterialTexture.LightmapRadiosity
+ * \li CustomMaterialTexture.LightmapShadow
+ * \endlist
+ *
+ */
+
+/*!
+ * \qmlproperty bool CustomMaterialTexture::enabled
+ *
+ * The property determines if this channel is enabled.
+ *
+ */
+
+/*!
+    \qmltype CustomMaterialPass
+    \inqmlmodule QtQuick3D
+    \brief Defines a pass in the Custom Material API.
+*/
+
+/*!
+    \qmltype CustomMaterialCommand
+    \inqmlmodule QtQuick3D
+    \brief Defines a command to be performed in a pass of a CustomMaterial.
+*/
+
+/*!
+    \qmltype CustomMaterialBufferInput
+    \inqmlmodule QtQuick3D
+    \brief Defines an input buffer to be used for a pass of a CustomMaterial.
+*/
+
+/*!
+    \qmltype CustomMaterialBufferBlit
+    \inqmlmodule QtQuick3D
+    \brief Defines a copy operation between two buffers in a pass of a CustomMaterial.
+*/
+
+/*!
+    \qmltype CustomMaterialBlending
+    \inqmlmodule QtQuick3D
+    \brief Defines the blending state in a pass of a CustomMaterial.
+*/
+
+/*!
+    \qmltype CustomMaterialBuffer
+    \inqmlmodule QtQuick3D
+    \brief Defines a buffer to be used for a pass of a CustomMaterial.
+*/
+
+/*!
+    \qmltype CustomMaterialRenderState
+    \inqmlmodule QtQuick3D
+    \brief Defines the render state in a pass of a CustomMaterial.
+*/
 
 QQuick3DCustomMaterial::QQuick3DCustomMaterial() {}
 
@@ -272,10 +378,10 @@ QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderG
 
     // Find the parent view
     QObject *p = this;
-    QQuick3DView3D *view = nullptr;
+    QQuick3DViewport *view = nullptr;
     while (p != nullptr && view == nullptr) {
         p = p->parent();
-        if ((view = qobject_cast<QQuick3DView3D *>(p)))
+        if ((view = qobject_cast<QQuick3DViewport *>(p)))
             break;
     }
 

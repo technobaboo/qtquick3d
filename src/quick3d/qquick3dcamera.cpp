@@ -35,52 +35,141 @@
 #include <qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
+
 /*!
     \qmltype Camera
     \inqmlmodule QtQuick3D
-    \brief Lets you add a camera to view the 3D content
+    \brief Defines a Camera node for viewing the content of a 3D scene.
 */
+
+/*!
+ * \internal
+ */
 QQuick3DCamera::QQuick3DCamera() {}
+
+
+/*!
+ * \qmlproperty real Camera::clipNear
+ *
+ * This property holds the near value of the camara's view frustum.  This value determines
+ * what the closest distance to the camera that items will be shown.
+ *
+ */
 
 float QQuick3DCamera::clipNear() const
 {
     return m_clipNear;
 }
 
+/*!
+ * \qmlproperty real Camera::clipFar
+ *
+ * This property holds the far value of the camara's view frustum.  This value determines
+ * what the furthest distance to the camera that items will be shown.
+ *
+ */
+
 float QQuick3DCamera::clipFar() const
 {
     return m_clipFar;
 }
+
+/*!
+ * \qmlproperty real Camera::fieldOfView
+ *
+ * This property holds the field of view of the camera in degrees. This can be either the
+ * vertical or horizontal field of view depending on if the isFieldOfViewHorizontal property
+ * is set to \c true or not.
+ *
+ *
+ */
 
 float QQuick3DCamera::fieldOfView() const
 {
     return m_fieldOfView;
 }
 
-bool QQuick3DCamera::isFieldOFViewHorizontal() const
+/*!
+ * \qmlproperty bool Camera::isFieldOfViewHorizontal
+ *
+ * This property determines if the field of view property reflects the horizontal
+ * field of view. If this value is \c false then it is assumed field of view is vertical.
+ *
+ */
+
+bool QQuick3DCamera::isFieldOfViewHorizontal() const
 {
-    return m_isFieldOFViewHorizontal;
+    return m_isFieldOfViewHorizontal;
 }
+
+/*!
+ * \qmlproperty enumeration Camera::scaleMode
+ *
+ * This property defines how the cameras output retangle is scaled to match the viewport.
+ *
+ * \list
+ * \li Camera.Fit
+ * \li Camera.SameSize
+ * \li Camera.FitHorizontal
+ * \li Camera.FitVertical
+ * \endlist
+ *
+ */
 
 QQuick3DCamera::QDemonCameraScaleModes QQuick3DCamera::scaleMode() const
 {
     return m_scaleMode;
 }
 
+
+/*!
+ * \qmlproperty enumeration Camera::scaleAnchor
+ *
+ * This property sets the anchor point to perform scaling when necessary.
+ *
+ * \list
+ * \li Camera.Center
+ * \li Camera.North
+ * \li Camera.NorthEast
+ * \li Camera.East
+ * \li Camera.SouthEast
+ * \li Camera.South
+ * \li Camera.SouthWest
+ * \li Camera.West
+ * \li Camera.NorthWest
+ * \endlist
+ */
+
 QQuick3DCamera::QDemonCameraScaleAnchors QQuick3DCamera::scaleAnchor() const
 {
     return m_scaleAnchor;
 }
 
+/*!
+ * \internal
+ */\
 QQuick3DObject::Type QQuick3DCamera::type() const
 {
     return QQuick3DObject::Camera;
 }
 
+/*!
+ * \internal
+ */\
 QDemonRenderCamera *QQuick3DCamera::getCameraNode() const
 {
     return m_cameraNode;
 }
+
+/*!
+ * \qmlproperty enumeration Camera::projectionMode
+ *
+ * \list
+ * \li Camera.Projection
+ * \li Camera.Orthographic
+ * \endlist
+ *
+ */
 
 QQuick3DCamera::QDemonCameraProjectionMode QQuick3DCamera::projectionMode() const
 {
@@ -117,13 +206,13 @@ void QQuick3DCamera::setFieldOfView(float fieldOfView)
     update();
 }
 
-void QQuick3DCamera::setIsFieldOFViewHorizontal(bool isFieldOFViewHorizontal)
+void QQuick3DCamera::setIsFieldOfViewHorizontal(bool isFieldOfViewHorizontal)
 {
-    if (m_isFieldOFViewHorizontal == isFieldOFViewHorizontal)
+    if (m_isFieldOfViewHorizontal == isFieldOfViewHorizontal)
         return;
 
-    m_isFieldOFViewHorizontal = isFieldOFViewHorizontal;
-    emit isFieldOFViewHorizontalChanged(m_isFieldOFViewHorizontal);
+    m_isFieldOfViewHorizontal = isFieldOfViewHorizontal;
+    emit isFieldOfViewHorizontalChanged(m_isFieldOfViewHorizontal);
     update();
 }
 
@@ -175,7 +264,7 @@ void QQuick3DCamera::setEnableFrustumCulling(bool enableFrustumCulling)
  * back of the frustum (clipNear) to \a worldPos in world units. If \a worldPos
  * cannot be mapped to a position in the viewport, a position of [0, 0, 0] is returned.
  *
- * \sa QDemonView3D::worldToView QDemonCamera::viewportToWorld
+ * \sa QQuick3DViewport::worldToView QQuick3DCamera::viewportToWorld
  */
 QVector3D QQuick3DCamera::worldToViewport(const QVector3D &worldPos) const
 {
@@ -220,7 +309,7 @@ QVector3D QQuick3DCamera::worldToViewport(const QVector3D &worldPos) const
  * If \a viewportPos cannot be mapped to a position in the world, a position of
  * [0, 0, 0] is returned.
  *
- * \sa QDemonView3D::viewToWorld QDemonCamera::worldToViewport
+ * \sa QQuick3DViewport::viewToWorld QQuick3DCamera::worldToViewport
  */
 QVector3D QQuick3DCamera::viewportToWorld(const QVector3D &viewportPos) const
 {
@@ -262,11 +351,21 @@ QVector3D QQuick3DCamera::viewportToWorld(const QVector3D &viewportPos) const
     return worldPos;
 }
 
+/*!
+ * \qmlproperty bool Camera::enableFrustumCulling
+ *
+ *
+ *
+ */
+
 bool QQuick3DCamera::enableFrustumCulling() const
 {
     return m_enableFrustumCulling;
 }
 
+/*!
+ * \internal
+ */\
 QDemonRenderGraphObject *QQuick3DCamera::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
@@ -279,7 +378,7 @@ QDemonRenderGraphObject *QQuick3DCamera::updateSpatialNode(QDemonRenderGraphObje
     camera->clipNear = m_clipNear;
     camera->clipFar = m_clipFar;
     camera->fov = qDegreesToRadians(m_fieldOfView);
-    camera->fovHorizontal = m_isFieldOFViewHorizontal;
+    camera->fovHorizontal = m_isFieldOfViewHorizontal;
 
     camera->scaleMode = QDemonRenderCamera::ScaleModes(m_scaleMode);
     camera->scaleAnchor = QDemonRenderCamera::ScaleAnchors(m_scaleAnchor);

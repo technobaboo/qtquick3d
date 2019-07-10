@@ -34,11 +34,13 @@
 #include "qquick3dobject_p.h"
 
 QT_BEGIN_NAMESPACE
+
 /*!
     \qmltype Texture
     \inqmlmodule QtQuick3D
-    \brief Lets you add a texture image to the material
+    \brief Lets you add a texture image to the material.
 */
+
 QQuick3DTexture::QQuick3DTexture() {}
 
 QQuick3DTexture::~QQuick3DTexture() {}

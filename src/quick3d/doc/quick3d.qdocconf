@@ -39,8 +39,7 @@ tagfile                 = ../../../doc/qtquick3d/qtquick3d.tags
 
 depends += qtqml qtquick qtdoc
 
-headerdirs  += .. \
-               ..\..
+headerdirs  += ..
 
 sourcedirs  += .. \
                src  
@@ -48,6 +47,9 @@ sourcedirs  += .. \
 exampledirs +=  ../../../examples/quick3d
 
 imagedirs   += images
+
+Cpp.ignoretokens         += Q_QUICK3D_EXPORT
+Cpp.ignoredirectives     += Q_DECLARE_LOGGING_CATEGORY
 
 #add imports directory because of dependencies
 headerdirs += ../../imports
