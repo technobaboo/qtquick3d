@@ -9,9 +9,9 @@
 Module {
     dependencies: ["QtQuick 2.12"]
     Component {
-        name: "QDemonCamera"
+        name: "QQuick3DCamera"
         defaultProperty: "data"
-        prototype: "QDemonNode"
+        prototype: "QQuick3DNode"
         exports: ["QtQuick3D/Camera 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
@@ -128,19 +128,19 @@ Module {
         }
     }
     Component {
-        name: "QDemonCustomMaterial"
+        name: "QQuick3DCustomMaterial"
         defaultProperty: "data"
-        prototype: "QDemonMaterial"
+        prototype: "QQuick3DMaterial"
         exports: ["QtQuick3D/CustomMaterial 1.0"]
         exportMetaObjectRevisions: [0]
         Property { name: "hasTransparency"; type: "bool" }
         Property { name: "hasRefraction"; type: "bool" }
         Property { name: "hasVolumetricDF"; type: "bool" }
         Property { name: "alwaysDirty"; type: "bool" }
-        Property { name: "shaderInfo"; type: "QDemonCustomMaterialShaderInfo"; isPointer: true }
+        Property { name: "shaderInfo"; type: "QQuick3DCustomMaterialShaderInfo"; isPointer: true }
         Property {
             name: "passes"
-            type: "QDemonCustomMaterialRenderPass"
+            type: "QQuick3DCustomMaterialRenderPass"
             isList: true
             isReadonly: true
         }
@@ -182,7 +182,7 @@ Module {
         }
         Method {
             name: "setShaderInfo"
-            Parameter { name: "shaderInfo"; type: "QDemonCustomMaterialShaderInfo"; isPointer: true }
+            Parameter { name: "shaderInfo"; type: "QQuick3DCustomMaterialShaderInfo"; isPointer: true }
         }
         Method {
             name: "setAlwaysDirty"
@@ -190,8 +190,8 @@ Module {
         }
     }
     Component {
-        name: "QDemonCustomMaterialBlending"
-        prototype: "QDemonCustomMaterialRenderCommand"
+        name: "QQuick3DCustomMaterialBlending"
+        prototype: "QQuick3DCustomMaterialRenderCommand"
         exports: ["QtQuick3D/CustomMaterialBlending 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
@@ -247,7 +247,7 @@ Module {
         }
     }
     Component {
-        name: "QDemonCustomMaterialBuffer"
+        name: "QQuick3DCustomMaterialBuffer"
         prototype: "QObject"
         exports: ["QtQuick3D/CustomMaterialBuffer 1.0"]
         exportMetaObjectRevisions: [0]
@@ -328,44 +328,44 @@ Module {
         Property { name: "name"; type: "QByteArray" }
     }
     Component {
-        name: "QDemonCustomMaterialBufferBlit"
-        prototype: "QDemonCustomMaterialRenderCommand"
+        name: "QQuick3DCustomMaterialBufferBlit"
+        prototype: "QQuick3DCustomMaterialRenderCommand"
         exports: ["QtQuick3D/CustomMaterialBufferBlit 1.0"]
         exportMetaObjectRevisions: [0]
-        Property { name: "source"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
-        Property { name: "destination"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
+        Property { name: "source"; type: "QQuick3DCustomMaterialBuffer"; isPointer: true }
+        Property { name: "destination"; type: "QQuick3DCustomMaterialBuffer"; isPointer: true }
     }
     Component {
-        name: "QDemonCustomMaterialBufferInput"
-        prototype: "QDemonCustomMaterialRenderCommand"
+        name: "QQuick3DCustomMaterialBufferInput"
+        prototype: "QQuick3DCustomMaterialRenderCommand"
         exports: ["QtQuick3D/CustomMaterialBufferInput 1.0"]
         exportMetaObjectRevisions: [0]
-        Property { name: "buffer"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
+        Property { name: "buffer"; type: "QQuick3DCustomMaterialBuffer"; isPointer: true }
         Property { name: "param"; type: "QByteArray" }
     }
     Component {
-        name: "QDemonCustomMaterialRenderCommand"
+        name: "QQuick3DCustomMaterialRenderCommand"
         prototype: "QObject"
         exports: ["QtQuick3D/CustomMaterialCommand 1.0"]
         exportMetaObjectRevisions: [0]
     }
     Component {
-        name: "QDemonCustomMaterialRenderPass"
+        name: "QQuick3DCustomMaterialRenderPass"
         prototype: "QObject"
         exports: ["QtQuick3D/CustomMaterialPass 1.0"]
         exportMetaObjectRevisions: [0]
         Property {
             name: "commands"
-            type: "QDemonCustomMaterialRenderCommand"
+            type: "QQuick3DCustomMaterialRenderCommand"
             isList: true
             isReadonly: true
         }
-        Property { name: "output"; type: "QDemonCustomMaterialBuffer"; isPointer: true }
-        Property { name: "shaders"; type: "QDemonCustomMaterialShader"; isList: true; isReadonly: true }
+        Property { name: "output"; type: "QQuick3DCustomMaterialBuffer"; isPointer: true }
+        Property { name: "shaders"; type: "QQuick3DCustomMaterialShader"; isList: true; isReadonly: true }
     }
     Component {
-        name: "QDemonCustomMaterialRenderState"
-        prototype: "QDemonCustomMaterialRenderCommand"
+        name: "QQuick3DCustomMaterialRenderState"
+        prototype: "QQuick3DCustomMaterialRenderCommand"
         exports: ["QtQuick3D/CustomMaterialRenderState 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
@@ -389,7 +389,7 @@ Module {
         }
     }
     Component {
-        name: "QDemonCustomMaterialShader"
+        name: "QQuick3DCustomMaterialShader"
         prototype: "QObject"
         exports: ["QtQuick3D/CustomMaterialShader 1.0"]
         exportMetaObjectRevisions: [0]
@@ -407,7 +407,7 @@ Module {
         Property { name: "stage"; type: "Stage" }
     }
     Component {
-        name: "QDemonCustomMaterialShaderInfo"
+        name: "QQuick3DCustomMaterialShaderInfo"
         prototype: "QObject"
         exports: ["QtQuick3D/CustomMaterialShaderInfo 1.0"]
         exportMetaObjectRevisions: [0]
@@ -431,7 +431,7 @@ Module {
         Property { name: "layers"; type: "int" }
     }
     Component {
-        name: "QDemonCustomMaterialTexture"
+        name: "QQuick3DCustomMaterialTexture"
         prototype: "QObject"
         exports: ["QtQuick3D/CustomMaterialTexture 1.0"]
         exportMetaObjectRevisions: [0]
@@ -454,22 +454,22 @@ Module {
                 "LightmapShadow": 13
             }
         }
-        Property { name: "image"; type: "QDemonImage"; isPointer: true }
+        Property { name: "image"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "type"; type: "TextureType" }
         Property { name: "enabled"; type: "bool" }
         Signal {
             name: "textureDirty"
-            Parameter { name: "texture"; type: "QDemonCustomMaterialTexture"; isPointer: true }
+            Parameter { name: "texture"; type: "QQuick3DCustomMaterialTexture"; isPointer: true }
         }
         Method {
             name: "setImage"
-            Parameter { name: "image"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "image"; type: "QQuick3DTexture"; isPointer: true }
         }
     }
     Component {
-        name: "QDemonDefaultMaterial"
+        name: "QQuick3DDefaultMaterial"
         defaultProperty: "data"
-        prototype: "QDemonMaterial"
+        prototype: "QQuick3DMaterial"
         exports: ["QtQuick3D/DefaultMaterial 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
@@ -502,27 +502,27 @@ Module {
         Property { name: "lighting"; type: "QDemonDefaultMaterialLighting" }
         Property { name: "blendMode"; type: "QDemonDefaultMaterialBlendMode" }
         Property { name: "diffuseColor"; type: "QColor" }
-        Property { name: "diffuseMap"; type: "QDemonImage"; isPointer: true }
-        Property { name: "diffuseMap2"; type: "QDemonImage"; isPointer: true }
-        Property { name: "diffuseMap3"; type: "QDemonImage"; isPointer: true }
+        Property { name: "diffuseMap"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "diffuseMap2"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "diffuseMap3"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "emissivePower"; type: "float" }
-        Property { name: "emissiveMap"; type: "QDemonImage"; isPointer: true }
+        Property { name: "emissiveMap"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "emissiveColor"; type: "QColor" }
-        Property { name: "specularReflectionMap"; type: "QDemonImage"; isPointer: true }
-        Property { name: "specularMap"; type: "QDemonImage"; isPointer: true }
+        Property { name: "specularReflectionMap"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "specularMap"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "specularModel"; type: "QDemonDefaultMaterialSpecularModel" }
         Property { name: "specularTint"; type: "QColor" }
         Property { name: "indexOfRefraction"; type: "float" }
         Property { name: "fresnelPower"; type: "float" }
         Property { name: "specularAmount"; type: "float" }
         Property { name: "specularRoughness"; type: "float" }
-        Property { name: "roughnessMap"; type: "QDemonImage"; isPointer: true }
+        Property { name: "roughnessMap"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "opacity"; type: "float" }
-        Property { name: "opacityMap"; type: "QDemonImage"; isPointer: true }
-        Property { name: "bumpMap"; type: "QDemonImage"; isPointer: true }
+        Property { name: "opacityMap"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "bumpMap"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "bumpAmount"; type: "float" }
-        Property { name: "normalMap"; type: "QDemonImage"; isPointer: true }
-        Property { name: "translucencyMap"; type: "QDemonImage"; isPointer: true }
+        Property { name: "normalMap"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "translucencyMap"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "translucentFalloff"; type: "float" }
         Property { name: "diffuseLightWrap"; type: "float" }
         Property { name: "vertexColors"; type: "bool" }
@@ -540,15 +540,15 @@ Module {
         }
         Signal {
             name: "diffuseMapChanged"
-            Parameter { name: "diffuseMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "diffuseMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "diffuseMap2Changed"
-            Parameter { name: "diffuseMap2"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "diffuseMap2"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "diffuseMap3Changed"
-            Parameter { name: "diffuseMap3"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "diffuseMap3"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "emissivePowerChanged"
@@ -556,7 +556,7 @@ Module {
         }
         Signal {
             name: "emissiveMapChanged"
-            Parameter { name: "emissiveMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "emissiveMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "emissiveColorChanged"
@@ -564,11 +564,11 @@ Module {
         }
         Signal {
             name: "specularReflectionMapChanged"
-            Parameter { name: "specularReflectionMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "specularReflectionMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "specularMapChanged"
-            Parameter { name: "specularMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "specularMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "specularModelChanged"
@@ -596,7 +596,7 @@ Module {
         }
         Signal {
             name: "roughnessMapChanged"
-            Parameter { name: "roughnessMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "roughnessMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "opacityChanged"
@@ -604,11 +604,11 @@ Module {
         }
         Signal {
             name: "opacityMapChanged"
-            Parameter { name: "opacityMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "opacityMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "bumpMapChanged"
-            Parameter { name: "bumpMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "bumpMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "bumpAmountChanged"
@@ -616,11 +616,11 @@ Module {
         }
         Signal {
             name: "normalMapChanged"
-            Parameter { name: "normalMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "normalMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "translucencyMapChanged"
-            Parameter { name: "translucencyMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "translucencyMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Signal {
             name: "translucentFalloffChanged"
@@ -648,15 +648,15 @@ Module {
         }
         Method {
             name: "setDiffuseMap"
-            Parameter { name: "diffuseMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "diffuseMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setDiffuseMap2"
-            Parameter { name: "diffuseMap2"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "diffuseMap2"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setDiffuseMap3"
-            Parameter { name: "diffuseMap3"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "diffuseMap3"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setEmissivePower"
@@ -664,7 +664,7 @@ Module {
         }
         Method {
             name: "setEmissiveMap"
-            Parameter { name: "emissiveMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "emissiveMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setEmissiveColor"
@@ -672,11 +672,11 @@ Module {
         }
         Method {
             name: "setSpecularReflectionMap"
-            Parameter { name: "specularReflectionMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "specularReflectionMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setSpecularMap"
-            Parameter { name: "specularMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "specularMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setSpecularModel"
@@ -704,7 +704,7 @@ Module {
         }
         Method {
             name: "setRoughnessMap"
-            Parameter { name: "roughnessMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "roughnessMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setOpacity"
@@ -712,11 +712,11 @@ Module {
         }
         Method {
             name: "setOpacityMap"
-            Parameter { name: "opacityMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "opacityMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setBumpMap"
-            Parameter { name: "bumpMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "bumpMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setBumpAmount"
@@ -724,11 +724,11 @@ Module {
         }
         Method {
             name: "setNormalMap"
-            Parameter { name: "normalMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "normalMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setTranslucencyMap"
-            Parameter { name: "translucencyMap"; type: "QDemonImage"; isPointer: true }
+            Parameter { name: "translucencyMap"; type: "QQuick3DTexture"; isPointer: true }
         }
         Method {
             name: "setTranslucentFalloff"
@@ -744,9 +744,9 @@ Module {
         }
     }
     Component {
-        name: "QDemonEffect"
+        name: "QQuick3DEffect"
         defaultProperty: "data"
-        prototype: "QDemonObject"
+        prototype: "QQuick3DObject"
         exports: ["QtQuick3D/Effect 1.0"]
         exportMetaObjectRevisions: [0]
         Property { name: "source"; type: "string" }
@@ -760,9 +760,832 @@ Module {
         }
     }
     Component {
-        name: "QDemonImage"
+        name: "QQuick3DLight"
         defaultProperty: "data"
-        prototype: "QDemonObject"
+        prototype: "QQuick3DNode"
+        exports: ["QtQuick3D/Light 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "QDemonRenderLightTypes"
+            values: {
+                "Unknown": 0,
+                "Directional": 1,
+                "Point": 2,
+                "Area": 3
+            }
+        }
+        Property { name: "lightType"; type: "QDemonRenderLightTypes" }
+        Property { name: "diffuseColor"; type: "QColor" }
+        Property { name: "specularColor"; type: "QColor" }
+        Property { name: "ambientColor"; type: "QColor" }
+        Property { name: "brightness"; type: "float" }
+        Property { name: "linearFade"; type: "float" }
+        Property { name: "exponentialFade"; type: "float" }
+        Property { name: "areaWidth"; type: "float" }
+        Property { name: "areaHeight"; type: "float" }
+        Property { name: "castShadow"; type: "bool" }
+        Property { name: "shadowBias"; type: "float" }
+        Property { name: "shadowFactor"; type: "float" }
+        Property { name: "shadowMapResolution"; type: "int" }
+        Property { name: "shadowMapFar"; type: "float" }
+        Property { name: "shadowMapFieldOfView"; type: "float" }
+        Property { name: "shadowFilter"; type: "float" }
+        Property { name: "scope"; type: "QQuick3DNode"; isPointer: true }
+        Signal {
+            name: "lightTypeChanged"
+            Parameter { name: "lightType"; type: "QDemonRenderLightTypes" }
+        }
+        Signal {
+            name: "diffuseColorChanged"
+            Parameter { name: "diffuseColor"; type: "QColor" }
+        }
+        Signal {
+            name: "specularColorChanged"
+            Parameter { name: "specularColor"; type: "QColor" }
+        }
+        Signal {
+            name: "ambientColorChanged"
+            Parameter { name: "ambientColor"; type: "QColor" }
+        }
+        Signal {
+            name: "brightnessChanged"
+            Parameter { name: "brightness"; type: "float" }
+        }
+        Signal {
+            name: "linearFadeChanged"
+            Parameter { name: "linearFade"; type: "float" }
+        }
+        Signal {
+            name: "exponentialFadeChanged"
+            Parameter { name: "exponentialFade"; type: "float" }
+        }
+        Signal {
+            name: "areaWidthChanged"
+            Parameter { name: "areaWidth"; type: "float" }
+        }
+        Signal {
+            name: "areaHeightChanged"
+            Parameter { name: "areaHeight"; type: "float" }
+        }
+        Signal {
+            name: "castShadowChanged"
+            Parameter { name: "castShadow"; type: "bool" }
+        }
+        Signal {
+            name: "shadowBiasChanged"
+            Parameter { name: "shadowBias"; type: "float" }
+        }
+        Signal {
+            name: "shadowFactorChanged"
+            Parameter { name: "shadowFactor"; type: "float" }
+        }
+        Signal {
+            name: "shadowMapResolutionChanged"
+            Parameter { name: "shadowMapResolution"; type: "int" }
+        }
+        Signal {
+            name: "shadowMapFarChanged"
+            Parameter { name: "shadowMapFar"; type: "float" }
+        }
+        Signal {
+            name: "shadowMapFieldOfViewChanged"
+            Parameter { name: "shadowMapFieldOfView"; type: "float" }
+        }
+        Signal {
+            name: "shadowFilterChanged"
+            Parameter { name: "shadowFilter"; type: "float" }
+        }
+        Signal {
+            name: "scopeChanged"
+            Parameter { name: "scope"; type: "QQuick3DNode"; isPointer: true }
+        }
+        Method {
+            name: "setLightType"
+            Parameter { name: "lightType"; type: "QDemonRenderLightTypes" }
+        }
+        Method {
+            name: "setDiffuseColor"
+            Parameter { name: "diffuseColor"; type: "QColor" }
+        }
+        Method {
+            name: "setSpecularColor"
+            Parameter { name: "specularColor"; type: "QColor" }
+        }
+        Method {
+            name: "setAmbientColor"
+            Parameter { name: "ambientColor"; type: "QColor" }
+        }
+        Method {
+            name: "setBrightness"
+            Parameter { name: "brightness"; type: "float" }
+        }
+        Method {
+            name: "setLinearFade"
+            Parameter { name: "linearFade"; type: "float" }
+        }
+        Method {
+            name: "setExponentialFade"
+            Parameter { name: "exponentialFade"; type: "float" }
+        }
+        Method {
+            name: "setAreaWidth"
+            Parameter { name: "areaWidth"; type: "float" }
+        }
+        Method {
+            name: "setAreaHeight"
+            Parameter { name: "areaHeight"; type: "float" }
+        }
+        Method {
+            name: "setCastShadow"
+            Parameter { name: "castShadow"; type: "bool" }
+        }
+        Method {
+            name: "setShadowBias"
+            Parameter { name: "shadowBias"; type: "float" }
+        }
+        Method {
+            name: "setShadowFactor"
+            Parameter { name: "shadowFactor"; type: "float" }
+        }
+        Method {
+            name: "setShadowMapResolution"
+            Parameter { name: "shadowMapResolution"; type: "int" }
+        }
+        Method {
+            name: "setShadowMapFar"
+            Parameter { name: "shadowMapFar"; type: "float" }
+        }
+        Method {
+            name: "setShadowMapFieldOfView"
+            Parameter { name: "shadowMapFieldOfView"; type: "float" }
+        }
+        Method {
+            name: "setShadowFilter"
+            Parameter { name: "shadowFilter"; type: "float" }
+        }
+        Method {
+            name: "setScope"
+            Parameter { name: "scope"; type: "QQuick3DNode"; isPointer: true }
+        }
+    }
+    Component {
+        name: "QQuick3DMaterial"
+        defaultProperty: "data"
+        prototype: "QQuick3DObject"
+        exports: ["QtQuick3D/Material 1.0"]
+        isCreatable: false
+        exportMetaObjectRevisions: [0]
+        Property { name: "lightmapIndirect"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "lightmapRadiosity"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "lightmapShadow"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "iblProbe"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "emissiveMap2"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "displacementMap"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "displacementAmount"; type: "float" }
+        Signal {
+            name: "lightmapIndirectChanged"
+            Parameter { name: "lightmapIndirect"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Signal {
+            name: "lightmapRadiosityChanged"
+            Parameter { name: "lightmapRadiosity"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Signal {
+            name: "lightmapShadowChanged"
+            Parameter { name: "lightmapShadow"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Signal {
+            name: "iblProbeChanged"
+            Parameter { name: "iblProbe"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Signal {
+            name: "emissiveMap2Changed"
+            Parameter { name: "emissiveMap2"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Signal {
+            name: "displacementMapChanged"
+            Parameter { name: "displacementMap"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Signal {
+            name: "displacementAmountChanged"
+            Parameter { name: "displacementAmount"; type: "float" }
+        }
+        Method {
+            name: "setLightmapIndirect"
+            Parameter { name: "lightmapIndirect"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Method {
+            name: "setLightmapRadiosity"
+            Parameter { name: "lightmapRadiosity"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Method {
+            name: "setLightmapShadow"
+            Parameter { name: "lightmapShadow"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Method {
+            name: "setIblProbe"
+            Parameter { name: "iblProbe"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Method {
+            name: "setEmissiveMap2"
+            Parameter { name: "emissiveMap2"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Method {
+            name: "setDisplacementMap"
+            Parameter { name: "displacementMap"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Method {
+            name: "setDisplacementAmount"
+            Parameter { name: "displacementAmount"; type: "float" }
+        }
+    }
+    Component {
+        name: "QQuick3DModel"
+        defaultProperty: "data"
+        prototype: "QQuick3DNode"
+        exports: ["QtQuick3D/Model 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "QDemonTessModeValues"
+            values: {
+                "NoTess": 0,
+                "TessLinear": 1,
+                "TessPhong": 2,
+                "TessNPatch": 3
+            }
+        }
+        Property { name: "source"; type: "QUrl" }
+        Property { name: "skeletonRoot"; type: "int" }
+        Property { name: "tesselationMode"; type: "QDemonTessModeValues" }
+        Property { name: "edgeTess"; type: "float" }
+        Property { name: "innerTess"; type: "float" }
+        Property { name: "isWireframeMode"; type: "bool" }
+        Property { name: "materials"; type: "QQuick3DMaterial"; isList: true; isReadonly: true }
+        Signal {
+            name: "sourceChanged"
+            Parameter { name: "source"; type: "QUrl" }
+        }
+        Signal {
+            name: "skeletonRootChanged"
+            Parameter { name: "skeletonRoot"; type: "int" }
+        }
+        Signal {
+            name: "tesselationModeChanged"
+            Parameter { name: "tesselationMode"; type: "QDemonTessModeValues" }
+        }
+        Signal {
+            name: "edgeTessChanged"
+            Parameter { name: "edgeTess"; type: "float" }
+        }
+        Signal {
+            name: "innerTessChanged"
+            Parameter { name: "innerTess"; type: "float" }
+        }
+        Signal {
+            name: "isWireframeModeChanged"
+            Parameter { name: "isWireframeMode"; type: "bool" }
+        }
+        Method {
+            name: "setSource"
+            Parameter { name: "source"; type: "QUrl" }
+        }
+        Method {
+            name: "setSkeletonRoot"
+            Parameter { name: "skeletonRoot"; type: "int" }
+        }
+        Method {
+            name: "setTesselationMode"
+            Parameter { name: "tesselationMode"; type: "QDemonTessModeValues" }
+        }
+        Method {
+            name: "setEdgeTess"
+            Parameter { name: "edgeTess"; type: "float" }
+        }
+        Method {
+            name: "setInnerTess"
+            Parameter { name: "innerTess"; type: "float" }
+        }
+        Method {
+            name: "setIsWireframeMode"
+            Parameter { name: "isWireframeMode"; type: "bool" }
+        }
+    }
+    Component {
+        name: "QQuick3DNode"
+        defaultProperty: "data"
+        prototype: "QQuick3DObject"
+        exports: ["QtQuick3D/Node 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "RotationOrder"
+            values: {
+                "XYZ": 0,
+                "YZX": 8,
+                "ZXY": 16,
+                "XZY": 4,
+                "YXZ": 12,
+                "ZYX": 20,
+                "XYZr": 21,
+                "YZXr": 5,
+                "ZXYr": 13,
+                "XZYr": 9,
+                "YXZr": 17,
+                "ZYXr": 1
+            }
+        }
+        Enum {
+            name: "Orientation"
+            values: {
+                "LeftHanded": 0,
+                "RightHanded": 1
+            }
+        }
+        Property { name: "x"; type: "float" }
+        Property { name: "y"; type: "float" }
+        Property { name: "z"; type: "float" }
+        Property { name: "rotation"; type: "QVector3D" }
+        Property { name: "position"; type: "QVector3D" }
+        Property { name: "scale"; type: "QVector3D" }
+        Property { name: "pivot"; type: "QVector3D" }
+        Property { name: "opacity"; type: "float" }
+        Property { name: "boneId"; type: "int" }
+        Property { name: "rotationOrder"; type: "RotationOrder" }
+        Property { name: "orientation"; type: "Orientation" }
+        Property { name: "visible"; type: "bool" }
+        Property { name: "forward"; type: "QVector3D"; isReadonly: true }
+        Property { name: "up"; type: "QVector3D"; isReadonly: true }
+        Property { name: "right"; type: "QVector3D"; isReadonly: true }
+        Property { name: "globalPosition"; type: "QVector3D"; isReadonly: true }
+        Property { name: "globalTransform"; type: "QMatrix4x4"; isReadonly: true }
+        Signal {
+            name: "xChanged"
+            Parameter { name: "x"; type: "float" }
+        }
+        Signal {
+            name: "yChanged"
+            Parameter { name: "y"; type: "float" }
+        }
+        Signal {
+            name: "zChanged"
+            Parameter { name: "z"; type: "float" }
+        }
+        Signal {
+            name: "rotationChanged"
+            Parameter { name: "rotation"; type: "QVector3D" }
+        }
+        Signal {
+            name: "positionChanged"
+            Parameter { name: "position"; type: "QVector3D" }
+        }
+        Signal {
+            name: "scaleChanged"
+            Parameter { name: "scale"; type: "QVector3D" }
+        }
+        Signal {
+            name: "pivotChanged"
+            Parameter { name: "pivot"; type: "QVector3D" }
+        }
+        Signal {
+            name: "localOpacityChanged"
+            Parameter { name: "opacity"; type: "float" }
+        }
+        Signal {
+            name: "skeletonIdChanged"
+            Parameter { name: "boneid"; type: "int" }
+        }
+        Signal {
+            name: "rotationOrderChanged"
+            Parameter { name: "rotationorder"; type: "RotationOrder" }
+        }
+        Signal {
+            name: "orientationChanged"
+            Parameter { name: "orientation"; type: "Orientation" }
+        }
+        Signal {
+            name: "visibleChanged"
+            Parameter { name: "visible"; type: "bool" }
+        }
+        Signal {
+            name: "globalTransformChanged"
+            Parameter { name: "transform"; type: "QMatrix4x4" }
+        }
+        Method {
+            name: "setX"
+            Parameter { name: "x"; type: "float" }
+        }
+        Method {
+            name: "setY"
+            Parameter { name: "y"; type: "float" }
+        }
+        Method {
+            name: "setZ"
+            Parameter { name: "z"; type: "float" }
+        }
+        Method {
+            name: "setRotation"
+            Parameter { name: "rotation"; type: "QVector3D" }
+        }
+        Method {
+            name: "setPosition"
+            Parameter { name: "position"; type: "QVector3D" }
+        }
+        Method {
+            name: "setScale"
+            Parameter { name: "scale"; type: "QVector3D" }
+        }
+        Method {
+            name: "setPivot"
+            Parameter { name: "pivot"; type: "QVector3D" }
+        }
+        Method {
+            name: "setLocalOpacity"
+            Parameter { name: "opacity"; type: "float" }
+        }
+        Method {
+            name: "setSkeletonId"
+            Parameter { name: "boneid"; type: "int" }
+        }
+        Method {
+            name: "setRotationOrder"
+            Parameter { name: "rotationorder"; type: "RotationOrder" }
+        }
+        Method {
+            name: "setOrientation"
+            Parameter { name: "orientation"; type: "Orientation" }
+        }
+        Method {
+            name: "setVisible"
+            Parameter { name: "visible"; type: "bool" }
+        }
+    }
+    Component {
+        name: "QQuick3DObject"
+        defaultProperty: "data"
+        prototype: "QObject"
+        exports: ["QtQuick3D/Object3D 1.0"]
+        isCreatable: false
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "Type"
+            values: {
+                "Unknown": 0,
+                "SceneEnvironment": 1,
+                "Node": 2,
+                "Layer": 3,
+                "Light": 4,
+                "Camera": 5,
+                "Model": 6,
+                "DefaultMaterial": 7,
+                "Image": 8,
+                "Text": 9,
+                "Effect": 10,
+                "CustomMaterial": 11,
+                "RenderPlugin": 12,
+                "ReferencedMaterial": 13,
+                "Path": 14,
+                "PathSubPath": 15,
+                "Lightmaps": 16,
+                "LastKnownGraphObjectType": 17
+            }
+        }
+        Property { name: "parent"; type: "QQuick3DObject"; isPointer: true }
+        Property { name: "data"; type: "QObject"; isList: true; isReadonly: true }
+        Property { name: "resources"; type: "QObject"; isList: true; isReadonly: true }
+        Property { name: "children"; type: "QQuick3DObject"; isList: true; isReadonly: true }
+        Property { name: "id"; type: "QByteArray"; isReadonly: true }
+        Property { name: "name"; type: "string" }
+        Property { name: "type"; type: "QQuick3DObject::Type"; isReadonly: true }
+        Property { name: "enabled"; type: "bool" }
+        Property { name: "visible"; type: "bool" }
+        Property { name: "states"; type: "QQuickState"; isList: true; isReadonly: true }
+        Property { name: "transitions"; type: "QQuickTransition"; isList: true; isReadonly: true }
+        Property { name: "state"; type: "string" }
+        Property { name: "visibleChildren"; type: "QQuick3DObject"; isList: true; isReadonly: true }
+        Signal {
+            name: "sceneRendererChanged"
+            Parameter { name: "sceneRenderer"; type: "QQuick3DSceneManager"; isPointer: true }
+        }
+        Signal {
+            name: "parentChanged"
+            Parameter { name: "parent"; type: "QQuick3DObject"; isPointer: true }
+        }
+        Signal {
+            name: "enabledChanged"
+            Parameter { name: "enabled"; type: "bool" }
+        }
+        Signal {
+            name: "stateChanged"
+            Parameter { type: "string" }
+        }
+        Signal {
+            name: "visibleChanged"
+            Parameter { name: "visible"; type: "bool" }
+        }
+        Method {
+            name: "setName"
+            Parameter { name: "name"; type: "string" }
+        }
+        Method { name: "update" }
+        Method {
+            name: "setParentItem"
+            Parameter { name: "parentItem"; type: "QQuick3DObject"; isPointer: true }
+        }
+        Method {
+            name: "setEnabled"
+            Parameter { name: "enabled"; type: "bool" }
+        }
+        Method {
+            name: "setVisible"
+            Parameter { name: "visible"; type: "bool" }
+        }
+    }
+    Component {
+        name: "QQuick3DSceneEnvironment"
+        defaultProperty: "data"
+        prototype: "QQuick3DObject"
+        exports: ["QtQuick3D/SceneEnvironment 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "QQuick3DEnvironmentAAModeValues"
+            values: {
+                "NoAA": 0,
+                "SSAA": 1,
+                "X2": 2,
+                "X4": 4,
+                "X8": 8
+            }
+        }
+        Enum {
+            name: "QQuick3DEnvironmentBackgroundTypes"
+            values: {
+                "Transparent": 0,
+                "Unspecified": 1,
+                "Color": 2,
+                "SkyBox": 3
+            }
+        }
+        Enum {
+            name: "QQuick3DEnvironmentBlendTypes"
+            values: {
+                "Normal": 0,
+                "Screen": 1,
+                "Multiply": 2,
+                "Add": 3,
+                "Subtract": 4,
+                "Overlay": 5,
+                "ColorBurn": 6,
+                "ColorDodge": 7
+            }
+        }
+        Property { name: "effects"; type: "QQuick3DEffect"; isList: true; isReadonly: true }
+        Property { name: "progressiveAAMode"; type: "QQuick3DEnvironmentAAModeValues" }
+        Property { name: "multisampleAAMode"; type: "QQuick3DEnvironmentAAModeValues" }
+        Property { name: "temporalAAEnabled"; type: "bool" }
+        Property { name: "backgroundMode"; type: "QQuick3DEnvironmentBackgroundTypes" }
+        Property { name: "clearColor"; type: "QColor" }
+        Property { name: "blendType"; type: "QQuick3DEnvironmentBlendTypes" }
+        Property { name: "isDepthTestDisabled"; type: "bool" }
+        Property { name: "isDepthPrePassDisabled"; type: "bool" }
+        Property { name: "aoStrength"; type: "float" }
+        Property { name: "aoDistance"; type: "float" }
+        Property { name: "aoSoftness"; type: "float" }
+        Property { name: "aoDither"; type: "bool" }
+        Property { name: "aoSampleRate"; type: "int" }
+        Property { name: "aoBias"; type: "float" }
+        Property { name: "shadowStrength"; type: "float" }
+        Property { name: "shadowDistance"; type: "float" }
+        Property { name: "shadowSoftness"; type: "float" }
+        Property { name: "shadowBias"; type: "float" }
+        Property { name: "lightProbe"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "probeBrightness"; type: "float" }
+        Property { name: "fastIBL"; type: "bool" }
+        Property { name: "probeHorizon"; type: "float" }
+        Property { name: "probeFieldOfView"; type: "float" }
+        Property { name: "lightProbe2"; type: "QQuick3DTexture"; isPointer: true }
+        Property { name: "probe2Fade"; type: "float" }
+        Property { name: "probe2Window"; type: "float" }
+        Property { name: "probe2Postion"; type: "float" }
+        Signal {
+            name: "progressiveAAModeChanged"
+            Parameter { name: "progressiveAAMode"; type: "QQuick3DEnvironmentAAModeValues" }
+        }
+        Signal {
+            name: "multisampleAAModeChanged"
+            Parameter { name: "multisampleAAMode"; type: "QQuick3DEnvironmentAAModeValues" }
+        }
+        Signal {
+            name: "temporalAAEnabledChanged"
+            Parameter { name: "temporalAAEnabled"; type: "bool" }
+        }
+        Signal {
+            name: "backgroundModeChanged"
+            Parameter { name: "backgroundMode"; type: "QQuick3DEnvironmentBackgroundTypes" }
+        }
+        Signal {
+            name: "clearColorChanged"
+            Parameter { name: "clearColor"; type: "QColor" }
+        }
+        Signal {
+            name: "blendTypeChanged"
+            Parameter { name: "blendType"; type: "QQuick3DEnvironmentBlendTypes" }
+        }
+        Signal {
+            name: "aoStrengthChanged"
+            Parameter { name: "aoStrength"; type: "float" }
+        }
+        Signal {
+            name: "aoDistanceChanged"
+            Parameter { name: "aoDistance"; type: "float" }
+        }
+        Signal {
+            name: "aoSoftnessChanged"
+            Parameter { name: "aoSoftness"; type: "float" }
+        }
+        Signal {
+            name: "aoDitherChanged"
+            Parameter { name: "aoDither"; type: "bool" }
+        }
+        Signal {
+            name: "aoSampleRateChanged"
+            Parameter { name: "aoSampleRate"; type: "int" }
+        }
+        Signal {
+            name: "aoBiasChanged"
+            Parameter { name: "aoBias"; type: "float" }
+        }
+        Signal {
+            name: "shadowStrengthChanged"
+            Parameter { name: "shadowStrength"; type: "float" }
+        }
+        Signal {
+            name: "shadowDistanceChanged"
+            Parameter { name: "shadowDistance"; type: "float" }
+        }
+        Signal {
+            name: "shadowSoftnessChanged"
+            Parameter { name: "shadowSoftness"; type: "float" }
+        }
+        Signal {
+            name: "shadowBiasChanged"
+            Parameter { name: "shadowBias"; type: "float" }
+        }
+        Signal {
+            name: "lightProbeChanged"
+            Parameter { name: "lightProbe"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Signal {
+            name: "probeBrightnessChanged"
+            Parameter { name: "probeBrightness"; type: "float" }
+        }
+        Signal {
+            name: "fastIBLChanged"
+            Parameter { name: "fastIBL"; type: "bool" }
+        }
+        Signal {
+            name: "probeHorizonChanged"
+            Parameter { name: "probeHorizon"; type: "float" }
+        }
+        Signal {
+            name: "probeFieldOfViewChanged"
+            Parameter { name: "probeFieldOfView"; type: "float" }
+        }
+        Signal {
+            name: "lightProbe2Changed"
+            Parameter { name: "lightProbe2"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Signal {
+            name: "probe2FadeChanged"
+            Parameter { name: "probe2Fade"; type: "float" }
+        }
+        Signal {
+            name: "probe2WindowChanged"
+            Parameter { name: "probe2Window"; type: "float" }
+        }
+        Signal {
+            name: "probe2PostionChanged"
+            Parameter { name: "probe2Postion"; type: "float" }
+        }
+        Signal {
+            name: "isDepthTestDisabledChanged"
+            Parameter { name: "isDepthTestDisabled"; type: "bool" }
+        }
+        Signal {
+            name: "isDepthPrePassDisabledChanged"
+            Parameter { name: "isDepthPrePassDisabled"; type: "bool" }
+        }
+        Method {
+            name: "setProgressiveAAMode"
+            Parameter { name: "progressiveAAMode"; type: "QQuick3DEnvironmentAAModeValues" }
+        }
+        Method {
+            name: "setMultisampleAAMode"
+            Parameter { name: "multisampleAAMode"; type: "QQuick3DEnvironmentAAModeValues" }
+        }
+        Method {
+            name: "setTemporalAAEnabled"
+            Parameter { name: "temporalAAEnabled"; type: "bool" }
+        }
+        Method {
+            name: "setBackgroundMode"
+            Parameter { name: "backgroundMode"; type: "QQuick3DEnvironmentBackgroundTypes" }
+        }
+        Method {
+            name: "setClearColor"
+            Parameter { name: "clearColor"; type: "QColor" }
+        }
+        Method {
+            name: "setBlendType"
+            Parameter { name: "blendType"; type: "QQuick3DEnvironmentBlendTypes" }
+        }
+        Method {
+            name: "setAoStrength"
+            Parameter { name: "aoStrength"; type: "float" }
+        }
+        Method {
+            name: "setAoDistance"
+            Parameter { name: "aoDistance"; type: "float" }
+        }
+        Method {
+            name: "setAoSoftness"
+            Parameter { name: "aoSoftness"; type: "float" }
+        }
+        Method {
+            name: "setAoDither"
+            Parameter { name: "aoDither"; type: "bool" }
+        }
+        Method {
+            name: "setAoSampleRate"
+            Parameter { name: "aoSampleRate"; type: "int" }
+        }
+        Method {
+            name: "setAoBias"
+            Parameter { name: "aoBias"; type: "float" }
+        }
+        Method {
+            name: "setShadowStrength"
+            Parameter { name: "shadowStrength"; type: "float" }
+        }
+        Method {
+            name: "setShadowDistance"
+            Parameter { name: "shadowDistance"; type: "float" }
+        }
+        Method {
+            name: "setShadowSoftness"
+            Parameter { name: "shadowSoftness"; type: "float" }
+        }
+        Method {
+            name: "setShadowBias"
+            Parameter { name: "shadowBias"; type: "float" }
+        }
+        Method {
+            name: "setLightProbe"
+            Parameter { name: "lightProbe"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Method {
+            name: "setProbeBrightness"
+            Parameter { name: "probeBrightness"; type: "float" }
+        }
+        Method {
+            name: "setFastIBL"
+            Parameter { name: "fastIBL"; type: "bool" }
+        }
+        Method {
+            name: "setProbeHorizon"
+            Parameter { name: "probeHorizon"; type: "float" }
+        }
+        Method {
+            name: "setProbeFieldOfView"
+            Parameter { name: "probeFieldOfView"; type: "float" }
+        }
+        Method {
+            name: "setLightProbe2"
+            Parameter { name: "lightProbe2"; type: "QQuick3DTexture"; isPointer: true }
+        }
+        Method {
+            name: "setProbe2Fade"
+            Parameter { name: "probe2Fade"; type: "float" }
+        }
+        Method {
+            name: "setProbe2Window"
+            Parameter { name: "probe2Window"; type: "float" }
+        }
+        Method {
+            name: "setProbe2Postion"
+            Parameter { name: "probe2Postion"; type: "float" }
+        }
+        Method {
+            name: "setIsDepthTestDisabled"
+            Parameter { name: "isDepthTestDisabled"; type: "bool" }
+        }
+        Method {
+            name: "setIsDepthPrePassDisabled"
+            Parameter { name: "isDepthPrePassDisabled"; type: "bool" }
+        }
+    }
+    Component {
+        name: "QQuick3DTexture"
+        defaultProperty: "data"
+        prototype: "QQuick3DObject"
         exports: ["QtQuick3D/Texture 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
@@ -930,836 +1753,13 @@ Module {
         }
     }
     Component {
-        name: "QDemonLight"
-        defaultProperty: "data"
-        prototype: "QDemonNode"
-        exports: ["QtQuick3D/Light 1.0"]
-        exportMetaObjectRevisions: [0]
-        Enum {
-            name: "QDemonRenderLightTypes"
-            values: {
-                "Unknown": 0,
-                "Directional": 1,
-                "Point": 2,
-                "Area": 3
-            }
-        }
-        Property { name: "lightType"; type: "QDemonRenderLightTypes" }
-        Property { name: "diffuseColor"; type: "QColor" }
-        Property { name: "specularColor"; type: "QColor" }
-        Property { name: "ambientColor"; type: "QColor" }
-        Property { name: "brightness"; type: "float" }
-        Property { name: "linearFade"; type: "float" }
-        Property { name: "exponentialFade"; type: "float" }
-        Property { name: "areaWidth"; type: "float" }
-        Property { name: "areaHeight"; type: "float" }
-        Property { name: "castShadow"; type: "bool" }
-        Property { name: "shadowBias"; type: "float" }
-        Property { name: "shadowFactor"; type: "float" }
-        Property { name: "shadowMapResolution"; type: "int" }
-        Property { name: "shadowMapFar"; type: "float" }
-        Property { name: "shadowMapFieldOfView"; type: "float" }
-        Property { name: "shadowFilter"; type: "float" }
-        Property { name: "scope"; type: "QDemonNode"; isPointer: true }
-        Signal {
-            name: "lightTypeChanged"
-            Parameter { name: "lightType"; type: "QDemonRenderLightTypes" }
-        }
-        Signal {
-            name: "diffuseColorChanged"
-            Parameter { name: "diffuseColor"; type: "QColor" }
-        }
-        Signal {
-            name: "specularColorChanged"
-            Parameter { name: "specularColor"; type: "QColor" }
-        }
-        Signal {
-            name: "ambientColorChanged"
-            Parameter { name: "ambientColor"; type: "QColor" }
-        }
-        Signal {
-            name: "brightnessChanged"
-            Parameter { name: "brightness"; type: "float" }
-        }
-        Signal {
-            name: "linearFadeChanged"
-            Parameter { name: "linearFade"; type: "float" }
-        }
-        Signal {
-            name: "exponentialFadeChanged"
-            Parameter { name: "exponentialFade"; type: "float" }
-        }
-        Signal {
-            name: "areaWidthChanged"
-            Parameter { name: "areaWidth"; type: "float" }
-        }
-        Signal {
-            name: "areaHeightChanged"
-            Parameter { name: "areaHeight"; type: "float" }
-        }
-        Signal {
-            name: "castShadowChanged"
-            Parameter { name: "castShadow"; type: "bool" }
-        }
-        Signal {
-            name: "shadowBiasChanged"
-            Parameter { name: "shadowBias"; type: "float" }
-        }
-        Signal {
-            name: "shadowFactorChanged"
-            Parameter { name: "shadowFactor"; type: "float" }
-        }
-        Signal {
-            name: "shadowMapResolutionChanged"
-            Parameter { name: "shadowMapResolution"; type: "int" }
-        }
-        Signal {
-            name: "shadowMapFarChanged"
-            Parameter { name: "shadowMapFar"; type: "float" }
-        }
-        Signal {
-            name: "shadowMapFieldOfViewChanged"
-            Parameter { name: "shadowMapFieldOfView"; type: "float" }
-        }
-        Signal {
-            name: "shadowFilterChanged"
-            Parameter { name: "shadowFilter"; type: "float" }
-        }
-        Signal {
-            name: "scopeChanged"
-            Parameter { name: "scope"; type: "QDemonNode"; isPointer: true }
-        }
-        Method {
-            name: "setLightType"
-            Parameter { name: "lightType"; type: "QDemonRenderLightTypes" }
-        }
-        Method {
-            name: "setDiffuseColor"
-            Parameter { name: "diffuseColor"; type: "QColor" }
-        }
-        Method {
-            name: "setSpecularColor"
-            Parameter { name: "specularColor"; type: "QColor" }
-        }
-        Method {
-            name: "setAmbientColor"
-            Parameter { name: "ambientColor"; type: "QColor" }
-        }
-        Method {
-            name: "setBrightness"
-            Parameter { name: "brightness"; type: "float" }
-        }
-        Method {
-            name: "setLinearFade"
-            Parameter { name: "linearFade"; type: "float" }
-        }
-        Method {
-            name: "setExponentialFade"
-            Parameter { name: "exponentialFade"; type: "float" }
-        }
-        Method {
-            name: "setAreaWidth"
-            Parameter { name: "areaWidth"; type: "float" }
-        }
-        Method {
-            name: "setAreaHeight"
-            Parameter { name: "areaHeight"; type: "float" }
-        }
-        Method {
-            name: "setCastShadow"
-            Parameter { name: "castShadow"; type: "bool" }
-        }
-        Method {
-            name: "setShadowBias"
-            Parameter { name: "shadowBias"; type: "float" }
-        }
-        Method {
-            name: "setShadowFactor"
-            Parameter { name: "shadowFactor"; type: "float" }
-        }
-        Method {
-            name: "setShadowMapResolution"
-            Parameter { name: "shadowMapResolution"; type: "int" }
-        }
-        Method {
-            name: "setShadowMapFar"
-            Parameter { name: "shadowMapFar"; type: "float" }
-        }
-        Method {
-            name: "setShadowMapFieldOfView"
-            Parameter { name: "shadowMapFieldOfView"; type: "float" }
-        }
-        Method {
-            name: "setShadowFilter"
-            Parameter { name: "shadowFilter"; type: "float" }
-        }
-        Method {
-            name: "setScope"
-            Parameter { name: "scope"; type: "QDemonNode"; isPointer: true }
-        }
-    }
-    Component {
-        name: "QDemonMaterial"
-        defaultProperty: "data"
-        prototype: "QDemonObject"
-        exports: ["QtQuick3D/Material 1.0"]
-        isCreatable: false
-        exportMetaObjectRevisions: [0]
-        Property { name: "lightmapIndirect"; type: "QDemonImage"; isPointer: true }
-        Property { name: "lightmapRadiosity"; type: "QDemonImage"; isPointer: true }
-        Property { name: "lightmapShadow"; type: "QDemonImage"; isPointer: true }
-        Property { name: "iblProbe"; type: "QDemonImage"; isPointer: true }
-        Property { name: "emissiveMap2"; type: "QDemonImage"; isPointer: true }
-        Property { name: "displacementMap"; type: "QDemonImage"; isPointer: true }
-        Property { name: "displacementAmount"; type: "float" }
-        Signal {
-            name: "lightmapIndirectChanged"
-            Parameter { name: "lightmapIndirect"; type: "QDemonImage"; isPointer: true }
-        }
-        Signal {
-            name: "lightmapRadiosityChanged"
-            Parameter { name: "lightmapRadiosity"; type: "QDemonImage"; isPointer: true }
-        }
-        Signal {
-            name: "lightmapShadowChanged"
-            Parameter { name: "lightmapShadow"; type: "QDemonImage"; isPointer: true }
-        }
-        Signal {
-            name: "iblProbeChanged"
-            Parameter { name: "iblProbe"; type: "QDemonImage"; isPointer: true }
-        }
-        Signal {
-            name: "emissiveMap2Changed"
-            Parameter { name: "emissiveMap2"; type: "QDemonImage"; isPointer: true }
-        }
-        Signal {
-            name: "displacementMapChanged"
-            Parameter { name: "displacementMap"; type: "QDemonImage"; isPointer: true }
-        }
-        Signal {
-            name: "displacementAmountChanged"
-            Parameter { name: "displacementAmount"; type: "float" }
-        }
-        Method {
-            name: "setLightmapIndirect"
-            Parameter { name: "lightmapIndirect"; type: "QDemonImage"; isPointer: true }
-        }
-        Method {
-            name: "setLightmapRadiosity"
-            Parameter { name: "lightmapRadiosity"; type: "QDemonImage"; isPointer: true }
-        }
-        Method {
-            name: "setLightmapShadow"
-            Parameter { name: "lightmapShadow"; type: "QDemonImage"; isPointer: true }
-        }
-        Method {
-            name: "setIblProbe"
-            Parameter { name: "iblProbe"; type: "QDemonImage"; isPointer: true }
-        }
-        Method {
-            name: "setEmissiveMap2"
-            Parameter { name: "emissiveMap2"; type: "QDemonImage"; isPointer: true }
-        }
-        Method {
-            name: "setDisplacementMap"
-            Parameter { name: "displacementMap"; type: "QDemonImage"; isPointer: true }
-        }
-        Method {
-            name: "setDisplacementAmount"
-            Parameter { name: "displacementAmount"; type: "float" }
-        }
-    }
-    Component {
-        name: "QDemonModel"
-        defaultProperty: "data"
-        prototype: "QDemonNode"
-        exports: ["QtQuick3D/Model 1.0"]
-        exportMetaObjectRevisions: [0]
-        Enum {
-            name: "QDemonTessModeValues"
-            values: {
-                "NoTess": 0,
-                "TessLinear": 1,
-                "TessPhong": 2,
-                "TessNPatch": 3
-            }
-        }
-        Property { name: "source"; type: "QUrl" }
-        Property { name: "skeletonRoot"; type: "int" }
-        Property { name: "tesselationMode"; type: "QDemonTessModeValues" }
-        Property { name: "edgeTess"; type: "float" }
-        Property { name: "innerTess"; type: "float" }
-        Property { name: "isWireframeMode"; type: "bool" }
-        Property { name: "materials"; type: "QDemonMaterial"; isList: true; isReadonly: true }
-        Signal {
-            name: "sourceChanged"
-            Parameter { name: "source"; type: "QUrl" }
-        }
-        Signal {
-            name: "skeletonRootChanged"
-            Parameter { name: "skeletonRoot"; type: "int" }
-        }
-        Signal {
-            name: "tesselationModeChanged"
-            Parameter { name: "tesselationMode"; type: "QDemonTessModeValues" }
-        }
-        Signal {
-            name: "edgeTessChanged"
-            Parameter { name: "edgeTess"; type: "float" }
-        }
-        Signal {
-            name: "innerTessChanged"
-            Parameter { name: "innerTess"; type: "float" }
-        }
-        Signal {
-            name: "isWireframeModeChanged"
-            Parameter { name: "isWireframeMode"; type: "bool" }
-        }
-        Method {
-            name: "setSource"
-            Parameter { name: "source"; type: "QUrl" }
-        }
-        Method {
-            name: "setSkeletonRoot"
-            Parameter { name: "skeletonRoot"; type: "int" }
-        }
-        Method {
-            name: "setTesselationMode"
-            Parameter { name: "tesselationMode"; type: "QDemonTessModeValues" }
-        }
-        Method {
-            name: "setEdgeTess"
-            Parameter { name: "edgeTess"; type: "float" }
-        }
-        Method {
-            name: "setInnerTess"
-            Parameter { name: "innerTess"; type: "float" }
-        }
-        Method {
-            name: "setIsWireframeMode"
-            Parameter { name: "isWireframeMode"; type: "bool" }
-        }
-    }
-    Component {
-        name: "QDemonNode"
-        defaultProperty: "data"
-        prototype: "QDemonObject"
-        exports: ["QtQuick3D/Node 1.0"]
-        exportMetaObjectRevisions: [0]
-        Enum {
-            name: "RotationOrder"
-            values: {
-                "XYZ": 0,
-                "YZX": 8,
-                "ZXY": 16,
-                "XZY": 4,
-                "YXZ": 12,
-                "ZYX": 20,
-                "XYZr": 21,
-                "YZXr": 5,
-                "ZXYr": 13,
-                "XZYr": 9,
-                "YXZr": 17,
-                "ZYXr": 1
-            }
-        }
-        Enum {
-            name: "Orientation"
-            values: {
-                "LeftHanded": 0,
-                "RightHanded": 1
-            }
-        }
-        Property { name: "x"; type: "float" }
-        Property { name: "y"; type: "float" }
-        Property { name: "z"; type: "float" }
-        Property { name: "rotation"; type: "QVector3D" }
-        Property { name: "position"; type: "QVector3D" }
-        Property { name: "scale"; type: "QVector3D" }
-        Property { name: "pivot"; type: "QVector3D" }
-        Property { name: "opacity"; type: "float" }
-        Property { name: "boneId"; type: "int" }
-        Property { name: "rotationOrder"; type: "RotationOrder" }
-        Property { name: "orientation"; type: "Orientation" }
-        Property { name: "visible"; type: "bool" }
-        Property { name: "forward"; type: "QVector3D"; isReadonly: true }
-        Property { name: "up"; type: "QVector3D"; isReadonly: true }
-        Property { name: "right"; type: "QVector3D"; isReadonly: true }
-        Property { name: "globalPosition"; type: "QVector3D"; isReadonly: true }
-        Property { name: "globalTransform"; type: "QMatrix4x4"; isReadonly: true }
-        Signal {
-            name: "xChanged"
-            Parameter { name: "x"; type: "float" }
-        }
-        Signal {
-            name: "yChanged"
-            Parameter { name: "y"; type: "float" }
-        }
-        Signal {
-            name: "zChanged"
-            Parameter { name: "z"; type: "float" }
-        }
-        Signal {
-            name: "rotationChanged"
-            Parameter { name: "rotation"; type: "QVector3D" }
-        }
-        Signal {
-            name: "positionChanged"
-            Parameter { name: "position"; type: "QVector3D" }
-        }
-        Signal {
-            name: "scaleChanged"
-            Parameter { name: "scale"; type: "QVector3D" }
-        }
-        Signal {
-            name: "pivotChanged"
-            Parameter { name: "pivot"; type: "QVector3D" }
-        }
-        Signal {
-            name: "localOpacityChanged"
-            Parameter { name: "opacity"; type: "float" }
-        }
-        Signal {
-            name: "skeletonIdChanged"
-            Parameter { name: "boneid"; type: "int" }
-        }
-        Signal {
-            name: "rotationOrderChanged"
-            Parameter { name: "rotationorder"; type: "RotationOrder" }
-        }
-        Signal {
-            name: "orientationChanged"
-            Parameter { name: "orientation"; type: "Orientation" }
-        }
-        Signal {
-            name: "visibleChanged"
-            Parameter { name: "visible"; type: "bool" }
-        }
-        Signal {
-            name: "globalTransformChanged"
-            Parameter { name: "transform"; type: "QMatrix4x4" }
-        }
-        Method {
-            name: "setX"
-            Parameter { name: "x"; type: "float" }
-        }
-        Method {
-            name: "setY"
-            Parameter { name: "y"; type: "float" }
-        }
-        Method {
-            name: "setZ"
-            Parameter { name: "z"; type: "float" }
-        }
-        Method {
-            name: "setRotation"
-            Parameter { name: "rotation"; type: "QVector3D" }
-        }
-        Method {
-            name: "setPosition"
-            Parameter { name: "position"; type: "QVector3D" }
-        }
-        Method {
-            name: "setScale"
-            Parameter { name: "scale"; type: "QVector3D" }
-        }
-        Method {
-            name: "setPivot"
-            Parameter { name: "pivot"; type: "QVector3D" }
-        }
-        Method {
-            name: "setLocalOpacity"
-            Parameter { name: "opacity"; type: "float" }
-        }
-        Method {
-            name: "setSkeletonId"
-            Parameter { name: "boneid"; type: "int" }
-        }
-        Method {
-            name: "setRotationOrder"
-            Parameter { name: "rotationorder"; type: "RotationOrder" }
-        }
-        Method {
-            name: "setOrientation"
-            Parameter { name: "orientation"; type: "Orientation" }
-        }
-        Method {
-            name: "setVisible"
-            Parameter { name: "visible"; type: "bool" }
-        }
-    }
-    Component {
-        name: "QDemonObject"
-        defaultProperty: "data"
-        prototype: "QObject"
-        exports: ["QtQuick3D/Object3D 1.0"]
-        isCreatable: false
-        exportMetaObjectRevisions: [0]
-        Enum {
-            name: "Type"
-            values: {
-                "Unknown": 0,
-                "SceneEnvironment": 1,
-                "Node": 2,
-                "Layer": 3,
-                "Light": 4,
-                "Camera": 5,
-                "Model": 6,
-                "DefaultMaterial": 7,
-                "Image": 8,
-                "Text": 9,
-                "Effect": 10,
-                "CustomMaterial": 11,
-                "RenderPlugin": 12,
-                "ReferencedMaterial": 13,
-                "Path": 14,
-                "PathSubPath": 15,
-                "Lightmaps": 16,
-                "LastKnownGraphObjectType": 17
-            }
-        }
-        Property { name: "parent"; type: "QDemonObject"; isPointer: true }
-        Property { name: "data"; type: "QObject"; isList: true; isReadonly: true }
-        Property { name: "resources"; type: "QObject"; isList: true; isReadonly: true }
-        Property { name: "children"; type: "QDemonObject"; isList: true; isReadonly: true }
-        Property { name: "id"; type: "QByteArray"; isReadonly: true }
-        Property { name: "name"; type: "string" }
-        Property { name: "type"; type: "QDemonObject::Type"; isReadonly: true }
-        Property { name: "enabled"; type: "bool" }
-        Property { name: "visible"; type: "bool" }
-        Property { name: "states"; type: "QQuickState"; isList: true; isReadonly: true }
-        Property { name: "transitions"; type: "QQuickTransition"; isList: true; isReadonly: true }
-        Property { name: "state"; type: "string" }
-        Property { name: "visibleChildren"; type: "QDemonObject"; isList: true; isReadonly: true }
-        Signal {
-            name: "sceneRendererChanged"
-            Parameter { name: "sceneRenderer"; type: "QDemonSceneManager"; isPointer: true }
-        }
-        Signal {
-            name: "parentChanged"
-            Parameter { name: "parent"; type: "QDemonObject"; isPointer: true }
-        }
-        Signal {
-            name: "enabledChanged"
-            Parameter { name: "enabled"; type: "bool" }
-        }
-        Signal {
-            name: "stateChanged"
-            Parameter { type: "string" }
-        }
-        Signal {
-            name: "visibleChanged"
-            Parameter { name: "visible"; type: "bool" }
-        }
-        Method {
-            name: "setName"
-            Parameter { name: "name"; type: "string" }
-        }
-        Method { name: "update" }
-        Method {
-            name: "setParentItem"
-            Parameter { name: "parentItem"; type: "QDemonObject"; isPointer: true }
-        }
-        Method {
-            name: "setEnabled"
-            Parameter { name: "enabled"; type: "bool" }
-        }
-        Method {
-            name: "setVisible"
-            Parameter { name: "visible"; type: "bool" }
-        }
-    }
-    Component {
-        name: "QDemonSceneEnvironment"
-        defaultProperty: "data"
-        prototype: "QDemonObject"
-        exports: ["QtQuick3D/SceneEnvironment 1.0"]
-        exportMetaObjectRevisions: [0]
-        Enum {
-            name: "QDemonEnvironmentAAModeValues"
-            values: {
-                "NoAA": 0,
-                "SSAA": 1,
-                "X2": 2,
-                "X4": 4,
-                "X8": 8
-            }
-        }
-        Enum {
-            name: "QDemonEnvironmentBackgroundTypes"
-            values: {
-                "Transparent": 0,
-                "Unspecified": 1,
-                "Color": 2,
-                "SkyBox": 3
-            }
-        }
-        Enum {
-            name: "QDemonEnvironmentBlendTypes"
-            values: {
-                "Normal": 0,
-                "Screen": 1,
-                "Multiply": 2,
-                "Add": 3,
-                "Subtract": 4,
-                "Overlay": 5,
-                "ColorBurn": 6,
-                "ColorDodge": 7
-            }
-        }
-        Property { name: "effects"; type: "QDemonEffect"; isList: true; isReadonly: true }
-        Property { name: "progressiveAAMode"; type: "QDemonEnvironmentAAModeValues" }
-        Property { name: "multisampleAAMode"; type: "QDemonEnvironmentAAModeValues" }
-        Property { name: "temporalAAEnabled"; type: "bool" }
-        Property { name: "backgroundMode"; type: "QDemonEnvironmentBackgroundTypes" }
-        Property { name: "clearColor"; type: "QColor" }
-        Property { name: "blendType"; type: "QDemonEnvironmentBlendTypes" }
-        Property { name: "isDepthTestDisabled"; type: "bool" }
-        Property { name: "isDepthPrePassDisabled"; type: "bool" }
-        Property { name: "aoStrength"; type: "float" }
-        Property { name: "aoDistance"; type: "float" }
-        Property { name: "aoSoftness"; type: "float" }
-        Property { name: "aoDither"; type: "bool" }
-        Property { name: "aoSampleRate"; type: "int" }
-        Property { name: "aoBias"; type: "float" }
-        Property { name: "shadowStrength"; type: "float" }
-        Property { name: "shadowDistance"; type: "float" }
-        Property { name: "shadowSoftness"; type: "float" }
-        Property { name: "shadowBias"; type: "float" }
-        Property { name: "lightProbe"; type: "QDemonImage"; isPointer: true }
-        Property { name: "probeBrightness"; type: "float" }
-        Property { name: "fastIBL"; type: "bool" }
-        Property { name: "probeHorizon"; type: "float" }
-        Property { name: "probeFieldOfView"; type: "float" }
-        Property { name: "lightProbe2"; type: "QDemonImage"; isPointer: true }
-        Property { name: "probe2Fade"; type: "float" }
-        Property { name: "probe2Window"; type: "float" }
-        Property { name: "probe2Postion"; type: "float" }
-        Signal {
-            name: "progressiveAAModeChanged"
-            Parameter { name: "progressiveAAMode"; type: "QDemonEnvironmentAAModeValues" }
-        }
-        Signal {
-            name: "multisampleAAModeChanged"
-            Parameter { name: "multisampleAAMode"; type: "QDemonEnvironmentAAModeValues" }
-        }
-        Signal {
-            name: "temporalAAEnabledChanged"
-            Parameter { name: "temporalAAEnabled"; type: "bool" }
-        }
-        Signal {
-            name: "backgroundModeChanged"
-            Parameter { name: "backgroundMode"; type: "QDemonEnvironmentBackgroundTypes" }
-        }
-        Signal {
-            name: "clearColorChanged"
-            Parameter { name: "clearColor"; type: "QColor" }
-        }
-        Signal {
-            name: "blendTypeChanged"
-            Parameter { name: "blendType"; type: "QDemonEnvironmentBlendTypes" }
-        }
-        Signal {
-            name: "aoStrengthChanged"
-            Parameter { name: "aoStrength"; type: "float" }
-        }
-        Signal {
-            name: "aoDistanceChanged"
-            Parameter { name: "aoDistance"; type: "float" }
-        }
-        Signal {
-            name: "aoSoftnessChanged"
-            Parameter { name: "aoSoftness"; type: "float" }
-        }
-        Signal {
-            name: "aoDitherChanged"
-            Parameter { name: "aoDither"; type: "bool" }
-        }
-        Signal {
-            name: "aoSampleRateChanged"
-            Parameter { name: "aoSampleRate"; type: "int" }
-        }
-        Signal {
-            name: "aoBiasChanged"
-            Parameter { name: "aoBias"; type: "float" }
-        }
-        Signal {
-            name: "shadowStrengthChanged"
-            Parameter { name: "shadowStrength"; type: "float" }
-        }
-        Signal {
-            name: "shadowDistanceChanged"
-            Parameter { name: "shadowDistance"; type: "float" }
-        }
-        Signal {
-            name: "shadowSoftnessChanged"
-            Parameter { name: "shadowSoftness"; type: "float" }
-        }
-        Signal {
-            name: "shadowBiasChanged"
-            Parameter { name: "shadowBias"; type: "float" }
-        }
-        Signal {
-            name: "lightProbeChanged"
-            Parameter { name: "lightProbe"; type: "QDemonImage"; isPointer: true }
-        }
-        Signal {
-            name: "probeBrightnessChanged"
-            Parameter { name: "probeBrightness"; type: "float" }
-        }
-        Signal {
-            name: "fastIBLChanged"
-            Parameter { name: "fastIBL"; type: "bool" }
-        }
-        Signal {
-            name: "probeHorizonChanged"
-            Parameter { name: "probeHorizon"; type: "float" }
-        }
-        Signal {
-            name: "probeFieldOfViewChanged"
-            Parameter { name: "probeFieldOfView"; type: "float" }
-        }
-        Signal {
-            name: "lightProbe2Changed"
-            Parameter { name: "lightProbe2"; type: "QDemonImage"; isPointer: true }
-        }
-        Signal {
-            name: "probe2FadeChanged"
-            Parameter { name: "probe2Fade"; type: "float" }
-        }
-        Signal {
-            name: "probe2WindowChanged"
-            Parameter { name: "probe2Window"; type: "float" }
-        }
-        Signal {
-            name: "probe2PostionChanged"
-            Parameter { name: "probe2Postion"; type: "float" }
-        }
-        Signal {
-            name: "isDepthTestDisabledChanged"
-            Parameter { name: "isDepthTestDisabled"; type: "bool" }
-        }
-        Signal {
-            name: "isDepthPrePassDisabledChanged"
-            Parameter { name: "isDepthPrePassDisabled"; type: "bool" }
-        }
-        Method {
-            name: "setProgressiveAAMode"
-            Parameter { name: "progressiveAAMode"; type: "QDemonEnvironmentAAModeValues" }
-        }
-        Method {
-            name: "setMultisampleAAMode"
-            Parameter { name: "multisampleAAMode"; type: "QDemonEnvironmentAAModeValues" }
-        }
-        Method {
-            name: "setTemporalAAEnabled"
-            Parameter { name: "temporalAAEnabled"; type: "bool" }
-        }
-        Method {
-            name: "setBackgroundMode"
-            Parameter { name: "backgroundMode"; type: "QDemonEnvironmentBackgroundTypes" }
-        }
-        Method {
-            name: "setClearColor"
-            Parameter { name: "clearColor"; type: "QColor" }
-        }
-        Method {
-            name: "setBlendType"
-            Parameter { name: "blendType"; type: "QDemonEnvironmentBlendTypes" }
-        }
-        Method {
-            name: "setAoStrength"
-            Parameter { name: "aoStrength"; type: "float" }
-        }
-        Method {
-            name: "setAoDistance"
-            Parameter { name: "aoDistance"; type: "float" }
-        }
-        Method {
-            name: "setAoSoftness"
-            Parameter { name: "aoSoftness"; type: "float" }
-        }
-        Method {
-            name: "setAoDither"
-            Parameter { name: "aoDither"; type: "bool" }
-        }
-        Method {
-            name: "setAoSampleRate"
-            Parameter { name: "aoSampleRate"; type: "int" }
-        }
-        Method {
-            name: "setAoBias"
-            Parameter { name: "aoBias"; type: "float" }
-        }
-        Method {
-            name: "setShadowStrength"
-            Parameter { name: "shadowStrength"; type: "float" }
-        }
-        Method {
-            name: "setShadowDistance"
-            Parameter { name: "shadowDistance"; type: "float" }
-        }
-        Method {
-            name: "setShadowSoftness"
-            Parameter { name: "shadowSoftness"; type: "float" }
-        }
-        Method {
-            name: "setShadowBias"
-            Parameter { name: "shadowBias"; type: "float" }
-        }
-        Method {
-            name: "setLightProbe"
-            Parameter { name: "lightProbe"; type: "QDemonImage"; isPointer: true }
-        }
-        Method {
-            name: "setProbeBrightness"
-            Parameter { name: "probeBrightness"; type: "float" }
-        }
-        Method {
-            name: "setFastIBL"
-            Parameter { name: "fastIBL"; type: "bool" }
-        }
-        Method {
-            name: "setProbeHorizon"
-            Parameter { name: "probeHorizon"; type: "float" }
-        }
-        Method {
-            name: "setProbeFieldOfView"
-            Parameter { name: "probeFieldOfView"; type: "float" }
-        }
-        Method {
-            name: "setLightProbe2"
-            Parameter { name: "lightProbe2"; type: "QDemonImage"; isPointer: true }
-        }
-        Method {
-            name: "setProbe2Fade"
-            Parameter { name: "probe2Fade"; type: "float" }
-        }
-        Method {
-            name: "setProbe2Window"
-            Parameter { name: "probe2Window"; type: "float" }
-        }
-        Method {
-            name: "setProbe2Postion"
-            Parameter { name: "probe2Postion"; type: "float" }
-        }
-        Method {
-            name: "setIsDepthTestDisabled"
-            Parameter { name: "isDepthTestDisabled"; type: "bool" }
-        }
-        Method {
-            name: "setIsDepthPrePassDisabled"
-            Parameter { name: "isDepthPrePassDisabled"; type: "bool" }
-        }
-    }
-    Component {
-        name: "QDemonView3D"
+        name: "QQuick3DView3D"
         defaultProperty: "data"
         prototype: "QQuickItem"
         exports: ["QtQuick3D/View3D 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
-            name: "QDemonView3DRenderMode"
+            name: "QQuick3DView3DRenderMode"
             values: {
                 "Texture": 0,
                 "Underlay": 1,
@@ -1768,41 +1768,41 @@ Module {
             }
         }
         Property { name: "data"; type: "QObject"; isList: true; isReadonly: true }
-        Property { name: "camera"; type: "QDemonCamera"; isPointer: true }
-        Property { name: "environment"; type: "QDemonSceneEnvironment"; isPointer: true }
-        Property { name: "scene"; type: "QDemonNode"; isPointer: true }
-        Property { name: "renderMode"; type: "QDemonView3DRenderMode" }
+        Property { name: "camera"; type: "QQuick3DCamera"; isPointer: true }
+        Property { name: "environment"; type: "QQuick3DSceneEnvironment"; isPointer: true }
+        Property { name: "scene"; type: "QQuick3DNode"; isPointer: true }
+        Property { name: "renderMode"; type: "QQuick3DView3DRenderMode" }
         Signal {
             name: "cameraChanged"
-            Parameter { name: "camera"; type: "QDemonCamera"; isPointer: true }
+            Parameter { name: "camera"; type: "QQuick3DCamera"; isPointer: true }
         }
         Signal {
             name: "environmentChanged"
-            Parameter { name: "environment"; type: "QDemonSceneEnvironment"; isPointer: true }
+            Parameter { name: "environment"; type: "QQuick3DSceneEnvironment"; isPointer: true }
         }
         Signal {
             name: "sceneChanged"
-            Parameter { name: "sceneRoot"; type: "QDemonNode"; isPointer: true }
+            Parameter { name: "sceneRoot"; type: "QQuick3DNode"; isPointer: true }
         }
         Signal {
             name: "renderModeChanged"
-            Parameter { name: "renderMode"; type: "QDemonView3DRenderMode" }
+            Parameter { name: "renderMode"; type: "QQuick3DView3DRenderMode" }
         }
         Method {
             name: "setCamera"
-            Parameter { name: "camera"; type: "QDemonCamera"; isPointer: true }
+            Parameter { name: "camera"; type: "QQuick3DCamera"; isPointer: true }
         }
         Method {
             name: "setEnvironment"
-            Parameter { name: "environment"; type: "QDemonSceneEnvironment"; isPointer: true }
+            Parameter { name: "environment"; type: "QQuick3DSceneEnvironment"; isPointer: true }
         }
         Method {
             name: "setScene"
-            Parameter { name: "sceneRoot"; type: "QDemonNode"; isPointer: true }
+            Parameter { name: "sceneRoot"; type: "QQuick3DNode"; isPointer: true }
         }
         Method {
             name: "setRenderMode"
-            Parameter { name: "renderMode"; type: "QDemonView3DRenderMode" }
+            Parameter { name: "renderMode"; type: "QQuick3DView3DRenderMode" }
         }
         Method {
             name: "worldToView"
