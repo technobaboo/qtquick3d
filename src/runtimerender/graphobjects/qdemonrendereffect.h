@@ -34,12 +34,12 @@
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 
+#include <QtDemonRuntimeRender/qdemonrenderimage.h>
+
 QT_BEGIN_NAMESPACE
 struct QDemonRenderLayer;
 struct QDemonEffectContext;
 class QDemonEffectSystem;
-
-#include <QtDemonRuntimeRender/qdemonrenderimage.h>
 
 namespace dynamic
 {

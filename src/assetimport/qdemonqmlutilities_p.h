@@ -91,6 +91,6 @@ void Q_DEMONASSETIMPORT_EXPORT writeQmlPropertyHelper(QTextStream &output, int t
 }
 
 
-QT_BEGIN_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QDEMONQMLUTILITIES_P_H
