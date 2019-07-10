@@ -8,7 +8,7 @@ Qt Quick 3D is a high level 3D API for Qt Quick.  Unlike Qt3D, Qt Quick 3D enabl
 ```
 import QtQuick 2.12
 import QtQuick.Window 2.12
-import QtDemon 1.0
+import QtQuick3D 1.0
 
 Window {
     id: window
@@ -17,21 +17,21 @@ Window {
     height: 720
 
     // Viewport for 3D content
-    DemonView3D {
+    View3D {
         id: view
         anchors.fill: parent
 
         // Scene to view
-        DemonNode {
+        Node {
             id: scene
 
             // To render anything to a 3D viewport, you need 3 things
             // Light, Camera, Model
-            DemonLight {
+            Light {
                 id: directionalLight
             }
 
-            DemonCamera {
+            Camera {
                 id: camera
                 // It's important that your camera is not inside your model
                 // So move it back a big along the z axis
@@ -40,7 +40,7 @@ Window {
                 z: -600
             }
 
-            DemonModel {
+            Model {
                 id: cubeModel
                 // #Cube is one of the "built-in" primitive meshes
                 // Other Options are #Cone, #Sphere, #Cylinder, #Rectangle
@@ -53,7 +53,7 @@ Window {
                 // All of the default primitive meshes contain one sub-mesh, so you only
                 // need 1 material. 
                 materials: [
-                    DemonDefaultMaterial {
+                    DefaultMaterial {
                         // We are using the DefaultMaterial which dynamically generates a shader
                         // based on what properties are set.  This means you don't need to write
                         // any shader code yourself.  In this case we just want the cube to have
