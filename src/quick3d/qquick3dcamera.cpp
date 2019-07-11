@@ -384,8 +384,7 @@ QDemonRenderGraphObject *QQuick3DCamera::updateSpatialNode(QDemonRenderGraphObje
     camera->scaleAnchor = QDemonRenderCamera::ScaleAnchors(m_scaleAnchor);
     camera->enableFrustumClipping = m_enableFrustumCulling;
 
-    if (m_projectionMode == Orthographic)
-        camera->flags.setFlag(QDemonRenderNode::Flag::Orthographic);
+    camera->flags.setFlag(QDemonRenderNode::Flag::Orthographic, m_projectionMode == Orthographic);
 
     m_cameraNode = camera;
 
