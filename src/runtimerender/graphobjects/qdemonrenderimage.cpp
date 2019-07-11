@@ -75,24 +75,21 @@ bool QDemonRenderImage::clearDirty(const QDemonRef<QDemonBufferManager> &inBuffe
                                    QDemonOffscreenRenderManager &inRenderManager,
                                    bool forIbl)
 {
-
     bool wasDirty = m_flags.testFlag(Flag::Dirty);
     m_flags.setFlag(Flag::Dirty, false);
     QDemonRenderImageTextureData newImage;
     bool replaceTexture(false);
-    if (newImage.m_texture == nullptr) {
-        if (!m_offscreenRendererId.isEmpty()) {
-            QDemonOffscreenRenderResult theResult = inRenderManager.getRenderedItem(m_offscreenRendererId);
-            HandleOffscreenResult(*this, newImage, theResult, replaceTexture, wasDirty);
-        }
+    if (!m_offscreenRendererId.isEmpty()) {
+        QDemonOffscreenRenderResult theResult = inRenderManager.getRenderedItem(m_offscreenRendererId);
+        HandleOffscreenResult(*this, newImage, theResult, replaceTexture, wasDirty);
     }
 
-    if (newImage.m_texture == nullptr && m_qsgTexture) {
+    if (wasDirty && newImage.m_texture == nullptr && m_qsgTexture) {
         newImage = inBufferManager->loadRenderImage(m_qsgTexture);
         replaceTexture = newImage.m_texture != m_textureData.m_texture;
     }
 
-    if (newImage.m_texture == nullptr) {
+    if (wasDirty && newImage.m_texture == nullptr) {
         m_lastFrameOffscreenRenderer = nullptr;
         newImage = inBufferManager->loadRenderImage(m_imagePath, m_format, false, forIbl);
         replaceTexture = newImage.m_texture != m_textureData.m_texture;

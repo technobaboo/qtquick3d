@@ -36,6 +36,7 @@
 
 #include "qquick3dobject_p.h"
 #include "qquick3dscenemanager_p.h"
+#include "qquick3dutils_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -123,6 +124,7 @@ void QQuick3DTexture::setSource(const QUrl &source)
         return;
 
     m_source = source;
+    m_dirtyFlags.setFlag(DirtyFlag::SourceDirty);
     emit sourceChanged(m_source);
     update();
 }
@@ -179,6 +181,7 @@ void QQuick3DTexture::setScaleU(float scaleU)
         return;
 
     m_scaleU = scaleU;
+    m_dirtyFlags.setFlag(DirtyFlag::TransformDirty);
     emit scaleUChanged(m_scaleU);
     update();
 }
@@ -189,6 +192,7 @@ void QQuick3DTexture::setScaleV(float scaleV)
         return;
 
     m_scaleV = scaleV;
+    m_dirtyFlags.setFlag(DirtyFlag::TransformDirty);
     emit scaleVChanged(m_scaleV);
     update();
 }
@@ -229,6 +233,7 @@ void QQuick3DTexture::setRotationUV(float rotationUV)
         return;
 
     m_rotationUV = rotationUV;
+    m_dirtyFlags.setFlag(DirtyFlag::TransformDirty);
     emit rotationUVChanged(m_rotationUV);
     update();
 }
@@ -239,6 +244,7 @@ void QQuick3DTexture::setPositionU(float positionU)
         return;
 
     m_positionU = positionU;
+    m_dirtyFlags.setFlag(DirtyFlag::TransformDirty);
     emit positionUChanged(m_positionU);
     update();
 }
@@ -249,6 +255,7 @@ void QQuick3DTexture::setPositionV(float positionV)
         return;
 
     m_positionV = positionV;
+    m_dirtyFlags.setFlag(DirtyFlag::TransformDirty);
     emit positionVChanged(m_positionV);
     update();
 }
@@ -259,6 +266,7 @@ void QQuick3DTexture::setPivotU(float pivotU)
         return;
 
     m_pivotU = pivotU;
+    m_dirtyFlags.setFlag(DirtyFlag::TransformDirty);
     emit pivotUChanged(m_pivotU);
     update();
 }
@@ -269,6 +277,7 @@ void QQuick3DTexture::setPivotV(float pivotV)
         return;
 
     m_pivotV = pivotV;
+    m_dirtyFlags.setFlag(DirtyFlag::TransformDirty);
     emit pivotVChanged(m_pivotV);
     update();
 }
@@ -290,18 +299,31 @@ QDemonRenderGraphObject *QQuick3DTexture::updateSpatialNode(QDemonRenderGraphObj
 
     auto imageNode = static_cast<QDemonRenderImage *>(node);
 
-    imageNode->m_imagePath = QQmlFile::urlToLocalFileOrQrc(m_source);
-    imageNode->m_scale = QVector2D(m_scaleU, m_scaleV);
-    imageNode->m_pivot = QVector2D(m_pivotU, m_pivotV);
-    imageNode->m_rotation = m_rotationUV;
-    imageNode->m_position = QVector2D(m_positionU, m_positionV);
-    imageNode->m_mappingMode = QDemonRenderImage::MappingModes(m_mappingMode);
-    imageNode->m_horizontalTilingMode = QDemonRenderTextureCoordOp(m_tilingModeHorizontal);
-    imageNode->m_verticalTilingMode = QDemonRenderTextureCoordOp(m_tilingModeVertical);
-    imageNode->m_format = QDemonRenderTextureFormat::Format(m_format);
-    // ### Make this more conditional
-    imageNode->m_flags.setFlag(QDemonRenderImage::Flag::Dirty);
-    imageNode->m_flags.setFlag(QDemonRenderImage::Flag::TransformDirty);
+    if (m_dirtyFlags.testFlag(DirtyFlag::TransformDirty)) {
+        m_dirtyFlags.setFlag(DirtyFlag::TransformDirty, false);
+        imageNode->m_scale = QVector2D(m_scaleU, m_scaleV);
+        imageNode->m_pivot = QVector2D(m_pivotU, m_pivotV);
+        imageNode->m_rotation = m_rotationUV;
+        imageNode->m_position = QVector2D(m_positionU, m_positionV);
+
+        imageNode->m_flags.setFlag(QDemonRenderImage::Flag::TransformDirty);
+    }
+
+    bool nodeChanged = false;
+    if (m_dirtyFlags.testFlag(DirtyFlag::SourceDirty)) {
+        m_dirtyFlags.setFlag(DirtyFlag::SourceDirty, false);
+        imageNode->m_imagePath = QQmlFile::urlToLocalFileOrQrc(m_source);
+        nodeChanged = true;
+    }
+
+    nodeChanged |= qUpdateIfNeeded(imageNode->m_mappingMode,
+                                  QDemonRenderImage::MappingModes(m_mappingMode));
+    nodeChanged |= qUpdateIfNeeded(imageNode->m_horizontalTilingMode,
+                                  QDemonRenderTextureCoordOp(m_tilingModeHorizontal));
+    nodeChanged |= qUpdateIfNeeded(imageNode->m_verticalTilingMode,
+                                  QDemonRenderTextureCoordOp(m_tilingModeVertical));
+    QDemonRenderTextureFormat format{QDemonRenderTextureFormat::Format(m_format)};
+    nodeChanged |= qUpdateIfNeeded(imageNode->m_format, format);
 
     if (m_sourceItem) { // TODO: handle width == 0 || height == 0
         QQuickWindow *window = m_sourceItem->window();
@@ -346,11 +368,15 @@ QDemonRenderGraphObject *QQuick3DTexture::updateSpatialNode(QDemonRenderGraphObj
         // TODO: set mipmapFiltering, filtering, hWrap, vWrap?
 
         imageNode->m_qsgTexture = m_layer;
+        nodeChanged = true; // @todo: make more granular
     } else {
         if (m_layer)
             m_layer->setItem(nullptr);
-        imageNode->m_qsgTexture = nullptr;
+        nodeChanged |= qUpdateIfNeeded(imageNode->m_qsgTexture, static_cast<QSGTexture *>(nullptr));
     }
+
+    if (nodeChanged)
+        imageNode->m_flags.setFlag(QDemonRenderImage::Flag::Dirty);
 
     return imageNode;
 }

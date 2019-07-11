@@ -175,6 +175,12 @@ private Q_SLOTS:
 private:
     void ensureTexture();
 
+    enum class DirtyFlag {
+        TransformDirty = (1 << 0),
+        SourceDirty = (1 << 1),
+    };
+    Q_DECLARE_FLAGS(DirtyFlags, DirtyFlag)
+
     QUrl m_source;
     QQuickItem *m_sourceItem = nullptr;
     bool m_sourceItemReparented = false;
@@ -190,6 +196,8 @@ private:
     float m_pivotU = 0;
     float m_pivotV = 0;
     Format m_format = Automatic;
+    DirtyFlags m_dirtyFlags = DirtyFlags(DirtyFlag::TransformDirty)
+                              | DirtyFlags(DirtyFlag::SourceDirty);
 };
 
 QT_END_NAMESPACE
