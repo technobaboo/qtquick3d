@@ -396,7 +396,7 @@ void QQuick3DCamera::setCustomProjection(QMatrix4x4 customProjection)
 QVector3D QQuick3DCamera::worldToViewport(const QVector3D &worldPos) const
 {
     if (!m_cameraNode)
-        return QVector3D(-1, -1, -1);
+        return QVector3D(0, 0, 0);
 
     // Convert from left-handed to right-handed
     const QVector4D worldPosRightHand(worldPos.x(), worldPos.y(), -worldPos.z(), 1);
@@ -443,7 +443,7 @@ QVector3D QQuick3DCamera::worldToViewport(const QVector3D &worldPos) const
 QVector3D QQuick3DCamera::viewportToWorld(const QVector3D &viewportPos) const
 {
     if (!m_cameraNode)
-        return QVector3D(-1, -1, -1);
+        return QVector3D(0, 0, 0);
 
     // Pick two positions in the frustum
     QVector4D clipNearPos(viewportPos, 1);
