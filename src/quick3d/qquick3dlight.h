@@ -130,6 +130,14 @@ protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
+    enum class DirtyFlag {
+        ShadowDirty = (1 << 0),
+        ColorDirty = (1 << 1),
+        BrightnessDirty = (1 << 2), // Including fade
+        AreaDirty = (1 << 3),
+    };
+    Q_DECLARE_FLAGS(DirtyFlags, DirtyFlag)
+
     QDemonRenderLightTypes m_lightType = Directional;
     QColor m_diffuseColor;
     QColor m_specularColor;
@@ -147,6 +155,10 @@ private:
     float m_shadowMapFieldOfView = 90.0f;
     float m_shadowFilter = 35.0f;
     QQuick3DNode *m_scope = nullptr;
+    DirtyFlags m_dirtyFlags = DirtyFlags(DirtyFlag::ShadowDirty)
+                              | DirtyFlags(DirtyFlag::ColorDirty)
+                              | DirtyFlags(DirtyFlag::BrightnessDirty)
+                              | DirtyFlags(DirtyFlag::AreaDirty);
 };
 
 QT_END_NAMESPACE

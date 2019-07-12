@@ -252,6 +252,7 @@ void QQuick3DLight::setDiffuseColor(QColor diffuseColor)
         return;
 
     m_diffuseColor = diffuseColor;
+    m_dirtyFlags.setFlag(DirtyFlag::ColorDirty);
     emit diffuseColorChanged(m_diffuseColor);
     update();
 }
@@ -262,6 +263,7 @@ void QQuick3DLight::setSpecularColor(QColor specularColor)
         return;
 
     m_specularColor = specularColor;
+    m_dirtyFlags.setFlag(DirtyFlag::ColorDirty);
     emit specularColorChanged(m_specularColor);
     update();
 }
@@ -272,6 +274,7 @@ void QQuick3DLight::setAmbientColor(QColor ambientColor)
         return;
 
     m_ambientColor = ambientColor;
+    m_dirtyFlags.setFlag(DirtyFlag::ColorDirty);
     emit ambientColorChanged(m_ambientColor);
     update();
 }
@@ -282,6 +285,7 @@ void QQuick3DLight::setBrightness(float brightness)
         return;
 
     m_brightness = brightness;
+    m_dirtyFlags.setFlag(DirtyFlag::BrightnessDirty);
     emit brightnessChanged(m_brightness);
     update();
 }
@@ -292,6 +296,7 @@ void QQuick3DLight::setLinearFade(float linearFade)
         return;
 
     m_linearFade = linearFade;
+    m_dirtyFlags.setFlag(DirtyFlag::BrightnessDirty);
     emit linearFadeChanged(m_linearFade);
     update();
 }
@@ -302,6 +307,7 @@ void QQuick3DLight::setExponentialFade(float exponentialFade)
         return;
 
     m_exponentialFade = exponentialFade;
+    m_dirtyFlags.setFlag(DirtyFlag::BrightnessDirty);
     emit exponentialFadeChanged(m_exponentialFade);
     update();
 }
@@ -312,6 +318,7 @@ void QQuick3DLight::setAreaWidth(float areaWidth)
         return;
 
     m_areaWidth = areaWidth;
+    m_dirtyFlags.setFlag(DirtyFlag::AreaDirty);
     emit areaWidthChanged(m_areaWidth);
     update();
 }
@@ -322,6 +329,7 @@ void QQuick3DLight::setAreaHeight(float areaHeight)
         return;
 
     m_areaHeight = areaHeight;
+    m_dirtyFlags.setFlag(DirtyFlag::AreaDirty);
     emit areaHeightChanged(m_areaHeight);
     update();
 }
@@ -332,6 +340,7 @@ void QQuick3DLight::setCastShadow(bool castShadow)
         return;
 
     m_castShadow = castShadow;
+    m_dirtyFlags.setFlag(DirtyFlag::ShadowDirty);
     emit castShadowChanged(m_castShadow);
     update();
 }
@@ -342,6 +351,7 @@ void QQuick3DLight::setShadowBias(float shadowBias)
         return;
 
     m_shadowBias = shadowBias;
+    m_dirtyFlags.setFlag(DirtyFlag::ShadowDirty);
     emit shadowBiasChanged(m_shadowBias);
     update();
 }
@@ -352,6 +362,7 @@ void QQuick3DLight::setShadowFactor(float shadowFactor)
         return;
 
     m_shadowFactor = shadowFactor;
+    m_dirtyFlags.setFlag(DirtyFlag::ShadowDirty);
     emit shadowFactorChanged(m_shadowFactor);
     update();
 }
@@ -362,6 +373,7 @@ void QQuick3DLight::setShadowMapResolution(int shadowMapResolution)
         return;
 
     m_shadowMapResolution = shadowMapResolution;
+    m_dirtyFlags.setFlag(DirtyFlag::ShadowDirty);
     emit shadowMapResolutionChanged(m_shadowMapResolution);
     update();
 }
@@ -372,6 +384,7 @@ void QQuick3DLight::setShadowMapFar(float shadowMapFar)
         return;
 
     m_shadowMapFar = shadowMapFar;
+    m_dirtyFlags.setFlag(DirtyFlag::ShadowDirty);
     emit shadowMapFarChanged(m_shadowMapFar);
     update();
 }
@@ -382,6 +395,7 @@ void QQuick3DLight::setShadowMapFieldOfView(float shadowMapFieldOfView)
         return;
 
     m_shadowMapFieldOfView = shadowMapFieldOfView;
+    m_dirtyFlags.setFlag(DirtyFlag::ShadowDirty);
     emit shadowMapFieldOfViewChanged(m_shadowMapFieldOfView);
     update();
 }
@@ -392,6 +406,7 @@ void QQuick3DLight::setShadowFilter(float shadowFilter)
         return;
 
     m_shadowFilter = shadowFilter;
+    m_dirtyFlags.setFlag(DirtyFlag::ShadowDirty);
     emit shadowFilterChanged(m_shadowFilter);
     update();
 }
@@ -416,24 +431,36 @@ QDemonRenderGraphObject *QQuick3DLight::updateSpatialNode(QDemonRenderGraphObjec
     QDemonRenderLight *light = static_cast<QDemonRenderLight *>(node);
 
     light->m_lightType = QDemonRenderLight::Type(m_lightType);
-    light->m_diffuseColor = QVector3D(m_diffuseColor.redF(), m_diffuseColor.greenF(), m_diffuseColor.blueF());
-    light->m_specularColor = QVector3D(m_specularColor.redF(), m_specularColor.greenF(), m_specularColor.blueF());
-    light->m_ambientColor = QVector3D(m_ambientColor.redF(), m_ambientColor.greenF(), m_ambientColor.blueF());
+    if (m_dirtyFlags.testFlag(DirtyFlag::ColorDirty)) {
+        m_dirtyFlags.setFlag(DirtyFlag::ColorDirty, false);
+        light->m_diffuseColor = QVector3D(m_diffuseColor.redF(), m_diffuseColor.greenF(), m_diffuseColor.blueF());
+        light->m_specularColor = QVector3D(m_specularColor.redF(), m_specularColor.greenF(), m_specularColor.blueF());
+        light->m_ambientColor = QVector3D(m_ambientColor.redF(), m_ambientColor.greenF(), m_ambientColor.blueF());
+    }
 
-    light->m_brightness = m_brightness;
-    light->m_linearFade = m_linearFade;
-    light->m_exponentialFade = m_exponentialFade;
+    if (m_dirtyFlags.testFlag(DirtyFlag::BrightnessDirty)) {
+        m_dirtyFlags.setFlag(DirtyFlag::BrightnessDirty, false);
+        light->m_brightness = m_brightness;
+        light->m_linearFade = m_linearFade;
+        light->m_exponentialFade = m_exponentialFade;
+    }
 
-    light->m_areaWidth = m_areaWidth;
-    light->m_areaHeight = m_areaHeight;
+    if (m_dirtyFlags.testFlag(DirtyFlag::AreaDirty)) {
+        m_dirtyFlags.setFlag(DirtyFlag::AreaDirty, false);
+        light->m_areaWidth = m_areaWidth;
+        light->m_areaHeight = m_areaHeight;
+    }
 
-    light->m_castShadow = m_castShadow;
-    light->m_shadowBias = m_shadowBias;
-    light->m_shadowFactor = m_shadowFactor;
-    light->m_shadowMapRes = m_shadowMapResolution;
-    light->m_shadowMapFar = m_shadowMapFar;
-    light->m_shadowMapFov = m_shadowMapFieldOfView;
-    light->m_shadowFilter = m_shadowFilter;
+    if (m_dirtyFlags.testFlag(DirtyFlag::ShadowDirty)) {
+        m_dirtyFlags.setFlag(DirtyFlag::ShadowDirty, false);
+        light->m_castShadow = m_castShadow;
+        light->m_shadowBias = m_shadowBias;
+        light->m_shadowFactor = m_shadowFactor;
+        light->m_shadowMapRes = m_shadowMapResolution;
+        light->m_shadowMapFar = m_shadowMapFar;
+        light->m_shadowMapFov = m_shadowMapFieldOfView;
+        light->m_shadowFilter = m_shadowFilter;
+    }
 
     if (m_scope)
         light->m_scope = static_cast<QDemonRenderNode*>(QQuick3DObjectPrivate::get(m_scope)->spatialNode);
