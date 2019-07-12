@@ -103,6 +103,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonRenderNode
     QVector2D frustumScale;
     bool enableFrustumClipping;
 
+    QRectF previousInViewport;
+    QVector2D previousInDesignDimensions;
+
     QDemonRenderCamera();
 
     QMatrix3x3 getLookAtMatrix(const QVector3D &inUpDir, const QVector3D &inDirection) const;

@@ -161,6 +161,8 @@ QDemonRenderCamera::QDemonRenderCamera()
     TORAD(fov);
     projection = QMatrix4x4();
     position = QVector3D(0, 0, -600);
+
+    flags.setFlag(Flag::CameraDirty, true);
 }
 
 // Code for testing
@@ -173,6 +175,15 @@ QDemonCameraGlobalCalculationResult QDemonRenderCamera::calculateGlobalVariables
 bool QDemonRenderCamera::calculateProjection(const QRectF &inViewport, const QVector2D &inDesignDimensions)
 {
     bool retval = false;
+
+    const bool argumentsChanged = (inViewport != previousInViewport)
+                                  || (inDesignDimensions != previousInDesignDimensions);
+    if (!argumentsChanged && !flags.testFlag(Flag::CameraDirty))
+        return true;
+    previousInViewport = inViewport;
+    previousInDesignDimensions = inDesignDimensions;
+    flags.setFlag(Flag::CameraDirty, false);
+
     if (flags.testFlag(Flag::Orthographic))
         retval = computeFrustumOrtho(inViewport, inDesignDimensions);
     else

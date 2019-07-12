@@ -73,6 +73,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderNode : public QDemonRenderGraphOb
         /// mechanism.  This can be usefulf or caching purposes.
         IgnoreParentTransform = 1 << 13,
         LayerEnableDepthPrePass = 1 << 14, ///< True when we render a depth pass before
+        CameraDirty = 1 << 15, ///< True when the camera inheriting from this is dirty
     };
     Q_DECLARE_FLAGS(Flags, Flag)
 

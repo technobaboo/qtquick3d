@@ -34,6 +34,8 @@
 #include <QtMath>
 #include <qdemonutils.h>
 
+#include "qquick3dutils_p.h"
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -365,7 +367,7 @@ bool QQuick3DCamera::enableFrustumCulling() const
 
 /*!
  * \internal
- */\
+ */
 QDemonRenderGraphObject *QQuick3DCamera::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
@@ -375,19 +377,25 @@ QDemonRenderGraphObject *QQuick3DCamera::updateSpatialNode(QDemonRenderGraphObje
 
     QDemonRenderCamera *camera = static_cast<QDemonRenderCamera *>(node);
 
-    camera->clipNear = m_clipNear;
-    camera->clipFar = m_clipFar;
-    camera->fov = qDegreesToRadians(m_fieldOfView);
-    camera->fovHorizontal = m_isFieldOfViewHorizontal;
+    bool changed = false;
+    changed |= qUpdateIfNeeded(camera->clipNear, m_clipNear);
+    changed |= qUpdateIfNeeded(camera->clipFar, m_clipFar);
+    changed |= qUpdateIfNeeded(camera->fov, qDegreesToRadians(m_fieldOfView));
+    changed |= qUpdateIfNeeded(camera->fovHorizontal, m_isFieldOfViewHorizontal);
 
-    camera->scaleMode = QDemonRenderCamera::ScaleModes(m_scaleMode);
-    camera->scaleAnchor = QDemonRenderCamera::ScaleAnchors(m_scaleAnchor);
-    camera->enableFrustumClipping = m_enableFrustumCulling;
+    changed |= qUpdateIfNeeded(camera->scaleMode, QDemonRenderCamera::ScaleModes(m_scaleMode));
+    changed |= qUpdateIfNeeded(camera->scaleAnchor, QDemonRenderCamera::ScaleAnchors(m_scaleAnchor));
+    changed |= qUpdateIfNeeded(camera->enableFrustumClipping, m_enableFrustumCulling);
 
-    camera->flags.setFlag(QDemonRenderNode::Flag::Orthographic, m_projectionMode == Orthographic);
+    const bool wasOrtho = camera->flags.testFlag(QDemonRenderNode::Flag::Orthographic);
+    const bool ortho = m_projectionMode == Orthographic;
+    camera->flags.setFlag(QDemonRenderNode::Flag::Orthographic, ortho);
+    changed |= wasOrtho != ortho;
 
     m_cameraNode = camera;
 
+    if (changed)
+        camera->flags.setFlag(QDemonRenderNode::Flag::CameraDirty);
     return node;
 }
 
