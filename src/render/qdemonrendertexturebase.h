@@ -87,7 +87,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContext> &context, QDemonRenderTextureTargetType texTarget);
+    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContext> &context, QDemonRenderTextureTargetType texTarget, bool ownsTexture = true);
 
     virtual ~QDemonRenderTextureBase();
 

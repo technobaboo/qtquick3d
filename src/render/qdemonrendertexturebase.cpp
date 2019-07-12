@@ -100,7 +100,8 @@ private:
 
 
 QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderContext> &context,
-                                                 QDemonRenderTextureTargetType texTarget)
+                                                 QDemonRenderTextureTargetType texTarget,
+                                                 bool ownsTexture)
     : m_context(context)
     , m_backend(context->backend())
     , m_handle(nullptr)
@@ -114,8 +115,10 @@ QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderCon
     , m_maxLevel(1000)
     , m_maxMipLevel(0)
     , m_immutable(false)
+    , m_ownsTexture(ownsTexture)
 {
-    m_handle = m_backend->createTexture();
+    if (m_ownsTexture)
+        m_handle = m_backend->createTexture();
     m_sampler = new QDemonRenderTextureSampler(context);
 }
 
