@@ -47,7 +47,7 @@ Module {
         Property { name: "clipNear"; type: "float" }
         Property { name: "clipFar"; type: "float" }
         Property { name: "fieldOfView"; type: "float" }
-        Property { name: "isFieldOFViewHorizontal"; type: "bool" }
+        Property { name: "isFieldOfViewHorizontal"; type: "bool" }
         Property { name: "projectionMode"; type: "QDemonCameraProjectionMode" }
         Property { name: "scaleMode"; type: "QDemonCameraScaleModes" }
         Property { name: "scaleAnchor"; type: "QDemonCameraScaleAnchors" }
@@ -65,8 +65,8 @@ Module {
             Parameter { name: "fieldOfView"; type: "float" }
         }
         Signal {
-            name: "isFieldOFViewHorizontalChanged"
-            Parameter { name: "isFieldOFViewHorizontal"; type: "bool" }
+            name: "isFieldOfViewHorizontalChanged"
+            Parameter { name: "isFieldOfViewHorizontal"; type: "bool" }
         }
         Signal {
             name: "scaleModeChanged"
@@ -97,7 +97,7 @@ Module {
             Parameter { name: "fieldOfView"; type: "float" }
         }
         Method {
-            name: "setIsFieldOFViewHorizontal"
+            name: "setIsFieldOfViewHorizontal"
             Parameter { name: "isFieldOFViewHorizontal"; type: "bool" }
         }
         Method {
@@ -1644,6 +1644,7 @@ Module {
             }
         }
         Property { name: "source"; type: "QUrl" }
+        Property { name: "sourceItem"; type: "QQuickItem"; isPointer: true }
         Property { name: "scaleU"; type: "float" }
         Property { name: "scaleV"; type: "float" }
         Property { name: "mappingMode"; type: "MappingMode" }
@@ -1658,6 +1659,10 @@ Module {
         Signal {
             name: "sourceChanged"
             Parameter { name: "source"; type: "QUrl" }
+        }
+        Signal {
+            name: "sourceItemChanged"
+            Parameter { name: "sourceItem"; type: "QQuickItem"; isPointer: true }
         }
         Signal {
             name: "scaleUChanged"
@@ -1708,6 +1713,10 @@ Module {
             Parameter { name: "source"; type: "QUrl" }
         }
         Method {
+            name: "setSourceItem"
+            Parameter { name: "sourceItem"; type: "QQuickItem"; isPointer: true }
+        }
+        Method {
             name: "setScaleU"
             Parameter { name: "scaleU"; type: "float" }
         }
@@ -1753,13 +1762,13 @@ Module {
         }
     }
     Component {
-        name: "QQuick3DView3D"
+        name: "QQuick3DViewport"
         defaultProperty: "data"
         prototype: "QQuickItem"
         exports: ["QtQuick3D/View3D 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
-            name: "QQuick3DView3DRenderMode"
+            name: "QQuick3DViewportRenderMode"
             values: {
                 "Texture": 0,
                 "Underlay": 1,
@@ -1771,7 +1780,7 @@ Module {
         Property { name: "camera"; type: "QQuick3DCamera"; isPointer: true }
         Property { name: "environment"; type: "QQuick3DSceneEnvironment"; isPointer: true }
         Property { name: "scene"; type: "QQuick3DNode"; isPointer: true }
-        Property { name: "renderMode"; type: "QQuick3DView3DRenderMode" }
+        Property { name: "renderMode"; type: "QQuick3DViewportRenderMode" }
         Signal {
             name: "cameraChanged"
             Parameter { name: "camera"; type: "QQuick3DCamera"; isPointer: true }
@@ -1786,7 +1795,7 @@ Module {
         }
         Signal {
             name: "renderModeChanged"
-            Parameter { name: "renderMode"; type: "QQuick3DView3DRenderMode" }
+            Parameter { name: "renderMode"; type: "QQuick3DViewportRenderMode" }
         }
         Method {
             name: "setCamera"
@@ -1802,7 +1811,7 @@ Module {
         }
         Method {
             name: "setRenderMode"
-            Parameter { name: "renderMode"; type: "QQuick3DView3DRenderMode" }
+            Parameter { name: "renderMode"; type: "QQuick3DViewportRenderMode" }
         }
         Method {
             name: "worldToView"
