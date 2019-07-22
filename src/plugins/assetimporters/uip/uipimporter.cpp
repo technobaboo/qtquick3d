@@ -59,7 +59,7 @@ const QStringList UipImporter::inputExtensions() const
 
 const QString UipImporter::outputExtension() const
 {
-    return QStringLiteral("3d.qml");
+    return QStringLiteral(".qml");
 }
 
 const QString UipImporter::type() const
@@ -105,6 +105,10 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
             } else {
                 // QML
                 // Just copy the source file to the export directory as is
+                QFileInfo sourceFile(source.absolutePath() + QDir::separator() + presentation.source);
+                QFileInfo destFile(savePath.absoluteFilePath(sourceFile.fileName()));
+                if (QFile::copy(sourceFile.absoluteFilePath(), destFile.absoluteFilePath()))
+                    m_generatedFiles += destFile.absoluteFilePath();
             }
 
         }
@@ -169,20 +173,20 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
                 processNode(obj->firstChild(), output, tabLevel + 1);
 
             if (obj->type() == GraphObject::Layer) {
-                // effects array
-                // get all children that are effects, and add their id's to effects: array
-                QString effects;
-                GraphObject *effectObject = obj->firstChild();
-                while (effectObject) {
-                    if (effectObject->type() == GraphObject::Effect)
-                        effects += effectObject->qmlId() + QStringLiteral(", ");
-                    effectObject = effectObject->nextSibling();
-                }
-                if (!effects.isEmpty()) {
-                    // remove final ", "
-                    effects.chop(2);
-                    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("effects: [") << effects << QStringLiteral("]") << endl;
-                }
+//                // effects array
+//                // get all children that are effects, and add their id's to effects: array
+//                QString effects;
+//                GraphObject *effectObject = obj->firstChild();
+//                while (effectObject) {
+//                    if (effectObject->type() == GraphObject::Effect)
+//                        effects += effectObject->qmlId() + QStringLiteral(", ");
+//                    effectObject = effectObject->nextSibling();
+//                }
+//                if (!effects.isEmpty()) {
+//                    // remove final ", "
+//                    effects.chop(2);
+//                    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("effects: [") << effects << QStringLiteral("]") << endl;
+//                }
 
                 // Generate Animation Timeline
                 generateAnimationTimeLine(obj, m_presentation->masterSlide(), output, tabLevel + 1);
@@ -230,7 +234,7 @@ void UipImporter::checkForResourceFiles(GraphObject *object)
         return;
     if (object->type() == GraphObject::Image) {
         Image *image = static_cast<Image*>(object);
-        if (!m_resourcesList.contains(image->m_sourcePath))
+        if (image->m_subPresentation.isEmpty() && !m_resourcesList.contains(image->m_sourcePath))
             m_resourcesList.append(image->m_sourcePath);
     } else if (object->type() == GraphObject::Model) {
         ModelNode *model = static_cast<ModelNode*>(object);
@@ -247,14 +251,14 @@ void UipImporter::checkForResourceFiles(GraphObject *object)
             m_resourcesList.append(meshLocation);
     } else if (object->type() == GraphObject::Effect) {
         // ### maybe remove #
-        EffectInstance *effect = static_cast<EffectInstance*>(object);
-        if (!m_resourcesList.contains(effect->m_effect_unresolved))
-            m_resourcesList.append(effect->m_effect_unresolved);
+        //EffectInstance *effect = static_cast<EffectInstance*>(object);
+        //if (!m_resourcesList.contains(effect->m_effect_unresolved))
+        //    m_resourcesList.append(effect->m_effect_unresolved);
     } else if (object->type() == GraphObject::CustomMaterial) {
         // ### maybe remove #
-        CustomMaterialInstance *material = static_cast<CustomMaterialInstance*>(object);
-        if (!m_resourcesList.contains(material->m_material_unresolved))
-            m_resourcesList.append(material->m_material_unresolved);
+        // CustomMaterialInstance *material = static_cast<CustomMaterialInstance*>(object);
+        //if (!m_resourcesList.contains(material->m_material_unresolved))
+        //    m_resourcesList.append(material->m_material_unresolved);
     }
 }
 

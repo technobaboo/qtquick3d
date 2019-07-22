@@ -79,7 +79,7 @@ QString sanitizeQmlId(const QString &id)
         idCopy.prepend(QStringLiteral("node"));
 
     // sometimes first letter is a #
-    if (idCopy.startsWith("#"))
+    if (idCopy.startsWith('#'))
         idCopy.remove(0, 1);
 
     // imported files have < > for certain items
@@ -97,6 +97,9 @@ QString sanitizeQmlId(const QString &id)
 
     // - is an operator in QML
     idCopy.replace('-', '_');
+
+    // : can not be use in an ID
+    idCopy.replace(':', '_');
 
     // first letter of id can not be upper case
     if (idCopy[0].isUpper())

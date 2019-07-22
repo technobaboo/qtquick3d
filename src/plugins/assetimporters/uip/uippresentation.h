@@ -1039,6 +1039,7 @@ public:
 public:
     void writeQmlHeader(QTextStream &output, int tabLevel) override;
     void writeQmlProperties(QTextStream &output, int tabLevel) override;
+    void writeQmlFooter(QTextStream &output, int tabLevel) override;
 
     QString m_effect_unresolved;
     bool m_effectIsResolved = false;

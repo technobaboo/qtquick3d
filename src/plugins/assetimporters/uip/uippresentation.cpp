@@ -1214,7 +1214,12 @@ QString tilingModeToString(Image::TilingMode mode)
 void Image::writeQmlProperties(QTextStream &output, int tabLevel)
 {
     output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("id: ") << qmlId() << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("source: ") <<  QDemonQmlUtilities::sanitizeQmlSourcePath(m_sourcePath) << endl;
+    if (m_subPresentation.isEmpty()) {
+        // if there is no sub-presentation, there is a source
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("source: ") <<  QDemonQmlUtilities::sanitizeQmlSourcePath(m_sourcePath) << endl;
+    } else {
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("sourceItem: ") << QDemonQmlUtilities::qmlComponentName(m_subPresentation) << QStringLiteral(" { }") << endl;
+    }
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("scaleu"), m_scaleU);
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("scalev"), m_scaleV);
     writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("mappingmode"), mappingModeToString(m_mappingMode));
@@ -2408,13 +2413,23 @@ void EffectInstance::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void EffectInstance::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Effect {") << endl;
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
+    //output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Effect {") << endl;
 }
 
 void EffectInstance::writeQmlProperties(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("id: ") << qmlId() << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("source: ") << QDemonQmlUtilities::sanitizeQmlId(m_effect_unresolved) << endl;
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
+    //output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("id: ") << qmlId() << endl;
+    //output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("source: ") << QDemonQmlUtilities::sanitizeQmlId(m_effect_unresolved) << endl;
+}
+
+void EffectInstance::writeQmlFooter(QTextStream &output, int tabLevel)
+{
+    Q_UNUSED(output)
+    Q_UNUSED(tabLevel)
 }
 
 template<typename V>
