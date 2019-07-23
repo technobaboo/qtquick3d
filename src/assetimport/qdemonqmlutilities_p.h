@@ -85,6 +85,7 @@ QString Q_DEMONASSETIMPORT_EXPORT qmlComponentName(const QString &name);
 QString Q_DEMONASSETIMPORT_EXPORT colorToQml(const QColor &color);
 QString Q_DEMONASSETIMPORT_EXPORT sanitizeQmlId(const QString &id);
 QString Q_DEMONASSETIMPORT_EXPORT sanitizeQmlSourcePath(const QString &source, bool removeParentDirectory = false);
+QString Q_DEMONASSETIMPORT_EXPORT stripParentDirectory(const QString &filePath);
 
 void Q_DEMONASSETIMPORT_EXPORT writeQmlPropertyHelper(QTextStream &output, int tabLevel, PropertyMap::Type type, const QString &propertyName, const QVariant &value);
 

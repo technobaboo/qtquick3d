@@ -122,21 +122,12 @@ QString sanitizeQmlId(const QString &id)
     return idCopy;
 }
 
-namespace  {
-QString stripParentDirectory(const QString &filePath) {
-    QString sourceCopy = filePath;
-    while(sourceCopy.startsWith('.') || sourceCopy.startsWith('/') || sourceCopy.startsWith('\\'))
-        sourceCopy.remove(0, 1);
-    return sourceCopy;
-}
-}
-
 QString sanitizeQmlSourcePath(const QString &source, bool removeParentDirectory)
 {
     QString sourceCopy = source;
 
     if (removeParentDirectory)
-        sourceCopy = stripParentDirectory(sourceCopy);
+        sourceCopy = QDemonQmlUtilities::stripParentDirectory(sourceCopy);
 
     sourceCopy.replace('\\', '/');
 
@@ -302,6 +293,12 @@ void writeQmlPropertyHelper(QTextStream &output, int tabLevel, PropertyMap::Type
 
 }
 
+QString stripParentDirectory(const QString &filePath) {
+    QString sourceCopy = filePath;
+    while(sourceCopy.startsWith('.') || sourceCopy.startsWith('/') || sourceCopy.startsWith('\\'))
+        sourceCopy.remove(0, 1);
+    return sourceCopy;
+}
 
 }
 

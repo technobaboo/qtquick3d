@@ -64,6 +64,7 @@ private:
     void generateAnimationTimeLine(GraphObject *object, Slide *masterSlide, QTextStream &output, int tabLevel);
     void generateComponent(GraphObject *component);
     void writeHeader(QTextStream &output);
+    void generateApplicationComponent(const QString &initialPresentationComponent, const QSize &size);
 
     QVector<QString> m_resourcesList;
     UiaParser m_uiaParser;
@@ -79,6 +80,7 @@ private:
     QVector <ReferencedMaterial *> m_referencedMaterials;
     QVector <AliasNode *> m_aliasNodes;
     QVector <ComponentNode *> m_componentNodes;
+    bool m_hasQMLSubPresentations = false;
 
     // options
     bool m_generateWindowComponent = true;

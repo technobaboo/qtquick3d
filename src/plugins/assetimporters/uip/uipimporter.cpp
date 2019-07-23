@@ -73,11 +73,37 @@ const QVariantMap UipImporter::importOptions() const
 }
 
 namespace  {
-QString stripParentDirectory(const QString &filePath) {
-    QString sourceCopy = filePath;
-    while(sourceCopy.startsWith('.') || sourceCopy.startsWith('/') || sourceCopy.startsWith('\\'))
-        sourceCopy.remove(0, 1);
-    return sourceCopy;
+bool copyRecursively(const QString &sourceFolder, const QString &destFolder)
+{
+    bool success = false;
+    QDir sourceDir(sourceFolder);
+
+    if(!sourceDir.exists())
+        return false;
+
+    QDir destDir(destFolder);
+    if(!destDir.exists())
+        destDir.mkdir(destFolder);
+
+    auto files = sourceDir.entryList(QDir::Files);
+    for (const auto &file : files) {
+        QString srcName = sourceFolder + QDir::separator() + file;
+        QString destName = destFolder + QDir::separator() + file;
+        success = QFile::copy(srcName, destName);
+        if(!success)
+            return false;
+    }
+
+    files = sourceDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+    for (const auto &file : files) {
+        QString srcName = sourceFolder + QDir::separator() + file;
+        QString destName = destFolder + QDir::separator() + file;
+        success = copyRecursively(srcName, destName);
+        if(!success)
+            return false;
+    }
+
+    return true;
 }
 }
 
@@ -94,23 +120,32 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
     if (!savePath.exists())
         return QStringLiteral("Export Directory Invalid");
 
+    QString uiaComponentName;
+    QSize uiaComponentSize;
+
     // If sourceFile is a UIA file
     if (sourceFile.endsWith(QStringLiteral(".uia"), Qt::CaseInsensitive)) {
         auto uia = m_uiaParser.parse(sourceFile);
+        uiaComponentName = QDemonQmlUtilities::qmlComponentName(uia.initialPresentationId);
+        for (auto presentation : uia.presentations)
+            if (presentation.type == UiaParser::Uia::Presentation::Qml)
+                m_hasQMLSubPresentations = true;
+
         for (auto presentation : uia.presentations) {
             if (presentation.type == UiaParser::Uia::Presentation::Uip) {
                 // UIP
+                m_exportPath.mkdir(QStringLiteral("presentations"));
                 auto uip = m_uipParser.parse(source.absolutePath() + QDir::separator() + presentation.source, presentation.id);
-                processUipPresentation(uip, savePath.absolutePath() + QDir::separator());
-            } else {
-                // QML
-                // Just copy the source file to the export directory as is
-                QFileInfo sourceFile(source.absolutePath() + QDir::separator() + presentation.source);
-                QFileInfo destFile(savePath.absoluteFilePath(sourceFile.fileName()));
-                if (QFile::copy(sourceFile.absoluteFilePath(), destFile.absoluteFilePath()))
-                    m_generatedFiles += destFile.absoluteFilePath();
+                processUipPresentation(uip, savePath.absolutePath() + QDir::separator() + QStringLiteral("presentations") + QDir::separator());
+                if (presentation.id == uiaComponentName)
+                    uiaComponentSize = QSize(uip->presentationWidth(), uip->presentationHeight());
             }
-
+        }
+        if (m_hasQMLSubPresentations) {
+            // If there is any QML in the project at all, we have to copy the entire
+            // qml folder over
+            copyRecursively(source.absolutePath() + QDir::separator() + QStringLiteral("qml"),
+                            m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("qml"));
         }
 
     } else if (sourceFile.endsWith(QStringLiteral(".uip"), Qt::CaseInsensitive)) {
@@ -125,19 +160,23 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
         QFileInfo sourceFile(source.absolutePath() + QDir::separator() + file);
         if (!sourceFile.exists()) {
             // Try again after stripping the parent directory
-            sourceFile = QFileInfo(source.absolutePath() + QDir::separator() + stripParentDirectory(file));
+            sourceFile = QFileInfo(source.absolutePath() + QDir::separator() + QDemonQmlUtilities::stripParentDirectory(file));
             if (!sourceFile.exists()) {
                 errorString += QStringLiteral("Resource file does not exist: ") + sourceFile.absoluteFilePath() + QChar('\n');
                 continue;
             }
         }
-        QFileInfo destFile(savePath.absoluteFilePath(stripParentDirectory(file)));
+        QFileInfo destFile(savePath.absoluteFilePath(QDemonQmlUtilities::stripParentDirectory(file)));
         QDir destDir(destFile.absolutePath());
         destDir.mkpath(".");
 
         if (QFile::copy(sourceFile.absoluteFilePath(), destFile.absoluteFilePath()))
             m_generatedFiles += destFile.absoluteFilePath();
     }
+
+    // Generate UIA Component if we converted a uia
+    if (!uiaComponentName.isEmpty())
+        generateApplicationComponent(uiaComponentName, uiaComponentSize);
 
     if (generatedFiles)
         generatedFiles = &m_generatedFiles;
@@ -298,7 +337,7 @@ void UipImporter::generateMaterialComponent(GraphObject *object)
 void UipImporter::generateAliasComponent(GraphObject *reference)
 {
     // create materials folder
-    QDir aliasPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("materials");
+    QDir aliasPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("aliases");
 
     QString aliasComponentName = QDemonQmlUtilities::qmlComponentName(reference->qmlId());
     QString targetFile = aliasPath.absolutePath() + QDir::separator() + aliasComponentName + QStringLiteral(".qml");
@@ -401,8 +440,10 @@ void UipImporter::generateAnimationTimeLine(GraphObject *object, Slide *masterSl
 
 void UipImporter::generateComponent(GraphObject *component)
 {
+    QDir componentPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("components");
+
     QString componentName = QDemonQmlUtilities::qmlComponentName(component->qmlId());
-    QString targetFileName = m_exportPath.absolutePath() + QDir::separator() + componentName + QStringLiteral(".qml");
+    QString targetFileName = componentPath.absolutePath() + QDir::separator() + componentName + QStringLiteral(".qml");
     QFile componentFile(targetFileName);
     if (!componentFile.open(QIODevice::WriteOnly)) {
         qWarning() << "Could not write to file: " << componentFile;
@@ -432,16 +473,59 @@ void UipImporter::writeHeader(QTextStream &output)
 {
     output << "import QtQuick3D 1.0" << endl;
     output << "import QtQuick 2.12" << endl;
-    output << "import QtQuick.Window 2.12" << endl;
     output << "import QtQuick.Timeline 1.0" << endl;
     if (m_referencedMaterials.count() > 0) {
-        output << "import \"./materials\" as Materials" << endl;
+        output << "import \"../materials\" as Materials" << endl;
     }
 
     if (m_aliasNodes.count() > 0) {
-        output << "import \"./aliases\" as Aliases" << endl;
+        output << "import \"../aliases\" as Aliases" << endl;
     }
+
+    if (m_componentNodes.count() > 0) {
+        output << "import \"../components\"" << endl;
+    }
+
+    if (m_hasQMLSubPresentations)
+        output << "import \"../qml\"" << endl;
+
     output << endl;
+}
+
+void UipImporter::generateApplicationComponent(const QString &initialPresentationComponent, const QSize &size)
+{
+    // Create File
+    QString targetFileName = m_exportPath.absolutePath() + QDir::separator() + initialPresentationComponent + QStringLiteral("Window.qml");
+    QFile applicationComponentFile(targetFileName);
+    if (!applicationComponentFile.open(QIODevice::WriteOnly)) {
+        qDebug() << "couldn't open " << targetFileName << " for writing";
+        return;
+    }
+
+    QTextStream output(&applicationComponentFile);
+
+    // Header
+    output << "import QtQuick 2.12" << endl;
+    output << "import QtQuick.Window 2.12" << endl;
+    output << "import \"presentations\"" << endl;
+    output << endl;
+
+    // Window
+    output << "Window {" << endl;
+    output << QDemonQmlUtilities::insertTabs(1) << "width: " << size.width() << endl;
+    output << QDemonQmlUtilities::insertTabs(1) << "height: " << size.height() << endl;
+    output << QDemonQmlUtilities::insertTabs(1) << "title: " << "\"" << initialPresentationComponent << "\"" << endl;
+    output << endl;
+
+    // Component
+    output << QDemonQmlUtilities::insertTabs(1) << initialPresentationComponent << " {" << endl;
+    output << QDemonQmlUtilities::insertTabs(2) << "anchors.fill: parent" << endl;
+    output << QDemonQmlUtilities::insertTabs(1) << "}" << endl;
+
+    output << "}" << endl;
+
+    applicationComponentFile.close();
+    m_generatedFiles += targetFileName;
 }
 
 QString UipImporter::processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath)
@@ -497,6 +581,9 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
         m_exportPath.mkdir("aliases");
     }
 
+    if(m_componentNodes.count() > 0) {
+        m_exportPath.mkdir("components");
+    }
 
     // Generate Alias, Components, and ReferenceMaterials (2nd pass)
     // Use iterators because generateComponent can contain additional nested components
@@ -536,12 +623,15 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             writeHeader(output);
 
             // Window header
-            output << QStringLiteral("Window {") << endl;
-            output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("visible: true") << endl;
+            if (m_presentation->scene()->m_useClearColor)
+                output << QStringLiteral("Rectangle {") << endl;
+            else
+                output << QStringLiteral("Item {") << endl;
             output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("width: ") << m_presentation->presentationWidth()<< endl;
             output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("height: ") << m_presentation->presentationHeight() << endl;
-            output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("title: \"") << m_presentation->name() << QStringLiteral("\"") << endl;
-            output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("color: ") << QDemonQmlUtilities::colorToQml(m_presentation->scene()->m_clearColor) << endl << endl;
+            //output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("title: \"") << m_presentation->name() << QStringLiteral("\"") << endl;
+            if (m_presentation->scene()->m_useClearColor)
+                output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("color: ") << QDemonQmlUtilities::colorToQml(m_presentation->scene()->m_clearColor) << endl << endl;
 
             // For each component buffer paste in each line with tablevel +1
             for (auto buffer : layerComponentsMap.values()) {
