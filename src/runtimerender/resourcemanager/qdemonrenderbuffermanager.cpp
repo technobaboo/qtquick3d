@@ -417,7 +417,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QDemonRenderMeshPath &inMe
             int poundIndex = pathBuilder.lastIndexOf('#');
             int id = 0;
             if (poundIndex != -1) {
-                id = pathBuilder.mid(poundIndex + 1).toInt();
+                id = pathBuilder.midRef(poundIndex + 1).toInt();
                 pathBuilder = pathBuilder.left(poundIndex); //### double check this isn't off-by-one
             }
             QSharedPointer<QIODevice> ioStream(inputStreamFactory->getStreamForFile(pathBuilder));
