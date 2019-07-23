@@ -39,6 +39,7 @@ HEADERS += \
     qquick3dscenemanager_p.h \
     qquick3dscenerenderer.h \
     qquick3dtexture.h \
+    qquick3dutils_p.h \
     qquick3dviewport.h \
     qtquick3dglobal.h \
     qtquick3dglobal_p.h
