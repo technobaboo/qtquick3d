@@ -106,7 +106,7 @@ void QDemonRenderAtomicCounterBuffer::updateData(qint32 offset, QDemonByteView d
 
 void QDemonRenderAtomicCounterBuffer::addParam(const QByteArray &name, quint32 offset)
 {
-    if (m_atomicCounterBufferEntryMap.find(name) == m_atomicCounterBufferEntryMap.end()) {
+    if (!m_atomicCounterBufferEntryMap.contains(name)) {
         AtomicCounterBufferEntry *newEntry = new AtomicCounterBufferEntry(name, offset);
 
         if (newEntry)
@@ -117,12 +117,9 @@ void QDemonRenderAtomicCounterBuffer::addParam(const QByteArray &name, quint32 o
     }
 }
 
-bool QDemonRenderAtomicCounterBuffer::containsParam(const QByteArray &name)
+bool QDemonRenderAtomicCounterBuffer::containsParam(const QByteArray &name) const
 {
-    if (m_atomicCounterBufferEntryMap.find(name) != m_atomicCounterBufferEntryMap.end())
-        return true;
-    else
-        return false;
+    return m_atomicCounterBufferEntryMap.contains(name);
 }
 
 QT_END_NAMESPACE

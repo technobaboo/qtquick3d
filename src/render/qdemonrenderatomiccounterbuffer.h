@@ -127,7 +127,7 @@ public:
      *
      * @return no return
      */
-    bool containsParam(const QByteArray &name);
+    bool containsParam(const QByteArray &name) const;
 
     /**
      * @brief get the buffer name
