@@ -32,6 +32,8 @@
 #include "qdemonrendermaterialshadergenerator.h"
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
+QT_BEGIN_NAMESPACE
+
 QDemonMaterialShaderGeneratorInterface::QDemonMaterialShaderGeneratorInterface(QDemonRenderContextInterface *renderContext)
     : m_renderContext(renderContext),
       m_programGenerator(m_renderContext->shaderProgramGenerator())
@@ -39,3 +41,5 @@ QDemonMaterialShaderGeneratorInterface::QDemonMaterialShaderGeneratorInterface(Q
 {}
 
 QDemonMaterialShaderGeneratorInterface::~QDemonMaterialShaderGeneratorInterface() {}
+
+QT_END_NAMESPACE

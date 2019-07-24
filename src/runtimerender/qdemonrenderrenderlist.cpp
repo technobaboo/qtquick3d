@@ -40,8 +40,6 @@ QDemonRef<QDemonRenderList> QDemonRenderList::createRenderList()
 
 QDemonRenderTask::~QDemonRenderTask() = default;
 
-QT_END_NAMESPACE
-
 void QDemonRenderList::beginFrame()
 {
     m_nextTaskId = 1;
@@ -77,3 +75,5 @@ void QDemonRenderList::runRenderTasks()
     }
     beginFrame();
 }
+
+QT_END_NAMESPACE

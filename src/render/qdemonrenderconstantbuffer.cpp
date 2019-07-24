@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 
 uint qHash(const QDemonRenderConstantBuffer::ParamHandle &h, uint seed) Q_DECL_NOTHROW
 {
-    return (h.key) ? h.key : ::qHash(h.name, seed);
+    return (h.key) ? h.key : QT_PREPEND_NAMESPACE(qHash(h.name, seed));
 }
 
 ///< struct handling a constant buffer entry

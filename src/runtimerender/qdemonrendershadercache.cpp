@@ -207,8 +207,6 @@ QDemonRef<QDemonShaderCache> QDemonShaderCache::createShaderCache(const QDemonRe
     return QDemonRef<QDemonShaderCache>(new QDemonShaderCache(inContext, inInputStreamFactory, inPerfTimer));
 }
 
-QT_END_NAMESPACE
-
 QDemonShaderCache::QDemonShaderCache(const QDemonRef<QDemonRenderContext> &ctx, const QDemonRef<QDemonInputStreamFactory> &inInputStreamFactory, QDemonPerfTimer *inPerfTimer)
     : m_renderContext(ctx), m_perfTimer(inPerfTimer), m_inputStreamFactory(inInputStreamFactory), m_shaderCompilationEnabled(true)
 {
@@ -652,3 +650,5 @@ void QDemonShaderCache::setShaderCompilationEnabled(bool inEnableShaderCompilati
 {
     m_shaderCompilationEnabled = inEnableShaderCompilation;
 }
+
+QT_END_NAMESPACE
