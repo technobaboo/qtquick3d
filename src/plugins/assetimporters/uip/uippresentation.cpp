@@ -247,7 +247,7 @@ bool convertToVector3D(const QStringRef &value, QVector3D *v, const char *desc, 
 bool convertToVector4D(const QStringRef &value, QVector4D *v, const char *desc, QXmlStreamReader *reader)
 {
     QVector<QStringRef> floatStrings = value.split(' ', QString::SkipEmptyParts);
-    if (floatStrings.count() != 4) {
+    if (!(floatStrings.count() == 4 || floatStrings.count() == 3)) {
         if (reader)
             reader->raiseError(QObject::tr("Invalid %1 \"%2\"").arg(QString::fromUtf8(desc)).arg(value.toString()));
         return false;
@@ -262,8 +262,14 @@ bool convertToVector4D(const QStringRef &value, QVector4D *v, const char *desc, 
         return false;
     if (!convertToFloat(floatStrings[2], &z, "Vector4D[z]", reader))
         return false;
-    if (!convertToFloat(floatStrings[3], &w, "Vector4D[w]", reader))
-        return false;
+    // Compat with old colors
+    if (floatStrings.count() == 4) {
+        if (!convertToFloat(floatStrings[3], &w, "Vector4D[w]", reader))
+            return false;
+    } else {
+        w = 1.0;
+    }
+
     v->setX(x);
     v->setY(y);
     v->setZ(z);
