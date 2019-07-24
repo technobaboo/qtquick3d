@@ -57,7 +57,7 @@ enum PropertyType {     // value format
     Vector,             // Float3
     Scale,              // Float3
     Rotation,           // Float3
-    Color,              // Float3
+    Color,              // Float4
     Boolean,            // Bool
     Slide,              // String
     Font,               // String
@@ -86,6 +86,7 @@ bool convertToInt32(const QStringRef &value, qint32 *v, const char *desc = nullp
 bool convertToBool(const QStringRef &value, bool *v, const char *desc = nullptr, QXmlStreamReader *reader = nullptr);
 bool convertToVector2D(const QStringRef &value, QVector2D *v, const char *desc = nullptr, QXmlStreamReader *reader = nullptr);
 bool convertToVector3D(const QStringRef &value, QVector3D *v, const char *desc = nullptr, QXmlStreamReader *reader = nullptr);
+bool convertToVector4D(const QStringRef &value, QVector4D *v, const char *desc = nullptr, QXmlStreamReader *reader = nullptr);
 bool convertToMatrix4x4(const QStringRef &value, QMatrix4x4 *v, const char *desc = nullptr, QXmlStreamReader *reader = nullptr);
 int animatablePropertyTypeToMetaType(Q3DS::PropertyType type);
 QVariant convertToVariant(const QString &value, Q3DS::PropertyType type);

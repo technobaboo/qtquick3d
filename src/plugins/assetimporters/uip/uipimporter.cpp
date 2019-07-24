@@ -126,7 +126,7 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
     // If sourceFile is a UIA file
     if (sourceFile.endsWith(QStringLiteral(".uia"), Qt::CaseInsensitive)) {
         auto uia = m_uiaParser.parse(sourceFile);
-        uiaComponentName = QDemonQmlUtilities::qmlComponentName(uia.initialPresentationId);
+        uiaComponentName = uia.initialPresentationId;
         for (auto presentation : uia.presentations)
             if (presentation.type == UiaParser::Uia::Presentation::Qml)
                 m_hasQMLSubPresentations = true;
@@ -176,7 +176,7 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
 
     // Generate UIA Component if we converted a uia
     if (!uiaComponentName.isEmpty())
-        generateApplicationComponent(uiaComponentName, uiaComponentSize);
+        generateApplicationComponent(QDemonQmlUtilities::qmlComponentName(uiaComponentName), uiaComponentSize);
 
     if (generatedFiles)
         generatedFiles = &m_generatedFiles;
@@ -208,7 +208,7 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
             obj->writeQmlProperties(output, tabLevel + 1);
             output << endl;
 
-            if (obj->type() != GraphObject::Component)
+            if (obj->type() != GraphObject::Component && obj->type() != GraphObject::Layer)
                 processNode(obj->firstChild(), output, tabLevel + 1);
 
             if (obj->type() == GraphObject::Layer) {
@@ -227,8 +227,15 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
 //                    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("effects: [") << effects << QStringLiteral("]") << endl;
 //                }
 
-                // Generate Animation Timeline
-                generateAnimationTimeLine(obj, m_presentation->masterSlide(), output, tabLevel + 1);
+
+                // Check if layer has a sub-presentation set, in which case we can skip children processing and timeline generation
+                auto layer = static_cast<LayerNode*>(obj);
+                if (layer->m_sourcePath.isEmpty()) {
+                    // Process children nodes
+                    processNode(obj->firstChild(), output, tabLevel + 1);
+                    // Generate Animation Timeline
+                    generateAnimationTimeLine(obj, m_presentation->masterSlide(), output, tabLevel + 1);
+                }
 
 
             } else if (obj->type() == GraphObject::Model) {
@@ -536,17 +543,20 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
     m_presentation = presentation;
 
     // Apply the properties of the first slide before running generator
-    Slide *firstSlide = static_cast<Slide*>(presentation->masterSlide()->firstChild());
-    if (firstSlide)
-        presentation->applySlidePropertyChanges(firstSlide);
+    if (presentation->masterSlide()) {
+        presentation->applySlidePropertyChanges(presentation->masterSlide());
 
+        Slide *firstSlide = static_cast<Slide*>(presentation->masterSlide()->firstChild());
+        if (firstSlide)
+            presentation->applySlidePropertyChanges(firstSlide);
+    }
     QString errorString;
 
     // create one component per layer
     GraphObject *layer = presentation->scene()->firstChild();
     QHash<QString, QBuffer *> layerComponentsMap;
     while (layer) {
-        if (layer->type() == GraphObject::Layer) {
+        if (layer->type() == GraphObject::Layer) {    
             // Create qml component from .uip presentation
             QString targetFile = ouputFilePath + QDemonQmlUtilities::qmlComponentName(presentation->name()) + QDemonQmlUtilities::qmlComponentName(layer->qmlId());
             QBuffer *qmlBuffer = new QBuffer();

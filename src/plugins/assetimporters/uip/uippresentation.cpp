@@ -86,7 +86,7 @@ bool convertToPropertyType(const QStringRef &value, Q3DS::PropertyType *type, in
         ok = true;
         *type = Q3DS::Color;
         if (componentCount)
-            *componentCount = 3;
+            *componentCount = 4;
     } else if (value == QStringLiteral("Boolean") || value == QStringLiteral("Bool")) {
         ok = true;
         *type = Q3DS::Boolean;
@@ -244,6 +244,33 @@ bool convertToVector3D(const QStringRef &value, QVector3D *v, const char *desc, 
     return true;
 }
 
+bool convertToVector4D(const QStringRef &value, QVector4D *v, const char *desc, QXmlStreamReader *reader)
+{
+    QVector<QStringRef> floatStrings = value.split(' ', QString::SkipEmptyParts);
+    if (floatStrings.count() != 4) {
+        if (reader)
+            reader->raiseError(QObject::tr("Invalid %1 \"%2\"").arg(QString::fromUtf8(desc)).arg(value.toString()));
+        return false;
+    }
+    float x;
+    float y;
+    float z;
+    float w;
+    if (!convertToFloat(floatStrings[0], &x, "Vector4D[x]", reader))
+        return false;
+    if (!convertToFloat(floatStrings[1], &y, "Vector4D[y]", reader))
+        return false;
+    if (!convertToFloat(floatStrings[2], &z, "Vector4D[z]", reader))
+        return false;
+    if (!convertToFloat(floatStrings[3], &w, "Vector4D[w]", reader))
+        return false;
+    v->setX(x);
+    v->setY(y);
+    v->setZ(z);
+    v->setW(w);
+    return true;
+}
+
 bool convertToMatrix4x4(const QStringRef &value, QMatrix4x4 *v, const char *desc, QXmlStreamReader *reader)
 {
     QVector<QStringRef> floatStrings = value.split(' ', QString::SkipEmptyParts);
@@ -337,8 +364,8 @@ QVariant convertToVariant(const QString &value, Q3DS::PropertyType type)
     case Rotation:
     case Color:
     {
-        QVector3D v;
-        if (convertToVector3D(&value, &v))
+        QVector4D v;
+        if (convertToVector4D(&value, &v))
             return v;
     }
         break;
@@ -387,9 +414,9 @@ QString convertFromVariant(const QVariant &value)
     case QVariant::Color:
     {
         const QColor c = value.value<QColor>();
-        const QVector3D v = QVector3D(c.redF(), c.greenF(), c.blueF());
-        return QString(QLatin1String("%1 %2 %3"))
-                .arg(QString::number(v.x())).arg(QString::number(v.y())).arg(QString::number(v.z()));
+        const QVector4D v = QVector4D(c.redF(), c.greenF(), c.blueF(), c.alphaF());
+        return QString(QLatin1String("%1 %2 %3 %4"))
+                .arg(QString::number(v.x())).arg(QString::number(v.y())).arg(QString::number(v.z())).arg(QString::number(v.w()));
     }
     case QVariant::Bool:
         return value.toBool() ? QLatin1String("true") : QLatin1String("false");
@@ -723,10 +750,11 @@ bool parseProperty(const V &attrs, GraphObject::PropSetFlags flags, const QStrin
 template<typename V>
 bool parseProperty(const V &attrs, GraphObject::PropSetFlags flags, const QString &typeName, const QString &propName, QColor *dst)
 {
-    QVector3D rgb;
-    bool r = ::parseProperty<QVector3D>(attrs, flags, typeName, propName, Q3DS::Color, &rgb, [](const QStringRef &s, QVector3D *v) { return Q3DS::convertToVector3D(s, v); });
+    QVector4D rgba;
+    bool r = ::parseProperty<QVector4D>(attrs, flags, typeName, propName, Q3DS::Color, &rgba, [](const QStringRef &s, QVector4D *v) { return Q3DS::convertToVector4D(s, v); });
     if (r)
-        *dst = QColor::fromRgbF(rgb.x(), rgb.y(), rgb.z());
+        *dst = QColor::fromRgbF(rgba.x(), rgba.y(), rgba.z(), rgba.w());
+
     return r;
 }
 
@@ -1381,7 +1409,11 @@ void LayerNode::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void LayerNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << "View3D {" << endl;
+    // If there is a sub-presentation, just use that component instead
+    if (m_sourcePath.isEmpty())
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << "View3D {" << endl;
+    else
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << QDemonQmlUtilities::qmlComponentName(m_sourcePath) << " {" << endl;
 }
 
 namespace {
@@ -1554,46 +1586,47 @@ void LayerNode::writeQmlProperties(QTextStream &output, int tabLevel)
             output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("anchors.bottomMargin: parent.height * ") << m_bottom * 0.01f << endl;
     }
 
+    if (m_sourcePath.isEmpty()) {
+        // SceneEnvironment Properties (seperate component)
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("environment: SceneEnvironment {") << endl;
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("progressiveaa"), progressiveAAToString(m_progressiveAA));
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("multisampleaa"), multisampleAAToString(m_multisampleAA));
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("background"), layerBackgroundToString(m_layerBackground));
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("backgroundcolor"), m_backgroundColor);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("blendtype"), blendTypeToString(m_blendType));
 
-    // SceneEnvironment Properties (seperate component)
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("environment: SceneEnvironment {") << endl;
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("progressiveaa"), progressiveAAToString(m_progressiveAA));
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("multisampleaa"), multisampleAAToString(m_multisampleAA));
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("background"), layerBackgroundToString(m_layerBackground));
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("backgroundcolor"), m_backgroundColor);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("blendtype"), blendTypeToString(m_blendType));
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aostrength"), m_aoStrength);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aodistance"), m_aoDistance);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aosoftness"), m_aoSoftness);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aodither"), m_aoDither);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aosamplerate"), m_aoSampleRate);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aobias"), m_aoBias);
 
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aostrength"), m_aoStrength);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aodistance"), m_aoDistance);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aosoftness"), m_aoSoftness);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aodither"), m_aoDither);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aosamplerate"), m_aoSampleRate);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aobias"), m_aoBias);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowstrength"), m_shadowStrength);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowdistance"), m_shadowDist);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowsoftness"), m_shadowSoftness);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowbias"), m_shadowBias);
 
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowstrength"), m_shadowStrength);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowdistance"), m_shadowDist);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowsoftness"), m_shadowSoftness);
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("shadowbias"), m_shadowBias);
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("disabledepthtest"),  m_layerFlags.testFlag(DisableDepthTest));
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("disabledepthprepass"),  m_layerFlags.testFlag(DisableDepthPrePass));
 
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("disabledepthtest"),  m_layerFlags.testFlag(DisableDepthTest));
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("disabledepthprepass"),  m_layerFlags.testFlag(DisableDepthPrePass));
+        if (!m_lightProbe_unresolved.isEmpty()) {
+            output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << "lightProbe: " << QDemonQmlUtilities::sanitizeQmlId(m_lightProbe_unresolved) << endl;
+            writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probebright"), m_probeBright);
+            writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("fastibl"), m_layerFlags.testFlag(LayerNode::FastIBL));
+            writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probehorizon"), m_probeHorizon);
+            writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probefov"), m_probeFov);
+        }
 
-    if (!m_lightProbe_unresolved.isEmpty()) {
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << "lightProbe: " << QDemonQmlUtilities::sanitizeQmlId(m_lightProbe_unresolved) << endl;
-        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probebright"), m_probeBright);
-        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("fastibl"), m_layerFlags.testFlag(LayerNode::FastIBL));
-        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probehorizon"), m_probeHorizon);
-        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probefov"), m_probeFov);
+        if (!m_lightProbe2_unresolved.isEmpty()) {
+            output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << "lightProbe2: " << QDemonQmlUtilities::sanitizeQmlId(m_lightProbe2_unresolved) << endl;
+            writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2fade"), m_probe2Fade);
+            writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2window"), m_probe2Window);
+            writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2pos"), m_probe2Window);
+        }
+        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("temporalaa"), (m_layerFlags.testFlag(LayerNode::TemporalAA)));
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl;
     }
-
-    if (!m_lightProbe2_unresolved.isEmpty()) {
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << "lightProbe2: " << QDemonQmlUtilities::sanitizeQmlId(m_lightProbe2_unresolved) << endl;
-        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2fade"), m_probe2Fade);
-        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2window"), m_probe2Window);
-        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("probe2pos"), m_probe2Window);
-    }
-    writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("temporalaa"), (m_layerFlags.testFlag(LayerNode::TemporalAA)));
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl;
 }
 
 template<typename V>
