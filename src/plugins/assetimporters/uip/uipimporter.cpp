@@ -233,8 +233,10 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
                 if (layer->m_sourcePath.isEmpty()) {
                     // Process children nodes
                     processNode(obj->firstChild(), output, tabLevel + 1);
-                    // Generate Animation Timeline
-                    generateAnimationTimeLine(obj, m_presentation->masterSlide(), output, tabLevel + 1);
+//                    // Generate Animation Timeline
+//                    generateAnimationTimeLine(obj, m_presentation->masterSlide(), output, tabLevel + 1);
+//                    // Generate States from Slides
+//                    generateStatesFromSlides(obj, m_presentation->masterSlide(), output, tabLevel + 1);
                 }
 
 
@@ -388,62 +390,125 @@ QSet<GraphObject*> getSubtreeItems(GraphObject *node)
     return items;
 }
 
-}
-
-void UipImporter::generateAnimationTimeLine(GraphObject *object, Slide *masterSlide, QTextStream &output, int tabLevel)
+void generateTimelineAnimation(Slide *slide, float startFrame, float endFrame, bool isRunning, QTextStream &output, int tabLevel)
 {
-    // Get a list off all animations for the master and first slide
-    auto animations = masterSlide->animations();
-    auto firstSlide = static_cast<Slide*>(masterSlide->firstChild());
-    animations.append(firstSlide->animations());
-
-    auto layerItems = getSubtreeItems(object);
-    if (layerItems.isEmpty())
-        return;
-
     QString looping = QStringLiteral("1");
     QString pingPong = QStringLiteral("false");
-    if (firstSlide->m_playMode == Slide::Looping) {
+    if (slide->m_playMode == Slide::Looping) {
         looping = QStringLiteral("-1");
-    } else if (firstSlide->m_playMode == Slide::PingPong) {
+    } else if (slide->m_playMode == Slide::PingPong) {
         looping = QStringLiteral("-1");
         pingPong = QStringLiteral("true");
     }
 
-    float startFrame = object->startTime();
-    float endFrame = object->endTime();
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("TimelineAnimation {") << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("duration: ") << (endFrame - startFrame) * 1000.0f << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("from: ") << startFrame << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("to: ") << endFrame << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("running: " ) << (isRunning ? QStringLiteral("true") : QStringLiteral("false")) << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("loops: ") << looping << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("pingPong: ") << pingPong << endl;
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
+}
 
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Timeline {") << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("startFrame: ") << startFrame << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("endFrame: ") << endFrame << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("currentFrame: ") << startFrame << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("enabled: true") << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("animations: [") << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("TimelineAnimation {") << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 3) << QStringLiteral("duration: ") << (endFrame - startFrame) * 1000.0f << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 3) << QStringLiteral("from: ") << startFrame << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 3) << QStringLiteral("to: ") << endFrame << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 3) << QStringLiteral("running: true") << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 3) << QStringLiteral("loops: ") << looping << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 3) << QStringLiteral("pingPong: ") << pingPong << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("}") << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("]") << endl << endl;
+}
 
-    KeyframeGroupGenerator generator;
+void UipImporter::generateAnimationTimeLine(Slide *masterSlide, QTextStream &output, int tabLevel)
+{
+    // Generate a 1 Timeline and 1 TimelineAnimation for each slide
+    // Each combines the master slide and current slide
 
-    // ignore all animations that are not in this layer
-    for (auto animation: animations) {
-        // check if targetObject is actually in this layer
-        if (layerItems.contains(animation.m_target)) {
-            // the animation is for an object in this layer
+    // For each slide, create a TimelineAnimation
+    auto slide = static_cast<Slide*>(masterSlide->firstChild());
+    while (slide) {
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Timeline {") << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << QDemonQmlUtilities::sanitizeQmlId(slide->m_name + QStringLiteral("Timeline")) << endl;;
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("startFrame: ") << masterSlide->startTime() << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("endFrame: ") << masterSlide->endTime() << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("currentFrame: ") << masterSlide->startTime() << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("enabled: false") << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("animations: [") << endl;
+        generateTimelineAnimation(masterSlide, slide->startTime(), slide->endTime(), true, output, tabLevel + 2);
+        output << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("]") << endl;
+
+        // Keyframe groups for master + current slide
+        // Get a list off all animations for the master and first slide
+        auto animations = masterSlide->animations();
+        animations.append(slide->animations());
+        // Create a list of KeyframeGroups
+        KeyframeGroupGenerator generator;
+
+        for (auto animation: animations) {
             generator.addAnimation(animation);
         }
+
+        generator.generateKeyframeGroups(output, tabLevel + 1);
+
+        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl;
+        slide = static_cast<Slide*>(slide->nextSibling());
+    }
+}
+
+void UipImporter::generateStatesFromSlides(Slide *masterSlide, QTextStream &output, int tabLevel)
+{
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("states: [") << endl;
+
+    auto slide = static_cast<Slide*>(masterSlide->firstChild());
+    bool isFirst = true;
+    QString firstStateName;
+    while (slide) {
+        if (isFirst) {
+            isFirst = false;
+            firstStateName = slide->m_name;
+        } else {
+            output << QStringLiteral(",") << endl;
+        }
+
+        output << QDemonQmlUtilities::insertTabs(tabLevel+1) << QStringLiteral("State {") << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("name: \"") << slide->m_name << QStringLiteral("\"") << endl;
+
+        // Add property changes here
+        // First enable the Timeline for this state
+        output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("PropertyChanges {") << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("target: ") << QDemonQmlUtilities::sanitizeQmlId(slide->m_name + QStringLiteral("Timeline")) << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("enabled: true") << endl;
+        output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("}") << endl;
+
+        // Now all other properties changed by the slide
+        auto changeList = slide->propertyChanges();
+        for (auto it = changeList.cbegin(), ite = changeList.cend(); it != ite; ++it) {
+            // First see if there are any property changes we actually care about
+            QBuffer propertyChangesBuffer;
+            propertyChangesBuffer.open(QBuffer::WriteOnly);
+            QTextStream propertyChangesOutput(&propertyChangesBuffer);
+            // output each of the properties changed
+            it.key()->writeQmlProperties(*it.value(), propertyChangesOutput, tabLevel + 3);
+            propertyChangesBuffer.close();
+
+            if (!propertyChangesBuffer.data().isEmpty()) {
+
+                output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("PropertyChanges {") << endl;
+                output << QDemonQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("target: ") << it.key()->qmlId() << endl;
+
+                output << propertyChangesBuffer.data();
+
+                output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("}") << endl;
+            }
+        }
+
+        output << QDemonQmlUtilities::insertTabs(tabLevel+1) << QStringLiteral("}");
+
+        slide = static_cast<Slide*>(slide->nextSibling());
     }
 
-    generator.generateKeyframeGroups(output, tabLevel + 1);
+    output << endl;
 
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl;
-}
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("]") << endl;
+
+    // Set the initial state (works correctly even when empty)
+    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("state: \"") << firstStateName << QStringLiteral("\"") << endl;
+ }
 
 void UipImporter::generateComponent(GraphObject *component)
 {
@@ -467,7 +532,10 @@ void UipImporter::generateComponent(GraphObject *component)
 
     // Generate Animation Timeline
     auto componentNode = static_cast<ComponentNode*>(component);
-    generateAnimationTimeLine(componentNode, componentNode->m_masterSlide, output, 1);
+    generateAnimationTimeLine(componentNode->m_masterSlide, output, 1);
+
+    // Generate States from Slides
+    generateStatesFromSlides(componentNode->m_masterSlide, output, 1);
 
     // Footer
     component->writeQmlFooter(output, 0);
@@ -650,6 +718,11 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
                 buffer->close();
                 output << endl;
             }
+            // Do States and AnimationTimelines here (same for all layers of the presentation)
+            // Generate Animation Timeline
+            generateAnimationTimeLine(m_presentation->masterSlide(), output, 1);
+            // Generate States from Slides
+            generateStatesFromSlides(m_presentation->masterSlide(), output, 1);
 
             // Window footer
             output << QStringLiteral("}") << endl;
