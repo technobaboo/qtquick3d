@@ -33,7 +33,7 @@
 #include "uippresentation.h"
 #include "datamodelparser.h"
 #include "keyframegroupgenerator.h"
-#include <private/qdemonqmlutilities_p.h>
+#include <private/QSSGqmlutilities_p.h>
 
 #include <QBuffer>
 
@@ -160,13 +160,13 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
         QFileInfo sourceFile(source.absolutePath() + QDir::separator() + file);
         if (!sourceFile.exists()) {
             // Try again after stripping the parent directory
-            sourceFile = QFileInfo(source.absolutePath() + QDir::separator() + QDemonQmlUtilities::stripParentDirectory(file));
+            sourceFile = QFileInfo(source.absolutePath() + QDir::separator() + QSSGQmlUtilities::stripParentDirectory(file));
             if (!sourceFile.exists()) {
                 errorString += QStringLiteral("Resource file does not exist: ") + sourceFile.absoluteFilePath() + QChar('\n');
                 continue;
             }
         }
-        QFileInfo destFile(savePath.absoluteFilePath(QDemonQmlUtilities::stripParentDirectory(file)));
+        QFileInfo destFile(savePath.absoluteFilePath(QSSGQmlUtilities::stripParentDirectory(file)));
         QDir destDir(destFile.absolutePath());
         destDir.mkpath(".");
 
@@ -176,7 +176,7 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
 
     // Generate UIA Component if we converted a uia
     if (!uiaComponentName.isEmpty())
-        generateApplicationComponent(QDemonQmlUtilities::qmlComponentName(uiaComponentName), uiaComponentSize);
+        generateApplicationComponent(QSSGQmlUtilities::qmlComponentName(uiaComponentName), uiaComponentSize);
 
     if (generatedFiles)
         generatedFiles = &m_generatedFiles;
@@ -224,7 +224,7 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
 //                if (!effects.isEmpty()) {
 //                    // remove final ", "
 //                    effects.chop(2);
-//                    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("effects: [") << effects << QStringLiteral("]") << endl;
+//                    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("effects: [") << effects << QStringLiteral("]") << endl;
 //                }
 
 
@@ -255,7 +255,7 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
                 if (!materials.isEmpty()) {
                     // remove final ", "
                     materials.chop(2);
-                    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("materials: [") << materials << QStringLiteral("]") << endl;
+                    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("materials: [") << materials << QStringLiteral("]") << endl;
                 }
             } else if (obj->type() == GraphObject::ReferencedMaterial) {
                 m_referencedMaterials.append(static_cast<ReferencedMaterial *>(obj));
@@ -321,7 +321,7 @@ void UipImporter::generateMaterialComponent(GraphObject *object)
     if (id.startsWith("_"))
         id.remove(0, 1);
 
-    QString materialComponent = QDemonQmlUtilities::qmlComponentName(id);
+    QString materialComponent = QSSGQmlUtilities::qmlComponentName(id);
     QString targetFile = materialPath.absolutePath() + QDir::separator() + materialComponent + QStringLiteral(".qml");
     QFile materialComponentFile(targetFile);
 
@@ -348,7 +348,7 @@ void UipImporter::generateAliasComponent(GraphObject *reference)
     // create materials folder
     QDir aliasPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("aliases");
 
-    QString aliasComponentName = QDemonQmlUtilities::qmlComponentName(reference->qmlId());
+    QString aliasComponentName = QSSGQmlUtilities::qmlComponentName(reference->qmlId());
     QString targetFile = aliasPath.absolutePath() + QDir::separator() + aliasComponentName + QStringLiteral(".qml");
     QFile aliasComponentFile(targetFile);
 
@@ -401,14 +401,14 @@ void generateTimelineAnimation(Slide *slide, float startFrame, float endFrame, b
         pingPong = QStringLiteral("true");
     }
 
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("TimelineAnimation {") << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("duration: ") << (endFrame - startFrame) * 1000.0f << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("from: ") << startFrame << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("to: ") << endFrame << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("running: " ) << (isRunning ? QStringLiteral("true") : QStringLiteral("false")) << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("loops: ") << looping << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("pingPong: ") << pingPong << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
+    output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("TimelineAnimation {") << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("duration: ") << (endFrame - startFrame) * 1000.0f << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("from: ") << startFrame << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("to: ") << endFrame << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("running: " ) << (isRunning ? QStringLiteral("true") : QStringLiteral("false")) << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("loops: ") << looping << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("pingPong: ") << pingPong << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
 }
 
 }
@@ -421,16 +421,16 @@ void UipImporter::generateAnimationTimeLine(Slide *masterSlide, QTextStream &out
     // For each slide, create a TimelineAnimation
     auto slide = static_cast<Slide*>(masterSlide->firstChild());
     while (slide) {
-        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Timeline {") << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << QDemonQmlUtilities::sanitizeQmlId(slide->m_name + QStringLiteral("Timeline")) << endl;;
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("startFrame: ") << masterSlide->startTime() << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("endFrame: ") << masterSlide->endTime() << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("currentFrame: ") << masterSlide->startTime() << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("enabled: false") << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("animations: [") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Timeline {") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << QSSGQmlUtilities::sanitizeQmlId(slide->m_name + QStringLiteral("Timeline")) << endl;;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("startFrame: ") << masterSlide->startTime() << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("endFrame: ") << masterSlide->endTime() << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("currentFrame: ") << masterSlide->startTime() << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("enabled: false") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("animations: [") << endl;
         generateTimelineAnimation(masterSlide, slide->startTime(), slide->endTime(), true, output, tabLevel + 2);
         output << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("]") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("]") << endl;
 
         // Keyframe groups for master + current slide
         // Get a list off all animations for the master and first slide
@@ -445,14 +445,14 @@ void UipImporter::generateAnimationTimeLine(Slide *masterSlide, QTextStream &out
 
         generator.generateKeyframeGroups(output, tabLevel + 1);
 
-        output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl;
         slide = static_cast<Slide*>(slide->nextSibling());
     }
 }
 
 void UipImporter::generateStatesFromSlides(Slide *masterSlide, QTextStream &output, int tabLevel)
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("states: [") << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("states: [") << endl;
 
     auto slide = static_cast<Slide*>(masterSlide->firstChild());
     bool isFirst = true;
@@ -465,15 +465,15 @@ void UipImporter::generateStatesFromSlides(Slide *masterSlide, QTextStream &outp
             output << QStringLiteral(",") << endl;
         }
 
-        output << QDemonQmlUtilities::insertTabs(tabLevel+1) << QStringLiteral("State {") << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("name: \"") << slide->m_name << QStringLiteral("\"") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel+1) << QStringLiteral("State {") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("name: \"") << slide->m_name << QStringLiteral("\"") << endl;
 
         // Add property changes here
         // First enable the Timeline for this state
-        output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("PropertyChanges {") << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("target: ") << QDemonQmlUtilities::sanitizeQmlId(slide->m_name + QStringLiteral("Timeline")) << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("enabled: true") << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("}") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("PropertyChanges {") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("target: ") << QSSGQmlUtilities::sanitizeQmlId(slide->m_name + QStringLiteral("Timeline")) << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("enabled: true") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("}") << endl;
 
         // Now all other properties changed by the slide
         auto changeList = slide->propertyChanges();
@@ -488,33 +488,33 @@ void UipImporter::generateStatesFromSlides(Slide *masterSlide, QTextStream &outp
 
             if (!propertyChangesBuffer.data().isEmpty()) {
 
-                output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("PropertyChanges {") << endl;
-                output << QDemonQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("target: ") << it.key()->qmlId() << endl;
+                output << QSSGQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("PropertyChanges {") << endl;
+                output << QSSGQmlUtilities::insertTabs(tabLevel+3) << QStringLiteral("target: ") << it.key()->qmlId() << endl;
 
                 output << propertyChangesBuffer.data();
 
-                output << QDemonQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("}") << endl;
+                output << QSSGQmlUtilities::insertTabs(tabLevel+2) << QStringLiteral("}") << endl;
             }
         }
 
-        output << QDemonQmlUtilities::insertTabs(tabLevel+1) << QStringLiteral("}");
+        output << QSSGQmlUtilities::insertTabs(tabLevel+1) << QStringLiteral("}");
 
         slide = static_cast<Slide*>(slide->nextSibling());
     }
 
     output << endl;
 
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("]") << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("]") << endl;
 
     // Set the initial state (works correctly even when empty)
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("state: \"") << firstStateName << QStringLiteral("\"") << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("state: \"") << firstStateName << QStringLiteral("\"") << endl;
  }
 
 void UipImporter::generateComponent(GraphObject *component)
 {
     QDir componentPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("components");
 
-    QString componentName = QDemonQmlUtilities::qmlComponentName(component->qmlId());
+    QString componentName = QSSGQmlUtilities::qmlComponentName(component->qmlId());
     QString targetFileName = componentPath.absolutePath() + QDir::separator() + componentName + QStringLiteral(".qml");
     QFile componentFile(targetFileName);
     if (!componentFile.open(QIODevice::WriteOnly)) {
@@ -587,15 +587,15 @@ void UipImporter::generateApplicationComponent(const QString &initialPresentatio
 
     // Window
     output << "Window {" << endl;
-    output << QDemonQmlUtilities::insertTabs(1) << "width: " << size.width() << endl;
-    output << QDemonQmlUtilities::insertTabs(1) << "height: " << size.height() << endl;
-    output << QDemonQmlUtilities::insertTabs(1) << "title: " << "\"" << initialPresentationComponent << "\"" << endl;
+    output << QSSGQmlUtilities::insertTabs(1) << "width: " << size.width() << endl;
+    output << QSSGQmlUtilities::insertTabs(1) << "height: " << size.height() << endl;
+    output << QSSGQmlUtilities::insertTabs(1) << "title: " << "\"" << initialPresentationComponent << "\"" << endl;
     output << endl;
 
     // Component
-    output << QDemonQmlUtilities::insertTabs(1) << initialPresentationComponent << " {" << endl;
-    output << QDemonQmlUtilities::insertTabs(2) << "anchors.fill: parent" << endl;
-    output << QDemonQmlUtilities::insertTabs(1) << "}" << endl;
+    output << QSSGQmlUtilities::insertTabs(1) << initialPresentationComponent << " {" << endl;
+    output << QSSGQmlUtilities::insertTabs(2) << "anchors.fill: parent" << endl;
+    output << QSSGQmlUtilities::insertTabs(1) << "}" << endl;
 
     output << "}" << endl;
 
@@ -622,7 +622,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
     while (layer) {
         if (layer->type() == GraphObject::Layer) {    
             // Create qml component from .uip presentation
-            QString targetFile = ouputFilePath + QDemonQmlUtilities::qmlComponentName(presentation->name()) + QDemonQmlUtilities::qmlComponentName(layer->qmlId());
+            QString targetFile = ouputFilePath + QSSGQmlUtilities::qmlComponentName(presentation->name()) + QSSGQmlUtilities::qmlComponentName(layer->qmlId());
             QBuffer *qmlBuffer = new QBuffer();
             qmlBuffer->open(QIODevice::WriteOnly);
             QTextStream output(qmlBuffer);
@@ -687,7 +687,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
     // Generate actual files from the buffers we created
     if (m_generateWindowComponent) {
         // only one component to create
-        QString outputFileName = ouputFilePath + QDemonQmlUtilities::qmlComponentName(presentation->name()) + QStringLiteral(".qml");
+        QString outputFileName = ouputFilePath + QSSGQmlUtilities::qmlComponentName(presentation->name()) + QStringLiteral(".qml");
         QFile outputFile(outputFileName);
         if (!outputFile.open(QIODevice::WriteOnly)) {
             errorString += QString(QStringLiteral("Could not write to file: ") + outputFileName);
@@ -701,11 +701,11 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
                 output << QStringLiteral("Rectangle {") << endl;
             else
                 output << QStringLiteral("Item {") << endl;
-            output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("width: ") << m_presentation->presentationWidth()<< endl;
-            output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("height: ") << m_presentation->presentationHeight() << endl;
-            //output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("title: \"") << m_presentation->name() << QStringLiteral("\"") << endl;
+            output << QSSGQmlUtilities::insertTabs(1) << QStringLiteral("width: ") << m_presentation->presentationWidth()<< endl;
+            output << QSSGQmlUtilities::insertTabs(1) << QStringLiteral("height: ") << m_presentation->presentationHeight() << endl;
+            //output << QSSGQmlUtilities::insertTabs(1) << QStringLiteral("title: \"") << m_presentation->name() << QStringLiteral("\"") << endl;
             if (m_presentation->scene()->m_useClearColor)
-                output << QDemonQmlUtilities::insertTabs(1) << QStringLiteral("color: ") << QDemonQmlUtilities::colorToQml(m_presentation->scene()->m_clearColor) << endl << endl;
+                output << QSSGQmlUtilities::insertTabs(1) << QStringLiteral("color: ") << QSSGQmlUtilities::colorToQml(m_presentation->scene()->m_clearColor) << endl << endl;
 
             // For each component buffer paste in each line with tablevel +1
             for (auto buffer : layerComponentsMap.values()) {
@@ -713,7 +713,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
                 buffer->seek(0);
                 while(!buffer->atEnd()) {
                     QByteArray line = buffer->readLine();
-                    output << QDemonQmlUtilities::insertTabs(1) << line;
+                    output << QSSGQmlUtilities::insertTabs(1) << line;
                 }
                 buffer->close();
                 output << endl;

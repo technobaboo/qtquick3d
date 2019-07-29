@@ -30,18 +30,18 @@
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
 
-#include <QtQuick3D/QQuick3DCamera>
-#include <QtQuick3D/QQuick3DCustomMaterial>
-#include <QtQuick3D/QQuick3DDefaultMaterial>
-#include <QtQuick3D/QQuick3DEffect>
-#include <QtQuick3D/QQuick3DTexture>
-#include <QtQuick3D/QQuick3DLight>
-#include <QtQuick3D/QQuick3DMaterial>
-#include <QtQuick3D/QQuick3DModel>
-#include <QtQuick3D/QQuick3DNode>
-#include <QtQuick3D/QQuick3DObject>
-#include <QtQuick3D/QQuick3DViewport>
-#include <QtQuick3D/QQuick3DSceneEnvironment>
+#include <QtQuick3D/private/qquick3dcamera_p.h>
+#include <QtQuick3D/private/qquick3dcustommaterial_p.h>
+#include <QtQuick3D/private/qquick3ddefaultmaterial_p.h>
+#include <QtQuick3D/private/qquick3deffect_p.h>
+#include <QtQuick3D/private/qquick3dtexture_p.h>
+#include <QtQuick3D/private/qquick3dlight_p.h>
+#include <QtQuick3D/private/qquick3dmaterial_p.h>
+#include <QtQuick3D/private/qquick3dmodel_p.h>
+#include <QtQuick3D/private/qquick3dnode_p.h>
+#include <QtQuick3D/private/qquick3dobject_p.h>
+#include <QtQuick3D/private/qquick3dviewport_p.h>
+#include <QtQuick3D/private/qquick3dsceneenvironment_p.h>
 
 #include <private/qqmlglobal_p.h>
 

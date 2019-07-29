@@ -28,11 +28,11 @@
 ****************************************************************************/
 
 #include "qquick3dscenemanager_p.h"
-#include "qquick3dobject_p.h"
-#include "qquick3dviewport.h"
+#include "qquick3dobject_p_p.h"
+#include "qquick3dviewport_p.h"
 
-#include <QtDemonRuntimeRender/qdemonrenderlayer.h>
-#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderlayer_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendercontextcore_p.h>
 QT_BEGIN_NAMESPACE
 
 QQuick3DSceneManager::QQuick3DSceneManager(QObject *parent)
@@ -49,7 +49,7 @@ void QQuick3DSceneManager::dirtyItem(QQuick3DObject *item)
     emit needsUpdate();
 }
 
-void QQuick3DSceneManager::cleanup(QDemonRenderGraphObject *item)
+void QQuick3DSceneManager::cleanup(QSSGRenderGraphObject *item)
 {
     Q_ASSERT(!cleanupNodeList.contains(item));
     cleanupNodeList.append(item);
@@ -151,12 +151,12 @@ void QQuick3DSceneManager::updateDirtySpatialNode(QQuick3DNode *spatialNode)
     itemPriv->dirtyAttributes = 0;
     itemPriv->spatialNode = spatialNode->updateSpatialNode(itemPriv->spatialNode);
 
-    QDemonRenderNode *graphNode = static_cast<QDemonRenderNode *>(itemPriv->spatialNode);
+    QSSGRenderNode *graphNode = static_cast<QSSGRenderNode *>(itemPriv->spatialNode);
 
     if (graphNode && graphNode->parent == nullptr) {
         QQuick3DNode *nodeParent = qobject_cast<QQuick3DNode *>(spatialNode->parent());
         if (nodeParent) {
-            QDemonRenderNode *parentGraphNode = static_cast<QDemonRenderNode *>(QQuick3DObjectPrivate::get(nodeParent)->spatialNode);
+            QSSGRenderNode *parentGraphNode = static_cast<QSSGRenderNode *>(QQuick3DObjectPrivate::get(nodeParent)->spatialNode);
             parentGraphNode->addChild(*graphNode);
         } else {
             QQuick3DViewport *viewParent = qobject_cast<QQuick3DViewport *>(spatialNode->parent());
@@ -166,7 +166,7 @@ void QQuick3DSceneManager::updateDirtySpatialNode(QQuick3DNode *spatialNode)
                     // must have a sceen root spatial node first
                     sceneRoot->spatialNode = viewParent->scene()->updateSpatialNode(sceneRoot->spatialNode);
                 }
-                static_cast<QDemonRenderNode *>(sceneRoot->spatialNode)->addChild(*graphNode);
+                static_cast<QSSGRenderNode *>(sceneRoot->spatialNode)->addChild(*graphNode);
             }
         }
     }
@@ -175,27 +175,27 @@ void QQuick3DSceneManager::updateDirtySpatialNode(QQuick3DNode *spatialNode)
 void QQuick3DSceneManager::cleanupNodes()
 {
     for (int ii = 0; ii < cleanupNodeList.count(); ++ii) {
-        QDemonRenderGraphObject *node = cleanupNodeList.at(ii);
+        QSSGRenderGraphObject *node = cleanupNodeList.at(ii);
         // Different processing for resource nodes vs hierarchical nodes
         switch (node->type) {
-        case QDemonRenderGraphObject::Type::Node:
-        case QDemonRenderGraphObject::Type::Light:
-        case QDemonRenderGraphObject::Type::Camera:
-        case QDemonRenderGraphObject::Type::Model:
-        case QDemonRenderGraphObject::Type::Path: {
+        case QSSGRenderGraphObject::Type::Node:
+        case QSSGRenderGraphObject::Type::Light:
+        case QSSGRenderGraphObject::Type::Camera:
+        case QSSGRenderGraphObject::Type::Model:
+        case QSSGRenderGraphObject::Type::Path: {
             // handle hierarchical nodes
-            QDemonRenderNode *spatialNode = static_cast<QDemonRenderNode *>(node);
+            QSSGRenderNode *spatialNode = static_cast<QSSGRenderNode *>(node);
             spatialNode->removeFromGraph();
         } break;
-        case QDemonRenderGraphObject::Type::Presentation:
-        case QDemonRenderGraphObject::Type::Scene:
-        case QDemonRenderGraphObject::Type::DefaultMaterial:
-        case QDemonRenderGraphObject::Type::Image:
-        case QDemonRenderGraphObject::Type::Effect:
-        case QDemonRenderGraphObject::Type::CustomMaterial:
-        case QDemonRenderGraphObject::Type::ReferencedMaterial:
-        case QDemonRenderGraphObject::Type::PathSubPath:
-        case QDemonRenderGraphObject::Type::Lightmaps:
+        case QSSGRenderGraphObject::Type::Presentation:
+        case QSSGRenderGraphObject::Type::Scene:
+        case QSSGRenderGraphObject::Type::DefaultMaterial:
+        case QSSGRenderGraphObject::Type::Image:
+        case QSSGRenderGraphObject::Type::Effect:
+        case QSSGRenderGraphObject::Type::CustomMaterial:
+        case QSSGRenderGraphObject::Type::ReferencedMaterial:
+        case QSSGRenderGraphObject::Type::PathSubPath:
+        case QSSGRenderGraphObject::Type::Lightmaps:
             // handle resource nodes
             // ### Handle the case where we are referenced by another node
             break;

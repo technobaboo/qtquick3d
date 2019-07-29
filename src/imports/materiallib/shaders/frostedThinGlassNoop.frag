@@ -1,7 +1,7 @@
 // add enum defines
-#define QDEMON_ENABLE_UV0 1
-#define QDEMON_ENABLE_WORLD_POSITION 1
-#define QDEMON_ENABLE_TEXTAN 1
+#define QSSG_ENABLE_UV0 1
+#define QSSG_ENABLE_WORLD_POSITION 1
+#define QSSG_ENABLE_TEXTAN 1
 
 vec3 texCoord0;
 

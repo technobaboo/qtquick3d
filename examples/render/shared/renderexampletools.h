@@ -49,11 +49,11 @@
 ****************************************************************************/
 
 #pragma once
-#ifndef QDEMON_RENDER_EXAMPLE_TOOLS_H
-#define QDEMON_RENDER_EXAMPLE_TOOLS_H
+#ifndef QSSG_RENDER_EXAMPLE_TOOLS_H
+#define QSSG_RENDER_EXAMPLE_TOOLS_H
 #include "renderexample.h"
 
-class QDemonRenderExampleTools
+class QSSGRenderExampleTools
 {
 public:
     static const char *getSimpleVertShader()
@@ -95,11 +95,11 @@ public:
                "}\n";
     }
 
-    static QDemonRef<QDemonRenderInputAssembler> createBox(QDemonRef<QDemonRenderContext> context,
-                                                                QDemonRef<QDemonRenderVertexBuffer> &outVertexBuffer,
-                                                                QDemonRef<QDemonRenderIndexBuffer> &outIndexBuffer);
-    static QDemonRef<QDemonRenderShaderProgram> createSimpleShader(QDemonRef<QDemonRenderContext> context);
-    static QDemonRef<QDemonRenderShaderProgram> createSimpleShaderTex(QDemonRef<QDemonRenderContext> context);
+    static QSSGRef<QSSGRenderInputAssembler> createBox(QSSGRef<QSSGRenderContext> context,
+                                                                QSSGRef<QSSGRenderVertexBuffer> &outVertexBuffer,
+                                                                QSSGRef<QSSGRenderIndexBuffer> &outIndexBuffer);
+    static QSSGRef<QSSGRenderShaderProgram> createSimpleShader(QSSGRef<QSSGRenderContext> context);
+    static QSSGRef<QSSGRenderShaderProgram> createSimpleShaderTex(QSSGRef<QSSGRenderContext> context);
 };
 
 #endif

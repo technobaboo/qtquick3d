@@ -1,27 +1,27 @@
-TARGET = QtDemonAssetImport
-MODULE = demonassetimport
+TARGET = QtQuick3DAssetImport
+MODULE = quick3dassetimport
 
 MODULE_PLUGIN_TYPES = assetimporters
 
-QT += core-private gui qml demon demonrender
+QT += core-private gui qml quick3drender-private quick3dutils-private
 
 SOURCES = \
-    qdemonassetimporterfactory.cpp \
-    qdemonassetimportmanager.cpp \
-    qdemonmeshutilities.cpp \
-    qdemonqmlutilities.cpp \
-    qdemonpathutilities.cpp
+    qssgassetimporterfactory.cpp \
+    qssgassetimportmanager.cpp \
+    qssgmeshutilities.cpp \
+    qssgqmlutilities.cpp \
+    qssgpathutilities.cpp
 
 HEADERS = \
-    qdemonqmlutilities_p.h \
-    qtdemonassetimportglobal.h \
-    qdemonassetimporter_p.h \
-    qdemonassetimporterfactory_p.h \
-    qdemonassetimporterplugin_p.h \
-    qdemonassetimportmanager.h \
-    qdemonmeshutilities_p.h \
-    qdemonpathutilities.h
+    qtquick3dassetimportglobal_p.h \
+    qssgqmlutilities_p.h \
+    qssgassetimporter_p.h \
+    qssgassetimporterfactory_p.h \
+    qssgassetimporterplugin_p.h \
+    qssgassetimportmanager_p.h \
+    qssgmeshutilities_p.h \
+    qssgpathutilities_p.h
 
-DEFINES += QT_BUILD_DEMONASSETIMPORT_LIB
+DEFINES += QT_BUILD_QUICK3DASSETIMPORT_LIB
 
 load(qt_module)

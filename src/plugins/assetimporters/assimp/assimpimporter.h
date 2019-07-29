@@ -30,7 +30,7 @@
 #ifndef ASSIMPIMPORTER_H
 #define ASSIMPIMPORTER_H
 
-#include <QtDemonAssetImport/private/qdemonassetimporter_p.h>
+#include <QtQuick3DAssetImport/private/qssgassetimporter_p.h>
 
 #include <QtCore/QStringList>
 #include <QtCore/QTextStream>
@@ -53,7 +53,7 @@ struct aiMesh;
 
 QT_BEGIN_NAMESPACE
 
-class AssimpImporter : public QDemonAssetImporter
+class AssimpImporter : public QSSGAssetImporter
 {
 public:
     AssimpImporter();

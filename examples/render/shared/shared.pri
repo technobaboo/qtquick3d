@@ -1,4 +1,4 @@
-QT += demonrender
+QT += quick3drender-private quick3dutils-private
 
 INCLUDEPATH += $PWD
 

@@ -27,9 +27,11 @@
 **
 ****************************************************************************/
 
-#include "qquick3dobject.h"
 #include "qquick3dobject_p.h"
+#include "qquick3dobject_p_p.h"
 #include "qquick3dscenemanager_p.h"
+
+#include <QtQuick3DRuntimeRender/private/qssgrendergraphobject_p.h>
 
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQuick/private/qquickstategroup_p.h>
@@ -88,7 +90,7 @@ void QQuick3DObject::setParentItem(QQuick3DObject *parentItem)
         QQuick3DObject *itemAncestor = parentItem;
         while (itemAncestor != nullptr) {
             if (Q_UNLIKELY(itemAncestor == this)) {
-                qWarning() << "QDemonObject::setParentItem: Parent" << parentItem << "is already part of the subtree of" << this;
+                qWarning() << "QSSGObject::setParentItem: Parent" << parentItem << "is already part of the subtree of" << this;
                 return;
             }
             itemAncestor = itemAncestor->parentItem();
@@ -338,9 +340,9 @@ void QQuick3DObjectPrivate::data_append(QQmlListProperty<QObject> *prop, QObject
     if (QQuick3DObject *item = qmlobject_cast<QQuick3DObject *>(o)) {
         item->setParentItem(that);
     } else {
-//        QDemonSceneRenderer *thisSceneRenderer = qmlobject_cast<QDemonSceneRenderer *>(o);
+//        QSSGSceneRenderer *thisSceneRenderer = qmlobject_cast<QSSGSceneRenderer *>(o);
 //        item = that;
-//        QDemonSceneRenderer *itemSceneRenderer = that->sceneRenderer();
+//        QSSGSceneRenderer *itemSceneRenderer = that->sceneRenderer();
 //        while (!itemSceneRenderer && item && item->parentItem()) {
 //            item = item->parentItem();
 //            itemSceneRenderer = item->sceneRenderer();
@@ -351,7 +353,7 @@ void QQuick3DObjectPrivate::data_append(QQmlListProperty<QObject> *prop, QObject
 //                // qCDebug(lcTransient) << thisWindow << "is transient for" << itemWindow;
 //                thisSceneRenderer->setTransientParent(itemSceneRenderer);
 //            } else {
-//                QObject::connect(item, SIGNAL(sceneRendererChanged(QDemonSceneRenderer *)), thisSceneRenderer, SLOT(setTransientParent_helper(QDemonSceneRenderer *)));
+//                QObject::connect(item, SIGNAL(sceneRendererChanged(QSSGSceneRenderer *)), thisSceneRenderer, SLOT(setTransientParent_helper(QSSGSceneRenderer *)));
 //            }
 //        }
         o->setParent(that);
@@ -784,7 +786,7 @@ void QQuick3DObjectPrivate::refSceneRenderer(QQuick3DSceneManager *c)
     Q_ASSERT(c);
     if (++windowRefCount > 1) {
         if (c != sceneManager)
-            qWarning("QDemonObject: Cannot use same item on different windows at the same time.");
+            qWarning("QSSGObject: Cannot use same item on different windows at the same time.");
         return; // Window already set.
     }
 
@@ -792,7 +794,7 @@ void QQuick3DObjectPrivate::refSceneRenderer(QQuick3DSceneManager *c)
     sceneManager = c;
 
     //    if (polishScheduled)
-    //        QDemonWindowPrivate::get(window)->itemsToPolish.append(q);
+    //        QSSGWindowPrivate::get(window)->itemsToPolish.append(q);
 
     if (!parentItem)
         sceneManager->parentlessItems.insert(q);
@@ -964,21 +966,21 @@ void QQuick3DObjectPrivate::itemChange(QQuick3DObject::ItemChange change, const 
 
 namespace QV4 {
 namespace Heap {
-struct QDemonItemWrapper : public QObjectWrapper
+struct QSSGItemWrapper : public QObjectWrapper
 {
     static void markObjects(QV4::Heap::Base *that, QV4::MarkStack *markStack);
 };
 }
 }
 
-struct QDemonItemWrapper : public QV4::QObjectWrapper
+struct QSSGItemWrapper : public QV4::QObjectWrapper
 {
-    V4_OBJECT2(QDemonItemWrapper, QV4::QObjectWrapper)
+    V4_OBJECT2(QSSGItemWrapper, QV4::QObjectWrapper)
 };
 
-DEFINE_OBJECT_VTABLE(QDemonItemWrapper);
+DEFINE_OBJECT_VTABLE(QSSGItemWrapper);
 
-void QV4::Heap::QDemonItemWrapper::markObjects(QV4::Heap::Base *that, QV4::MarkStack *markStack)
+void QV4::Heap::QSSGItemWrapper::markObjects(QV4::Heap::Base *that, QV4::MarkStack *markStack)
 {
     QObjectWrapper *This = static_cast<QObjectWrapper *>(that);
     if (QQuick3DObject *item = static_cast<QQuick3DObject *>(This->object())) {
@@ -990,11 +992,11 @@ void QV4::Heap::QDemonItemWrapper::markObjects(QV4::Heap::Base *that, QV4::MarkS
 
 quint64 QQuick3DObjectPrivate::_q_createJSWrapper(QV4::ExecutionEngine *engine)
 {
-    return (engine->memoryManager->allocate<QDemonItemWrapper>(q_func()))->asReturnedValue();
+    return (engine->memoryManager->allocate<QSSGItemWrapper>(q_func()))->asReturnedValue();
 }
 
 QQuick3DObjectPrivate::ExtraData::ExtraData() : hideRefCount(0) {}
 
 QT_END_NAMESPACE
 
-#include <moc_qquick3dobject.cpp>
+#include "moc_qquick3dobject_p.cpp"

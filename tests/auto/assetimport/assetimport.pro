@@ -1,5 +1,5 @@
 QT += testlib
-QT += gui demonassetimport core
+QT += gui quick3dassetimport-private core
 
 CONFIG += qt console warn_on depend_includepath testcase
 CONFIG -= app_bundle

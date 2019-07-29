@@ -33,7 +33,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 
-#include <QtDemonAssetImport/QDemonAssetImportManager>
+#include <QtQuick3DAssetImport/private/qssgassetimportmanager_p.h>
 
 int main(int argc, char *argv[])
 {
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     if (assetFileNames.isEmpty())
         return 0;
 
-    QDemonAssetImportManager assetImporter;
+    QSSGAssetImportManager assetImporter;
 
     // Convert each assetFile is possible
     for (const auto &assetFileName : assetFileNames) {

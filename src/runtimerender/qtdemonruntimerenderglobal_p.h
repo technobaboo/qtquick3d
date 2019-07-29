@@ -27,8 +27,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTDEMONRENDERGLOBAL_P_H
-#define QTDEMONRENDERGLOBAL_P_H
+#ifndef QTQUICK3DRENDERGLOBAL_P_H
+#define QTQUICK3DRENDERGLOBAL_P_H
 
 //
 //  W A R N I N G
@@ -45,4 +45,4 @@
 
 #define Q_DEMONRUNTIMERENDER_PRIVATE_EXPORT Q_DEMONRUNTIMERENDER_EXPORT
 
-#endif // QTDEMONRENDERGLOBAL_P_H
+#endif // QTQUICK3DRENDERGLOBAL_P_H

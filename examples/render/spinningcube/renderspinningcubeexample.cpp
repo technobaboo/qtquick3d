@@ -52,10 +52,10 @@
 #include "../shared/renderexampletools.h"
 #include <QtGui/QVector4D>
 #include <QtGui/QMatrix4x4>
-#include <QtDemonRender/qdemonrendercontext.h>
-#include <QtDemonRender/QDemonRenderShaderProgram>
-#include <QtDemonRender/qdemonrenderindexbuffer.h>
-#include <QtDemonRender/qdemonrendervertexbuffer.h>
+#include <QtQuick3DRender/private/qssgrendercontext_p.h>
+#include <QtQuick3DRender/private/qssgrendershaderprogram_p.h>
+#include <QtQuick3DRender/private/qssgrenderindexbuffer_p.h>
+#include <QtQuick3DRender/private/qssgrendervertexbuffer_p.h>
 #include <QtGui/QGuiApplication>
 
 struct ShaderArguments
@@ -63,7 +63,7 @@ struct ShaderArguments
     QMatrix4x4 mMatrix;
 };
 
-class SpinningCube : public QDemonRenderExample
+class SpinningCube : public QSSGRenderExample
 {
 public:
     SpinningCube()
@@ -76,9 +76,9 @@ public:
 
     void initialize() override
     {
-        m_context = QDemonRenderContext::createGl(format());
-        m_inputAssembler = QDemonRenderExampleTools::createBox(m_context, m_vertexBuffer, m_indexBuffer);
-        m_shader = QDemonRenderExampleTools::createSimpleShader(m_context);
+        m_context = QSSGRenderContext::createGl(format());
+        m_inputAssembler = QSSGRenderExampleTools::createBox(m_context, m_vertexBuffer, m_indexBuffer);
+        m_shader = QSSGRenderExampleTools::createSimpleShader(m_context);
         if (m_shader) {
             m_context->setActiveShader(m_shader);
         }
@@ -104,18 +104,18 @@ public:
         }
 
         m_context->clear(
-            QDemonRenderClearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth));
+            QSSGRenderClearFlags(QSSGRenderClearValues::Color | QSSGRenderClearValues::Depth));
         m_context->setInputAssembler(m_inputAssembler);
 
         m_shader->setPropertyValue("mat_mvp", mvp);
-        m_context->draw(QDemonRenderDrawMode::Triangles, m_indexBuffer->numIndices(), 0);
+        m_context->draw(QSSGRenderDrawMode::Triangles, m_indexBuffer->numIndices(), 0);
     }
 private:
-    QDemonRef<QDemonRenderContext> m_context;
-    QDemonRef<QDemonRenderVertexBuffer> m_vertexBuffer;
-    QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer;
-    QDemonRef<QDemonRenderInputAssembler> m_inputAssembler;
-    QDemonRef<QDemonRenderShaderProgram> m_shader;
+    QSSGRef<QSSGRenderContext> m_context;
+    QSSGRef<QSSGRenderVertexBuffer> m_vertexBuffer;
+    QSSGRef<QSSGRenderIndexBuffer> m_indexBuffer;
+    QSSGRef<QSSGRenderInputAssembler> m_inputAssembler;
+    QSSGRef<QSSGRenderShaderProgram> m_shader;
     QMatrix4x4 frus;
     QMatrix4x4 model;
     qint64 m_elapsedTime = 0;

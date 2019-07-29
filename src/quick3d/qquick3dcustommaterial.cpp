@@ -27,12 +27,12 @@
 **
 ****************************************************************************/
 
-#include "qquick3dcustommaterial.h"
-#include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
-#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include "qquick3dcustommaterial_p.h"
+#include <QtQuick3DRuntimeRender/private/qssgrendercustommaterial_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendercontextcore_p.h>
 
-#include "qquick3dobject_p.h"
-#include "qquick3dviewport.h"
+#include "qquick3dobject_p_p.h"
+#include "qquick3dviewport_p.h"
 
 Q_DECLARE_OPAQUE_POINTER(QQuick3DCustomMaterialTexture)
 
@@ -46,42 +46,42 @@ struct ShaderType
 template<>
 struct ShaderType<QVariant::Double>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Float; }
+    static constexpr QSSGRenderShaderDataType type() { return QSSGRenderShaderDataType::Float; }
     static QByteArray name() { return QByteArrayLiteral("float"); }
 };
 
 template<>
 struct ShaderType<QVariant::Bool>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Boolean; }
+    static constexpr QSSGRenderShaderDataType type() { return QSSGRenderShaderDataType::Boolean; }
     static QByteArray name() { return QByteArrayLiteral("bool"); }
 };
 
 template<>
 struct ShaderType<QVariant::Int>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Integer; }
+    static constexpr QSSGRenderShaderDataType type() { return QSSGRenderShaderDataType::Integer; }
     static QByteArray name() { return QByteArrayLiteral("int"); }
 };
 
 template<>
 struct ShaderType<QVariant::Vector2D>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec2; }
+    static constexpr QSSGRenderShaderDataType type() { return QSSGRenderShaderDataType::Vec2; }
     static QByteArray name() { return QByteArrayLiteral("vec2"); }
 };
 
 template<>
 struct ShaderType<QVariant::Vector3D>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec3; }
+    static constexpr QSSGRenderShaderDataType type() { return QSSGRenderShaderDataType::Vec3; }
     static QByteArray name() { return QByteArrayLiteral("vec3"); }
 };
 
 template<>
 struct ShaderType<QVariant::Vector4D>
 {
-    static constexpr QDemonRenderShaderDataType type() { return QDemonRenderShaderDataType::Vec4; }
+    static constexpr QSSGRenderShaderDataType type() { return QSSGRenderShaderDataType::Vec4; }
     static QByteArray name() { return QByteArrayLiteral("vec4"); }
 };
 
@@ -285,7 +285,7 @@ void QQuick3DCustomMaterial::setAlwaysDirty(bool alwaysDirty)
     emit alwaysDirtyChanged(m_alwaysDirty);
 }
 
-QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     static const auto updateShaderPrefix = [](QByteArray &shaderPrefix, const QByteArray &name) {
         const char *filter = "linear";
@@ -386,16 +386,16 @@ QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderG
     }
 
     Q_ASSERT(view);
-    QDemonRenderContextInterface::QDemonRenderContextInterfacePtr renderContext = QDemonRenderContextInterface::getRenderContextInterface(quintptr(view->window()));
+    QSSGRenderContextInterface::QSSGRenderContextInterfacePtr renderContext = QSSGRenderContextInterface::getRenderContextInterface(quintptr(view->window()));
 
     if (node)
         QQuick3DMaterial::updateSpatialNode(node);
 
-    QDemonRenderCustomMaterial *customMaterial = static_cast<QDemonRenderCustomMaterial *>(node);
+    QSSGRenderCustomMaterial *customMaterial = static_cast<QSSGRenderCustomMaterial *>(node);
     if (!customMaterial) {
-        customMaterial = new QDemonRenderCustomMaterial;
+        customMaterial = new QSSGRenderCustomMaterial;
         customMaterial->m_layerCount = m_shaderInfo->layers;
-        customMaterial->m_shaderKeyValues = static_cast<QDemonRenderCustomMaterial::MaterialShaderKeyFlags>(m_shaderInfo->shaderKey);
+        customMaterial->m_shaderKeyValues = static_cast<QSSGRenderCustomMaterial::MaterialShaderKeyFlags>(m_shaderInfo->shaderKey);
         customMaterial->className = metaObject()->className();
         customMaterial->m_alwaysDirty = m_alwaysDirty;
         customMaterial->m_hasTransparency = m_hasTransparency;
@@ -454,7 +454,7 @@ QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderG
 
         // Textures
         for (const auto &userProperty : qAsConst(userProperties)) {
-            QDemonRenderCustomMaterial::TextureProperty textureData;
+            QSSGRenderCustomMaterial::TextureProperty textureData;
             QQuick3DCustomMaterialTexture *texture = userProperty.read(this).value<QQuick3DCustomMaterialTexture *>();
             const QByteArray &name = userProperty.name();
             if (name.isEmpty()) // Warnings here will just drown in the shader error messages
@@ -464,11 +464,11 @@ QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderG
             textureData.name = name;
             if (texture->enabled)
                 textureData.texImage = image->getRenderImage();
-            textureData.usageType = QDemonRenderTextureTypeValue(texture->type);
-            textureData.shaderDataType = QDemonRenderShaderDataType::Texture2D;
-            textureData.clampType = image->horizontalTiling() == QQuick3DTexture::Repeat ? QDemonRenderTextureCoordOp::Repeat
-                                                                                     : (image->horizontalTiling() == QQuick3DTexture::ClampToEdge) ? QDemonRenderTextureCoordOp::ClampToEdge
-                                                                                                                                               : QDemonRenderTextureCoordOp::MirroredRepeat;
+            textureData.usageType = QSSGRenderTextureTypeValue(texture->type);
+            textureData.shaderDataType = QSSGRenderShaderDataType::Texture2D;
+            textureData.clampType = image->horizontalTiling() == QQuick3DTexture::Repeat ? QSSGRenderTextureCoordOp::Repeat
+                                                                                     : (image->horizontalTiling() == QQuick3DTexture::ClampToEdge) ? QSSGRenderTextureCoordOp::ClampToEdge
+                                                                                                                                               : QSSGRenderTextureCoordOp::MirroredRepeat;
             updateShaderPrefix(shaderInfo.shaderPrefix, textureData.name);
             customMaterial->textureProperties.push_back(textureData);
         }
@@ -502,8 +502,8 @@ QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderG
                 shaderCode = mergeShaderCode(shared, vertex, geometry, fragment);
 
                 // Bind shader
-                customMaterial->commands.push_back(new dynamic::QDemonBindShader(shaderName));
-                customMaterial->commands.push_back(new dynamic::QDemonApplyInstanceValue());
+                customMaterial->commands.push_back(new dynamic::QSSGBindShader(shaderName));
+                customMaterial->commands.push_back(new dynamic::QSSGApplyInstanceValue());
 
                 // Buffers
                 QQuick3DCustomMaterialBuffer *outputBuffer = pass->outputBuffer;
@@ -513,9 +513,9 @@ QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderG
                     // Allocate buffer command
                     customMaterial->commands.push_back(outputBuffer->getCommand());
                     // bind buffer
-                    customMaterial->commands.push_back(new dynamic::QDemonBindBuffer(outBufferName, true));
+                    customMaterial->commands.push_back(new dynamic::QSSGBindBuffer(outBufferName, true));
                 } else {
-                    customMaterial->commands.push_back(new dynamic::QDemonBindTarget(QDemonRenderTextureFormat::RGBA8));
+                    customMaterial->commands.push_back(new dynamic::QSSGBindTarget(QSSGRenderTextureFormat::RGBA8));
                 }
 
                 // Other commands (BufferInput, Blending ... )
@@ -528,7 +528,7 @@ QDemonRenderGraphObject *QQuick3DCustomMaterial::updateSpatialNode(QDemonRenderG
                 }
 
                 // ... and finaly the render command (TODO: indirect/or not?)
-                customMaterial->commands.push_back(new dynamic::QDemonRender(false));
+                customMaterial->commands.push_back(new dynamic::QSSGRender(false));
 
                 renderContext->customMaterialSystem()->setMaterialClassShader(shaderName, shaderInfo.type, shaderInfo.version, shaderCode, false, false);
             }

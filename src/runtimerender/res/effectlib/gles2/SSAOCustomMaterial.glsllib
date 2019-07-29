@@ -31,18 +31,18 @@
 #ifndef SSAO_CUSTOM_MATERIAL_GLSLLIB
 #define SSAO_CUSTOM_MATERIAL_GLSLLIB
 
-#ifndef QDEMON_ENABLE_SSAO
-#define QDEMON_ENABLE_SSAO 0
+#ifndef QSSG_ENABLE_SSAO
+#define QSSG_ENABLE_SSAO 0
 #endif
 
-#ifndef QDEMON_ENABLE_SSDO
-#define QDEMON_ENABLE_SSDO 0
+#ifndef QSSG_ENABLE_SSDO
+#define QSSG_ENABLE_SSDO 0
 #endif
 
-#if QDEMON_ENABLE_SSAO || QDEMON_ENABLE_SSDO
+#if QSSG_ENABLE_SSAO || QSSG_ENABLE_SSDO
 
 #include "viewProperties.glsllib"
-#if QDEMON_ENABLE_SSDO
+#if QSSG_ENABLE_SSDO
 #include "screenSpaceDO.glsllib"
 
 
@@ -58,13 +58,13 @@ uniform sampler2D depth_sampler;
 uniform sampler2D ao_sampler;
 uniform vec2 ao_sampler_size;
 
-#endif  // QDEMON_ENABLE_SSAO || QDEMON_ENABLE_SSDO
+#endif  // QSSG_ENABLE_SSAO || QSSG_ENABLE_SSDO
 
-#if QDEMON_ENABLE_SSAO
+#if QSSG_ENABLE_SSAO
 
 float customMaterialAO()
 {
-#if QDEMON_ENABLE_SSDO
+#if QSSG_ENABLE_SSDO
     vec2 smpUV = (gl_FragCoord.xy) * aoScreenConst.zw;
 #else
     vec2 smpUV = gl_FragCoord.xy / ao_sampler_size;
@@ -81,7 +81,7 @@ float customMaterialAO()
 
 #endif
 
-#if QDEMON_ENABLE_SSDO
+#if QSSG_ENABLE_SSDO
 
 float customMaterialShadow( vec3 lightDir, vec3 varWorldPos )
 {

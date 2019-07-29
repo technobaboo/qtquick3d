@@ -27,10 +27,11 @@
 **
 ****************************************************************************/
 
-#include "qquick3dnode.h"
+#include "qquick3dnode_p.h"
 
-#include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <QtDemon/qdemonutils.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendereulerangles_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendernode_p.h>
+#include <QtQuick3DUtils/private/qssgutils_p.h>
 
 #include <QtMath>
 
@@ -285,12 +286,12 @@ void QQuick3DNode::setVisible(bool visible)
     update();
 }
 
-QDemonRenderGraphObject *QQuick3DNode::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DNode::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     if (!node)
-        node = new QDemonRenderNode();
+        node = new QSSGRenderNode();
 
-    auto spacialNode = static_cast<QDemonRenderNode *>(node);
+    auto spacialNode = static_cast<QSSGRenderNode *>(node);
     bool transformIsDirty = false;
     if (spacialNode->position != m_position) {
         transformIsDirty = true;
@@ -320,14 +321,14 @@ QDemonRenderGraphObject *QQuick3DNode::updateSpatialNode(QDemonRenderGraphObject
     spacialNode->skeletonId = m_boneid;
 
     if (m_orientation == LeftHanded)
-        spacialNode->flags.setFlag(QDemonRenderNode::Flag::LeftHanded, true);
+        spacialNode->flags.setFlag(QSSGRenderNode::Flag::LeftHanded, true);
     else
-        spacialNode->flags.setFlag(QDemonRenderNode::Flag::LeftHanded, false);
+        spacialNode->flags.setFlag(QSSGRenderNode::Flag::LeftHanded, false);
 
-    spacialNode->flags.setFlag(QDemonRenderNode::Flag::Active, m_visible);
+    spacialNode->flags.setFlag(QSSGRenderNode::Flag::Active, m_visible);
 
     if (transformIsDirty) {
-        spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformIsDirty);
+        spacialNode->markDirty(QSSGRenderNode::TransformDirtyFlag::TransformIsDirty);
         spacialNode->calculateGlobalVariables();
         QMatrix4x4 globalTransformMatrix = spacialNode->globalTransform;
         // Might need to switch it regardless because it is always in right hand coordinates
@@ -338,9 +339,9 @@ QDemonRenderGraphObject *QQuick3DNode::updateSpatialNode(QDemonRenderGraphObject
             emit globalTransformChanged(m_globalTransform);
         }
         // Still needs to be marked dirty if it will show up correctly in the backend
-        spacialNode->flags.setFlag(QDemonRenderNode::Flag::Dirty, true);
+        spacialNode->flags.setFlag(QSSGRenderNode::Flag::Dirty, true);
     } else {
-        spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
+        spacialNode->markDirty(QSSGRenderNode::TransformDirtyFlag::TransformNotDirty);
     }
 
     return spacialNode;

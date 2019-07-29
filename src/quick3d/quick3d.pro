@@ -1,7 +1,7 @@
 TARGET = QtQuick3D
 MODULE = quick3d
 
-QT = core-private gui-private demonruntimerender-private quick-private
+QT = core-private gui-private quick3druntimerender-private quick-private
 
 DEFINES += QT_BUILD_QUICK3D_LIB
 
@@ -24,24 +24,24 @@ SOURCES += \
     qquick3dviewport.cpp
 
 HEADERS += \
-    qquick3dcamera.h \
-    qquick3dcustommaterial.h \
-    qquick3ddefaultmaterial.h \
-    qquick3deffect.h \
-    qquick3dlight.h \
-    qquick3dmaterial.h \
-    qquick3dmodel.h \
-    qquick3dnode.h \
-    qquick3dobject.h \
-    qquick3dobject_p.h \
     qquick3dobjectchangelistener_p.h \
-    qquick3dsceneenvironment.h \
     qquick3dscenemanager_p.h \
-    qquick3dscenerenderer.h \
-    qquick3dtexture.h \
     qquick3dutils_p.h \
-    qquick3dviewport.h \
     qtquick3dglobal.h \
-    qtquick3dglobal_p.h
+    qtquick3dglobal_p.h \
+    qquick3dcamera_p.h \
+    qquick3dcustommaterial_p.h \
+    qquick3ddefaultmaterial_p.h \
+    qquick3deffect_p.h \
+    qquick3dlight_p.h \
+    qquick3dmaterial_p.h \
+    qquick3dmodel_p.h \
+    qquick3dnode_p.h \
+    qquick3dobject_p_p.h \
+    qquick3dobject_p.h \
+    qquick3dsceneenvironment_p.h \
+    qquick3dscenerenderer_p.h \
+    qquick3dtexture_p.h \
+    qquick3dviewport_p.h
 
 load(qt_module)

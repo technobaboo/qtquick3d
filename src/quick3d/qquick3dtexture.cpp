@@ -27,14 +27,14 @@
 **
 ****************************************************************************/
 
-#include "qquick3dtexture.h"
-#include <QtDemonRuntimeRender/qdemonrenderimage.h>
+#include "qquick3dtexture_p.h"
+#include <QtQuick3DRuntimeRender/private/qssgrenderimage_p.h>
 #include <QtQml/QQmlFile>
 #include <QtQuick/QQuickItem>
 #include <QtQuick/private/qquickitem_p.h>
-#include <qquick3dviewport.h>
+#include <qquick3dviewport_p.h>
 
-#include "qquick3dobject_p.h"
+#include "qquick3dobject_p_p.h"
 #include "qquick3dscenemanager_p.h"
 #include "qquick3dutils_p.h"
 
@@ -292,12 +292,12 @@ void QQuick3DTexture::setFormat(QQuick3DTexture::Format format)
     update();
 }
 
-QDemonRenderGraphObject *QQuick3DTexture::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DTexture::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     if (!node)
-        node = new QDemonRenderImage();
+        node = new QSSGRenderImage();
 
-    auto imageNode = static_cast<QDemonRenderImage *>(node);
+    auto imageNode = static_cast<QSSGRenderImage *>(node);
 
     if (m_dirtyFlags.testFlag(DirtyFlag::TransformDirty)) {
         m_dirtyFlags.setFlag(DirtyFlag::TransformDirty, false);
@@ -306,7 +306,7 @@ QDemonRenderGraphObject *QQuick3DTexture::updateSpatialNode(QDemonRenderGraphObj
         imageNode->m_rotation = m_rotationUV;
         imageNode->m_position = QVector2D(m_positionU, m_positionV);
 
-        imageNode->m_flags.setFlag(QDemonRenderImage::Flag::TransformDirty);
+        imageNode->m_flags.setFlag(QSSGRenderImage::Flag::TransformDirty);
     }
 
     bool nodeChanged = false;
@@ -317,12 +317,12 @@ QDemonRenderGraphObject *QQuick3DTexture::updateSpatialNode(QDemonRenderGraphObj
     }
 
     nodeChanged |= qUpdateIfNeeded(imageNode->m_mappingMode,
-                                  QDemonRenderImage::MappingModes(m_mappingMode));
+                                  QSSGRenderImage::MappingModes(m_mappingMode));
     nodeChanged |= qUpdateIfNeeded(imageNode->m_horizontalTilingMode,
-                                  QDemonRenderTextureCoordOp(m_tilingModeHorizontal));
+                                  QSSGRenderTextureCoordOp(m_tilingModeHorizontal));
     nodeChanged |= qUpdateIfNeeded(imageNode->m_verticalTilingMode,
-                                  QDemonRenderTextureCoordOp(m_tilingModeVertical));
-    QDemonRenderTextureFormat format{QDemonRenderTextureFormat::Format(m_format)};
+                                  QSSGRenderTextureCoordOp(m_tilingModeVertical));
+    QSSGRenderTextureFormat format{QSSGRenderTextureFormat::Format(m_format)};
     nodeChanged |= qUpdateIfNeeded(imageNode->m_format, format);
 
     if (m_sourceItem) { // TODO: handle width == 0 || height == 0
@@ -376,7 +376,7 @@ QDemonRenderGraphObject *QQuick3DTexture::updateSpatialNode(QDemonRenderGraphObj
     }
 
     if (nodeChanged)
-        imageNode->m_flags.setFlag(QDemonRenderImage::Flag::Dirty);
+        imageNode->m_flags.setFlag(QSSGRenderImage::Flag::Dirty);
 
     return imageNode;
 }
@@ -437,10 +437,10 @@ void QQuick3DTexture::ensureTexture()
     m_layer = layer;
 }
 
-QDemonRenderImage *QQuick3DTexture::getRenderImage()
+QSSGRenderImage *QQuick3DTexture::getRenderImage()
 {
     QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(this);
-    return static_cast<QDemonRenderImage *>(p->spatialNode);
+    return static_cast<QSSGRenderImage *>(p->spatialNode);
 }
 
 QQuick3DTexture::Format QQuick3DTexture::format() const

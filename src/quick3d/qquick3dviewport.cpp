@@ -27,14 +27,14 @@
 **
 ****************************************************************************/
 
-#include "qquick3dviewport.h"
-#include "qquick3dsceneenvironment.h"
-#include "qquick3dobject_p.h"
+#include "qquick3dviewport_p.h"
+#include "qquick3dsceneenvironment_p.h"
+#include "qquick3dobject_p_p.h"
 #include "qquick3dscenemanager_p.h"
-#include "qquick3dtexture.h"
-#include "qquick3dscenerenderer.h"
-#include "qquick3dcamera.h"
-#include <QtDemonRuntimeRender/QDemonRenderLayer>
+#include "qquick3dtexture_p.h"
+#include "qquick3dscenerenderer_p.h"
+#include "qquick3dcamera_p.h"
+#include <QtQuick3DRuntimeRender/private/qssgrenderlayer_p.h>
 #include <QOpenGLFunctions>
 
 #include <qsgtextureprovider.h>
@@ -168,7 +168,7 @@ QSGTextureProvider *QQuick3DViewport::textureProvider() const
 
     QQuickWindow *w = window();
     if (!w || !w->openglContext() || QThread::currentThread() != w->openglContext()->thread()) {
-        qWarning("QDemonView3D::textureProvider: can only be queried on the rendering thread of an exposed window");
+        qWarning("QSSGView3D::textureProvider: can only be queried on the rendering thread of an exposed window");
         return nullptr;
     }
     if (!m_node)

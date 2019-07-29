@@ -30,7 +30,7 @@
 
 #include <QtTest>
 #include <QDebug>
-#include <QtDemonAssetImport/QDemonAssetImportManager>
+#include <QtQuick3DAssetImport/private/qssgassetimportmanager_p.h>
 #include <QDir>
 #include <QByteArray>
 
@@ -103,7 +103,7 @@ void tst_assetimport::importFile()
     QFETCH(bool, result);
     QFETCH(QByteArray, expectedHash);
 
-    QDemonAssetImportManager importManager;
+    QSSGAssetImportManager importManager;
     QString file = "resources/cube_scene." + extension;
     QString error;
     QByteArray fileChecksum;

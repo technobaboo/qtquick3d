@@ -1,4 +1,4 @@
-QT += demonruntimerender
+QT += quick3druntimerender-private
 
 SOURCES += \
     main.cpp \

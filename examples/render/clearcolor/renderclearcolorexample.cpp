@@ -50,13 +50,13 @@
 
 #include "../shared/renderexample.h"
 #include <QtGui/QVector4D>
-#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtQuick3DRender/private/qssgrendercontext_p.h>
 #include <QtGui/QGuiApplication>
 
 namespace {
-class ClearColor : public QDemonRenderExample
+class ClearColor : public QSSGRenderExample
 {
-    QDemonRef<QDemonRenderContext> m_context;
+    QSSGRef<QSSGRenderContext> m_context;
     qint64 m_elapsedTime = 0;
 
 public:
@@ -66,7 +66,7 @@ public:
 
     void initialize() override
     {
-        m_context = QDemonRenderContext::createGl(format());
+        m_context = QSSGRenderContext::createGl(format());
     }
 
     virtual void drawFrame(qint64 delta) override
@@ -82,7 +82,7 @@ public:
             m_context->setClearColor(QVector4D(0.f, 1.0f, 1.f, 1.f));
             m_elapsedTime = 0;
         }
-        m_context->clear(QDemonRenderClearFlags(QDemonRenderClearValues::Color));
+        m_context->clear(QSSGRenderClearFlags(QSSGRenderClearValues::Color));
     }
 };
 }

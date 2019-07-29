@@ -31,12 +31,12 @@
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QDebug>
 
-#include <QtDemonAssetImport/private/qdemonmeshutilities_p.h>
+#include <QtQuick3DAssetImport/private/qssgmeshutilities_p.h>
 
 #include <QtGui/QMatrix4x4>
 
 
-using namespace QDemonMeshUtilities;
+using namespace QSSGMeshUtilities;
 
 class MeshOffsetTracker
 {

@@ -27,8 +27,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDEMONSCENEMANAGER_P_H
-#define QDEMONSCENEMANAGER_P_H
+#ifndef QSSGSCENEMANAGER_P_H
+#define QSSGSCENEMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -46,8 +46,8 @@
 
 #include <QtQuick3D/private/qtquick3dglobal_p.h>
 
-#include "qquick3dobject.h"
-#include "qquick3dnode.h"
+#include "qquick3dobject_p.h"
+#include "qquick3dnode_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -60,7 +60,7 @@ public:
     explicit QQuick3DSceneManager(QObject *parent = nullptr);
 
     void dirtyItem(QQuick3DObject *item);
-    void cleanup(QDemonRenderGraphObject *item);
+    void cleanup(QSSGRenderGraphObject *item);
 
     void polishItems();
     void forcePolish();
@@ -77,7 +77,7 @@ public:
     QQuick3DObject *dirtyResourceList;
     QQuick3DObject *dirtyImageList;
     QList<QQuick3DObject *> dirtyLightList;
-    QList<QDemonRenderGraphObject *> cleanupNodeList;
+    QList<QSSGRenderGraphObject *> cleanupNodeList;
     QSet<QQuick3DObject *> parentlessItems;
     QVector<QSGDynamicTexture *> qsgDynamicTextures;
     friend QQuick3DObject;
@@ -90,4 +90,4 @@ QT_END_NAMESPACE
 
 QML_DECLARE_TYPE(QQuick3DSceneManager)
 
-#endif // QDEMONSCENEMANAGER_P_H
+#endif // QSSGSCENEMANAGER_P_H

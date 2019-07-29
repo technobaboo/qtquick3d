@@ -1,17 +1,17 @@
 HEADERS += \
-    $$PWD/qdemonrenderbuffermanager.h \
-    $$PWD/qdemonrenderimagebatchloader.h \
-    $$PWD/qdemonrenderloadedtexture.h \
-    $$PWD/qdemonrenderprefiltertexture.h \
-    $$PWD/qdemonrenderresourcebufferobjects.h \
-    $$PWD/qdemonrenderresourcemanager.h \
-    $$PWD/qdemonrenderresourcetexture2d.h
+    $$PWD/qssgrenderbuffermanager_p.h \
+    $$PWD/qssgrenderimagebatchloader_p.h \
+    $$PWD/qssgrenderloadedtexture_p.h \
+    $$PWD/qssgrenderprefiltertexture_p.h \
+    $$PWD/qssgrenderresourcebufferobjects_p.h \
+    $$PWD/qssgrenderresourcemanager_p.h \
+    $$PWD/qssgrenderresourcetexture2d_p.h
 
 SOURCES += \
-    $$PWD/qdemonrenderbuffermanager.cpp \
-    $$PWD/qdemonrenderimagebatchloader.cpp \
-    $$PWD/qdemonrenderloadedtexture.cpp \
-    $$PWD/qdemonrenderprefiltertexture.cpp \
-    $$PWD/qdemonrenderresourcebufferobjects.cpp \
-    $$PWD/qdemonrenderresourcemanager.cpp \
-    $$PWD/qdemonrenderresourcetexture2d.cpp
+    $$PWD/qssgrenderbuffermanager.cpp \
+    $$PWD/qssgrenderimagebatchloader.cpp \
+    $$PWD/qssgrenderloadedtexture.cpp \
+    $$PWD/qssgrenderprefiltertexture.cpp \
+    $$PWD/qssgrenderresourcebufferobjects.cpp \
+    $$PWD/qssgrenderresourcemanager.cpp \
+    $$PWD/qssgrenderresourcetexture2d.cpp

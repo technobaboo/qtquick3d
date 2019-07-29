@@ -27,12 +27,12 @@
 **
 ****************************************************************************/
 
-#include "qquick3dmaterial.h"
-#include "qquick3dobject_p.h"
+#include "qquick3dmaterial_p.h"
+#include "qquick3dobject_p_p.h"
 #include "qquick3dscenemanager_p.h"
 
-#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
-#include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderdefaultmaterial_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendercustommaterial_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -246,14 +246,14 @@ void QQuick3DMaterial::setDisplacementAmount(float displacementAmount)
     update();
 }
 
-QDemonRenderGraphObject *QQuick3DMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DMaterial::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     if (!node)
         return nullptr;
 
     // Set the common properties
-    if (node->type == QDemonRenderGraphObject::Type::DefaultMaterial) {
-        auto defaultMaterial = static_cast<QDemonRenderDefaultMaterial *>(node);
+    if (node->type == QSSGRenderGraphObject::Type::DefaultMaterial) {
+        auto defaultMaterial = static_cast<QSSGRenderDefaultMaterial *>(node);
         if (!m_lightmapIndirect)
             defaultMaterial->lightmaps.m_lightmapIndirect = nullptr;
         else
@@ -287,8 +287,8 @@ QDemonRenderGraphObject *QQuick3DMaterial::updateSpatialNode(QDemonRenderGraphOb
         defaultMaterial->displaceAmount = m_displacementAmount;
         node = defaultMaterial;
 
-    } else if (node->type == QDemonRenderGraphObject::Type::CustomMaterial) {
-        auto customMaterial = static_cast<QDemonRenderCustomMaterial *>(node);
+    } else if (node->type == QSSGRenderGraphObject::Type::CustomMaterial) {
+        auto customMaterial = static_cast<QSSGRenderCustomMaterial *>(node);
         if (!m_lightmapIndirect)
             customMaterial->m_lightmaps.m_lightmapIndirect = nullptr;
         else

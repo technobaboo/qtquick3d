@@ -27,19 +27,18 @@
 **
 ****************************************************************************/
 
-#include "qquick3dscenerenderer.h"
-#include "qquick3dsceneenvironment.h"
-#include "qquick3dobject_p.h"
-#include "qquick3dnode.h"
+#include "qquick3dscenerenderer_p.h"
+#include "qquick3dsceneenvironment_p.h"
+#include "qquick3dobject_p_p.h"
+#include "qquick3dnode_p.h"
 #include "qquick3dscenemanager_p.h"
-#include "qquick3dtexture.h"
-#include "qquick3dcamera.h"
+#include "qquick3dtexture_p.h"
+#include "qquick3dcamera_p.h"
 
 #include <private/qopenglvertexarrayobject_p.h>
 
-#include <QtDemonRender/QDemonRenderFrameBuffer>
-#include <QtDemonRuntimeRender/QDemonRenderLayer>
-#include <QtDemonRuntimeRender/QDemonOffscreenRendererKey>
+#include <QtQuick3DRender/private/qssgrenderframebuffer_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderlayer_p.h>
 #include <QtQuick/QQuickWindow>
 
 QT_BEGIN_NAMESPACE
@@ -144,7 +143,7 @@ QQuick3DSceneRenderer::QQuick3DSceneRenderer(QWindow *window)
     QOpenGLContext *openGLContext = QOpenGLContext::currentContext();
 
     // There is only one Render context per window, so check if one exists for this window already
-    auto renderContextInterface = QDemonRenderContextInterface::getRenderContextInterface(quintptr(window));
+    auto renderContextInterface = QSSGRenderContextInterface::getRenderContextInterface(quintptr(window));
     if (!renderContextInterface.isNull()) {
         m_sgContext = renderContextInterface;
         m_renderContext = renderContextInterface->renderContext();
@@ -152,9 +151,9 @@ QQuick3DSceneRenderer::QQuick3DSceneRenderer(QWindow *window)
 
     // If there was no render context, then set it up for this window
     if (m_renderContext.isNull())
-        m_renderContext = QDemonRenderContext::createGl(openGLContext->format());
+        m_renderContext = QSSGRenderContext::createGl(openGLContext->format());
     if (m_sgContext.isNull())
-        m_sgContext = QDemonRenderContextInterface::getRenderContextInterface(m_renderContext, QString::fromLatin1("./"), quintptr(window));
+        m_sgContext = QSSGRenderContextInterface::getRenderContextInterface(m_renderContext, QString::fromLatin1("./"), quintptr(window));
 
     dumpPerfTiming = !qgetenv("QUICK3D_PERFTIMERS").isEmpty();
     dumpRenderTimes = !qgetenv("QUICK3D_RENDERTIMES").isEmpty();
@@ -243,13 +242,13 @@ void QQuick3DSceneRenderer::synchronize(QQuick3DViewport *item, const QSize &siz
 
     // Generate layer node
     if (!m_layer)
-        m_layer = new QDemonRenderLayer();
+        m_layer = new QSSGRenderLayer();
 
     // Update the layer node properties
     updateLayerNode(view3D);
 
     // Set the root item for the scene to the layer
-    auto rootNode = static_cast<QDemonRenderNode*>(QQuick3DObjectPrivate::get(view3D->scene())->spatialNode);
+    auto rootNode = static_cast<QSSGRenderNode*>(QQuick3DObjectPrivate::get(view3D->scene())->spatialNode);
     if (rootNode != m_sceneRootNode) {
         if (m_sceneRootNode)
             removeNodeFromLayer(m_sceneRootNode);
@@ -261,9 +260,9 @@ void QQuick3DSceneRenderer::synchronize(QQuick3DViewport *item, const QSize &siz
     }
 
     // Add the referenced scene root node to the layer as well if available
-    QDemonRenderNode* referencedRootNode = nullptr;
+    QSSGRenderNode* referencedRootNode = nullptr;
     if (view3D->referencedScene())
-        referencedRootNode = static_cast<QDemonRenderNode*>(QQuick3DObjectPrivate::get(view3D->referencedScene())->spatialNode);
+        referencedRootNode = static_cast<QSSGRenderNode*>(QQuick3DObjectPrivate::get(view3D->referencedScene())->spatialNode);
     if (referencedRootNode != m_referencedRootNode) {
         if (m_referencedRootNode)
             removeNodeFromLayer(m_referencedRootNode);
@@ -304,21 +303,21 @@ void QQuick3DSceneRenderer::invalidateFramebufferObject()
 
 void QQuick3DSceneRenderer::updateLayerNode(QQuick3DViewport *view3D)
 {
-    QDemonRenderLayer *layerNode = m_layer;
-    layerNode->progressiveAAMode = QDemonRenderLayer::AAMode(view3D->environment()->progressiveAAMode());
-    layerNode->multisampleAAMode = QDemonRenderLayer::AAMode(view3D->environment()->multisampleAAMode());
+    QSSGRenderLayer *layerNode = m_layer;
+    layerNode->progressiveAAMode = QSSGRenderLayer::AAMode(view3D->environment()->progressiveAAMode());
+    layerNode->multisampleAAMode = QSSGRenderLayer::AAMode(view3D->environment()->multisampleAAMode());
     layerNode->temporalAAEnabled = view3D->environment()->temporalAAEnabled();
 
-    layerNode->background = QDemonRenderLayer::Background(view3D->environment()->backgroundMode());
+    layerNode->background = QSSGRenderLayer::Background(view3D->environment()->backgroundMode());
     layerNode->clearColor = QVector3D(float(view3D->environment()->clearColor().redF()),
                                       float(view3D->environment()->clearColor().greenF()),
                                       float(view3D->environment()->clearColor().blueF()));
-    layerNode->blendType = QDemonRenderLayer::BlendMode(view3D->environment()->blendType());
+    layerNode->blendType = QSSGRenderLayer::BlendMode(view3D->environment()->blendType());
 
     layerNode->m_width = 100.f;
     layerNode->m_height = 100.f;
-    layerNode->widthUnits = QDemonRenderLayer::UnitType::Percent;
-    layerNode->heightUnits = QDemonRenderLayer::UnitType::Percent;
+    layerNode->widthUnits = QSSGRenderLayer::UnitType::Percent;
+    layerNode->heightUnits = QSSGRenderLayer::UnitType::Percent;
 
     layerNode->aoStrength = view3D->environment()->aoStrength();
     layerNode->aoDistance = view3D->environment()->aoDistance();
@@ -360,19 +359,19 @@ void QQuick3DSceneRenderer::updateLayerNode(QQuick3DViewport *view3D)
     layerNode->probe2Pos = view3D->environment()->probe2Postion();
 
     if (view3D->environment()->isDepthTestDisabled())
-        layerNode->flags.setFlag(QDemonRenderNode::Flag::LayerEnableDepthTest, false);
+        layerNode->flags.setFlag(QSSGRenderNode::Flag::LayerEnableDepthTest, false);
     else
-        layerNode->flags.setFlag(QDemonRenderNode::Flag::LayerEnableDepthTest, true);
+        layerNode->flags.setFlag(QSSGRenderNode::Flag::LayerEnableDepthTest, true);
 
     if (view3D->environment()->isDepthPrePassDisabled())
-        layerNode->flags.setFlag(QDemonRenderNode::Flag::LayerEnableDepthPrePass, false);
+        layerNode->flags.setFlag(QSSGRenderNode::Flag::LayerEnableDepthPrePass, false);
     else
-        layerNode->flags.setFlag(QDemonRenderNode::Flag::LayerEnableDepthPrePass, true);
+        layerNode->flags.setFlag(QSSGRenderNode::Flag::LayerEnableDepthPrePass, true);
 
-    layerNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
+    layerNode->markDirty(QSSGRenderNode::TransformDirtyFlag::TransformNotDirty);
 }
 
-void QQuick3DSceneRenderer::removeNodeFromLayer(QDemonRenderNode *node)
+void QQuick3DSceneRenderer::removeNodeFromLayer(QSSGRenderNode *node)
 {
     if (!m_layer)
         return;
@@ -380,7 +379,7 @@ void QQuick3DSceneRenderer::removeNodeFromLayer(QDemonRenderNode *node)
     m_layer->removeChild(*node);
 }
 
-void QQuick3DSceneRenderer::addNodeToLayer(QDemonRenderNode *node)
+void QQuick3DSceneRenderer::addNodeToLayer(QSSGRenderNode *node)
 {
     if (!m_layer)
         return;
@@ -388,18 +387,18 @@ void QQuick3DSceneRenderer::addNodeToLayer(QDemonRenderNode *node)
     m_layer->addChild(*node);
 }
 
-QQuick3DSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, const QDemonRef<QDemonRenderContext> &context)
+QQuick3DSceneRenderer::FramebufferObject::FramebufferObject(const QSize &s, const QSSGRef<QSSGRenderContext> &context)
 {
     size = s;
     renderContext = context;
 
-    depthStencil = new QDemonRenderTexture2D(renderContext);
-    depthStencil->setTextureData(QDemonByteView(), 0, size.width(), size.height(), QDemonRenderTextureFormat::Depth24Stencil8);
-    color0 = new QDemonRenderTexture2D(renderContext);
-    color0->setTextureData(QDemonByteView(), 0, size.width(), size.height(), QDemonRenderTextureFormat::RGBA8);
-    fbo = new QDemonRenderFrameBuffer(renderContext);
-    fbo->attach(QDemonRenderFrameBufferAttachment::Color0, color0);
-    fbo->attach(QDemonRenderFrameBufferAttachment::DepthStencil, depthStencil);
+    depthStencil = new QSSGRenderTexture2D(renderContext);
+    depthStencil->setTextureData(QSSGByteView(), 0, size.width(), size.height(), QSSGRenderTextureFormat::Depth24Stencil8);
+    color0 = new QSSGRenderTexture2D(renderContext);
+    color0->setTextureData(QSSGByteView(), 0, size.width(), size.height(), QSSGRenderTextureFormat::RGBA8);
+    fbo = new QSSGRenderFrameBuffer(renderContext);
+    fbo->attach(QSSGRenderFrameBufferAttachment::Color0, color0);
+    fbo->attach(QSSGRenderFrameBufferAttachment::DepthStencil, depthStencil);
 }
 
 QQuick3DSceneRenderer::FramebufferObject::~FramebufferObject()

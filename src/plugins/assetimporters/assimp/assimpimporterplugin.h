@@ -30,17 +30,17 @@
 #ifndef ASSIMPIMPORTERPLUGIN_H
 #define ASSIMPIMPORTERPLUGIN_H
 
-#include <QtDemonAssetImport/private/qdemonassetimporterplugin_p.h>
+#include <QtQuick3DAssetImport/private/qssgassetimporterplugin_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class AssimpImporterPlugin : public QDemonAssetImporterPlugin
+class AssimpImporterPlugin : public QSSGAssetImporterPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID QDemonAssetImporterFactoryInterface_iid FILE "assimp.json")
+    Q_PLUGIN_METADATA(IID QSSGAssetImporterFactoryInterface_iid FILE "assimp.json")
 
 public:
-    QDemonAssetImporter *create(const QString &key, const QStringList &paramList) override;
+    QSSGAssetImporter *create(const QString &key, const QStringList &paramList) override;
 };
 
 QT_END_NAMESPACE

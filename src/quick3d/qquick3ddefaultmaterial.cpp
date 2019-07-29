@@ -27,10 +27,10 @@
 **
 ****************************************************************************/
 
-#include "qquick3ddefaultmaterial.h"
-#include "qquick3dobject_p.h"
+#include "qquick3ddefaultmaterial_p.h"
+#include "qquick3dobject_p_p.h"
 
-#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderdefaultmaterial_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -244,12 +244,12 @@ QQuick3DObject::Type QQuick3DDefaultMaterial::type() const
     return QQuick3DObject::DefaultMaterial;
 }
 
-QQuick3DDefaultMaterial::QDemonDefaultMaterialLighting QQuick3DDefaultMaterial::lighting() const
+QQuick3DDefaultMaterial::QSSGDefaultMaterialLighting QQuick3DDefaultMaterial::lighting() const
 {
     return m_lighting;
 }
 
-QQuick3DDefaultMaterial::QDemonDefaultMaterialBlendMode QQuick3DDefaultMaterial::blendMode() const
+QQuick3DDefaultMaterial::QSSGDefaultMaterialBlendMode QQuick3DDefaultMaterial::blendMode() const
 {
     return m_blendMode;
 }
@@ -299,7 +299,7 @@ QQuick3DTexture *QQuick3DDefaultMaterial::specularMap() const
     return m_specularMap;
 }
 
-QQuick3DDefaultMaterial::QDemonDefaultMaterialSpecularModel QQuick3DDefaultMaterial::specularModel() const
+QQuick3DDefaultMaterial::QSSGDefaultMaterialSpecularModel QQuick3DDefaultMaterial::specularModel() const
 {
     return m_specularModel;
 }
@@ -379,7 +379,7 @@ bool QQuick3DDefaultMaterial::vertexColors() const
     return m_vertexColors;
 }
 
-void QQuick3DDefaultMaterial::setLighting(QQuick3DDefaultMaterial::QDemonDefaultMaterialLighting lighting)
+void QQuick3DDefaultMaterial::setLighting(QQuick3DDefaultMaterial::QSSGDefaultMaterialLighting lighting)
 {
     if (m_lighting == lighting)
         return;
@@ -389,7 +389,7 @@ void QQuick3DDefaultMaterial::setLighting(QQuick3DDefaultMaterial::QDemonDefault
     markDirty(LightingModeDirty);
 }
 
-void QQuick3DDefaultMaterial::setBlendMode(QQuick3DDefaultMaterial::QDemonDefaultMaterialBlendMode blendMode)
+void QQuick3DDefaultMaterial::setBlendMode(QQuick3DDefaultMaterial::QSSGDefaultMaterialBlendMode blendMode)
 {
     if (m_blendMode == blendMode)
         return;
@@ -516,7 +516,7 @@ void QQuick3DDefaultMaterial::setSpecularMap(QQuick3DTexture *specularMap)
     markDirty(SpecularDirty);
 }
 
-void QQuick3DDefaultMaterial::setSpecularModel(QQuick3DDefaultMaterial::QDemonDefaultMaterialSpecularModel specularModel)
+void QQuick3DDefaultMaterial::setSpecularModel(QQuick3DDefaultMaterial::QSSGDefaultMaterialSpecularModel specularModel)
 {
     if (m_specularModel == specularModel)
         return;
@@ -703,21 +703,21 @@ void QQuick3DDefaultMaterial::setVertexColors(bool vertexColors)
     markDirty(VertexColorsDirty);
 }
 
-QDemonRenderGraphObject *QQuick3DDefaultMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DDefaultMaterial::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     if (!node)
-        node = new QDemonRenderDefaultMaterial();
+        node = new QSSGRenderDefaultMaterial();
 
     // Set common material properties
     QQuick3DMaterial::updateSpatialNode(node);
 
-    QDemonRenderDefaultMaterial *material = static_cast<QDemonRenderDefaultMaterial *>(node);
+    QSSGRenderDefaultMaterial *material = static_cast<QSSGRenderDefaultMaterial *>(node);
 
     if (m_dirtyAttributes & LightingModeDirty)
-        material->lighting = QDemonRenderDefaultMaterial::MaterialLighting(m_lighting);
+        material->lighting = QSSGRenderDefaultMaterial::MaterialLighting(m_lighting);
 
     if (m_dirtyAttributes & BlendModeDirty)
-        material->blendMode = QDemonRenderDefaultMaterial::MaterialBlendMode(m_blendMode);
+        material->blendMode = QSSGRenderDefaultMaterial::MaterialBlendMode(m_blendMode);
 
     if (m_dirtyAttributes & DiffuseDirty) {
         material->diffuseColor = QVector3D(m_diffuseColor.redF(), m_diffuseColor.greenF(), m_diffuseColor.blueF());
@@ -759,7 +759,7 @@ QDemonRenderGraphObject *QQuick3DDefaultMaterial::updateSpatialNode(QDemonRender
         else
             material->specularMap = m_specularMap->getRenderImage();
 
-        material->specularModel = QDemonRenderDefaultMaterial::MaterialSpecularModel(m_specularModel);
+        material->specularModel = QSSGRenderDefaultMaterial::MaterialSpecularModel(m_specularModel);
         material->specularTint = QVector3D(m_specularTint.redF(), m_specularTint.greenF(), m_specularTint.blueF());
         material->ior = m_indexOfRefraction;
         material->fresnelPower = m_fresnelPower;
@@ -869,7 +869,7 @@ void QQuick3DDefaultMaterial::updateSceneRenderer(QQuick3DSceneManager *window)
     }
 }
 
-void QQuick3DDefaultMaterial::markDirty(QQuick3DDefaultMaterial::QDemonDefaultMaterialDirtyType type)
+void QQuick3DDefaultMaterial::markDirty(QQuick3DDefaultMaterial::QSSGDefaultMaterialDirtyType type)
 {
     if (!(m_dirtyAttributes & quint32(type))) {
         m_dirtyAttributes |= quint32(type);

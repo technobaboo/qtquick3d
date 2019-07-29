@@ -27,8 +27,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDEMONITEMCHANGELISTENER_P_H
-#define QDEMONITEMCHANGELISTENER_P_H
+#ifndef QSSGITEMCHANGELISTENER_P_H
+#define QSSGITEMCHANGELISTENER_P_H
 
 //
 //  W A R N I N G
@@ -62,4 +62,4 @@ public:
 
 QT_END_NAMESPACE
 
-#endif // QDEMONITEMCHANGELISTENER_P_H
+#endif // QSSGITEMCHANGELISTENER_P_H

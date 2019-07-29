@@ -1,15 +1,15 @@
 HEADERS += \
-    $$PWD/qdemonrenderableobjects.h \
-    $$PWD/qdemonrendererimpl.h \
-    $$PWD/qdemonrendererimpllayerrenderdata.h \
-    $$PWD/qdemonrendererimpllayerrenderhelper.h \
-    $$PWD/qdemonrendererimpllayerrenderpreparationdata.h \
-    $$PWD/qdemonrendererimplshaders.h \
-    $$PWD/qdemonvertexpipelineimpl.h
+    $$PWD/qssgrenderableobjects_p.h \
+    $$PWD/qssgrendererimpl_p.h \
+    $$PWD/qssgrendererimpllayerrenderdata_p.h \
+    $$PWD/qssgrendererimpllayerrenderhelper_p.h \
+    $$PWD/qssgrendererimpllayerrenderpreparationdata_p.h \
+    $$PWD/qssgrendererimplshaders_p.h \
+    $$PWD/qssgvertexpipelineimpl_p.h
 SOURCES += \
-    $$PWD/qdemonrenderableobjects.cpp \
-    $$PWD/qdemonrendererimpl.cpp \
-    $$PWD/qdemonrendererimpllayerrenderdata.cpp \
-    $$PWD/qdemonrendererimpllayerrenderhelper.cpp \
-    $$PWD/qdemonrendererimpllayerrenderpreparationdata.cpp \
-    $$PWD/qdemonrendererimplshaders.cpp
+    $$PWD/qssgrenderableobjects.cpp \
+    $$PWD/qssgrendererimpl.cpp \
+    $$PWD/qssgrendererimpllayerrenderdata.cpp \
+    $$PWD/qssgrendererimpllayerrenderhelper.cpp \
+    $$PWD/qssgrendererimpllayerrenderpreparationdata.cpp \
+    $$PWD/qssgrendererimplshaders.cpp

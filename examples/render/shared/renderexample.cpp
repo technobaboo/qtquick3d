@@ -49,7 +49,7 @@
 ****************************************************************************/
 
 #include "renderexample.h"
-#include <QtDemonRender/qdemonrenderbasetypes.h>
+#include <QtQuick3DRender/private/qssgrenderbasetypes_p.h>
 
 #include <cstring>
 #include <cstdio>
@@ -59,7 +59,7 @@
 
 #include <QtGui/QSurfaceFormat>
 
-QDemonRenderExample::QDemonRenderExample(QWindow *parent)
+QSSGRenderExample::QSSGRenderExample(QWindow *parent)
     : QWindow(parent)
 {
     setSurfaceType(QWindow::OpenGLSurface);
@@ -68,17 +68,17 @@ QDemonRenderExample::QDemonRenderExample(QWindow *parent)
     m_frameTimer.start();
 }
 
-QDemonRenderExample::~QDemonRenderExample()
+QSSGRenderExample::~QSSGRenderExample()
 {
     delete m_context;
 }
 
-void QDemonRenderExample::renderLater()
+void QSSGRenderExample::renderLater()
 {
     requestUpdate();
 }
 
-void QDemonRenderExample::renderNow()
+void QSSGRenderExample::renderNow()
 {
     if (!m_isIntialized) {
         preInit();
@@ -94,7 +94,7 @@ void QDemonRenderExample::renderNow()
         renderLater();
 }
 
-bool QDemonRenderExample::event(QEvent *event)
+bool QSSGRenderExample::event(QEvent *event)
 {
     switch (event->type()) {
     case QEvent::UpdateRequest:
@@ -105,7 +105,7 @@ bool QDemonRenderExample::event(QEvent *event)
     }
 }
 
-void QDemonRenderExample::exposeEvent(QExposeEvent *event)
+void QSSGRenderExample::exposeEvent(QExposeEvent *event)
 {
     Q_UNUSED(event);
 
@@ -113,7 +113,7 @@ void QDemonRenderExample::exposeEvent(QExposeEvent *event)
         renderNow();
 }
 
-void QDemonRenderExample::preInit()
+void QSSGRenderExample::preInit()
 {
     m_context = new QOpenGLContext();
     m_context->setFormat(requestedFormat());

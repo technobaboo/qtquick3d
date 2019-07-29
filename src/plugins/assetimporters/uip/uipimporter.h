@@ -30,7 +30,7 @@
 #ifndef UIPIMPORTER_H
 #define UIPIMPORTER_H
 
-#include <QtDemonAssetImport/private/qdemonassetimporter_p.h>
+#include <QtQuick3DAssetImport/private/qssgassetimporter_p.h>
 
 #include <QtCore/QTextStream>
 
@@ -43,7 +43,7 @@ class UipPresentation;
 class ReferencedMaterial;
 class ComponentNode;
 class AliasNode;
-class UipImporter : public QDemonAssetImporter
+class UipImporter : public QSSGAssetImporter
 {
 public:
     UipImporter();

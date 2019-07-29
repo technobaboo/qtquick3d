@@ -1,95 +1,83 @@
-TARGET = QtDemonRuntimeRender
-MODULE = demonruntimerender
+TARGET = QtQuick3DRuntimeRender
+MODULE = quick3druntimerender
 
-QT += demon demonrender demonassetimport-private
+QT += quick3drender-private quick3dassetimport-private
 
 include(graphobjects/graphobjects.pri)
 include(rendererimpl/rendererimpl.pri)
 include(resourcemanager/resourcemanager.pri)
 
+DEFINES += QT_BUILD_QUICK3DRUNTIMERENDER_LIB
+
 HEADERS += \
-    qdemonrendergpuprofiler.h \
-    qtdemonruntimerenderglobal.h \
-    qtdemonruntimerenderglobal_p.h \
-#    qdemonqmlrender.h \
-    qdemonoffscreenrenderkey.h \
-    qdemonoffscreenrendermanager.h \
-#    qdemonoldnbustedrenderplugin.h \
-    qdemonrenderableimage.h \
-    qdemonrenderclippingfrustum.h \
-    qdemonrendercontextcore.h \
-    qdemonrendercustommaterialrendercontext.h \
-    qdemonrendercustommaterialsystem.h \
-    qdemonrenderdefaultmaterialshadergenerator.h \
-    qdemonrenderdynamicobjectsystem.h \
-    qdemonrenderdynamicobjectsystemcommands.h \
-    qdemonrenderdynamicobjectsystemutil.h \
-    qdemonrendereffectsystem.h \
-    qdemonrenderer.h \
-    qdemonrendererutil.h \
-    qdemonrendereulerangles.h \
-    qdemonrendergraphobjectpickquery.h \
-#    qdemonrendergraphobjectserializer.h \
-    qdemonrenderimagetexturedata.h \
-    qdemonrenderinputstreamfactory.h \
-    qdemonrenderlightconstantproperties.h \
-    qdemonrendermaterialshadergenerator.h \
-    qdemonrendermesh.h \
-    qdemonrenderpathmanager.h \
-    qdemonrenderpathmath.h \
-    qdemonrenderpathrendercontext.h \
-    qdemonrenderpixelgraphicsrenderer.h \
-    qdemonrenderpixelgraphicstypes.h \
-#    qdemonrenderplugin.h \
-#    qdemonrenderplugincinterface.h \
-#    qdemonrenderplugingraphobject.h \
-#    qdemonrenderpluginpropertyvalue.h \
-    qdemonrenderray.h \
-    qdemonrenderrenderlist.h \
-    qdemonrendershadercache.h \
-    qdemonrendershadercodegenerator.h \
-    qdemonrendershadercodegeneratorv2.h \
-    qdemonrendershaderkeys.h \
-    qdemonrendershadowmap.h \
-    qdemonrendertessmodevalues.h \
-    qdemonrenderthreadpool.h \
-#    qdemonrenderuipsharedtranslation.h \
-    qdemonrenderwidgets.h \
-    qdemonruntimerenderlogging.h \
-    qdemonperframeallocator.h
+    qtquick3druntimerenderglobal_p.h \
+    qssgrendergpuprofiler_p.h \
+    qssgoffscreenrenderkey_p.h \
+    qssgoffscreenrendermanager_p.h \
+    qssgrenderableimage_p.h \
+    qssgrenderclippingfrustum_p.h \
+    qssgrendercontextcore_p.h \
+    qssgrendercustommaterialrendercontext_p.h \
+    qssgrendercustommaterialsystem_p.h \
+    qssgrenderdefaultmaterialshadergenerator_p.h \
+    qssgrenderdynamicobjectsystem_p.h \
+    qssgrenderdynamicobjectsystemcommands_p.h \
+    qssgrenderdynamicobjectsystemutil_p.h \
+    qssgrendereffectsystem_p.h \
+    qssgrenderer_p.h \
+    qssgrendererutil_p.h \
+    qssgrendereulerangles_p.h \
+    qssgrendergraphobjectpickquery_p.h \
+    qssgrenderimagetexturedata_p.h \
+    qssgrenderinputstreamfactory_p.h \
+    qssgrenderlightconstantproperties_p.h \
+    qssgrendermaterialshadergenerator_p.h \
+    qssgrendermesh_p.h \
+    qssgrenderpathmanager_p.h \
+    qssgrenderpathmath_p.h \
+    qssgrenderpathrendercontext_p.h \
+    qssgrenderpixelgraphicsrenderer_p.h \
+    qssgrenderpixelgraphicstypes_p.h \
+    qssgrenderray_p.h \
+    qssgrenderrenderlist_p.h \
+    qssgrendershadercache_p.h \
+    qssgrendershadercodegenerator_p.h \
+    qssgrendershadercodegeneratorv2_p.h \
+    qssgrendershaderkeys_p.h \
+    qssgrendershadowmap_p.h \
+    qssgrendertessmodevalues_p.h \
+    qssgrenderthreadpool_p.h \
+    qssgrenderwidgets_p.h \
+    qssgruntimerenderlogging_p.h \
+    qssgperframeallocator_p.h
 
 SOURCES += \
-#    qdemonqmlrender.cpp \
-    qdemonoffscreenrendermanager.cpp \
-#    qdemonoldnbustedrenderplugin.cpp \
-    qdemonrenderclippingfrustum.cpp \
-    qdemonrendercontextcore.cpp \
-    qdemonrendercustommaterialshadergenerator.cpp \
-    qdemonrendercustommaterialsystem.cpp \
-    qdemonrenderdefaultmaterialshadergenerator.cpp \
-    qdemonrenderdynamicobjectsystem.cpp \
-    qdemonrendereffectsystem.cpp \
-    qdemonrendererutil.cpp \
-    qdemonrendereulerangles.cpp \
-    qdemonrendergpuprofiler.cpp \
-#    qdemonrendergraphobjectserializer.cpp \
-    qdemonrenderinputstreamfactory.cpp \
-    qdemonrendermaterialshadergenerator.cpp \
-    qdemonrenderpathmanager.cpp \
-    qdemonrenderpixelgraphicsrenderer.cpp \
-#    qdemonrenderplugin.cpp \
-    qdemonrenderray.cpp \
-    qdemonrenderrenderlist.cpp \
-    qdemonrendershadercache.cpp \
-    qdemonrendershadercodegenerator.cpp \
-    qdemonrendershadercodegeneratorv2.cpp \
-    qdemonrendershadowmap.cpp \
-    qdemonrenderthreadpool.cpp \
-#    qdemonrenderuipsharedtranslation.cpp \
-    qdemonrenderwidgets.cpp \
-    qdemonruntimerenderlogging.cpp \
-    qdemonrenderer.cpp \
-    qdemonrendercustommaterialrendercontext.cpp
+    qssgoffscreenrendermanager.cpp \
+    qssgrenderclippingfrustum.cpp \
+    qssgrendercontextcore.cpp \
+    qssgrendercustommaterialshadergenerator.cpp \
+    qssgrendercustommaterialsystem.cpp \
+    qssgrenderdefaultmaterialshadergenerator.cpp \
+    qssgrenderdynamicobjectsystem.cpp \
+    qssgrendereffectsystem.cpp \
+    qssgrendererutil.cpp \
+    qssgrendereulerangles.cpp \
+    qssgrendergpuprofiler.cpp \
+    qssgrenderinputstreamfactory.cpp \
+    qssgrendermaterialshadergenerator.cpp \
+    qssgrenderpathmanager.cpp \
+    qssgrenderpixelgraphicsrenderer.cpp \
+    qssgrenderray.cpp \
+    qssgrenderrenderlist.cpp \
+    qssgrendershadercache.cpp \
+    qssgrendershadercodegenerator.cpp \
+    qssgrendershadercodegeneratorv2.cpp \
+    qssgrendershadowmap.cpp \
+    qssgrenderthreadpool.cpp \
+    qssgrenderwidgets.cpp \
+    qssgruntimerenderlogging.cpp \
+    qssgrenderer.cpp \
+    qssgrendercustommaterialrendercontext.cpp
 
 RESOURCES += res.qrc
 

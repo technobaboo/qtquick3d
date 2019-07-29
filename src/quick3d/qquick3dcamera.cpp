@@ -27,12 +27,12 @@
 **
 ****************************************************************************/
 
-#include "qquick3dcamera.h"
+#include "qquick3dcamera_p.h"
 
-#include <QtDemonRuntimeRender/qdemonrendercamera.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendercamera_p.h>
 
 #include <QtMath>
-#include <qdemonutils.h>
+#include <QtQuick3DUtils/private/qssgutils_p.h>
 
 #include "qquick3dutils_p.h"
 
@@ -118,7 +118,7 @@ bool QQuick3DCamera::isFieldOfViewHorizontal() const
  *
  */
 
-QQuick3DCamera::QDemonCameraScaleModes QQuick3DCamera::scaleMode() const
+QQuick3DCamera::QSSGCameraScaleModes QQuick3DCamera::scaleMode() const
 {
     return m_scaleMode;
 }
@@ -142,7 +142,7 @@ QQuick3DCamera::QDemonCameraScaleModes QQuick3DCamera::scaleMode() const
  * \endlist
  */
 
-QQuick3DCamera::QDemonCameraScaleAnchors QQuick3DCamera::scaleAnchor() const
+QQuick3DCamera::QSSGCameraScaleAnchors QQuick3DCamera::scaleAnchor() const
 {
     return m_scaleAnchor;
 }
@@ -158,7 +158,7 @@ QQuick3DObject::Type QQuick3DCamera::type() const
 /*!
  * \internal
  */\
-QDemonRenderCamera *QQuick3DCamera::getCameraNode() const
+QSSGRenderCamera *QQuick3DCamera::getCameraNode() const
 {
     return m_cameraNode;
 }
@@ -173,7 +173,7 @@ QDemonRenderCamera *QQuick3DCamera::getCameraNode() const
  *
  */
 
-QQuick3DCamera::QDemonCameraProjectionMode QQuick3DCamera::projectionMode() const
+QQuick3DCamera::QSSGCameraProjectionMode QQuick3DCamera::projectionMode() const
 {
     return m_projectionMode;
 }
@@ -218,7 +218,7 @@ void QQuick3DCamera::setIsFieldOfViewHorizontal(bool isFieldOfViewHorizontal)
     update();
 }
 
-void QQuick3DCamera::setScaleMode(QQuick3DCamera::QDemonCameraScaleModes scaleMode)
+void QQuick3DCamera::setScaleMode(QQuick3DCamera::QSSGCameraScaleModes scaleMode)
 {
     if (m_scaleMode == scaleMode)
         return;
@@ -228,7 +228,7 @@ void QQuick3DCamera::setScaleMode(QQuick3DCamera::QDemonCameraScaleModes scaleMo
     update();
 }
 
-void QQuick3DCamera::setScaleAnchor(QQuick3DCamera::QDemonCameraScaleAnchors scaleAnchor)
+void QQuick3DCamera::setScaleAnchor(QQuick3DCamera::QSSGCameraScaleAnchors scaleAnchor)
 {
     if (m_scaleAnchor == scaleAnchor)
         return;
@@ -239,7 +239,7 @@ void QQuick3DCamera::setScaleAnchor(QQuick3DCamera::QDemonCameraScaleAnchors sca
 }
 
 
-void QQuick3DCamera::setProjectionMode(QQuick3DCamera::QDemonCameraProjectionMode projectionMode)
+void QQuick3DCamera::setProjectionMode(QQuick3DCamera::QSSGCameraProjectionMode projectionMode)
 {
     if (m_projectionMode == projectionMode)
         return;
@@ -368,14 +368,14 @@ bool QQuick3DCamera::enableFrustumCulling() const
 /*!
  * \internal
  */
-QDemonRenderGraphObject *QQuick3DCamera::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DCamera::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     if (!node)
-        node = new QDemonRenderCamera();
+        node = new QSSGRenderCamera();
 
     QQuick3DNode::updateSpatialNode(node);
 
-    QDemonRenderCamera *camera = static_cast<QDemonRenderCamera *>(node);
+    QSSGRenderCamera *camera = static_cast<QSSGRenderCamera *>(node);
 
     bool changed = false;
     changed |= qUpdateIfNeeded(camera->clipNear, m_clipNear);
@@ -383,19 +383,19 @@ QDemonRenderGraphObject *QQuick3DCamera::updateSpatialNode(QDemonRenderGraphObje
     changed |= qUpdateIfNeeded(camera->fov, qDegreesToRadians(m_fieldOfView));
     changed |= qUpdateIfNeeded(camera->fovHorizontal, m_isFieldOfViewHorizontal);
 
-    changed |= qUpdateIfNeeded(camera->scaleMode, QDemonRenderCamera::ScaleModes(m_scaleMode));
-    changed |= qUpdateIfNeeded(camera->scaleAnchor, QDemonRenderCamera::ScaleAnchors(m_scaleAnchor));
+    changed |= qUpdateIfNeeded(camera->scaleMode, QSSGRenderCamera::ScaleModes(m_scaleMode));
+    changed |= qUpdateIfNeeded(camera->scaleAnchor, QSSGRenderCamera::ScaleAnchors(m_scaleAnchor));
     changed |= qUpdateIfNeeded(camera->enableFrustumClipping, m_enableFrustumCulling);
 
-    const bool wasOrtho = camera->flags.testFlag(QDemonRenderNode::Flag::Orthographic);
+    const bool wasOrtho = camera->flags.testFlag(QSSGRenderNode::Flag::Orthographic);
     const bool ortho = m_projectionMode == Orthographic;
-    camera->flags.setFlag(QDemonRenderNode::Flag::Orthographic, ortho);
+    camera->flags.setFlag(QSSGRenderNode::Flag::Orthographic, ortho);
     changed |= wasOrtho != ortho;
 
     m_cameraNode = camera;
 
     if (changed)
-        camera->flags.setFlag(QDemonRenderNode::Flag::CameraDirty);
+        camera->flags.setFlag(QSSGRenderNode::Flag::CameraDirty);
     return node;
 }
 

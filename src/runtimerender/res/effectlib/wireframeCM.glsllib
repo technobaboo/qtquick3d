@@ -48,26 +48,26 @@ attribute vec3 VARYING_NAME(varObjPos)[];
 varying vec3 varNormal;
 varying vec3 varObjPos;
 
-#if QDEMON_ENABLE_UV0
+#if QSSG_ENABLE_UV0
 attribute vec3 VARYING_NAME(varTexCoord0)[];
 varying vec3 varTexCoord0;
 #endif
 
-#if QDEMON_ENABLE_TEXTAN
+#if QSSG_ENABLE_TEXTAN
 attribute vec3 VARYING_NAME(varTangent)[];
 attribute vec3 VARYING_NAME(varObjTangent)[];
 varying vec3 varTangent;
 varying vec3 varObjTangent;
 #endif
 
-#if QDEMON_ENABLE_BINORMAL
+#if QSSG_ENABLE_BINORMAL
 attribute vec3 VARYING_NAME(varBinormal)[];
 attribute vec3 VARYING_NAME(varObjBinormal)[];
 varying vec3 varBinormal;
 varying vec3 varObjBinormal;
 #endif
 
-#if QDEMON_ENABLE_WORLD_POSITION
+#if QSSG_ENABLE_WORLD_POSITION
 attribute vec3 VARYING_NAME(varWorldPos)[];
 varying vec3 varWorldPos;
 #endif
@@ -101,18 +101,18 @@ void main()
     varEdgeDistance = vec3(ha*gl_in[0].gl_Position.w, 0.0, 0.0);
     varNormal = VARYING_NAME(varNormal)[0];
     varObjPos = VARYING_NAME(varObjPos)[0];
-#if QDEMON_ENABLE_UV0
+#if QSSG_ENABLE_UV0
         varTexCoord0 = VARYING_NAME(varTexCoord0)[0];
 #endif
-#if QDEMON_ENABLE_TEXTAN
+#if QSSG_ENABLE_TEXTAN
         varTangent = VARYING_NAME(varTangent)[0];
         varObjTangent = VARYING_NAME(varObjTangent)[0];
 #endif
-#if QDEMON_ENABLE_BINORMAL
+#if QSSG_ENABLE_BINORMAL
         varBinormal = VARYING_NAME(varBinormal)[0];
         varObjBinormal = VARYING_NAME(varObjBinormal)[0];
 #endif
-#if QDEMON_ENABLE_WORLD_POSITION
+#if QSSG_ENABLE_WORLD_POSITION
         varWorldPos = VARYING_NAME(varWorldPos)[0];
 #endif
 
@@ -123,18 +123,18 @@ void main()
     varEdgeDistance = vec3(0.0, hb*gl_in[1].gl_Position.w, 0.0);
     varNormal = VARYING_NAME(varNormal)[1];
     varObjPos = VARYING_NAME(varObjPos)[1];
-#if QDEMON_ENABLE_UV0
+#if QSSG_ENABLE_UV0
         varTexCoord0 = VARYING_NAME(varTexCoord0)[1];
 #endif
-#if QDEMON_ENABLE_TEXTAN
+#if QSSG_ENABLE_TEXTAN
         varTangent = VARYING_NAME(varTangent)[1];
         varObjTangent = VARYING_NAME(varObjTangent)[1];
 #endif
-#if QDEMON_ENABLE_BINORMAL
+#if QSSG_ENABLE_BINORMAL
         varBinormal = VARYING_NAME(varBinormal)[1];
         varObjBinormal = VARYING_NAME(varObjBinormal)[1];
 #endif
-#if QDEMON_ENABLE_WORLD_POSITION
+#if QSSG_ENABLE_WORLD_POSITION
         varWorldPos = VARYING_NAME(varWorldPos)[1];
 #endif
 
@@ -145,18 +145,18 @@ void main()
     varEdgeDistance = vec3(0.0, 0.0, hc*gl_in[2].gl_Position.w);
     varNormal = VARYING_NAME(varNormal)[2];
     varObjPos = VARYING_NAME(varObjPos)[2];
-#if QDEMON_ENABLE_UV0
+#if QSSG_ENABLE_UV0
         varTexCoord0 = VARYING_NAME(varTexCoord0)[2];
 #endif
-#if QDEMON_ENABLE_TEXTAN
+#if QSSG_ENABLE_TEXTAN
         varTangent = VARYING_NAME(varTangent)[2];
         varObjTangent = VARYING_NAME(varObjTangent)[2];
 #endif
-#if QDEMON_ENABLE_BINORMAL
+#if QSSG_ENABLE_BINORMAL
         varBinormal = VARYING_NAME(varBinormal)[2];
         varObjBinormal = VARYING_NAME(varObjBinormal)[2];
 #endif
-#if QDEMON_ENABLE_WORLD_POSITION
+#if QSSG_ENABLE_WORLD_POSITION
         varWorldPos = VARYING_NAME(varWorldPos)[2];
 #endif
 

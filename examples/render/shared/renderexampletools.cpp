@@ -50,10 +50,10 @@
 
 #include "renderexampletools.h"
 
-#include <QtDemonRender/qdemonrenderindexbuffer.h>
-#include <QtDemonRender/qdemonrendervertexbuffer.h>
-#include <QtDemonRender/qdemonrenderattriblayout.h>
-#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtQuick3DRender/private/qssgrenderindexbuffer_p.h>
+#include <QtQuick3DRender/private/qssgrendervertexbuffer_p.h>
+#include <QtQuick3DRender/private/qssgrenderattriblayout_p.h>
+#include <QtQuick3DRender/private/qssgrendershaderprogram_p.h>
 
 #include <QtGui/QVector3D>
 
@@ -85,22 +85,22 @@ static const QVector2D g_BoxUVs[] = {
     QVector2D(0, 1), QVector2D(0, 0), QVector2D(1, 0), QVector2D(1, 1),
 };
 
-QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemonRef<QDemonRenderContext> context,
-                                                                               QDemonRef<QDemonRenderVertexBuffer> &outVertexBuffer,
-                                                                               QDemonRef<QDemonRenderIndexBuffer> &outIndexBuffer)
+QSSGRef<QSSGRenderInputAssembler> QSSGRenderExampleTools::createBox(QSSGRef<QSSGRenderContext> context,
+                                                                               QSSGRef<QSSGRenderVertexBuffer> &outVertexBuffer,
+                                                                               QSSGRef<QSSGRenderIndexBuffer> &outIndexBuffer)
 {
     const quint32 numVerts = 24;
     const quint32 numIndices = 36;
     QVector3D extents = QVector3D(1, 1, 1);
 
     // Attribute Layouts
-    QDemonRenderVertexBufferEntry entries[] = {
-        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3, 0),
-        QDemonRenderVertexBufferEntry("attr_norm", QDemonRenderComponentType::Float32, 3, 3 * sizeof(float)),
-        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 6 * sizeof(float)),
+    QSSGRenderVertexBufferEntry entries[] = {
+        QSSGRenderVertexBufferEntry("attr_pos", QSSGRenderComponentType::Float32, 3, 0),
+        QSSGRenderVertexBufferEntry("attr_norm", QSSGRenderComponentType::Float32, 3, 3 * sizeof(float)),
+        QSSGRenderVertexBufferEntry("attr_uv", QSSGRenderComponentType::Float32, 2, 6 * sizeof(float)),
     };
 
-    QDemonRef<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toDataView(entries, 3));
+    QSSGRef<QSSGRenderAttribLayout> attribLayout = context->createAttributeLayout(toDataView(entries, 3));
 
     // Vertex Buffer
     struct Vertex {
@@ -125,7 +125,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
     }
 
     auto vertexDataRef = toByteView(vertices);
-    outVertexBuffer= new QDemonRenderVertexBuffer(context, QDemonRenderBufferUsageType::Static, bufStride, vertexDataRef);
+    outVertexBuffer= new QSSGRenderVertexBuffer(context, QSSGRenderBufferUsageType::Static, bufStride, vertexDataRef);
     Q_ASSERT(bufStride == outVertexBuffer->stride());
 
     // Index Buffer
@@ -141,14 +141,14 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
         *(indices++) = base + 3;
     }
     auto indexDataRef = toByteView(indexBuffer);
-    outIndexBuffer= new QDemonRenderIndexBuffer(context, QDemonRenderBufferUsageType::Static,
-                                               QDemonRenderComponentType::UnsignedInteger16,
+    outIndexBuffer= new QSSGRenderIndexBuffer(context, QSSGRenderBufferUsageType::Static,
+                                               QSSGRenderComponentType::UnsignedInteger16,
                                                indexDataRef);
 
     quint32 strides = outVertexBuffer->stride();
     quint32 offsets = 0;
 
-    QDemonRef<QDemonRenderInputAssembler> inputAssembler = context->createInputAssembler(attribLayout,
+    QSSGRef<QSSGRenderInputAssembler> inputAssembler = context->createInputAssembler(attribLayout,
                                                                                               toDataView(&outVertexBuffer, 1),
                                                                                               outIndexBuffer,
                                                                                               toDataView(&strides, 1),
@@ -159,7 +159,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
 
 namespace {
 
-static void dumpShaderOutput(const QDemonRef<QDemonRenderContext> &ctx, const QDemonRenderVertFragCompilationResult &compResult)
+static void dumpShaderOutput(const QSSGRef<QSSGRenderContext> &ctx, const QSSGRenderVertFragCompilationResult &compResult)
 {
     //    if (!isTrivial(compResult.mFragCompilationOutput)) {
     //        qWarning("Frag output:\n%s", compResult.mFragCompilationOutput);
@@ -172,21 +172,21 @@ static void dumpShaderOutput(const QDemonRef<QDemonRenderContext> &ctx, const QD
     //    }
 }
 
-QDemonRef<QDemonRenderShaderProgram> compileAndDump(const QDemonRef<QDemonRenderContext> &ctx, const char *name, const char *vertShader, const char *fragShader)
+QSSGRef<QSSGRenderShaderProgram> compileAndDump(const QSSGRef<QSSGRenderContext> &ctx, const char *name, const char *vertShader, const char *fragShader)
 {
-    QDemonRenderVertFragCompilationResult compResult =
+    QSSGRenderVertFragCompilationResult compResult =
             ctx->compileSource(name, toByteView(vertShader), toByteView(fragShader));
     dumpShaderOutput(ctx, compResult);
     return compResult.m_shader;
 }
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShader(QDemonRef<QDemonRenderContext> ctx)
+QSSGRef<QSSGRenderShaderProgram> QSSGRenderExampleTools::createSimpleShader(QSSGRef<QSSGRenderContext> ctx)
 {
     return compileAndDump(ctx, "SimpleShader", getSimpleVertShader(), getSimpleFragShader());
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShaderTex(QDemonRef<QDemonRenderContext> ctx)
+QSSGRef<QSSGRenderShaderProgram> QSSGRenderExampleTools::createSimpleShaderTex(QSSGRef<QSSGRenderContext> ctx)
 {
     return compileAndDump(ctx, "SimpleShader", getSimpleVertShader(), getSimpleFragShaderTex());
 }

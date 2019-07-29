@@ -1,5 +1,5 @@
 TARGET = assimp
-QT += demonassetimport-private
+QT += quick3dassetimport-private
 
 PLUGIN_TYPE = assetimporters
 PLUGIN_CLASS_NAME = AssimpImporterPlugin

@@ -27,10 +27,10 @@
 **
 ****************************************************************************/
 
-#include "qquick3dlight.h"
-#include "qquick3dobject_p.h"
+#include "qquick3dlight_p.h"
+#include "qquick3dobject_p_p.h"
 
-#include <QtDemonRuntimeRender/qdemonrenderlight.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderlight_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -151,7 +151,7 @@ QQuick3DObject::Type QQuick3DLight::type() const
     return QQuick3DObject::Light;
 }
 
-QQuick3DLight::QDemonRenderLightTypes QQuick3DLight::lightType() const
+QQuick3DLight::QSSGRenderLightTypes QQuick3DLight::lightType() const
 {
     return m_lightType;
 }
@@ -236,7 +236,7 @@ QQuick3DNode *QQuick3DLight::scope() const
     return m_scope;
 }
 
-void QQuick3DLight::setLightType(QQuick3DLight::QDemonRenderLightTypes lightType)
+void QQuick3DLight::setLightType(QQuick3DLight::QSSGRenderLightTypes lightType)
 {
     if (m_lightType == lightType)
         return;
@@ -421,16 +421,16 @@ void QQuick3DLight::setScope(QQuick3DNode *scope)
     update();
 }
 
-QDemonRenderGraphObject *QQuick3DLight::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DLight::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     if (!node)
-        node = new QDemonRenderLight();
+        node = new QSSGRenderLight();
 
     QQuick3DNode::updateSpatialNode(node);
 
-    QDemonRenderLight *light = static_cast<QDemonRenderLight *>(node);
+    QSSGRenderLight *light = static_cast<QSSGRenderLight *>(node);
 
-    light->m_lightType = QDemonRenderLight::Type(m_lightType);
+    light->m_lightType = QSSGRenderLight::Type(m_lightType);
     if (m_dirtyFlags.testFlag(DirtyFlag::ColorDirty)) {
         m_dirtyFlags.setFlag(DirtyFlag::ColorDirty, false);
         light->m_diffuseColor = QVector3D(m_diffuseColor.redF(), m_diffuseColor.greenF(), m_diffuseColor.blueF());
@@ -463,7 +463,7 @@ QDemonRenderGraphObject *QQuick3DLight::updateSpatialNode(QDemonRenderGraphObjec
     }
 
     if (m_scope)
-        light->m_scope = static_cast<QDemonRenderNode*>(QQuick3DObjectPrivate::get(m_scope)->spatialNode);
+        light->m_scope = static_cast<QSSGRenderNode*>(QQuick3DObjectPrivate::get(m_scope)->spatialNode);
     else
         light->m_scope = nullptr;
 

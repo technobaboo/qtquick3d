@@ -1,11 +1,10 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS = \
-    demon \
+    utils \
     render \
     assetimport \
     plugins \
     runtimerender \
     quick3d \
     imports
-

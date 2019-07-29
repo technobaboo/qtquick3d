@@ -49,13 +49,13 @@
 ****************************************************************************/
 
 #include "renderwindow.h"
-#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtQuick3DRender/private/qssgrendercontext_p.h>
 
-#include <QtDemonRuntimeRender/qdemonrenderlayer.h>
-#include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <QtDemonRuntimeRender/qdemonrenderlight.h>
-#include <QtDemonRuntimeRender/qdemonrendermodel.h>
-#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderlayer_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendercamera_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderlight_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendermodel_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderdefaultmaterial_p.h>
 
 RenderWindow::RenderWindow(QWindow *parent)
     : QWindow(parent)
@@ -156,8 +156,8 @@ static QSurfaceFormat idealSurfaceFormat()
 }
 void RenderWindow::initialize()
 {
-    m_renderContext = QDemonRenderContext::createGl(idealSurfaceFormat());
-    m_context = QDemonRenderContextInterface::getRenderContextInterface(m_renderContext, "./", quintptr(this));
+    m_renderContext = QSSGRenderContext::createGl(idealSurfaceFormat());
+    m_context = QSSGRenderContextInterface::getRenderContextInterface(m_renderContext, "./", quintptr(this));
     m_context->setSceneColor(QVector4D(1.0, 0.0, 0.0, 1.0));
 
     buildTestScene();
@@ -206,7 +206,7 @@ void RenderWindow::renderNow()
 void RenderWindow::updateAnimations()
 {
     m_cube->rotation = QVector3D(0.785398f, m_cube->rotation.y() + 0.01f, 0.785398f);
-    m_cube->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformIsDirty);
+    m_cube->markDirty(QSSGRenderNode::TransformDirtyFlag::TransformIsDirty);
 }
 
 bool RenderWindow::event(QEvent *event)
@@ -240,31 +240,31 @@ void RenderWindow::preInit()
 
 void RenderWindow::buildTestScene()
 {
-    m_layer = new QDemonRenderLayer();
+    m_layer = new QSSGRenderLayer();
     m_layer->clearColor = QVector3D(0.0, 0.0, 1.0);
-    m_layer->background = QDemonRenderLayer::Background::Color;
+    m_layer->background = QSSGRenderLayer::Background::Color;
     m_layer->m_height = 100.f;
     m_layer->m_width = 100.f;
-    m_layer->widthUnits = QDemonRenderLayer::UnitType::Percent;
-    m_layer->heightUnits = QDemonRenderLayer::UnitType::Percent;
+    m_layer->widthUnits = QSSGRenderLayer::UnitType::Percent;
+    m_layer->heightUnits = QSSGRenderLayer::UnitType::Percent;
 
     // Camera
-    auto camera = new QDemonRenderCamera();
+    auto camera = new QSSGRenderCamera();
     m_layer->addChild(*camera);
     camera->lookAt(QVector3D(0.0, 0.0, -600.0),
                    QVector3D(0.0, 1.0, 0.0),
                    QVector3D(0.0, 0.0, 0.0));
 
     // Light
-    auto light = new QDemonRenderLight();
+    auto light = new QSSGRenderLight();
     m_layer->addChild(*light);
 
     // Mesh (#Cube)
-    m_cube = new QDemonRenderModel();
-    m_cube->meshPath = QDemonRenderMeshPath::create(QStringLiteral("#Cube"));
+    m_cube = new QSSGRenderModel();
+    m_cube->meshPath = QSSGRenderMeshPath::create(QStringLiteral("#Cube"));
     m_layer->addChild(*m_cube);
 
     // Default Material
-    auto material = new QDemonRenderDefaultMaterial();
+    auto material = new QSSGRenderDefaultMaterial();
     m_cube->materials.append(material);
 }

@@ -17,10 +17,10 @@
 #define color_layer_brightness 5
 #define color_layer_color 6
 
-#define QDEMON_ENABLE_UV0 1
-#define QDEMON_ENABLE_WORLD_POSITION 1
-#define QDEMON_ENABLE_TEXTAN 1
-#define QDEMON_ENABLE_BINORMAL 1
+#define QSSG_ENABLE_UV0 1
+#define QSSG_ENABLE_WORLD_POSITION 1
+#define QSSG_ENABLE_TEXTAN 1
+#define QSSG_ENABLE_BINORMAL 1
 
 #include "vertexFragmentBase.glsllib"
 
@@ -103,7 +103,7 @@ vec3 computeFrontMaterialEmissive()
 
 void computeFrontLayerColor( in vec3 normal, in vec3 lightDir, in vec3 viewDir, in vec3 lightDiffuse, in vec3 lightSpecular, in float materialIOR, float aoFactor )
 {
-#if QDEMON_ENABLE_CG_LIGHTING
+#if QSSG_ENABLE_CG_LIGHTING
   layers[0].base += tmpShadowTerm * normalizedMix( bsdf_component[2]( bsdf_component(transmission_weight, diffuseTransmissionBSDF( -normal, lightDir, viewDir, lightDiffuse, vec4( ftmp0, 1.0), uTranslucentFalloff, uDiffuseLightWrap )) ,bsdf_component(reflection_weight, diffuseReflectionBSDF( normal, lightDir, viewDir, lightDiffuse, 0.000000 )) ) );
 
 #endif
@@ -111,7 +111,7 @@ void computeFrontLayerColor( in vec3 normal, in vec3 lightDir, in vec3 viewDir, 
 
 void computeFrontAreaColor( in int lightIdx, in vec4 lightDiffuse, in vec4 lightSpecular )
 {
-#if QDEMON_ENABLE_CG_LIGHTING
+#if QSSG_ENABLE_CG_LIGHTING
   layers[0].base += tmpShadowTerm * normalizedMix( bsdf_component[2]( bsdf_component(transmission_weight, lightDiffuse * sampleAreaDiffuseTransmissive( layers[0].tanFrame, varWorldPos, lightIdx, vec4( ftmp0, 1.0), uTranslucentFalloff, uDiffuseLightWrap )) ,bsdf_component(reflection_weight, lightDiffuse * sampleAreaDiffuse( layers[0].tanFrame, varWorldPos, lightIdx )) ) );
 
 #endif
@@ -119,7 +119,7 @@ void computeFrontAreaColor( in int lightIdx, in vec4 lightDiffuse, in vec4 light
 
 void computeFrontLayerEnvironment( in vec3 normal, in vec3 viewDir, float aoFactor )
 {
-#if !QDEMON_ENABLE_LIGHT_PROBE
+#if !QSSG_ENABLE_LIGHT_PROBE
   layers[0].base += tmpShadowTerm * diffuseReflectionBSDFEnvironment( normal, 0.000000 ) * aoFactor;
 
 #else
@@ -130,7 +130,7 @@ void computeFrontLayerEnvironment( in vec3 normal, in vec3 viewDir, float aoFact
 
 void computeFrontLayerRnmColor( in vec3 normal, in vec3 rnmX, in vec3 rnmY, in vec3 rnmZ )
 {
-#if QDEMON_ENABLE_RNM
+#if QSSG_ENABLE_RNM
   layers[0].base += tmpShadowTerm * diffuseRNM( normal, rnmX, rnmY, rnmZ );
 
 #endif
@@ -143,7 +143,7 @@ vec3 computeBackMaterialEmissive()
 
 void computeBackLayerColor( in vec3 normal, in vec3 lightDir, in vec3 viewDir, in vec3 lightDiffuse, in vec3 lightSpecular, in float materialIOR, float aoFactor )
 {
-#if QDEMON_ENABLE_CG_LIGHTING
+#if QSSG_ENABLE_CG_LIGHTING
   layers[0].base += vec4( 0.0, 0.0, 0.0, 1.0 );
   layers[0].layer += vec4( 0.0, 0.0, 0.0, 1.0 );
 #endif
@@ -151,7 +151,7 @@ void computeBackLayerColor( in vec3 normal, in vec3 lightDir, in vec3 viewDir, i
 
 void computeBackAreaColor( in int lightIdx, in vec4 lightDiffuse, in vec4 lightSpecular )
 {
-#if QDEMON_ENABLE_CG_LIGHTING
+#if QSSG_ENABLE_CG_LIGHTING
   layers[0].base += vec4( 0.0, 0.0, 0.0, 1.0 );
   layers[0].layer += vec4( 0.0, 0.0, 0.0, 1.0 );
 #endif
@@ -159,7 +159,7 @@ void computeBackAreaColor( in int lightIdx, in vec4 lightDiffuse, in vec4 lightS
 
 void computeBackLayerEnvironment( in vec3 normal, in vec3 viewDir, float aoFactor )
 {
-#if !QDEMON_ENABLE_LIGHT_PROBE
+#if !QSSG_ENABLE_LIGHT_PROBE
   layers[0].base += vec4( 0.0, 0.0, 0.0, 1.0 );
   layers[0].layer += vec4( 0.0, 0.0, 0.0, 1.0 );
 #else
@@ -170,7 +170,7 @@ void computeBackLayerEnvironment( in vec3 normal, in vec3 viewDir, float aoFacto
 
 void computeBackLayerRnmColor( in vec3 normal, in vec3 rnmX, in vec3 rnmY, in vec3 rnmZ )
 {
-#if QDEMON_ENABLE_RNM
+#if QSSG_ENABLE_RNM
   layers[0].base += vec4( 0.0, 0.0, 0.0, 1.0 );
   layers[0].layer += vec4( 0.0, 0.0, 0.0, 1.0 );
 #endif

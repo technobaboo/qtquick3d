@@ -27,217 +27,156 @@
 **
 ****************************************************************************/
 
-#ifndef QDEMONOBJECT_P_H
-#define QDEMONOBJECT_P_H
+#ifndef QSSGOBJECT_H
+#define QSSGOBJECT_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtQuick3D/qtquick3dglobal.h>
 
-#include "qquick3dobject.h"
+#include <QtQml/qqml.h>
+#include <QtQml/qqmlcomponent.h>
 
-#include "qtquick3dglobal_p.h"
+#include <QtCore/QObject>
 
-#include "qquick3dobjectchangelistener_p.h"
-
-#include <private/qobject_p.h>
-#include <private/qquickstate_p.h>
-#include <private/qqmlnotifier_p.h>
-#include <private/qlazilyallocated_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendergraphobject_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextInterface;
-class QDemonRenderContext;
+class QQuick3DObjectPrivate;
+class QQuick3DSceneManager;
 
-class Q_QUICK3D_PRIVATE_EXPORT QQuick3DObjectPrivate : public QObjectPrivate
+class Q_QUICK3D_EXPORT QQuick3DObject : public QObject, public QQmlParserStatus
 {
-    Q_DECLARE_PUBLIC(QQuick3DObject)
+    Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
+    Q_DECLARE_PRIVATE(QQuick3DObject)
+    Q_DISABLE_COPY(QQuick3DObject)
+
+    Q_PROPERTY(QQuick3DObject *parent READ parentItem WRITE setParentItem NOTIFY parentChanged DESIGNABLE false FINAL)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QObject> data READ data DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QObject> resources READ resources DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(),
+                       QQmlListProperty<QQuick3DObject> children READ children NOTIFY childrenChanged DESIGNABLE false)
+
+    Q_PROPERTY(QByteArray id READ id CONSTANT)
+    Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QQuick3DObject::Type type READ type CONSTANT)
+    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged FINAL)
+
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QQuickState> states READ states DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QQuickTransition> transitions READ transitions DESIGNABLE false)
+    Q_PROPERTY(QString state READ state WRITE setState NOTIFY stateChanged)
+    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(),
+                       QQmlListProperty<QQuick3DObject> visibleChildren READ visibleChildren NOTIFY visibleChildrenChanged DESIGNABLE false)
+
+    Q_CLASSINFO("DefaultProperty", "data")
+    Q_CLASSINFO("qt_QmlJSWrapperFactoryMethod", "_q_createJSWrapper(QV4::ExecutionEngine*)")
 public:
-    static QQuick3DObjectPrivate *get(QQuick3DObject *item) { return item->d_func(); }
-    static const QQuick3DObjectPrivate *get(const QQuick3DObject *item) { return item->d_func(); }
+    enum Type {
+        Unknown = 0,
+        SceneEnvironment,
+        Node,
+        Layer,
+        Light,
+        Camera,
+        Model,
+        DefaultMaterial,
+        Image,
+        Text,
+        Effect,
+        CustomMaterial,
+        RenderPlugin,
+        ReferencedMaterial,
+        Path,
+        PathSubPath,
+        Lightmaps,
+        LastKnownGraphObjectType,
+    };
+    Q_ENUM(Type)
 
-    QQuick3DObjectPrivate();
-    ~QQuick3DObjectPrivate() override;
-    void init(QQuick3DObject *parent);
+    enum ItemChange {
+        ItemChildAddedChange, // value.item
+        ItemChildRemovedChange, // value.item
+        ItemSceneChange, // value.window
+        ItemVisibleHasChanged, // value.boolValue
+        ItemParentHasChanged, // value.item
+        ItemOpacityHasChanged, // value.realValue
+        ItemActiveFocusHasChanged, // value.boolValue
+        ItemRotationHasChanged, // value.realValue
+        ItemAntialiasingHasChanged, // value.boolValue
+        ItemDevicePixelRatioHasChanged, // value.realValue
+        ItemEnabledHasChanged // value.boolValue
+    };
 
-    QQmlListProperty<QObject> data();
-    QQmlListProperty<QObject> resources();
-    QQmlListProperty<QQuick3DObject> children();
-    QQmlListProperty<QQuick3DObject> visibleChildren();
+    union ItemChangeData {
+        ItemChangeData(QQuick3DObject *v) : item(v) {}
+        ItemChangeData(QQuick3DSceneManager *v) : sceneRenderer(v) {}
+        ItemChangeData(qreal v) : realValue(v) {}
+        ItemChangeData(bool v) : boolValue(v) {}
 
-    QQmlListProperty<QQuickState> states();
-    QQmlListProperty<QQuickTransition> transitions();
+        QQuick3DObject *item;
+        QQuick3DSceneManager *sceneRenderer;
+        qreal realValue;
+        bool boolValue;
+    };
+
+    explicit QQuick3DObject(QQuick3DObject *parent = nullptr);
+    ~QQuick3DObject() override;
+
+    QByteArray id() const;
+    QString name() const;
+    virtual QQuick3DObject::Type type() const = 0;
 
     QString state() const;
-    void setState(const QString &);
+    void setState(const QString &state);
 
-    // data property
-    static void data_append(QQmlListProperty<QObject> *, QObject *);
-    static int data_count(QQmlListProperty<QObject> *);
-    static QObject *data_at(QQmlListProperty<QObject> *, int);
-    static void data_clear(QQmlListProperty<QObject> *);
+    QList<QQuick3DObject *> childItems() const;
 
-    // resources property
-    static QObject *resources_at(QQmlListProperty<QObject> *, int);
-    static void resources_append(QQmlListProperty<QObject> *, QObject *);
-    static int resources_count(QQmlListProperty<QObject> *);
-    static void resources_clear(QQmlListProperty<QObject> *);
+    QQuick3DSceneManager *sceneRenderer() const;
+    QQuick3DObject *parentItem() const;
 
-    // children property
-    static void children_append(QQmlListProperty<QQuick3DObject> *, QQuick3DObject *);
-    static int children_count(QQmlListProperty<QQuick3DObject> *);
-    static QQuick3DObject *children_at(QQmlListProperty<QQuick3DObject> *, int);
-    static void children_clear(QQmlListProperty<QQuick3DObject> *);
+    bool isEnabled() const;
+    bool isVisible() const;
 
-    // visibleChildren property
-    static void visibleChildren_append(QQmlListProperty<QQuick3DObject> *prop, QQuick3DObject *o);
-    static int visibleChildren_count(QQmlListProperty<QQuick3DObject> *prop);
-    static QQuick3DObject *visibleChildren_at(QQmlListProperty<QQuick3DObject> *prop, int index);
+public Q_SLOTS:
+    void setName(QString name);
+    void update();
 
-    void _q_resourceObjectDeleted(QObject *);
-    quint64 _q_createJSWrapper(QV4::ExecutionEngine *engine);
+    void setParentItem(QQuick3DObject *parentItem);
+    void setEnabled(bool enabled);
+    void setVisible(bool visible);
 
-    enum ChangeType {
-        Geometry = 0x01,
-        SiblingOrder = 0x02,
-        Visibility = 0x04,
-        Opacity = 0x08,
-        Destroyed = 0x10,
-        Parent = 0x20,
-        Children = 0x40,
-        Rotation = 0x80,
-        ImplicitWidth = 0x100,
-        ImplicitHeight = 0x200,
-        Enabled = 0x400,
-    };
+Q_SIGNALS:
+    void sceneRendererChanged(QQuick3DSceneManager *sceneRenderer);
+    void parentChanged(QQuick3DObject *parent);
+    void enabledChanged(bool enabled);
+    void childrenChanged();
+    void stateChanged(const QString &);
+    void visibleChildrenChanged();
 
-    Q_DECLARE_FLAGS(ChangeTypes, ChangeType)
+    void visibleChanged(bool visible);
 
-    struct ChangeListener
-    {
-        using ChangeTypes = QQuick3DObjectPrivate::ChangeTypes;
+protected:
+    virtual QSSGRenderGraphObject *updateSpatialNode(QSSGRenderGraphObject *node) = 0;
+    virtual void itemChange(ItemChange, const ItemChangeData &);
+    QQuick3DObject(QQuick3DObjectPrivate &dd, QQuick3DObject *parent = nullptr);
 
-        ChangeListener(QQuick3DObjectChangeListener *l = nullptr, ChangeTypes t = nullptr) : listener(l), types(t) {}
+    void classBegin() override;
+    void componentComplete() override;
 
-        ChangeListener(QQuick3DObjectChangeListener *l) : listener(l), types(Geometry) {}
+private:
+    Q_PRIVATE_SLOT(d_func(), void _q_resourceObjectDeleted(QObject *))
+    Q_PRIVATE_SLOT(d_func(), quint64 _q_createJSWrapper(QV4::ExecutionEngine *))
 
-        bool operator==(const ChangeListener &other) const
-        {
-            return listener == other.listener && types == other.types;
-        }
-
-        QQuick3DObjectChangeListener *listener;
-        ChangeTypes types;
-
-        QVector<QQuick3DObjectPrivate::ChangeListener> changeListeners;
-    };
-
-    struct ExtraData
-    {
-        ExtraData();
-
-        int hideRefCount;
-        QObjectList resourcesList;
-
-    };
-    QLazilyAllocated<ExtraData> extra;
-
-    QVector<QQuick3DObjectPrivate::ChangeListener> changeListeners;
-
-    void addItemChangeListener(QQuick3DObjectChangeListener *listener, ChangeTypes types);
-    void updateOrAddItemChangeListener(QQuick3DObjectChangeListener *listener, ChangeTypes types);
-    void removeItemChangeListener(QQuick3DObjectChangeListener *, ChangeTypes types);
-
-    QQuickStateGroup *_states();
-    QQuickStateGroup *_stateGroup;
-
-    enum DirtyType {
-        TransformOrigin = 0x00000001,
-        Transform = 0x00000002,
-        BasicTransform = 0x00000004,
-        Position = 0x00000008,
-        Size = 0x00000010,
-
-        ZValue = 0x00000020,
-        Content = 0x00000040,
-        Smooth = 0x00000080,
-        OpacityValue = 0x00000100,
-        ChildrenChanged = 0x00000200,
-        ChildrenStackingChanged = 0x00000400,
-        ParentChanged = 0x00000800,
-
-        Clip = 0x00001000,
-        Window = 0x00002000,
-
-        EffectReference = 0x00008000,
-        Visible = 0x00010000,
-        HideReference = 0x00020000,
-        Antialiasing = 0x00040000,
-        // When you add an attribute here, don't forget to update
-        // dirtyToString()
-
-        TransformUpdateMask = TransformOrigin | Transform | BasicTransform | Position | Window,
-        ComplexTransformUpdateMask = Transform | Window,
-        ContentUpdateMask = Size | Content | Smooth | Window | Antialiasing,
-        ChildrenUpdateMask = ChildrenChanged | ChildrenStackingChanged | EffectReference | Window
-    };
-
-    quint32 dirtyAttributes;
-    QString dirtyToString() const;
-    void dirty(DirtyType);
-    void addToDirtyList();
-    void removeFromDirtyList();
-    QQuick3DObject *nextDirtyItem;
-    QQuick3DObject **prevDirtyItem;
-
-    bool isResourceNode() const;
-    bool isSpatialNode() const;
-
-    void setCulled(bool);
-
-    QQuick3DSceneManager *sceneManager;
-    int windowRefCount;
-//    QDemonRenderContextInterface *sceneGraphContext() const;
-//    QDemonRenderContext *sceneGraphRenderContext() const;
-
-    QQuick3DObject *parentItem;
-
-    QList<QQuick3DObject *> childItems;
-    mutable QList<QQuick3DObject *> *sortedChildItems;
-    QList<QQuick3DObject *> paintOrderChildItems() const;
-    void addChild(QQuick3DObject *);
-    void removeChild(QQuick3DObject *);
-    void siblingOrderChanged();
-
-    void markSortedChildrenDirty(QQuick3DObject *child);
-
-    void refSceneRenderer(QQuick3DSceneManager *);
-    void derefSceneRenderer();
-
-    QQuick3DObject *subFocusItem;
-    void updateSubFocusItem(QQuick3DObject *scope, bool focus);
-
-    void itemChange(QQuick3DObject::ItemChange, const QQuick3DObject::ItemChangeData &);
-
-    virtual void updatePolish() {}
-
-    QDemonRenderGraphObject *spatialNode = nullptr;
-
-    bool componentComplete = true;
-    bool culled;
+    QByteArray m_id;
+    QString m_name;
+    bool m_enabled;
+    bool m_visible;
+    friend QQuick3DSceneManager;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QQuick3DObjectPrivate::ChangeTypes)
-Q_DECLARE_TYPEINFO(QQuick3DObjectPrivate::ChangeListener, Q_PRIMITIVE_TYPE);
 
 QT_END_NAMESPACE
 
-#endif // QDEMONOBJECT_P_H
+QML_DECLARE_TYPE(QQuick3DObject)
+
+#endif // QSSGOBJECT_H

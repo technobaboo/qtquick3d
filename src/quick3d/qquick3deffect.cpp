@@ -27,9 +27,9 @@
 **
 ****************************************************************************/
 
-#include "qquick3deffect.h"
+#include "qquick3deffect_p.h"
 
-#include <QtDemonRuntimeRender/qdemonrendereffect.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendereffect_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -63,7 +63,7 @@ void QQuick3DEffect::setSource(QString source)
     emit sourceChanged(m_source);
 }
 
-QDemonRenderGraphObject *QQuick3DEffect::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DEffect::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     // TODO: Add Effect Node and update properties
 

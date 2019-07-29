@@ -1,8 +1,8 @@
 #define MAX_AREA_LIGHTS 16
 
 // note this struct must exactly match the memory layout of the
-// struct QQDEMONLightSourceShader in the source code. If you make changes here you need
-// to adjust the struct QQDEMONLightSourceShader as well
+// struct QQSSGLightSourceShader in the source code. If you make changes here you need
+// to adjust the struct QQSSGLightSourceShader as well
 struct AreaLight
 {
     vec4  position;

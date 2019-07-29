@@ -29,7 +29,7 @@
 
 #include "keyframegroupgenerator.h"
 
-#include <private/qdemonqmlutilities_p.h>
+#include <private/QSSGqmlutilities_p.h>
 
 #include "propertymap.h"
 
@@ -160,22 +160,22 @@ KeyframeGroupGenerator::KeyframeGroup::~KeyframeGroup()
 
 void KeyframeGroupGenerator::KeyframeGroup::generateKeyframeGroupQml(QTextStream &output, int tabLevel) const
 {
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("KeyframeGroup {") << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("target: ") << target->qmlId() << endl;
-    output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("property: ") << QStringLiteral("\"") << property << QStringLiteral("\"") <<  endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("KeyframeGroup {") << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("target: ") << target->qmlId() << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("property: ") << QStringLiteral("\"") << property << QStringLiteral("\"") <<  endl;
 
     for (auto keyframe : keyframes) {
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("Keyframe {") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("Keyframe {") << endl;
 
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("frame: ") << keyframe->time << endl;
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("value: ") << keyframe->valueToString() << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("frame: ") << keyframe->time << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("value: ") << keyframe->valueToString() << endl;
 
         // ### Only linear supported at the moment, add support for EaseInOut and Bezier
 
-        output << QDemonQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("}") << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("}") << endl;
     }
 
-    output << QDemonQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl << endl;
+    output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}") << endl << endl;
 }
 
 KeyframeGroupGenerator::KeyframeGroup::KeyFrame::ValueType KeyframeGroupGenerator::KeyframeGroup::getPropertyValueType(const QString &propertyName) {

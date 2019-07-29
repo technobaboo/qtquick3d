@@ -54,15 +54,15 @@
 #include <QtGui/QWindow>
 #include <QtCore/QElapsedTimer>
 #include <QtGui/QOpenGLContext>
-#include <QtDemon/qtdemonglobal.h>
-#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtQuick3DUtils/private/qtquick3dutilsglobal_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendercontextcore_p.h>
 
 QT_BEGIN_NAMESPACE
-class QDemonRenderContext;
-class QDemonRenderLayer;
-struct QDemonRenderPresentation;
-struct QDemonRenderScene;
-struct QDemonRenderModel;
+class QSSGRenderContext;
+class QSSGRenderLayer;
+struct QSSGRenderPresentation;
+struct QSSGRenderScene;
+struct QSSGRenderModel;
 QT_END_NAMESPACE
 
 class RenderWindow : public QWindow
@@ -94,10 +94,10 @@ private:
     bool m_autoUpdate = true;
     bool m_isIntialized = false;
     QOpenGLContext *m_glContext;
-    QDemonRenderLayer *m_layer;
-    QDemonRenderContextInterface::QDemonRenderContextInterfacePtr m_context;
-    QDemonRef<QDemonRenderContext> m_renderContext;
-    QDemonRenderModel *m_cube;
+    QSSGRenderLayer *m_layer;
+    QSSGRenderContextInterface::QSSGRenderContextInterfacePtr m_context;
+    QSSGRef<QSSGRenderContext> m_renderContext;
+    QSSGRenderModel *m_cube;
 
 };
 

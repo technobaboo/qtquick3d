@@ -1,29 +1,29 @@
 HEADERS += \
-    $$PWD/qdemonrendercamera.h \
-    $$PWD/qdemonrendercustommaterial.h \
-    $$PWD/qdemonrenderdefaultmaterial.h \
-    $$PWD/qdemonrendereffect.h \
-    $$PWD/qdemonrendergraphobject.h \
-    $$PWD/qdemonrenderimage.h \
-    $$PWD/qdemonrenderlayer.h \
-    $$PWD/qdemonrenderlight.h \
-    $$PWD/qdemonrenderlightmaps.h \
-    $$PWD/qdemonrendermaterialdirty.h \
-    $$PWD/qdemonrendermodel.h \
-    $$PWD/qdemonrendernode.h \
-    $$PWD/qdemonrenderpath.h \
-    $$PWD/qdemonrenderreferencedmaterial.h \
-    $$PWD/qdemonrendersubpath.h
+    $$PWD/qssgrendercamera_p.h \
+    $$PWD/qssgrendercustommaterial_p.h \
+    $$PWD/qssgrenderdefaultmaterial_p.h \
+    $$PWD/qssgrendereffect_p.h \
+    $$PWD/qssgrendergraphobject_p.h \
+    $$PWD/qssgrenderimage_p.h \
+    $$PWD/qssgrenderlayer_p.h \
+    $$PWD/qssgrenderlight_p.h \
+    $$PWD/qssgrenderlightmaps_p.h \
+    $$PWD/qssgrendermaterialdirty_p.h \
+    $$PWD/qssgrendermodel_p.h \
+    $$PWD/qssgrendernode_p.h \
+    $$PWD/qssgrenderpath_p.h \
+    $$PWD/qssgrenderreferencedmaterial_p.h \
+    $$PWD/qssgrendersubpath_p.h
 
 SOURCES += \
-    $$PWD/qdemonrendercamera.cpp \
-    $$PWD/qdemonrenderdefaultmaterial.cpp \
-    $$PWD/qdemonrendereffect.cpp \
-    $$PWD/qdemonrenderimage.cpp \
-    $$PWD/qdemonrenderlayer.cpp \
-    $$PWD/qdemonrenderlight.cpp \
-    $$PWD/qdemonrenderlightmaps.cpp \
-    $$PWD/qdemonrendermodel.cpp \
-    $$PWD/qdemonrendernode.cpp \
-    $$PWD/qdemonrenderpath.cpp \
-    $$PWD/qdemonrendergraphobject.cpp
+    $$PWD/qssgrendercamera.cpp \
+    $$PWD/qssgrenderdefaultmaterial.cpp \
+    $$PWD/qssgrendereffect.cpp \
+    $$PWD/qssgrenderimage.cpp \
+    $$PWD/qssgrenderlayer.cpp \
+    $$PWD/qssgrenderlight.cpp \
+    $$PWD/qssgrenderlightmaps.cpp \
+    $$PWD/qssgrendermodel.cpp \
+    $$PWD/qssgrendernode.cpp \
+    $$PWD/qssgrenderpath.cpp \
+    $$PWD/qssgrendergraphobject.cpp

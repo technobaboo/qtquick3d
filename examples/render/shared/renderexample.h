@@ -52,23 +52,23 @@
 #ifndef RENDER_EXAMPLE_H
 #define RENDER_EXAMPLE_H
 
-#include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtQuick3DRender/private/qssgrenderbasetypes_p.h>
+#include <QtQuick3DRender/private/qssgrendercontext_p.h>
 
 #include <QtGui/QWindow>
 #include <QtCore/QElapsedTimer>
 #include <QtGui/QOpenGLContext>
 
 QT_BEGIN_NAMESPACE
-class QDemonRenderContext;
+class QSSGRenderContext;
 QT_END_NAMESPACE
 
-class QDemonRenderExample : public QWindow
+class QSSGRenderExample : public QWindow
 {
     Q_OBJECT
 public:
-    explicit QDemonRenderExample(QWindow *parent = nullptr);
-    ~QDemonRenderExample() override;
+    explicit QSSGRenderExample(QWindow *parent = nullptr);
+    ~QSSGRenderExample() override;
     virtual void initialize() = 0;
     virtual void drawFrame(qint64 delta) = 0;
 

@@ -27,14 +27,14 @@
 **
 ****************************************************************************/
 
-#include "qquick3dmodel.h"
-#include "qquick3dobject_p.h"
+#include "qquick3dmodel_p.h"
+#include "qquick3dobject_p_p.h"
 
-#include <QtDemonRuntimeRender/QDemonRenderGraphObject>
-#include <QtDemonRuntimeRender/QDemonRenderCustomMaterial>
-#include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>
-#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
-#include <QtDemonRuntimeRender/qdemonrendermodel.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendergraphobject_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendercustommaterial_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderreferencedmaterial_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrenderdefaultmaterial_p.h>
+#include <QtQuick3DRuntimeRender/private/qssgrendermodel_p.h>
 
 #include <QtQml/QQmlFile>
 
@@ -65,7 +65,7 @@ int QQuick3DModel::skeletonRoot() const
     return m_skeletonRoot;
 }
 
-QQuick3DModel::QDemonTessModeValues QQuick3DModel::tesselationMode() const
+QQuick3DModel::QSSGTessModeValues QQuick3DModel::tesselationMode() const
 {
     return m_tesselationMode;
 }
@@ -115,7 +115,7 @@ void QQuick3DModel::setSkeletonRoot(int skeletonRoot)
     markDirty(SkeletonRootDirty);
 }
 
-void QQuick3DModel::setTesselationMode(QQuick3DModel::QDemonTessModeValues tesselationMode)
+void QQuick3DModel::setTesselationMode(QQuick3DModel::QSSGTessModeValues tesselationMode)
 {
     if (m_tesselationMode == tesselationMode)
         return;
@@ -155,22 +155,22 @@ void QQuick3DModel::setIsWireframeMode(bool isWireframeMode)
     markDirty(WireframeDirty);
 }
 
-static QDemonRenderGraphObject *getMaterialNodeFromQDemonMaterial(QQuick3DMaterial *material)
+static QSSGRenderGraphObject *getMaterialNodeFromQSSGMaterial(QQuick3DMaterial *material)
 {
     QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(material);
     return p->spatialNode;
 }
 
-QDemonRenderGraphObject *QQuick3DModel::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DModel::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     if (!node)
-        node = new QDemonRenderModel();
+        node = new QSSGRenderModel();
 
     QQuick3DNode::updateSpatialNode(node);
 
-    auto modelNode = static_cast<QDemonRenderModel *>(node);
+    auto modelNode = static_cast<QSSGRenderModel *>(node);
     if (m_dirtyAttributes & SourceDirty)
-        modelNode->meshPath = QDemonRenderMeshPath::create(translateSource());
+        modelNode->meshPath = QSSGRenderMeshPath::create(translateSource());
     if (m_dirtyAttributes & SkeletonRootDirty)
         modelNode->skeletonRoot = m_skeletonRoot;
     if (m_dirtyAttributes & TesselationModeDirty)
@@ -188,7 +188,7 @@ QDemonRenderGraphObject *QQuick3DModel::updateSpatialNode(QDemonRenderGraphObjec
             if (modelNode->materials.isEmpty()) {
                 // Easy mode, just add each material
                 for (auto material : m_materials) {
-                    QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(material);
+                    QSSGRenderGraphObject *graphObject = getMaterialNodeFromQSSGMaterial(material);
                     if (graphObject)
                         modelNode->materials.append(graphObject);
                 }
@@ -197,7 +197,7 @@ QDemonRenderGraphObject *QQuick3DModel::updateSpatialNode(QDemonRenderGraphObjec
                 if (modelNode->materials.size() != m_materials.size())
                     modelNode->materials.resize(m_materials.size());
                 for (int i = 0; i < m_materials.size(); ++i) {
-                    QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(m_materials[i]);
+                    QSSGRenderGraphObject *graphObject = getMaterialNodeFromQSSGMaterial(m_materials[i]);
                     if (modelNode->materials[i] != graphObject)
                         modelNode->materials[i] = graphObject;
                 }
@@ -233,7 +233,7 @@ QString QQuick3DModel::translateSource()
     return QQmlFile::urlToLocalFileOrQrc(m_source) + fragment;
 }
 
-void QQuick3DModel::markDirty(QQuick3DModel::QDemonModelDirtyType type)
+void QQuick3DModel::markDirty(QQuick3DModel::QSSGModelDirtyType type)
 {
     if (!(m_dirtyAttributes & quint32(type))) {
         m_dirtyAttributes |= quint32(type);

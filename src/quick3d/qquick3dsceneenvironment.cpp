@@ -27,9 +27,9 @@
 **
 ****************************************************************************/
 
-#include "qquick3dsceneenvironment.h"
-#include "qquick3dobject_p.h"
-#include "qquick3dtexture.h"
+#include "qquick3dsceneenvironment_p.h"
+#include "qquick3dobject_p_p.h"
+#include "qquick3dtexture_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -493,7 +493,7 @@ void QQuick3DSceneEnvironment::setIsDepthPrePassDisabled(bool isDepthPrePassDisa
     update();
 }
 
-QDemonRenderGraphObject *QQuick3DSceneEnvironment::updateSpatialNode(QDemonRenderGraphObject *node)
+QSSGRenderGraphObject *QQuick3DSceneEnvironment::updateSpatialNode(QSSGRenderGraphObject *node)
 {
     // Don't do anything, these properties get set by the scene renderer
     return node;

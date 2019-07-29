@@ -31,7 +31,7 @@
 #ifndef TEXTURE_COORDINATE_INFO_GLSLLIB
 #define TEXTURE_COORDINATE_INFO_GLSLLIB
 
-#ifdef QDEMON_DEFINE_API
+#ifdef QSSG_DEFINE_API
 
 struct texture_coordinate_info
 {
