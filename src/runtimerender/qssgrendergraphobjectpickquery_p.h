@@ -31,6 +31,17 @@
 #ifndef QSSG_RENDER_GRAPH_OBJECT_PICK_QUERY_H
 #define QSSG_RENDER_GRAPH_OBJECT_PICK_QUERY_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QtGui/QVector2D>
 #include <QtGui/QMatrix4x4>
 

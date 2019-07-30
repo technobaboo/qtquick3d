@@ -31,6 +31,17 @@
 #ifndef QSSG_RENDERER_IMPL_SHADERS_H
 #define QSSG_RENDERER_IMPL_SHADERS_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QtQuick3DRender/private/qssgrendershaderprogram_p.h>
 #include <QtQuick3DRender/private/qssgrenderprogrampipeline_p.h>
 #include <QtQuick3DRuntimeRender/private/qssgrenderableobjects_p.h>

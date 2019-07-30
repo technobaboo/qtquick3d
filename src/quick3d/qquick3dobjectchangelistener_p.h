@@ -41,7 +41,7 @@
 // We mean it.
 //
 
-#include <QtQuick3D/QQuick3DObject>
+#include <QtQuick3D/private/qquick3dobject_p.h>
 
 QT_BEGIN_NAMESPACE
 

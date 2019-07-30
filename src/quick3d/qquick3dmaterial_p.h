@@ -30,8 +30,19 @@
 #ifndef QSSGMATERIAL_H
 #define QSSGMATERIAL_H
 
-#include <QtQuick3D/QQuick3DObject>
-#include <QtQuick3D/QQuick3DTexture>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtQuick3D/private/qquick3dobject_p.h>
+#include <QtQuick3D/private/qquick3dtexture_p.h>
 
 #include <QtCore/QVector>
 

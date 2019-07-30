@@ -31,6 +31,17 @@
 #ifndef QSSG_RENDER_BACKEND_GL3_H
 #define QSSG_RENDER_BACKEND_GL3_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 /// @file QSSGrenderbackendgl3.h
 ///       NVRender OpenGL 3 backend definition.
 

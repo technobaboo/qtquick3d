@@ -31,6 +31,17 @@
 #ifndef QSSG_RENDER_BACKEND_GL4_H
 #define QSSG_RENDER_BACKEND_GL4_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 /// @file QSSGrenderbackendgl4.h
 ///       NVRender OpenGL 4 backend definition.
 
