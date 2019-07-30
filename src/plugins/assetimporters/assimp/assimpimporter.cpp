@@ -36,7 +36,7 @@
 #include <assimp/postprocess.h>
 
 #include <QtQuick3DAssetImport/private/qssgmeshutilities_p.h>
-#include <private/QSSGqmlutilities_p.h>
+#include <QtQuick3DAssetImport/private/qssgqmlutilities_p.h>
 
 #include <QtGui/QImage>
 #include <QtGui/QImageReader>

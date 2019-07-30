@@ -33,7 +33,7 @@
 #include "uippresentation.h"
 #include "datamodelparser.h"
 #include "keyframegroupgenerator.h"
-#include <private/QSSGqmlutilities_p.h>
+#include <QtQuick3DAssetImport/private/qssgqmlutilities_p.h>
 
 #include <QBuffer>
 
