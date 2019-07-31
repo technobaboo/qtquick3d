@@ -5,8 +5,6 @@ QT = core-private gui-private quick3druntimerender-private quick-private
 
 DEFINES += QT_BUILD_QUICK3D_LIB
 
-QMAKE_DOCS = $$PWD/doc/quick3d.qdocconf
-
 SOURCES += \
     qquick3dcamera.cpp \
     qquick3dcustommaterial.cpp \

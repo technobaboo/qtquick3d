@@ -6,10 +6,6 @@ version                 = $QT_VERSION
 
 examplesinstallpath     = quick3d
 
-# Custom module header that pulls in also QtQuick3D
-moduleheader            = QtQuick3DDoc
-includepaths            = -I .
-
 qhp.projects            = QtQuick3D
 
 qhp.QtQuick3D.file                = qtquick3d.qhp
@@ -21,42 +17,33 @@ qhp.QtQuick3D.indexRoot           =
 qhp.QtQuick3D.filterAttributes    = qtquick3d $QT_VERSION qtrefdoc
 qhp.QtQuick3D.customFilters.Qt.name = QtQuick3D $QT_VERSION
 qhp.QtQuick3D.customFilters.Qt.filterAttributes = qtquick3d $QT_VERSION
-qhp.QtQuick3D.subprojects         = qmltypes classes examples
+
+qhp.QtQuick3D.subprojects = qmltypes examples
 qhp.QtQuick3D.subprojects.qmltypes.title = QML Types
 qhp.QtQuick3D.subprojects.qmltypes.indexTitle = Qt Quick 3D QML Types
 qhp.QtQuick3D.subprojects.qmltypes.selectors = qmlclass
 qhp.QtQuick3D.subprojects.qmltypes.sortPages = true
-qhp.QtQuick3D.subprojects.classes.title = Classes
-qhp.QtQuick3D.subprojects.classes.title = C++ Classes
-qhp.QtQuick3D.subprojects.classes.indexTitle = Qt Quick 3D C++ Classes
-qhp.QtQuick3D.subprojects.classes.selectors = class fake:headerfile
-qhp.QtQuick3D.subprojects.classes.sortPages = true
 qhp.QtQuick3D.subprojects.examples.title = Examples
 qhp.QtQuick3D.subprojects.examples.indexTitle = Qt Quick 3D Examples and Tutorials
 qhp.QtQuick3D.subprojects.examples.selectors = fake:example
 
-tagfile                 = ../../../doc/qtquick3d/qtquick3d.tags
+# This module has no documented C++ types, clear the module header
+moduleheader =
 
-depends += qtqml qtquick qtdoc
+depends += qtcore qtgui qtdoc qtqml qtquick
 
-headerdirs  += ..
+headerdirs  += .. \
+               ../../../quick3d/
 
 sourcedirs  += .. \
-               src  
+               src \
+               ../../../quick3d/
 
-exampledirs +=  ../../../examples/quick3d
+exampledirs +=  ../../../../examples/quick3d
 
 imagedirs   += images
 
-Cpp.ignoretokens         += Q_QUICK3D_EXPORT
-Cpp.ignoredirectives     += Q_DECLARE_LOGGING_CATEGORY
-
-#add imports directory because of dependencies
-headerdirs += ../../imports
-sourcedirs += ../../imports
-
-#add plugins directory because of dependencies
-headerdirs += ../../plugins
-sourcedirs += ../../plugins
-
 navigation.landingpage = "Qt Quick 3D"
+navigation.qmltypespage = "Qt Quick 3D QML Types"
+
+tagfile                 = qtquick3d.tags

@@ -26,24 +26,41 @@
 ****************************************************************************/
 
 /*!
-\page qtquick3d-index.html
-\title Qt Quick 3D
-\brief Provides API that lets you define 3D items using QML
-
-Qt Quick 3D provides a high-level API for creating 3D content or UIs based on
-Qt Quick. Rather than using an external engine which creates syncing issues,
-and additional layers of abstraction, we provide extensions to the existing
-Qt Quick scenegraph for spatial content, and a renderer for that extended
-scenegraph. When using the Spatial scenegraph it is also be possible to mix
-Qt Quick 2D content with 3D content.
-
-\image demonRender.png
-
-\section1 Related information
-
-\list
-\li \l{Qt Quick 3D C++ Classes}
-\li \l{Qt Quick 3D QML Types}
-\li \l{Qt Quick 3D Examples and Tutorials}
-\endlist
+    \group quick3d-examples
+    \title Qt Quick 3D Examples and Tutorials
+    \brief List of all examples and tutorials
 */
+/*!
+    \example hellocube
+    \title Qt Quick 3D - Hellocube example
+    \brief Demonstrates the use of custom material.
+    \ingroup quick3d-examples
+
+    \image hellocube.png
+*/
+/*!
+    \example simple
+    \title Qt Quick 3D - Simple example
+    \brief Demonstrates the use of custom material.
+    \ingroup quick3d-examples
+
+    \image hellocube.png
+*/
+/*!
+    \example view3d
+    \title Qt Quick 3D - View3D example
+    \brief Demonstrates the use View3D to show a scene from multiple cameras.
+    \ingroup quick3d-examples
+
+    \image hellocube.png
+*/
+/*!
+    \example wasdcamera
+    \title Qt Quick 3D - WASD Camera example
+    \brief Demonstrates the use of the WASD camera controller.
+    \ingroup quick3d-examples
+
+    \image hellocube.png
+*/
+
+
