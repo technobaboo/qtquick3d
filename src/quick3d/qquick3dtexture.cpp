@@ -42,8 +42,16 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype Texture
+    \inherits Object3D
+    \instantiates QQuick3DTexture
     \inqmlmodule QtQuick3D
-    \brief Lets you add a texture image to the material.
+    \brief Defines a texture for use in 3D scenes.
+
+    Texture defines an image and how it is mapped to meshes in a 3d scene.
+
+    Texture components can use image data either from a file using the
+    QtQuick3D::Texture::source property, or a Qt Quick item using the
+    QtQuick3D::Texture::sourceItem property.
 */
 
 QQuick3DTexture::QQuick3DTexture() {}
@@ -53,61 +61,186 @@ QQuick3DTexture::~QQuick3DTexture()
     delete m_layer;
 }
 
+/*!
+    \qmlproperty url QtQuick3D::Texture::source
+
+    This property holds the location of an image file containing the data used
+    by the texture.
+*/
 QUrl QQuick3DTexture::source() const
 {
     return m_source;
 }
 
+
+/*!
+    \qmlproperty Item QtQuick3D::Texture::sourceItem
+
+    This property defines a Item to be used as the source of the texture. Using
+    this property allows any 2D Qt Quick content to be used as a texture source
+    by renderind that item as an offscreen layer.
+
+    If this property is used, then the value of QtQuick3D::Texture::source will
+    be ignored.
+
+    \note Currently there is no way to forward input events to the Item used as
+    a texture source.
+
+    \sa QtQuick3D::Texture::source
+*/
 QQuickItem *QQuick3DTexture::sourceItem() const
 {
     return m_sourceItem;
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Texture::scaleU
+
+    This property defines how to scale the U texture coordinate when mapping to
+    a mesh's UV coordinates.
+
+    Scaling the U value when using horizontal tiling will define how many times the
+    texture is repeated from left to right.
+
+    \sa QtQuick3D::Texture::tilingModeHorizontal
+ */
 float QQuick3DTexture::scaleU() const
 {
     return m_scaleU;
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Texture::scaleV
+
+    This property defines how to scale the V texture coordinate when mapping to
+    a mesh's UV coordinates.
+
+    Scaling the V value when using vertical tiling will define how many times a
+    texture is repeated from bottom to top.
+
+    \sa QtQuick3D::Texture::tilingModeVertical
+*/
 float QQuick3DTexture::scaleV() const
 {
     return m_scaleV;
 }
 
+/*!
+    \qmlproperty enumeration QtQuick3D::Texture::mappingMode
+
+    This property defines which method of mapping to use when sampling this
+    texture.
+
+    \table
+    \header \li Mode \li Result
+    \row \li \c Texture.Normal \li The default for diffuse and opacity maps,
+    this causes the image to be stuck to the mesh. The same portion of the
+    image will always appear on the same vertex (unless the UV properties are
+    animated).
+    \row \li \c Texture.Environment \li The default for specular reflection,
+    this causes the image to be ‘projected’ onto the material as though it is
+    being reflected. Using Environmental Mapping for diffuse maps provides a
+    mirror effect.
+    \row \li \c Texture.LightProbe \li The default for HDRI sphere maps used
+    by light probes.
+    \endtable
+*/
 QQuick3DTexture::MappingMode QQuick3DTexture::mappingMode() const
 {
     return m_mappingMode;
 }
 
+/*!
+    \qmlproperty enumeration QtQuick3D::Texture::tilingModeHorizontal
+
+    Controls how the texture is mapped when the U scaling value is greater than 1.
+
+    \table
+    \header \li Mode \li Result
+    \row \li \c Texture.ClampToEdge \li Texture is not tiled, but the value on the edge is used instead
+    \row \li \c Texture.MirroredRepeat \li Texture is repeated and mirrored over the X axis
+    \row \li \c Texture.Repeat \li Texture is repeated over the X axis
+    \endtable
+
+    \sa QtQuick3D::Texture::scaleU
+*/
 QQuick3DTexture::TilingMode QQuick3DTexture::horizontalTiling() const
 {
     return m_tilingModeHorizontal;
 }
 
+/*!
+    \qmlproperty enumeration QtQuick3D::Texture::tilingModeVertical
+
+    This property controls how the texture is mapped when the V scaling value
+    is greater than 1.
+
+    \table
+    \header \li Mode \li Result
+    \row \li \c Texture.ClampToEdge \li Texture is not tiled, but the value on the edge is used instead
+    \row \li \c Texture.MirroredRepeat \li Texture is repeated and mirrored over the Y axis
+    \row \li \c Texture.Repeat \li Texture is repeated over the Y axis
+    \endtable
+
+    \sa QtQuick3D::Texture::scaleV
+*/
 QQuick3DTexture::TilingMode QQuick3DTexture::verticalTiling() const
 {
     return m_tilingModeVertical;
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Texture::rotationUV
+
+    This property rotates the texture around the pivot point.  This is defined
+    using euler angles and for a positve value rotation is clockwise.
+
+    \sa QtQuick3D::Texture::pivotU, QtQuick3D::Texture::pivotV
+*/
 float QQuick3DTexture::rotationUV() const
 {
     return m_rotationUV;
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Texture::positionU
+
+    This property offsets the U coordinate mapping from left to right.
+*/
 float QQuick3DTexture::positionU() const
 {
     return m_positionU;
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Texture::positionV
+
+    This property offsets the U coordinate mapping from bottom to top.
+*/
 float QQuick3DTexture::positionV() const
 {
     return m_positionV;
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Texture::pivotU
+
+    This property sets the pivot U position.
+
+    \sa QtQuick3D::Texture::rotationUV
+*/
 float QQuick3DTexture::pivotU() const
 {
     return m_pivotU;
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Texture::pivotV
+
+    This property sets the pivot V position.
+
+    \sa QtQuick3D::Texture::rotationUV
+*/
 float QQuick3DTexture::pivotV() const
 {
     return m_pivotV;

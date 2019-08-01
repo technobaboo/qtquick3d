@@ -49,9 +49,41 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype View3D
+    \inherits QQuickItem
+    \instantiates QQuick3DViewport
     \inqmlmodule QtQuick3D
-    \brief Provides the infrastructure to render 3D items.
+    \brief Provides a viewport on which to render a 3D scene.
 
+    View3D provides a 2D surface for 3D content to be rendered to. Before 3D
+    content can be displayed in a Qt Quick scene, it must first be flattend.
+
+    There are two ways to define a 3D scene for View3D to view.  The first
+    and easiest is to just define a higharchy of QtQuick3D::Node based items as
+    children of the View3D.  This becomes the implicit scene of the viewport.
+
+    It is also possible to reference an existing scene by using the
+    View3D::scene property to set the root of the scene you want to render.
+    This scene does not have to exist as a child of the current View3D.
+
+    There is also a combination approach where you define both a scene with
+    children nodes, as well as define a scene that is being referenced. In this
+    case you can treat the referenced scene as a sibling of the child scene.
+
+    This is demonstrated in {View3D example}
+
+    To control how a scene is rendered, it is necessary to define a
+    SceneEnvironment to the View3D::environment property.
+
+    To project a 3D scene to a 2D viewport, it is necessary to view the scene
+    from a camera. If a scene has more than one camera it is possible to set
+    which camera is used to render the scene to this viewport by setting the
+    View3D::Camera property.
+
+    It is also possible to define where the 3D scene is rendered to using
+    the View3D::renderMode property. This can be necessary for performance
+    reasons on certain platforms where it is expensive to render to
+    intermediate offscreen surfaces.  There are certain tradeoffs to rendering
+    directly to the window though, so this is not the default.
 */
 
 QQuick3DViewport::QQuick3DViewport(QQuickItem *parent)
@@ -115,16 +147,44 @@ QQmlListProperty<QObject> QQuick3DViewport::data()
                                      ssgn_clear);
 }
 
+/*!
+    \qmlproperty QtQuick3D::Camera QtQuick3D::View3D::camera
+
+    This property specifies which camera is used to render the scene. It is
+    possible for this value to be undefined, in which case the first enabled
+    camera in the scene will be used instead.
+
+    If it is desired to not render anything in the scene, then make sure all
+    cameras are disabled.
+
+    \sa QtQuick3D::Camera
+*/
 QQuick3DCamera *QQuick3DViewport::camera() const
 {
     return m_camera;
 }
 
+
+/*!
+    \qmlproperty QtQuick3D::SceneEnvironment QtQuick3D::View3D::environment
+
+    This property specifies the SceneEnvironment used to render the scene.
+
+    \sa QtQuick3D::SceneEnvironment
+*/
 QQuick3DSceneEnvironment *QQuick3DViewport::environment() const
 {
     return m_environment;
 }
 
+/*!
+    \qmlproperty QtQuick3D::Node QtQuick3D::View3D::scene
+
+    This property defines the root nood of the scene to render to the
+    viewport.
+
+    \sa QtQuick3D::Node
+*/
 QQuick3DNode *QQuick3DViewport::scene() const
 {
     return m_sceneRoot;
@@ -135,6 +195,21 @@ QQuick3DNode *QQuick3DViewport::referencedScene() const
     return m_referencedScene;
 }
 
+/*!
+    \qmlproperty enumeration QtQuick3D::View3D::renderMode
+
+    This property determines how the scene is rendered to the viewport.
+
+    \table
+    \header \li Display \li Result
+    \row \li \c View3D.Texture \li Scene is rendered to a texture. Comes with no limitations.
+    \row \li \c View3D.Underlay \li Scene is rendered directly to the window before Qt Quick is rendered.
+    \row \li \c View3D.Overlay \li Scene is rendered directly to the window after Qt Quick is rendered.
+    \row \li \c View3D.RenderNode \li Scene is rendered to the current render target using QSGRenderNode.
+    \endtable
+
+    The default mode is \c View3D.Texture as this is the offers the best compatiblity.
+*/
 QQuick3DViewport::QQuick3DViewportRenderMode QQuick3DViewport::renderMode() const
 {
     return m_renderMode;
