@@ -71,7 +71,6 @@ public:
     QQmlListProperty<QObject> data();
     QQmlListProperty<QObject> resources();
     QQmlListProperty<QQuick3DObject> children();
-    QQmlListProperty<QQuick3DObject> visibleChildren();
 
     QQmlListProperty<QQuickState> states();
     QQmlListProperty<QQuickTransition> transitions();
@@ -96,11 +95,6 @@ public:
     static int children_count(QQmlListProperty<QQuick3DObject> *);
     static QQuick3DObject *children_at(QQmlListProperty<QQuick3DObject> *, int);
     static void children_clear(QQmlListProperty<QQuick3DObject> *);
-
-    // visibleChildren property
-    static void visibleChildren_append(QQmlListProperty<QQuick3DObject> *prop, QQuick3DObject *o);
-    static int visibleChildren_count(QQmlListProperty<QQuick3DObject> *prop);
-    static QQuick3DObject *visibleChildren_at(QQmlListProperty<QQuick3DObject> *prop, int index);
 
     void _q_resourceObjectDeleted(QObject *);
     quint64 _q_createJSWrapper(QV4::ExecutionEngine *engine);

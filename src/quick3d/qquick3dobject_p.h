@@ -68,17 +68,11 @@ class Q_QUICK3D_EXPORT QQuick3DObject : public QObject, public QQmlParserStatus
     Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(),
                        QQmlListProperty<QQuick3DObject> children READ children NOTIFY childrenChanged DESIGNABLE false)
 
-    Q_PROPERTY(QByteArray id READ id CONSTANT)
-    Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(QQuick3DObject::Type type READ type CONSTANT)
-    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
-    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged FINAL)
 
     Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QQuickState> states READ states DESIGNABLE false)
     Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(), QQmlListProperty<QQuickTransition> transitions READ transitions DESIGNABLE false)
     Q_PROPERTY(QString state READ state WRITE setState NOTIFY stateChanged)
-    Q_PRIVATE_PROPERTY(QQuick3DObject::d_func(),
-                       QQmlListProperty<QQuick3DObject> visibleChildren READ visibleChildren NOTIFY visibleChildrenChanged DESIGNABLE false)
 
     Q_CLASSINFO("DefaultProperty", "data")
     Q_CLASSINFO("qt_QmlJSWrapperFactoryMethod", "_q_createJSWrapper(QV4::ExecutionEngine*)")
@@ -134,8 +128,6 @@ public:
     explicit QQuick3DObject(QQuick3DObject *parent = nullptr);
     ~QQuick3DObject() override;
 
-    QByteArray id() const;
-    QString name() const;
     virtual QQuick3DObject::Type type() const = 0;
 
     QString state() const;
@@ -146,26 +138,16 @@ public:
     QQuick3DSceneManager *sceneRenderer() const;
     QQuick3DObject *parentItem() const;
 
-    bool isEnabled() const;
-    bool isVisible() const;
-
 public Q_SLOTS:
-    void setName(QString name);
     void update();
 
     void setParentItem(QQuick3DObject *parentItem);
-    void setEnabled(bool enabled);
-    void setVisible(bool visible);
 
 Q_SIGNALS:
     void sceneRendererChanged(QQuick3DSceneManager *sceneRenderer);
     void parentChanged(QQuick3DObject *parent);
-    void enabledChanged(bool enabled);
     void childrenChanged();
     void stateChanged(const QString &);
-    void visibleChildrenChanged();
-
-    void visibleChanged(bool visible);
 
 protected:
     virtual QSSGRenderGraphObject *updateSpatialNode(QSSGRenderGraphObject *node) = 0;
@@ -179,10 +161,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_resourceObjectDeleted(QObject *))
     Q_PRIVATE_SLOT(d_func(), quint64 _q_createJSWrapper(QV4::ExecutionEngine *))
 
-    QByteArray m_id;
-    QString m_name;
-    bool m_enabled;
-    bool m_visible;
     friend QQuick3DSceneManager;
 };
 

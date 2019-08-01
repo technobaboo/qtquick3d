@@ -104,11 +104,7 @@ void QQuick3DObject::setParentItem(QQuick3DObject *parentItem)
     if (oldParentItem) {
         QQuick3DObjectPrivate *op = QQuick3DObjectPrivate::get(oldParentItem);
 
-        const bool wasVisible = isVisible();
         op->removeChild(this);
-        if (wasVisible) {
-            emit oldParentItem->visibleChildrenChanged();
-        }
     } else if (d->sceneManager) {
         d->sceneManager->parentlessItems.remove(this);
     }
@@ -135,36 +131,6 @@ void QQuick3DObject::setParentItem(QQuick3DObject *parentItem)
     d->itemChange(ItemParentHasChanged, d->parentItem);
 
     emit parentChanged(d->parentItem);
-    if (isVisible() && d->parentItem)
-        emit d->parentItem->visibleChildrenChanged();
-}
-
-void QQuick3DObject::setEnabled(bool enabled)
-{
-    if (m_enabled == enabled)
-        return;
-
-    m_enabled = enabled;
-    emit enabledChanged(m_enabled);
-}
-
-void QQuick3DObject::setVisible(bool visible)
-{
-    if (m_visible == visible)
-        return;
-
-    m_visible = visible;
-    emit visibleChanged(m_visible);
-}
-
-QByteArray QQuick3DObject::id() const
-{
-    return m_id;
-}
-
-QString QQuick3DObject::name() const
-{
-    return m_name;
 }
 
 QString QQuick3DObject::state() const
@@ -195,21 +161,6 @@ QQuick3DObject *QQuick3DObject::parentItem() const
 {
     Q_D(const QQuick3DObject);
     return d->parentItem;
-}
-
-bool QQuick3DObject::isEnabled() const
-{
-    return m_enabled;
-}
-
-bool QQuick3DObject::isVisible() const
-{
-    return m_visible;
-}
-
-void QQuick3DObject::setName(QString name)
-{
-    m_name = name;
 }
 
 void QQuick3DObject::itemChange(QQuick3DObject::ItemChange change, const QQuick3DObject::ItemChangeData &value)
@@ -300,11 +251,6 @@ QQmlListProperty<QQuick3DObject> QQuick3DObjectPrivate::children()
                                           QQuick3DObjectPrivate::children_count,
                                           QQuick3DObjectPrivate::children_at,
                                           QQuick3DObjectPrivate::children_clear);
-}
-
-QQmlListProperty<QQuick3DObject> QQuick3DObjectPrivate::visibleChildren()
-{
-    return QQmlListProperty<QQuick3DObject>(q_func(), nullptr, QQuick3DObjectPrivate::visibleChildren_count, QQuick3DObjectPrivate::visibleChildren_at);
 }
 
 QQmlListProperty<QQuickState> QQuick3DObjectPrivate::states()
@@ -472,36 +418,6 @@ void QQuick3DObjectPrivate::children_clear(QQmlListProperty<QQuick3DObject> *pro
     QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(that);
     while (!p->childItems.isEmpty())
         p->childItems.at(0)->setParentItem(nullptr);
-}
-
-int QQuick3DObjectPrivate::visibleChildren_count(QQmlListProperty<QQuick3DObject> *prop)
-{
-    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(static_cast<QQuick3DObject *>(prop->object));
-    int visibleCount = 0;
-    int c = p->childItems.count();
-    while (c--) {
-        if (p->childItems.at(c)->isVisible())
-            visibleCount++;
-    }
-
-    return visibleCount;
-}
-
-QQuick3DObject *QQuick3DObjectPrivate::visibleChildren_at(QQmlListProperty<QQuick3DObject> *prop, int index)
-{
-    QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(static_cast<QQuick3DObject *>(prop->object));
-    const int childCount = p->childItems.count();
-    if (index >= childCount || index < 0)
-        return nullptr;
-
-    int visibleCount = -1;
-    for (int i = 0; i < childCount; i++) {
-        if (p->childItems.at(i)->isVisible())
-            visibleCount++;
-        if (visibleCount == index)
-            return p->childItems.at(i);
-    }
-    return nullptr;
 }
 
 void QQuick3DObjectPrivate::_q_resourceObjectDeleted(QObject *object)
