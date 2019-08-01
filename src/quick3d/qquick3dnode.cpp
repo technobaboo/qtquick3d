@@ -39,8 +39,12 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype Node
+    \inherits Object3D
+    \instantiates QQuick3DNode
     \inqmlmodule QtQuick3D
-    \brief Lets you define a 3D item with necessary properties.
+    \brief The base component for an object that exists in a 3D Scene
+
+
 */
 
 QQuick3DNode::QQuick3DNode()
@@ -49,66 +53,161 @@ QQuick3DNode::QQuick3DNode()
 
 QQuick3DNode::~QQuick3DNode() {}
 
+/*!
+    \qmlproperty float QtQuick3D::Node::x
+
+    This property contains the x value of the position translation in
+    local coordinate space.
+
+    \sa QtQuick3D::Node::position
+*/
 float QQuick3DNode::x() const
 {
     return m_position.x();
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Node::y
+
+    This property contains the y value of the position translation in
+    local coordinate space.
+
+    \sa QtQuick3D::Node::position
+*/
 float QQuick3DNode::y() const
 {
     return m_position.y();
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Node::z
+
+    This property contains the z value of the position translation in
+    local coordinate space.
+
+    \sa QtQuick3D::Node::position
+*/
 float QQuick3DNode::z() const
 {
     return m_position.z();
 }
 
+/*!
+    \qmlproperty vector3d QtQuick3D::Node::rotation
+
+    This property contains the rotation values for the x, y, and z axis.
+    These values are stored as euler angles.
+*/
 QVector3D QQuick3DNode::rotation() const
 {
     return m_rotation;
 }
 
+/*!
+    \qmlproperty vector3d QtQuick3D::Node::position
+
+    This property contains the position translation in local coordinate space.
+
+    \sa QtQuick3D::Node::x, QtQuick3D::Node::y, QtQuick3D::Node::z
+*/
 QVector3D QQuick3DNode::position() const
 {
     return m_position;
 }
 
+
+/*!
+    \qmlproperty vector3d QtQuick3D::Node::scale
+
+    This property contains the scale values for the x, y, and z axis.
+*/
 QVector3D QQuick3DNode::scale() const
 {
     return m_scale;
 }
 
+/*!
+    \qmlproperty vector3d QtQuick3D::Node::pivot
+
+    This property contains the pivot values for the x, y, and z axis.  These
+    values are used as the pivot points when applying rotations to the node.
+
+*/
 QVector3D QQuick3DNode::pivot() const
 {
     return m_pivot;
 }
 
+/*!
+    \qmlproperty float QtQuick3D::Node::opacity
+
+    This property contains the local opacity value of the Node.  Since Node
+    objects are not necessarialy visible, this value might not have any affect,
+    but this value is inherited by all children of the Node, which might be visible.
+
+*/
 float QQuick3DNode::localOpacity() const
 {
     return m_opacity;
 }
 
+/*!
+    \qmlproperty int QtQuick3D::Node::boneId
+
+    This property contains the skeletonID used for skeletal animations
+
+    \note This property currently has no effect, since skeletal animations are
+    not implimented.
+
+*/
 qint32 QQuick3DNode::skeletonId() const
 {
     return m_boneid;
 }
 
+/*!
+    \qmlproperty enumeration QtQuick3D::Node::rotationOrder
+
+    This property defines in what order the Node::rotation properties components
+    are applied in.
+
+*/
 QQuick3DNode::RotationOrder QQuick3DNode::rotationOrder() const
 {
     return m_rotationorder;
 }
 
+/*!
+    \qmlproperty enumeration QtQuick3D::Node::orientation
+
+    This property defines whether the Node is using a RightHanded or Lefthanded
+    coordinate system.
+
+
+*/
 QQuick3DNode::Orientation QQuick3DNode::orientation() const
 {
     return m_orientation;
 }
 
+/*!
+    \qmlproperty bool QtQuick3D::Node::visible
+
+    When this property is true, the Node (and its children) can be visible.
+
+*/
 bool QQuick3DNode::visible() const
 {
     return m_visible;
 }
 
+/*!
+    \qmlproperty vector3d QtQuick3D::Node::forward
+
+    This property returns a normalized vector of its forward direction.
+
+
+*/
 QVector3D QQuick3DNode::forward() const
 {
     QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
@@ -118,6 +217,12 @@ QVector3D QQuick3DNode::forward() const
     return mat33::transform(theDirMatrix, frontVector).normalized();
 }
 
+/*!
+    \qmlproperty vector3d QtQuick3D::Node::up
+
+    This property returns a normalized vector of its up direction.
+
+*/
 QVector3D QQuick3DNode::up() const
 {
     QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
@@ -127,6 +232,12 @@ QVector3D QQuick3DNode::up() const
     return mat33::transform(theDirMatrix, upVector).normalized();
 }
 
+/*!
+    \qmlproperty vector3d QtQuick3D::Node::right
+
+    This property returns a normalized vector of its up direction.
+
+*/
 QVector3D QQuick3DNode::right() const
 {
     QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
@@ -135,12 +246,23 @@ QVector3D QQuick3DNode::right() const
     const QVector3D rightVector(1, 0, 0);
     return mat33::transform(theDirMatrix, rightVector).normalized();
 }
+/*!
+    \qmlproperty vector3d QtQuick3D::Node::globalPosition
 
+    This property returns the position of the node in global coordinate space.
+
+
+*/
 QVector3D QQuick3DNode::globalPosition() const
 {
     return QVector3D(m_globalTransform(0, 3), m_globalTransform(1, 3), m_globalTransform(2, 3));
 }
 
+/*!
+    \qmlproperty matrix4x4 QtQuick3D::Node::globalTransform
+
+    This property returns the global transform matrix for this node.
+*/
 QMatrix4x4 QQuick3DNode::globalTransform() const
 {
     return m_globalTransform;
