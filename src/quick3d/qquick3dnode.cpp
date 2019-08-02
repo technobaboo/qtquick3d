@@ -42,7 +42,7 @@ QT_BEGIN_NAMESPACE
     \inherits Object3D
     \instantiates QQuick3DNode
     \inqmlmodule QtQuick3D
-    \brief The base component for an object that exists in a 3D Scene
+    \brief The base component for an object that exists in a 3D Scene.
 
 
 */

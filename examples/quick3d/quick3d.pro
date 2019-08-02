@@ -3,4 +3,5 @@ SUBDIRS += \
     hellocube \
     simple \
     view3d \
-    wasdcamera
+    wasdcamera \
+    picking

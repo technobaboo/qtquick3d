@@ -19,7 +19,8 @@ SOURCES += \
     qquick3dscenemanager.cpp \
     qquick3dscenerenderer.cpp \
     qquick3dtexture.cpp \
-    qquick3dviewport.cpp
+    qquick3dviewport.cpp \
+    qquick3dpickresult.cpp
 
 HEADERS += \
     qquick3dobjectchangelistener_p.h \
@@ -40,6 +41,7 @@ HEADERS += \
     qquick3dsceneenvironment_p.h \
     qquick3dscenerenderer_p.h \
     qquick3dtexture_p.h \
-    qquick3dviewport_p.h
+    qquick3dviewport_p.h \
+    qquick3dpickresult_p.h
 
 load(qt_module)

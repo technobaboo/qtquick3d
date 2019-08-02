@@ -34,6 +34,8 @@
 #include "qquick3dscenemanager_p.h"
 #include "qquick3dtexture_p.h"
 #include "qquick3dcamera_p.h"
+#include "qquick3dpickresult_p.h"
+#include "qquick3dmodel_p.h"
 
 #include <private/qopenglvertexarrayobject_p.h>
 
@@ -299,6 +301,20 @@ void QQuick3DSceneRenderer::invalidateFramebufferObject()
 {
     if (data)
         static_cast<SGFramebufferObjectNode *>(data)->invalidatePending = true;
+}
+
+QQuick3DPickResult QQuick3DSceneRenderer::pick(const QPointF &pos)
+{
+    auto pickResults = m_sgContext->renderer()->pick(*m_layer,
+                                                     QVector2D(m_surfaceSize.width(), m_surfaceSize.height()),
+                                                     QVector2D(pos.x(), pos.y()));
+    if (pickResults.m_hitObject) {
+        QQuick3DModel *model = qobject_cast<QQuick3DModel*>(m_sceneManager->lookUpNode(const_cast<QSSGRenderGraphObject*>(pickResults.m_hitObject)));
+        if (model)
+            return QQuick3DPickResult(model, ::sqrtf(pickResults.m_cameraDistanceSq), pickResults.m_localUVCoords);
+    }
+
+    return QQuick3DPickResult();
 }
 
 void QQuick3DSceneRenderer::updateLayerNode(QQuick3DViewport *view3D)

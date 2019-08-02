@@ -45,6 +45,7 @@
 #include <QtQuick/QQuickItem>
 
 #include <QtQuick3D/qtquick3dglobal.h>
+#include <QtQuick3D/private/qquick3dpickresult_p.h>
 
 #include <QtQuick3DRender/private/qssgrenderframebuffer_p.h>
 
@@ -99,6 +100,8 @@ public:
 
     Q_INVOKABLE QVector3D worldToView(const QVector3D &worldPos) const;
     Q_INVOKABLE QVector3D viewToWorld(const QVector3D &viewPos) const;
+
+    Q_INVOKABLE QQuick3DPickResult pick(float x, float y) const;
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;

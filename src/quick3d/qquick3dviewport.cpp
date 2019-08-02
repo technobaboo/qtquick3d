@@ -560,6 +560,27 @@ QVector3D QQuick3DViewport::viewToWorld(const QVector3D &viewPos) const
     return m_camera->viewportToWorld(normalizedPos);
 }
 
+QQuick3DPickResult QQuick3DViewport::pick(float x, float y) const
+{
+    const QPointF position(x * window()->effectiveDevicePixelRatio(), y * window()->effectiveDevicePixelRatio());
+    // Some non-thread safe stuff to do input
+    // First need to get a handle to the renderer
+
+    QQuick3DSceneRenderer *renderer = nullptr;
+    if (m_node) {
+        renderer = m_node->renderer;
+    } else if (m_renderNode) {
+        renderer = m_renderNode->renderer;
+    } else if (m_directRenderer) {
+        renderer = m_directRenderer->renderer();
+    }
+
+    if (renderer) {
+        return renderer->pick(position);
+    }
+    return QQuick3DPickResult();
+}
+
 void QQuick3DViewport::invalidateSceneGraph()
 {
     m_node = nullptr;

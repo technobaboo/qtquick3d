@@ -139,6 +139,8 @@ void QQuick3DSceneManager::updateDirtyResource(QQuick3DObject *resourceObject)
     Q_UNUSED(dirty)
     itemPriv->dirtyAttributes = 0;
     itemPriv->spatialNode = resourceObject->updateSpatialNode(itemPriv->spatialNode);
+    if (itemPriv->spatialNode)
+        m_nodeMap.insert(itemPriv->spatialNode, resourceObject);
 
     // resource nodes dont go in the tree, so we dont need to parent them
 }
@@ -150,6 +152,8 @@ void QQuick3DSceneManager::updateDirtySpatialNode(QQuick3DNode *spatialNode)
     Q_UNUSED(dirty)
     itemPriv->dirtyAttributes = 0;
     itemPriv->spatialNode = spatialNode->updateSpatialNode(itemPriv->spatialNode);
+    if (itemPriv->spatialNode)
+        m_nodeMap.insert(itemPriv->spatialNode, spatialNode);
 
     QSSGRenderNode *graphNode = static_cast<QSSGRenderNode *>(itemPriv->spatialNode);
 
@@ -165,11 +169,18 @@ void QQuick3DSceneManager::updateDirtySpatialNode(QQuick3DNode *spatialNode)
                 if (!sceneRoot->spatialNode) {
                     // must have a sceen root spatial node first
                     sceneRoot->spatialNode = viewParent->scene()->updateSpatialNode(sceneRoot->spatialNode);
+                    if (sceneRoot->spatialNode)
+                        m_nodeMap.insert(sceneRoot->spatialNode, viewParent->scene());
                 }
                 static_cast<QSSGRenderNode *>(sceneRoot->spatialNode)->addChild(*graphNode);
             }
         }
     }
+}
+
+QQuick3DObject *QQuick3DSceneManager::lookUpNode(QSSGRenderGraphObject *node) const
+{
+    return m_nodeMap[node];
 }
 
 void QQuick3DSceneManager::cleanupNodes()
@@ -204,6 +215,7 @@ void QQuick3DSceneManager::cleanupNodes()
             break;
         }
 
+        m_nodeMap.remove(node);
         delete node;
     }
     cleanupNodeList.clear();

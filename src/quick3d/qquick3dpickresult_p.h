@@ -27,8 +27,8 @@
 **
 ****************************************************************************/
 
-#ifndef QSSGSCENEMANAGER_P_H
-#define QSSGSCENEMANAGER_P_H
+#ifndef QQUICK3DPICKRESULT_P_H
+#define QQUICK3DPICKRESULT_P_H
 
 //
 //  W A R N I N G
@@ -41,56 +41,43 @@
 // We mean it.
 //
 
-#include <QtCore/QObject>
-#include <QtCore/QSet>
+#include <QtQuick3D/private/qquick3dobject_p.h>
 
-#include <QtQuick3D/private/qtquick3dglobal_p.h>
-
-#include "qquick3dobject_p.h"
-#include "qquick3dnode_p.h"
+#include <QObject>
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
+class QQuick3DModel;
 
-class QSGDynamicTexture;
-
-class Q_QUICK3D_PRIVATE_EXPORT QQuick3DSceneManager : public QObject
+class Q_QUICK3D_EXPORT QQuick3DPickResult
 {
-    Q_OBJECT
+    Q_GADGET
+    Q_PROPERTY(QQuick3DModel* objectHit READ objectHit CONSTANT)
+    Q_PROPERTY(float distance READ distance CONSTANT)
+    Q_PROPERTY(QVector2D position READ position CONSTANT)
+
 public:
-    explicit QQuick3DSceneManager(QObject *parent = nullptr);
 
-    void dirtyItem(QQuick3DObject *item);
-    void cleanup(QSSGRenderGraphObject *item);
+    QQuick3DPickResult();
+    explicit QQuick3DPickResult(QQuick3DModel *hitObject,
+                                float distanceFromCamera,
+                                const QVector2D &uvPosition);
+    QQuick3DPickResult (const QQuick3DPickResult &obj);
 
-    void polishItems();
-    void forcePolish();
-    void sync();
+    ~QQuick3DPickResult();
 
-    void updateDirtyNodes();
-    void updateDirtyNode(QQuick3DObject *object);
-    void updateDirtyResource(QQuick3DObject *resourceObject);
-    void updateDirtySpatialNode(QQuick3DNode *spatialNode);
+    QQuick3DModel *objectHit() const;
+    float distance() const;
+    QVector2D position() const;
 
-    QQuick3DObject *lookUpNode(QSSGRenderGraphObject *node) const;
-
-    void cleanupNodes();
-
-    QQuick3DObject *dirtySpatialNodeList;
-    QQuick3DObject *dirtyResourceList;
-    QQuick3DObject *dirtyImageList;
-    QList<QQuick3DObject *> dirtyLightList;
-    QList<QSSGRenderGraphObject *> cleanupNodeList;
-    QSet<QQuick3DObject *> parentlessItems;
-    QVector<QSGDynamicTexture *> qsgDynamicTextures;
-    QHash<QSSGRenderGraphObject *, QQuick3DObject *> m_nodeMap;
-    friend QQuick3DObject;
-
-Q_SIGNALS:
-    void needsUpdate();
+private:
+    QQuick3DModel *m_objectHit;
+    float m_distance;
+    QVector2D m_position;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QQuick3DSceneManager)
+Q_DECLARE_METATYPE(QQuick3DPickResult)
 
-#endif // QSSGSCENEMANAGER_P_H
+#endif // QQUICK3DPICKRESULT_P_H
