@@ -1674,7 +1674,7 @@ void LayerNode::writeQmlProperties(QTextStream &output, int tabLevel)
         writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("multisampleaa"), multisampleAAToString(m_multisampleAA));
         writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("background"), layerBackgroundToString(m_layerBackground));
         writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("backgroundcolor"), m_backgroundColor);
-        writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("blendtype"), blendTypeToString(m_blendType));
+        //writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("blendtype"), blendTypeToString(m_blendType));
 
         writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aostrength"), m_aoStrength);
         writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("aodistance"), m_aoDistance);
@@ -1727,9 +1727,9 @@ void LayerNode::writeQmlProperties(const PropertyChangeList &changeList, QTextSt
             writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("environment.background"), layerBackgroundToString(m_layerBackground));
         } else if (targetProperty == QStringLiteral("backgroundcolor")) {
             writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("environment.backgroundcolor"), m_backgroundColor);
-        } else if (targetProperty == QStringLiteral("blendtype")) {
+        } /*else if (targetProperty == QStringLiteral("blendtype")) {
             writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("environment.blendtype"), blendTypeToString(m_blendType));
-        } else if (targetProperty == QStringLiteral("aostrength")) {
+        }*/ else if (targetProperty == QStringLiteral("aostrength")) {
             writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("environment.aostrength"), m_aoStrength);
         } else if (targetProperty == QStringLiteral("aodistance")) {
             writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("environment.aodistance"), m_aoDistance);

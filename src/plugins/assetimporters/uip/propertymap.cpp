@@ -127,8 +127,9 @@ PropertyMap::PropertyMap()
     layer->insert(QStringLiteral("environment.background"), Property(QStringLiteral("environment.backgroundMode"), Q3DS::Enum, QStringLiteral("SceneEnvironment.Transparent")));
     layer->insert(QStringLiteral("backgroundcolor"), Property(QStringLiteral("clearColor"), Q3DS::Color, QColor(Qt::black)));
     layer->insert(QStringLiteral("environment.backgroundcolor"), Property(QStringLiteral("environment.clearColor"), Q3DS::Color, QColor(Qt::black)));
-    layer->insert(QStringLiteral("blendtype"), Property(QStringLiteral("blendType"), Q3DS::Enum, QStringLiteral("SceneEnvironment.Normal")));
-    layer->insert(QStringLiteral("environment.blendtype"), Property(QStringLiteral("environment.blendType"), Q3DS::Enum, QStringLiteral("SceneEnvironment.Normal")));
+    // Disable because it shouldn't be used this way.
+//    layer->insert(QStringLiteral("blendtype"), Property(QStringLiteral("blendType"), Q3DS::Enum, QStringLiteral("SceneEnvironment.Normal")));
+//    layer->insert(QStringLiteral("environment.blendtype"), Property(QStringLiteral("environment.blendType"), Q3DS::Enum, QStringLiteral("SceneEnvironment.Normal")));
 
     layer->insert(QStringLiteral("aostrength"), Property(QStringLiteral("aoStrength"), Q3DS::Float, 0.0f));
     layer->insert(QStringLiteral("aodistance"), Property(QStringLiteral("aoDistance"), Q3DS::Float, 5.0f));

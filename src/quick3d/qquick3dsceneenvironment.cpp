@@ -185,10 +185,6 @@ QColor QQuick3DSceneEnvironment::clearColor() const
     return m_clearColor;
 }
 
-QQuick3DSceneEnvironment::QQuick3DEnvironmentBlendTypes QQuick3DSceneEnvironment::blendType() const
-{
-    return m_blendType;
-}
 /*!
     \qmlproperty float QtQuick3D::SceneEnvironment::aoStrength
 
@@ -538,16 +534,6 @@ void QQuick3DSceneEnvironment::setClearColor(QColor clearColor)
 
     m_clearColor = clearColor;
     emit clearColorChanged(m_clearColor);
-    update();
-}
-
-void QQuick3DSceneEnvironment::setBlendType(QQuick3DSceneEnvironment::QQuick3DEnvironmentBlendTypes blendType)
-{
-    if (m_blendType == blendType)
-        return;
-
-    m_blendType = blendType;
-    emit blendTypeChanged(m_blendType);
     update();
 }
 

@@ -63,7 +63,6 @@ class Q_QUICK3D_EXPORT QQuick3DSceneEnvironment : public QQuick3DObject
     Q_PROPERTY(bool temporalAAEnabled READ temporalAAEnabled WRITE setTemporalAAEnabled NOTIFY temporalAAEnabledChanged)
     Q_PROPERTY(QQuick3DEnvironmentBackgroundTypes backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
     Q_PROPERTY(QColor clearColor READ clearColor WRITE setClearColor NOTIFY clearColorChanged)
-    Q_PROPERTY(QQuick3DEnvironmentBlendTypes blendType READ blendType WRITE setBlendType NOTIFY blendTypeChanged)
     Q_PROPERTY(bool isDepthTestDisabled READ isDepthTestDisabled WRITE setIsDepthTestDisabled NOTIFY isDepthTestDisabledChanged)
     Q_PROPERTY(bool isDepthPrePassDisabled READ isDepthPrePassDisabled WRITE setIsDepthPrePassDisabled NOTIFY isDepthPrePassDisabledChanged)
 
@@ -107,19 +106,6 @@ public:
     };
     Q_ENUM(QQuick3DEnvironmentBackgroundTypes)
 
-    enum QQuick3DEnvironmentBlendTypes {
-        Normal = 0,
-        Screen,
-        Multiply,
-        Add,
-        Subtract,
-        Overlay,
-        ColorBurn,
-        ColorDodge
-    };
-    Q_ENUM(QQuick3DEnvironmentBlendTypes)
-
-
     explicit QQuick3DSceneEnvironment(QQuick3DObject *parent = nullptr);
     ~QQuick3DSceneEnvironment() override;
 
@@ -129,7 +115,6 @@ public:
 
     QQuick3DEnvironmentBackgroundTypes backgroundMode() const;
     QColor clearColor() const;
-    QQuick3DEnvironmentBlendTypes blendType() const;
 
     float aoStrength() const;
     float aoDistance() const;
@@ -168,7 +153,6 @@ public Q_SLOTS:
 
     void setBackgroundMode(QQuick3DEnvironmentBackgroundTypes backgroundMode);
     void setClearColor(QColor clearColor);
-    void setBlendType(QQuick3DEnvironmentBlendTypes blendType);
 
     void setAoStrength(float aoStrength);
     void setAoDistance(float aoDistance);
@@ -203,7 +187,6 @@ Q_SIGNALS:
 
     void backgroundModeChanged(QQuick3DEnvironmentBackgroundTypes backgroundMode);
     void clearColorChanged(QColor clearColor);
-    void blendTypeChanged(QQuick3DEnvironmentBlendTypes blendType);
 
     void aoStrengthChanged(float aoStrength);
     void aoDistanceChanged(float aoDistance);
@@ -244,7 +227,6 @@ private:
 
     QQuick3DEnvironmentBackgroundTypes m_backgroundMode = Transparent;
     QColor m_clearColor = Qt::black;
-    QQuick3DEnvironmentBlendTypes m_blendType = Normal;
 
     float m_aoStrength = 0.0f;
     float m_aoDistance = 5.0f;

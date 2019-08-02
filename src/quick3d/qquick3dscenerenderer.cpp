@@ -328,7 +328,6 @@ void QQuick3DSceneRenderer::updateLayerNode(QQuick3DViewport *view3D)
     layerNode->clearColor = QVector3D(float(view3D->environment()->clearColor().redF()),
                                       float(view3D->environment()->clearColor().greenF()),
                                       float(view3D->environment()->clearColor().blueF()));
-    layerNode->blendType = QSSGRenderLayer::BlendMode(view3D->environment()->blendType());
 
     layerNode->m_width = 100.f;
     layerNode->m_height = 100.f;

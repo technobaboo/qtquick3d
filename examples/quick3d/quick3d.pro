@@ -4,4 +4,5 @@ SUBDIRS += \
     simple \
     view3d \
     wasdcamera \
-    picking
+    picking \
+    blendmodes
