@@ -41,7 +41,9 @@ Module {
             name: "QSSGCameraProjectionMode"
             values: {
                 "Perspective": 0,
-                "Orthographic": 1
+                "Orthographic": 1,
+                "Frustum": 2,
+                "Custom": 3
             }
         }
         Property { name: "clipNear"; type: "float" }
@@ -49,9 +51,12 @@ Module {
         Property { name: "fieldOfView"; type: "float" }
         Property { name: "isFieldOfViewHorizontal"; type: "bool" }
         Property { name: "projectionMode"; type: "QSSGCameraProjectionMode" }
-        Property { name: "scaleMode"; type: "QSSGCameraScaleModes" }
-        Property { name: "scaleAnchor"; type: "QSSGCameraScaleAnchors" }
         Property { name: "enableFrustumCulling"; type: "bool" }
+        Property { name: "frustumTop"; type: "float" }
+        Property { name: "frustumBottom"; type: "float" }
+        Property { name: "frustumRight"; type: "float" }
+        Property { name: "frustumLeft"; type: "float" }
+        Property { name: "customProjection"; type: "QMatrix4x4" }
         Signal {
             name: "clipNearChanged"
             Parameter { name: "clipNear"; type: "float" }
@@ -69,20 +74,32 @@ Module {
             Parameter { name: "isFieldOfViewHorizontal"; type: "bool" }
         }
         Signal {
-            name: "scaleModeChanged"
-            Parameter { name: "scaleMode"; type: "QSSGCameraScaleModes" }
-        }
-        Signal {
-            name: "scaleAnchorChanged"
-            Parameter { name: "scaleAnchor"; type: "QSSGCameraScaleAnchors" }
-        }
-        Signal {
             name: "projectionModeChanged"
             Parameter { name: "projectionMode"; type: "QSSGCameraProjectionMode" }
         }
         Signal {
             name: "enableFrustumCullingChanged"
             Parameter { name: "enableFrustumCulling"; type: "bool" }
+        }
+        Signal {
+            name: "frustumTopChanged"
+            Parameter { name: "frustumTop"; type: "float" }
+        }
+        Signal {
+            name: "frustumBottomChanged"
+            Parameter { name: "frustumBottom"; type: "float" }
+        }
+        Signal {
+            name: "frustumRightChanged"
+            Parameter { name: "frustumRight"; type: "float" }
+        }
+        Signal {
+            name: "frustumLeftChanged"
+            Parameter { name: "frustumLeft"; type: "float" }
+        }
+        Signal {
+            name: "customProjectionChanged"
+            Parameter { name: "customProjection"; type: "QMatrix4x4" }
         }
         Method {
             name: "setClipNear"
@@ -101,20 +118,32 @@ Module {
             Parameter { name: "isFieldOFViewHorizontal"; type: "bool" }
         }
         Method {
-            name: "setScaleMode"
-            Parameter { name: "scaleMode"; type: "QSSGCameraScaleModes" }
-        }
-        Method {
-            name: "setScaleAnchor"
-            Parameter { name: "scaleAnchor"; type: "QSSGCameraScaleAnchors" }
-        }
-        Method {
             name: "setProjectionMode"
             Parameter { name: "projectionMode"; type: "QSSGCameraProjectionMode" }
         }
         Method {
             name: "setEnableFrustumCulling"
             Parameter { name: "enableFrustumCulling"; type: "bool" }
+        }
+        Method {
+            name: "setFrustumTop"
+            Parameter { name: "frustumTop"; type: "float" }
+        }
+        Method {
+            name: "setFrustumBottom"
+            Parameter { name: "frustumBottom"; type: "float" }
+        }
+        Method {
+            name: "setFrustumRight"
+            Parameter { name: "frustumRight"; type: "float" }
+        }
+        Method {
+            name: "setFrustumLeft"
+            Parameter { name: "frustumLeft"; type: "float" }
+        }
+        Method {
+            name: "setCustomProjection"
+            Parameter { name: "customProjection"; type: "QMatrix4x4" }
         }
         Method {
             name: "worldToViewport"

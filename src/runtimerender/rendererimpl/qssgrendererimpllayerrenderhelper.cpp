@@ -56,14 +56,12 @@ inline constexpr float getMaxValue(float start, float width, float value, QSSGRe
 
 QSSGLayerRenderHelper::QSSGLayerRenderHelper(const QRectF &inPresentationViewport,
                                                  const QRectF &inPresentationScissor,
-                                                 const QVector2D &inPresentationDesignDimensions,
                                                  QSSGRenderLayer &inLayer,
                                                  bool inOffscreen,
                                                  ScaleModes inScaleMode,
                                                  QVector2D inScaleFactor)
     : m_presentationViewport(inPresentationViewport)
     , m_presentationScissor(inPresentationScissor)
-    , m_presentationDesignDimensions(inPresentationDesignDimensions)
     , m_layer(&inLayer)
     , m_offscreen(inOffscreen)
     , m_scaleMode(inScaleMode)
@@ -190,7 +188,7 @@ QSSGCameraGlobalCalculationResult QSSGLayerRenderHelper::setupCameraForRender(QS
         rect.setWidth((float)(QSSGRendererUtil::nextMultipleOf4((quint32)(rect.width() / m_scaleFactor.x()))));
         rect.setHeight((float)(QSSGRendererUtil::nextMultipleOf4((quint32)(rect.height() / m_scaleFactor.y()))));
     }
-    return m_camera->calculateGlobalVariables(rect, m_presentationDesignDimensions);
+    return m_camera->calculateGlobalVariables(rect);
 }
 
 QSSGOption<QVector2D> QSSGLayerRenderHelper::layerMouseCoords(const QVector2D &inMouseCoords,
@@ -224,7 +222,7 @@ QSSGOption<QSSGRenderRay> QSSGLayerRenderHelper::pickRay(const QVector2D &inMous
         // The cameras projection is different if we are onscreen vs. offscreen.
         // When offscreen, we need to move the mouse coordinates into a local space
         // to the layer.
-        return m_camera->unproject(*theCoords, m_viewport, m_presentationDesignDimensions);
+        return m_camera->unproject(*theCoords, m_viewport);
     }
     return QSSGEmpty();
 }

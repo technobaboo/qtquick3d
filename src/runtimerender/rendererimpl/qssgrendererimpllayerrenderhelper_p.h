@@ -68,7 +68,6 @@ struct QSSGLayerRenderHelper
 private:
     QRectF m_presentationViewport;
     QRectF m_presentationScissor;
-    QVector2D m_presentationDesignDimensions;
     QSSGRenderLayer *m_layer = nullptr;
     QSSGRenderCamera *m_camera = nullptr;
     bool m_offscreen = false;
@@ -84,7 +83,6 @@ public:
 
     QSSGLayerRenderHelper(const QRectF &inPresentationViewport,
                             const QRectF &inPresentationScissor,
-                            const QVector2D &inPresentationDesignDimensions,
                             QSSGRenderLayer &inLayer,
                             bool inOffscreen,
                             ScaleModes inScaleMode,
@@ -92,7 +90,6 @@ public:
 
     QRectF presentationViewport() const { return m_presentationViewport; }
     QRectF presentationScissor() const { return m_presentationScissor; }
-    QVector2D presentationDesignDimensions() const { return m_presentationDesignDimensions; }
     QSSGRenderLayer *layer() const { return m_layer; }
     QSSGRenderCamera *camera() const { return m_camera; }
     bool isOffscreen() const { return m_offscreen; }

@@ -50,102 +50,6 @@ float getAspectRatio(const QRectF &inViewport)
     return inViewport.height() != 0 ? inViewport.width() / inViewport.height() : 0.0f;
 }
 
-float getAspectRatio(const QVector2D &inDimensions)
-{
-    return inDimensions.y() != 0 ? inDimensions.x() / inDimensions.y() : 0.0f;
-}
-
-bool isCameraVerticalAdjust(QSSGRenderCamera::ScaleModes inMode, float inDesignAspect, float inActualAspect)
-{
-    return (inMode == QSSGRenderCamera::ScaleModes::Fit && inActualAspect >= inDesignAspect) || inMode == QSSGRenderCamera::ScaleModes::FitVertical;
-}
-
-#if 0
-bool isCameraHorizontalAdjust(CameraScaleModes inMode, float inDesignAspect, float inActualAspect)
-{
-    return (inMode == CameraScaleModes::Fit && inActualAspect < inDesignAspect) || inMode == CameraScaleModes::FitHorizontal;
-}
-#endif
-
-bool isFitTypeScaleMode(QSSGRenderCamera::ScaleModes inMode)
-{
-    return inMode == QSSGRenderCamera::ScaleModes::Fit || inMode == QSSGRenderCamera::ScaleModes::FitHorizontal || inMode == QSSGRenderCamera::ScaleModes::FitVertical;
-}
-
-struct QSSGPinCameraResult
-{
-    QRectF m_viewport;
-    QRectF m_virtualViewport;
-    QSSGPinCameraResult(QRectF v, QRectF vv) : m_viewport(v), m_virtualViewport(vv) {}
-};
-// Scale and transform the projection matrix to respect the camera anchor attribute
-// and the scale mode.
-QSSGPinCameraResult pinCamera(const QRectF &inViewport,
-                                QVector2D inDesignDims,
-                                QMatrix4x4 &ioPerspectiveMatrix,
-                                QSSGRenderCamera::ScaleModes inScaleMode,
-                                QSSGRenderCamera::ScaleAnchors inPinLocation)
-{
-    QRectF viewport(inViewport);
-    QRectF idealViewport(inViewport.x(), inViewport.y(), inDesignDims.x(), inDesignDims.y());
-    float designAspect = getAspectRatio(inDesignDims);
-    float actualAspect = getAspectRatio(inViewport);
-    if (isFitTypeScaleMode(inScaleMode)) {
-        idealViewport.setWidth(viewport.width());
-        idealViewport.setHeight(viewport.height());
-    }
-    // We move the viewport such that the left, top of the presentation sits against the left top
-    // edge
-    // We only need to translate in X *if* our actual aspect > design aspect
-    // And then we only need to account for whatever centering would happen.
-
-    bool pinLeft = inPinLocation == QSSGRenderCamera::ScaleAnchors::SouthWest || inPinLocation == QSSGRenderCamera::ScaleAnchors::West
-            || inPinLocation == QSSGRenderCamera::ScaleAnchors::NorthWest;
-    bool pinRight = inPinLocation == QSSGRenderCamera::ScaleAnchors::SouthEast || inPinLocation == QSSGRenderCamera::ScaleAnchors::East
-            || inPinLocation == QSSGRenderCamera::ScaleAnchors::NorthEast;
-    bool pinTop = inPinLocation == QSSGRenderCamera::ScaleAnchors::NorthWest || inPinLocation == QSSGRenderCamera::ScaleAnchors::North
-            || inPinLocation == QSSGRenderCamera::ScaleAnchors::NorthEast;
-    bool pinBottom = inPinLocation == QSSGRenderCamera::ScaleAnchors::SouthWest || inPinLocation == QSSGRenderCamera::ScaleAnchors::South
-            || inPinLocation == QSSGRenderCamera::ScaleAnchors::SouthEast;
-
-    if (inScaleMode == QSSGRenderCamera::ScaleModes::SameSize) {
-        // In this case the perspective transform does not center the view,
-        // it places it in the lower-left of the viewport.
-        float idealWidth = inDesignDims.x();
-        float idealHeight = inDesignDims.y();
-        if (pinRight)
-            idealViewport.setX(idealViewport.x() - ((idealWidth - inViewport.width())));
-        else if (!pinLeft)
-            idealViewport.setX(idealViewport.x() - ((idealWidth - inViewport.width()) / 2.0f));
-
-        if (pinTop)
-            idealViewport.setY(idealViewport.y() - ((idealHeight - inViewport.height())));
-        else if (!pinBottom)
-            idealViewport.setY(idealViewport.y() - ((idealHeight - inViewport.height()) / 2.0f));
-    } else {
-        // In this case our perspective matrix will center the view and we need to decenter
-        // it as necessary
-        // if we are wider than we are high
-        if (isCameraVerticalAdjust(inScaleMode, designAspect, actualAspect)) {
-            if (pinLeft || pinRight) {
-                float idealWidth = inViewport.height() * designAspect;
-                qint32 halfOffset = (qint32)((idealWidth - inViewport.width()) / 2.0f);
-                halfOffset = pinLeft ? halfOffset : -1 * halfOffset;
-                idealViewport.setX(idealViewport.x() + halfOffset);
-            }
-        } else {
-            if (pinTop || pinBottom) {
-                float idealHeight = inViewport.width() / designAspect;
-                qint32 halfOffset = (qint32)((idealHeight - inViewport.height()) / 2.0f);
-                halfOffset = pinBottom ? halfOffset : -1 * halfOffset;
-                idealViewport.setY(idealViewport.y() + halfOffset);
-            }
-        }
-    }
-
-    ioPerspectiveMatrix = QSSGRenderContext::applyVirtualViewportToProjectionMatrix(ioPerspectiveMatrix, viewport, idealViewport);
-    return QSSGPinCameraResult(viewport, idealViewport);
-}
 }
 
 QSSGRenderCamera::QSSGRenderCamera()
@@ -154,8 +58,6 @@ QSSGRenderCamera::QSSGRenderCamera()
     , clipFar(10000)
     , fov(60)
     , fovHorizontal(false)
-    , scaleMode(QSSGRenderCamera::ScaleModes::Fit)
-    , scaleAnchor(QSSGRenderCamera::ScaleAnchors::Center)
     , enableFrustumClipping(true)
 {
     TORAD(fov);
@@ -166,33 +68,34 @@ QSSGRenderCamera::QSSGRenderCamera()
 }
 
 // Code for testing
-QSSGCameraGlobalCalculationResult QSSGRenderCamera::calculateGlobalVariables(const QRectF &inViewport, const QVector2D &inDesignDimensions)
+QSSGCameraGlobalCalculationResult QSSGRenderCamera::calculateGlobalVariables(const QRectF &inViewport)
 {
     bool wasDirty = QSSGRenderNode::calculateGlobalVariables();
-    return QSSGCameraGlobalCalculationResult{ wasDirty, calculateProjection(inViewport, inDesignDimensions) };
+    return QSSGCameraGlobalCalculationResult{ wasDirty, calculateProjection(inViewport) };
 }
 
-bool QSSGRenderCamera::calculateProjection(const QRectF &inViewport, const QVector2D &inDesignDimensions)
+bool QSSGRenderCamera::calculateProjection(const QRectF &inViewport)
 {
     bool retval = false;
 
-    const bool argumentsChanged = (inViewport != previousInViewport)
-                                  || (inDesignDimensions != previousInDesignDimensions);
+    const bool argumentsChanged = inViewport != previousInViewport;
     if (!argumentsChanged && !flags.testFlag(Flag::CameraDirty))
         return true;
     previousInViewport = inViewport;
-    previousInDesignDimensions = inDesignDimensions;
     flags.setFlag(Flag::CameraDirty, false);
 
-    if (flags.testFlag(Flag::Orthographic))
-        retval = computeFrustumOrtho(inViewport, inDesignDimensions);
+    if (flags.testFlag(Flag::CameraCustomProjection))
+        retval = true; // AKA, do nothing
+    else if (flags.testFlag(Flag::CameraFrustumProjection))
+        retval = computeCustomFrustum(inViewport);
+    else if (flags.testFlag(Flag::Orthographic))
+        retval = computeFrustumOrtho(inViewport);
     else
-        retval = computeFrustumPerspective(inViewport, inDesignDimensions);
+        retval = computeFrustumPerspective(inViewport);
     if (retval) {
         float *writePtr(projection.data());
         frustumScale.setX(writePtr[0]);
         frustumScale.setY(writePtr[5]);
-        pinCamera(inViewport, inDesignDimensions, projection, scaleMode, scaleAnchor);
     }
     return retval;
 }
@@ -202,38 +105,19 @@ bool QSSGRenderCamera::calculateProjection(const QRectF &inViewport, const QVect
  *	Compute the projection matrix for a perspective camera
  *	@return true if the computed projection matrix is valid
  */
-bool QSSGRenderCamera::computeFrustumPerspective(const QRectF &inViewport, const QVector2D &inDesignDimensions)
+bool QSSGRenderCamera::computeFrustumPerspective(const QRectF &inViewport)
 {
     projection = QMatrix4x4();
-    float theAngleInRadians = verticalFov(inViewport) / 2.0f;
-    float theDeltaZ = clipFar - clipNear;
-    float theSine = sinf(theAngleInRadians);
-    float designAspect = getAspectRatio(inDesignDimensions);
-    float theAspectRatio = designAspect;
-    if (isFitTypeScaleMode(scaleMode))
-        theAspectRatio = getAspectRatio(inViewport);
+    projection.perspective(qRadiansToDegrees(verticalFov(inViewport)), getAspectRatio(inViewport), clipNear, clipFar);
+    return true;
+}
 
-    if (!qFuzzyIsNull(theDeltaZ) && !qFuzzyIsNull(theSine) && !qFuzzyIsNull(theAspectRatio)) {
-        float *writePtr(projection.data());
-        writePtr[10] = -(clipFar + clipNear) / theDeltaZ;
-        writePtr[11] = -1;
-        writePtr[14] = -2 * clipNear * clipFar / theDeltaZ;
-        writePtr[15] = 0;
-
-        if (isCameraVerticalAdjust(scaleMode, designAspect, theAspectRatio)) {
-            float theCotangent = cosf(theAngleInRadians) / theSine;
-            writePtr[0] = theCotangent / theAspectRatio;
-            writePtr[5] = theCotangent;
-        } else {
-            float theCotangent = cosf(theAngleInRadians) / theSine;
-            writePtr[0] = theCotangent / designAspect;
-            writePtr[5] = theCotangent * (theAspectRatio / designAspect);
-        }
-        return true;
-    }
-
-    Q_ASSERT(false);
-    return false;
+bool QSSGRenderCamera::computeCustomFrustum(const QRectF &inViewport)
+{
+    Q_UNUSED(inViewport)
+    projection.setToIdentity();
+    projection.frustum(left, right, bottom, top, clipNear, clipFar);
+    return true;
 }
 
 //==============================================================================
@@ -241,54 +125,18 @@ bool QSSGRenderCamera::computeFrustumPerspective(const QRectF &inViewport, const
  *	Compute the projection matrix for a orthographic camera
  *	@return true if the computed projection matrix is valid
  */
-bool QSSGRenderCamera::computeFrustumOrtho(const QRectF &inViewport, const QVector2D &inDesignDimensions)
+bool QSSGRenderCamera::computeFrustumOrtho(const QRectF &inViewport)
 {
     projection = QMatrix4x4();
-
-    float theDeltaZ = clipFar - clipNear;
-    float halfWidth = inDesignDimensions.x() / 2.0f;
-    float halfHeight = inDesignDimensions.y() / 2.0f;
-    float designAspect = getAspectRatio(inDesignDimensions);
-    float theAspectRatio = designAspect;
-    if (isFitTypeScaleMode(scaleMode))
-        theAspectRatio = getAspectRatio(inViewport);
-    if (!qFuzzyIsNull(theDeltaZ)) {
-        float *writePtr(projection.data());
-        writePtr[10] = -2.0f / theDeltaZ;
-        writePtr[11] = 0.0f;
-        writePtr[14] = -(clipNear + clipFar) / theDeltaZ;
-        writePtr[15] = 1.0f;
-        if (isCameraVerticalAdjust(scaleMode, designAspect, theAspectRatio)) {
-            writePtr[0] = 1.0f / (halfHeight * theAspectRatio);
-            writePtr[5] = 1.0f / halfHeight;
-        } else {
-            writePtr[0] = 1.0f / halfWidth;
-            writePtr[5] = 1.0f / (halfWidth / theAspectRatio);
-        }
-        return true;
-    }
-
-    Q_ASSERT(false);
-    return false;
+    float halfWidth = inViewport.width() / 2.0f;
+    float halfHeight = inViewport.height() / 2.0f;
+    projection.ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, clipNear, clipFar);
+    return true;
 }
 
-float QSSGRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport, const QVector2D &inDesignDimensions) const
+float QSSGRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport) const
 {
-    if (scaleMode == QSSGRenderCamera::ScaleModes::SameSize)
-        return 1.0f;
-    QMatrix4x4 temp;
-    float designAspect = getAspectRatio(inDesignDimensions);
-    float theAspectRatio = getAspectRatio(inViewport);
-    if (scaleMode == QSSGRenderCamera::ScaleModes::Fit) {
-        if (theAspectRatio >= designAspect)
-            return inViewport.width() < inDesignDimensions.x() ? theAspectRatio / designAspect : 1.0f;
-
-        return inViewport.height() < inDesignDimensions.y() ? designAspect / theAspectRatio : 1.0f;
-    } else if (scaleMode == QSSGRenderCamera::ScaleModes::FitVertical) {
-        return (float)inDesignDimensions.y() / (float)inViewport.height();
-    } else {
-        return (float)inDesignDimensions.x() / (float)inViewport.width();
-    }
+    return 1.0f;
 }
 
 QMatrix3x3 QSSGRenderCamera::getLookAtMatrix(const QVector3D &inUpDir, const QVector3D &inDirection) const
@@ -333,55 +181,10 @@ void QSSGRenderCamera::calculateViewProjectionMatrix(QMatrix4x4 &outMatrix) cons
     outMatrix = projection * globalTransform.inverted();
 }
 
-QSSGCuboidRect QSSGRenderCamera::getCameraBounds(const QRectF &inViewport, const QVector2D &inDesignDimensions) const
+QSSGCuboidRect QSSGRenderCamera::getCameraBounds(const QRectF &inViewport) const
 {
-    QMatrix4x4 unused;
-    QSSGPinCameraResult theResult = pinCamera(inViewport, inDesignDimensions, unused, scaleMode, scaleAnchor);
-    // find the normalized edges of the view frustum given the renormalization that happens when
-    // pinning the camera.
+    Q_UNUSED(inViewport)
     QSSGCuboidRect normalizedCuboid(-1, 1, 1, -1);
-    QVector2D translation(theResult.m_viewport.x() - theResult.m_virtualViewport.x(),
-                          theResult.m_viewport.y() - theResult.m_virtualViewport.y());
-    if (scaleMode == QSSGRenderCamera::ScaleModes::SameSize) {
-        // the cuboid ranges are the actual divided by the ideal in this case
-        float xRange = 2.0f * (theResult.m_viewport.width() / theResult.m_virtualViewport.width());
-        float yRange = 2.0f * (theResult.m_viewport.height() / theResult.m_virtualViewport.height());
-        normalizedCuboid = QSSGCuboidRect(-1, -1 + yRange, -1 + xRange, -1);
-        translation.setX(translation.x() / (theResult.m_virtualViewport.width() / 2.0f));
-        translation.setY(translation.y() / (theResult.m_virtualViewport.height() / 2.0f));
-        normalizedCuboid.translate(translation);
-    }
-    // fit.  This means that two parameters of the normalized cuboid will be -1, 1.
-    else {
-        // In this case our perspective matrix will center the view and we need to decenter
-        // it as necessary
-        float actualAspect = getAspectRatio(inViewport);
-        float designAspect = getAspectRatio(inDesignDimensions);
-        // if we are wider than we are high
-        float idealWidth = inViewport.width();
-        float idealHeight = inViewport.height();
-
-        if (isCameraVerticalAdjust(scaleMode, designAspect, actualAspect)) {
-            // then we just need to setup the left, right parameters of the cuboid because we know
-            // the top
-            // bottom are -1,1 due to how fit works.
-            idealWidth = (float)QSSGRendererUtil::nextMultipleOf4((quint32)(inViewport.height() * designAspect + .5f));
-            // halfRange should always be greater than 1.0f.
-            float halfRange = inViewport.width() / idealWidth;
-            normalizedCuboid.left = -halfRange;
-            normalizedCuboid.right = halfRange;
-            translation.setX(translation.x() / (idealWidth / 2.0f));
-        } else {
-            idealHeight = (float)QSSGRendererUtil::nextMultipleOf4((quint32)(inViewport.width() / designAspect + .5f));
-            float halfRange = inViewport.height() / idealHeight;
-            normalizedCuboid.bottom = -halfRange;
-            normalizedCuboid.top = halfRange;
-            translation.setY(translation.y() / (idealHeight / 2.0f));
-        }
-        normalizedCuboid.translate(translation);
-    }
-    // Given no adjustment in the virtual rect, then this is what we would have.
-
     return normalizedCuboid;
 }
 
@@ -400,21 +203,17 @@ void QSSGRenderCamera::setupOrthographicCameraForOffscreenRender(QSSGRenderTextu
     QSSGRenderCamera theTempCamera;
     theTempCamera.flags.setFlag(Flag::Orthographic);
     theTempCamera.markDirty(TransformDirtyFlag::TransformIsDirty);
-    QVector2D theDimensions((float)theDetails.width, (float)theDetails.height);
-    theTempCamera.calculateGlobalVariables(QRect(0, 0, theDetails.width, theDetails.height), theDimensions);
+    theTempCamera.calculateGlobalVariables(QRect(0, 0, theDetails.width, theDetails.height));
     theTempCamera.calculateViewProjectionMatrix(outVP);
     outCamera = theTempCamera;
 }
 
 QSSGRenderRay QSSGRenderCamera::unproject(const QVector2D &inViewportRelativeCoords,
-                                              const QRectF &inViewport,
-                                              const QVector2D &inDesignDimensions) const
+                                              const QRectF &inViewport) const
 {
     QSSGRenderRay theRay;
-    QMatrix4x4 tempVal;
-    QSSGPinCameraResult result = pinCamera(inViewport, inDesignDimensions, tempVal, scaleMode, scaleAnchor);
     QVector2D globalCoords = toAbsoluteCoords(inViewport, inViewportRelativeCoords);
-    QVector2D normalizedCoords = absoluteToNormalizedCoordinates(result.m_virtualViewport, globalCoords);
+    QVector2D normalizedCoords = absoluteToNormalizedCoordinates(inViewport, globalCoords);
     QVector3D &outOrigin(theRay.origin);
     QVector3D &outDir(theRay.direction);
     QVector2D inverseFrustumScale(1.0f / frustumScale.x(), 1.0f / frustumScale.y());
@@ -443,12 +242,6 @@ QSSGRenderRay QSSGRenderCamera::unproject(const QVector2D &inViewportRelativeCoo
 
     outDir = mat33::transform(theNormalMatrix, outDir);
     outDir.normalize();
-    /*
-    char printBuf[2000];
-    sprintf_s( printBuf, "normCoords %f %f outDir %f %f %f\n"
-            , normalizedCoords.x, normalizedCoords.y, outDir.x, outDir.y, outDir.z );
-    OutputDebugStringA( printBuf );
-    */
 
     return theRay;
 }
