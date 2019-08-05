@@ -1,4 +1,4 @@
-﻿import QtQuick.tooling 1.2
+import QtQuick.tooling 1.2
 
 // This file describes the plugin-supplied types contained in the library.
 // It is used for QML tooling purposes only.
@@ -15,7 +15,7 @@ Module {
         exports: ["QtQuick3D/Camera 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
-            name: "QDemonCameraScaleModes"
+            name: "QSSGCameraScaleModes"
             values: {
                 "Fit": 0,
                 "SameSize": 1,
@@ -24,7 +24,7 @@ Module {
             }
         }
         Enum {
-            name: "QDemonCameraScaleAnchors"
+            name: "QSSGCameraScaleAnchors"
             values: {
                 "Center": 0,
                 "North": 1,
@@ -38,7 +38,7 @@ Module {
             }
         }
         Enum {
-            name: "QDemonCameraProjectionMode"
+            name: "QSSGCameraProjectionMode"
             values: {
                 "Perspective": 0,
                 "Orthographic": 1
@@ -48,9 +48,9 @@ Module {
         Property { name: "clipFar"; type: "float" }
         Property { name: "fieldOfView"; type: "float" }
         Property { name: "isFieldOfViewHorizontal"; type: "bool" }
-        Property { name: "projectionMode"; type: "QDemonCameraProjectionMode" }
-        Property { name: "scaleMode"; type: "QDemonCameraScaleModes" }
-        Property { name: "scaleAnchor"; type: "QDemonCameraScaleAnchors" }
+        Property { name: "projectionMode"; type: "QSSGCameraProjectionMode" }
+        Property { name: "scaleMode"; type: "QSSGCameraScaleModes" }
+        Property { name: "scaleAnchor"; type: "QSSGCameraScaleAnchors" }
         Property { name: "enableFrustumCulling"; type: "bool" }
         Signal {
             name: "clipNearChanged"
@@ -70,15 +70,15 @@ Module {
         }
         Signal {
             name: "scaleModeChanged"
-            Parameter { name: "scaleMode"; type: "QDemonCameraScaleModes" }
+            Parameter { name: "scaleMode"; type: "QSSGCameraScaleModes" }
         }
         Signal {
             name: "scaleAnchorChanged"
-            Parameter { name: "scaleAnchor"; type: "QDemonCameraScaleAnchors" }
+            Parameter { name: "scaleAnchor"; type: "QSSGCameraScaleAnchors" }
         }
         Signal {
             name: "projectionModeChanged"
-            Parameter { name: "projectionMode"; type: "QDemonCameraProjectionMode" }
+            Parameter { name: "projectionMode"; type: "QSSGCameraProjectionMode" }
         }
         Signal {
             name: "enableFrustumCullingChanged"
@@ -102,15 +102,15 @@ Module {
         }
         Method {
             name: "setScaleMode"
-            Parameter { name: "scaleMode"; type: "QDemonCameraScaleModes" }
+            Parameter { name: "scaleMode"; type: "QSSGCameraScaleModes" }
         }
         Method {
             name: "setScaleAnchor"
-            Parameter { name: "scaleAnchor"; type: "QDemonCameraScaleAnchors" }
+            Parameter { name: "scaleAnchor"; type: "QSSGCameraScaleAnchors" }
         }
         Method {
             name: "setProjectionMode"
-            Parameter { name: "projectionMode"; type: "QDemonCameraProjectionMode" }
+            Parameter { name: "projectionMode"; type: "QSSGCameraProjectionMode" }
         }
         Method {
             name: "setEnableFrustumCulling"
@@ -473,7 +473,7 @@ Module {
         exports: ["QtQuick3D/DefaultMaterial 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
-            name: "QDemonDefaultMaterialLighting"
+            name: "QSSGDefaultMaterialLighting"
             values: {
                 "NoLighting": 0,
                 "VertexLighting": 1,
@@ -481,7 +481,7 @@ Module {
             }
         }
         Enum {
-            name: "QDemonDefaultMaterialBlendMode"
+            name: "QSSGDefaultMaterialBlendMode"
             values: {
                 "Normal": 0,
                 "Screen": 1,
@@ -492,15 +492,15 @@ Module {
             }
         }
         Enum {
-            name: "QDemonDefaultMaterialSpecularModel"
+            name: "QSSGDefaultMaterialSpecularModel"
             values: {
                 "Default": 0,
                 "KGGX": 1,
                 "KWard": 2
             }
         }
-        Property { name: "lighting"; type: "QDemonDefaultMaterialLighting" }
-        Property { name: "blendMode"; type: "QDemonDefaultMaterialBlendMode" }
+        Property { name: "lighting"; type: "QSSGDefaultMaterialLighting" }
+        Property { name: "blendMode"; type: "QSSGDefaultMaterialBlendMode" }
         Property { name: "diffuseColor"; type: "QColor" }
         Property { name: "diffuseMap"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "diffuseMap2"; type: "QQuick3DTexture"; isPointer: true }
@@ -510,7 +510,7 @@ Module {
         Property { name: "emissiveColor"; type: "QColor" }
         Property { name: "specularReflectionMap"; type: "QQuick3DTexture"; isPointer: true }
         Property { name: "specularMap"; type: "QQuick3DTexture"; isPointer: true }
-        Property { name: "specularModel"; type: "QDemonDefaultMaterialSpecularModel" }
+        Property { name: "specularModel"; type: "QSSGDefaultMaterialSpecularModel" }
         Property { name: "specularTint"; type: "QColor" }
         Property { name: "indexOfRefraction"; type: "float" }
         Property { name: "fresnelPower"; type: "float" }
@@ -528,11 +528,11 @@ Module {
         Property { name: "vertexColors"; type: "bool" }
         Signal {
             name: "lightingChanged"
-            Parameter { name: "lighting"; type: "QDemonDefaultMaterialLighting" }
+            Parameter { name: "lighting"; type: "QSSGDefaultMaterialLighting" }
         }
         Signal {
             name: "blendModeChanged"
-            Parameter { name: "blendMode"; type: "QDemonDefaultMaterialBlendMode" }
+            Parameter { name: "blendMode"; type: "QSSGDefaultMaterialBlendMode" }
         }
         Signal {
             name: "diffuseColorChanged"
@@ -572,7 +572,7 @@ Module {
         }
         Signal {
             name: "specularModelChanged"
-            Parameter { name: "specularModel"; type: "QDemonDefaultMaterialSpecularModel" }
+            Parameter { name: "specularModel"; type: "QSSGDefaultMaterialSpecularModel" }
         }
         Signal {
             name: "specularTintChanged"
@@ -636,11 +636,11 @@ Module {
         }
         Method {
             name: "setLighting"
-            Parameter { name: "lighting"; type: "QDemonDefaultMaterialLighting" }
+            Parameter { name: "lighting"; type: "QSSGDefaultMaterialLighting" }
         }
         Method {
             name: "setBlendMode"
-            Parameter { name: "blendMode"; type: "QDemonDefaultMaterialBlendMode" }
+            Parameter { name: "blendMode"; type: "QSSGDefaultMaterialBlendMode" }
         }
         Method {
             name: "setDiffuseColor"
@@ -680,7 +680,7 @@ Module {
         }
         Method {
             name: "setSpecularModel"
-            Parameter { name: "specularModel"; type: "QDemonDefaultMaterialSpecularModel" }
+            Parameter { name: "specularModel"; type: "QSSGDefaultMaterialSpecularModel" }
         }
         Method {
             name: "setSpecularTint"
@@ -766,7 +766,7 @@ Module {
         exports: ["QtQuick3D/Light 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
-            name: "QDemonRenderLightTypes"
+            name: "QSSGRenderLightTypes"
             values: {
                 "Unknown": 0,
                 "Directional": 1,
@@ -774,7 +774,7 @@ Module {
                 "Area": 3
             }
         }
-        Property { name: "lightType"; type: "QDemonRenderLightTypes" }
+        Property { name: "lightType"; type: "QSSGRenderLightTypes" }
         Property { name: "diffuseColor"; type: "QColor" }
         Property { name: "specularColor"; type: "QColor" }
         Property { name: "ambientColor"; type: "QColor" }
@@ -793,7 +793,7 @@ Module {
         Property { name: "scope"; type: "QQuick3DNode"; isPointer: true }
         Signal {
             name: "lightTypeChanged"
-            Parameter { name: "lightType"; type: "QDemonRenderLightTypes" }
+            Parameter { name: "lightType"; type: "QSSGRenderLightTypes" }
         }
         Signal {
             name: "diffuseColorChanged"
@@ -861,7 +861,7 @@ Module {
         }
         Method {
             name: "setLightType"
-            Parameter { name: "lightType"; type: "QDemonRenderLightTypes" }
+            Parameter { name: "lightType"; type: "QSSGRenderLightTypes" }
         }
         Method {
             name: "setDiffuseColor"
@@ -1006,7 +1006,7 @@ Module {
         exports: ["QtQuick3D/Model 1.0"]
         exportMetaObjectRevisions: [0]
         Enum {
-            name: "QDemonTessModeValues"
+            name: "QSSGTessModeValues"
             values: {
                 "NoTess": 0,
                 "TessLinear": 1,
@@ -1016,7 +1016,7 @@ Module {
         }
         Property { name: "source"; type: "QUrl" }
         Property { name: "skeletonRoot"; type: "int" }
-        Property { name: "tesselationMode"; type: "QDemonTessModeValues" }
+        Property { name: "tesselationMode"; type: "QSSGTessModeValues" }
         Property { name: "edgeTess"; type: "float" }
         Property { name: "innerTess"; type: "float" }
         Property { name: "isWireframeMode"; type: "bool" }
@@ -1031,7 +1031,7 @@ Module {
         }
         Signal {
             name: "tesselationModeChanged"
-            Parameter { name: "tesselationMode"; type: "QDemonTessModeValues" }
+            Parameter { name: "tesselationMode"; type: "QSSGTessModeValues" }
         }
         Signal {
             name: "edgeTessChanged"
@@ -1055,7 +1055,7 @@ Module {
         }
         Method {
             name: "setTesselationMode"
-            Parameter { name: "tesselationMode"; type: "QDemonTessModeValues" }
+            Parameter { name: "tesselationMode"; type: "QSSGTessModeValues" }
         }
         Method {
             name: "setEdgeTess"
@@ -1252,15 +1252,10 @@ Module {
         Property { name: "data"; type: "QObject"; isList: true; isReadonly: true }
         Property { name: "resources"; type: "QObject"; isList: true; isReadonly: true }
         Property { name: "children"; type: "QQuick3DObject"; isList: true; isReadonly: true }
-        Property { name: "id"; type: "QByteArray"; isReadonly: true }
-        Property { name: "name"; type: "string" }
         Property { name: "type"; type: "QQuick3DObject::Type"; isReadonly: true }
-        Property { name: "enabled"; type: "bool" }
-        Property { name: "visible"; type: "bool" }
         Property { name: "states"; type: "QQuickState"; isList: true; isReadonly: true }
         Property { name: "transitions"; type: "QQuickTransition"; isList: true; isReadonly: true }
         Property { name: "state"; type: "string" }
-        Property { name: "visibleChildren"; type: "QQuick3DObject"; isList: true; isReadonly: true }
         Signal {
             name: "sceneRendererChanged"
             Parameter { name: "sceneRenderer"; type: "QQuick3DSceneManager"; isPointer: true }
@@ -1270,33 +1265,13 @@ Module {
             Parameter { name: "parent"; type: "QQuick3DObject"; isPointer: true }
         }
         Signal {
-            name: "enabledChanged"
-            Parameter { name: "enabled"; type: "bool" }
-        }
-        Signal {
             name: "stateChanged"
             Parameter { type: "string" }
-        }
-        Signal {
-            name: "visibleChanged"
-            Parameter { name: "visible"; type: "bool" }
-        }
-        Method {
-            name: "setName"
-            Parameter { name: "name"; type: "string" }
         }
         Method { name: "update" }
         Method {
             name: "setParentItem"
             Parameter { name: "parentItem"; type: "QQuick3DObject"; isPointer: true }
-        }
-        Method {
-            name: "setEnabled"
-            Parameter { name: "enabled"; type: "bool" }
-        }
-        Method {
-            name: "setVisible"
-            Parameter { name: "visible"; type: "bool" }
         }
     }
     Component {
@@ -1324,26 +1299,12 @@ Module {
                 "SkyBox": 3
             }
         }
-        Enum {
-            name: "QQuick3DEnvironmentBlendTypes"
-            values: {
-                "Normal": 0,
-                "Screen": 1,
-                "Multiply": 2,
-                "Add": 3,
-                "Subtract": 4,
-                "Overlay": 5,
-                "ColorBurn": 6,
-                "ColorDodge": 7
-            }
-        }
         Property { name: "effects"; type: "QQuick3DEffect"; isList: true; isReadonly: true }
         Property { name: "progressiveAAMode"; type: "QQuick3DEnvironmentAAModeValues" }
         Property { name: "multisampleAAMode"; type: "QQuick3DEnvironmentAAModeValues" }
         Property { name: "temporalAAEnabled"; type: "bool" }
         Property { name: "backgroundMode"; type: "QQuick3DEnvironmentBackgroundTypes" }
         Property { name: "clearColor"; type: "QColor" }
-        Property { name: "blendType"; type: "QQuick3DEnvironmentBlendTypes" }
         Property { name: "isDepthTestDisabled"; type: "bool" }
         Property { name: "isDepthPrePassDisabled"; type: "bool" }
         Property { name: "aoStrength"; type: "float" }
@@ -1384,10 +1345,6 @@ Module {
         Signal {
             name: "clearColorChanged"
             Parameter { name: "clearColor"; type: "QColor" }
-        }
-        Signal {
-            name: "blendTypeChanged"
-            Parameter { name: "blendType"; type: "QQuick3DEnvironmentBlendTypes" }
         }
         Signal {
             name: "aoStrengthChanged"
@@ -1492,10 +1449,6 @@ Module {
         Method {
             name: "setClearColor"
             Parameter { name: "clearColor"; type: "QColor" }
-        }
-        Method {
-            name: "setBlendType"
-            Parameter { name: "blendType"; type: "QQuick3DEnvironmentBlendTypes" }
         }
         Method {
             name: "setAoStrength"
@@ -1822,6 +1775,12 @@ Module {
             name: "viewToWorld"
             type: "QVector3D"
             Parameter { name: "viewPos"; type: "QVector3D" }
+        }
+        Method {
+            name: "pick"
+            type: "QQuick3DPickResult"
+            Parameter { name: "x"; type: "float" }
+            Parameter { name: "y"; type: "float" }
         }
     }
 }
