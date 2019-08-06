@@ -60,6 +60,8 @@ class Q_QUICK3D_EXPORT QQuick3DModel : public QQuick3DNode
     Q_PROPERTY(float edgeTess READ edgeTess WRITE setEdgeTess NOTIFY edgeTessChanged)
     Q_PROPERTY(float innerTess READ innerTess WRITE setInnerTess NOTIFY innerTessChanged)
     Q_PROPERTY(bool isWireframeMode READ isWireframeMode WRITE setIsWireframeMode NOTIFY isWireframeModeChanged)
+    Q_PROPERTY(bool castsShadows READ castsShadows WRITE setCastsShadows NOTIFY castsShadowsChanged)
+    Q_PROPERTY(bool receivesShadows READ receivesShadows WRITE setReceivesShadows NOTIFY receivesShadowsChanged)
     Q_PROPERTY(QQmlListProperty<QQuick3DMaterial> materials READ materials)
 
 public:
@@ -83,6 +85,8 @@ public:
     float edgeTess() const;
     float innerTess() const;
     bool isWireframeMode() const;
+    bool castsShadows() const;
+    bool receivesShadows() const;
 
     QQmlListProperty<QQuick3DMaterial> materials();
 
@@ -93,6 +97,8 @@ public Q_SLOTS:
     void setEdgeTess(float edgeTess);
     void setInnerTess(float innerTess);
     void setIsWireframeMode(bool isWireframeMode);
+    void setCastsShadows(bool castsShadows);
+    void setReceivesShadows(bool receivesShadows);
 
 Q_SIGNALS:
     void sourceChanged(const QUrl &source);
@@ -101,6 +107,8 @@ Q_SIGNALS:
     void edgeTessChanged(float edgeTess);
     void innerTessChanged(float innerTess);
     void isWireframeModeChanged(bool isWireframeMode);
+    void castsShadowsChanged(bool castsShadows);
+    void receivesShadowsChanged(bool receivesShadows);
 
 protected:
     QSSGRenderGraphObject *updateSpatialNode(QSSGRenderGraphObject *node) override;
@@ -113,7 +121,8 @@ private:
         TesselationEdgeDirty =  0x00000008,
         TesselationInnerDirty = 0x00000010,
         WireframeDirty =        0x00000020,
-        MaterialsDirty =        0x00000040
+        MaterialsDirty =        0x00000040,
+        ShadowsDirty =          0x00000080
     };
 
     QString translateSource();
@@ -133,6 +142,8 @@ private:
     static void qmlClearMaterials(QQmlListProperty<QQuick3DMaterial> *list);
 
     QVector<QQuick3DMaterial *> m_materials;
+    bool m_castsShadows = true;
+    bool m_receivesShadows = true;
 };
 
 QT_END_NAMESPACE

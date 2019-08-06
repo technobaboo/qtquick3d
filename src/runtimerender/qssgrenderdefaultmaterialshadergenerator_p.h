@@ -135,7 +135,8 @@ public:
                                        const QMatrix4x4 &inGlobalTransform,
                                        QSSGRenderableImage *inFirstImage,
                                        float inOpacity,
-                                       const QSSGLayerGlobalRenderProperties &inRenderProperties) override = 0;
+                                       const QSSGLayerGlobalRenderProperties &inRenderProperties,
+                                       bool receivesShadows = true) override = 0;
 
     static QSSGRef<QSSGDefaultMaterialShaderGeneratorInterface> createDefaultMaterialShaderGenerator(QSSGRenderContextInterface *inRenderContext);
 

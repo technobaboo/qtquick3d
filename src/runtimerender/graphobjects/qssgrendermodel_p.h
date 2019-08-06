@@ -65,6 +65,8 @@ struct Q_QUICK3DRUNTIMERENDER_EXPORT QSSGRenderModel : public QSSGRenderNode
     float innerTess = 1.0f;
     TessModeValues tessellationMode = TessModeValues::NoTess;
     bool wireframeMode = false;
+    bool castsShadows = true;
+    bool receivesShadows = true;
 
     QSSGRenderModel();
 

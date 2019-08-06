@@ -95,6 +95,16 @@ QQmlListProperty<QQuick3DMaterial> QQuick3DModel::materials()
                                             QQuick3DModel::qmlClearMaterials);
 }
 
+bool QQuick3DModel::castsShadows() const
+{
+    return m_castsShadows;
+}
+
+bool QQuick3DModel::receivesShadows() const
+{
+    return m_receivesShadows;
+}
+
 void QQuick3DModel::setSource(const QUrl &source)
 {
     if (m_source == source)
@@ -155,6 +165,26 @@ void QQuick3DModel::setIsWireframeMode(bool isWireframeMode)
     markDirty(WireframeDirty);
 }
 
+void QQuick3DModel::setCastsShadows(bool castsShadows)
+{
+    if (m_castsShadows == castsShadows)
+        return;
+
+    m_castsShadows = castsShadows;
+    emit castsShadowsChanged(m_castsShadows);
+    markDirty(ShadowsDirty);
+}
+
+void QQuick3DModel::setReceivesShadows(bool receivesShadows)
+{
+    if (m_receivesShadows == receivesShadows)
+        return;
+
+    m_receivesShadows = receivesShadows;
+    emit receivesShadowsChanged(m_receivesShadows);
+    markDirty(ShadowsDirty);
+}
+
 static QSSGRenderGraphObject *getMaterialNodeFromQSSGMaterial(QQuick3DMaterial *material)
 {
     QQuick3DObjectPrivate *p = QQuick3DObjectPrivate::get(material);
@@ -182,6 +212,10 @@ QSSGRenderGraphObject *QQuick3DModel::updateSpatialNode(QSSGRenderGraphObject *n
     if (m_dirtyAttributes & WireframeDirty)
         modelNode->wireframeMode = m_isWireframeMode;
 
+    if (m_dirtyAttributes & ShadowsDirty) {
+        modelNode->castsShadows = m_castsShadows;
+        modelNode->receivesShadows = m_receivesShadows;
+    }
 
     if (m_dirtyAttributes & MaterialsDirty) {
         if (!m_materials.isEmpty()) {

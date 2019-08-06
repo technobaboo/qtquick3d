@@ -179,7 +179,8 @@ public:
                                        const QMatrix4x4 &inGlobalTransform,
                                        QSSGRenderableImage *inFirstImage,
                                        float inOpacity,
-                                       const QSSGLayerGlobalRenderProperties &inRenderProperties) = 0;
+                                       const QSSGLayerGlobalRenderProperties &inRenderProperties,
+                                       bool receivesShadows = true) = 0;
 
     static QSSGRef<QSSGMaterialShaderGeneratorInterface> createCustomMaterialShaderGenerator(QSSGRenderContextInterface *inRenderContext);
 };

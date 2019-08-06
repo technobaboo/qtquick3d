@@ -225,7 +225,8 @@ void QSSGSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderFea
                                                                                              modelContext.model.globalTransform,
                                                                                              firstImage,
                                                                                              opacity,
-                                                                                             generator->getLayerGlobalRenderProperties());
+                                                                                             generator->getLayerGlobalRenderProperties(),
+                                                                                             renderableFlags.receivesShadows());
 
     // tesselation
     if (subset.primitiveType == QSSGRenderDrawMode::Patches) {

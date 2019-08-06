@@ -271,7 +271,7 @@ void QSSGLayerRenderPreparationData::addRenderWidget(QSSGRenderWidgetInterface &
 
 #define QSSG_RENDER_MINIMUM_RENDER_OPACITY .01f
 
-QSSGShaderDefaultMaterialKey QSSGLayerRenderPreparationData::generateLightingKey(QSSGRenderDefaultMaterial::MaterialLighting inLightingType)
+QSSGShaderDefaultMaterialKey QSSGLayerRenderPreparationData::generateLightingKey(QSSGRenderDefaultMaterial::MaterialLighting inLightingType, bool receivesShadows)
 {
     QSSGShaderDefaultMaterialKey theGeneratedKey(getShaderFeatureSetHash());
     const bool lighting = inLightingType != QSSGRenderDefaultMaterial::MaterialLighting::NoLighting;
@@ -293,7 +293,7 @@ QSSGShaderDefaultMaterialKey QSSGLayerRenderPreparationData::generateLightingKey
             QSSGRenderLight *theLight(globalLights[lightIdx]);
             const bool isDirectional = theLight->m_lightType == QSSGRenderLight::Type::Directional;
             const bool isArea = theLight->m_lightType == QSSGRenderLight::Type::Area;
-            const bool castShadowsArea = (theLight->m_lightType != QSSGRenderLight::Type::Area) && (theLight->m_castShadow);
+            const bool castShadowsArea = (theLight->m_lightType != QSSGRenderLight::Type::Area) && (theLight->m_castShadow) && receivesShadows;
 
             renderer->defaultMaterialShaderKeyProperties().m_lightFlags[lightIdx].setValue(theGeneratedKey, !isDirectional);
             renderer->defaultMaterialShaderKeyProperties().m_lightAreaFlags[lightIdx].setValue(theGeneratedKey, isArea);
@@ -547,7 +547,7 @@ QSSGDefaultMaterialPreparationResult QSSGLayerRenderPreparationData::prepareDefa
         bool inClearDirtyFlags)
 {
     QSSGRenderDefaultMaterial *theMaterial = &inMaterial;
-    QSSGDefaultMaterialPreparationResult retval(generateLightingKey(theMaterial->lighting));
+    QSSGDefaultMaterialPreparationResult retval(generateLightingKey(theMaterial->lighting, inExistingFlags.receivesShadows()));
     retval.renderableFlags = inExistingFlags;
     QSSGRenderableObjectFlags &renderableFlags(retval.renderableFlags);
     QSSGShaderDefaultMaterialKey &theGeneratedKey(retval.materialKey);
@@ -669,7 +669,7 @@ QSSGDefaultMaterialPreparationResult QSSGLayerRenderPreparationData::prepareCust
                                                                                                         QSSGRenderableObjectFlags &inExistingFlags,
                                                                                                         float inOpacity)
 {
-    QSSGDefaultMaterialPreparationResult retval(generateLightingKey(QSSGRenderDefaultMaterial::MaterialLighting::FragmentLighting)); // always fragment lighting
+    QSSGDefaultMaterialPreparationResult retval(generateLightingKey(QSSGRenderDefaultMaterial::MaterialLighting::FragmentLighting, inExistingFlags.receivesShadows())); // always fragment lighting
     retval.renderableFlags = inExistingFlags;
     QSSGRenderableObjectFlags &renderableFlags(retval.renderableFlags);
     QSSGShaderDefaultMaterialKey &theGeneratedKey(retval.materialKey);
@@ -774,6 +774,11 @@ bool QSSGLayerRenderPreparationData::prepareModelForRender(QSSGRenderModel &inMo
             renderableFlags.setPickable(canModelBePickable
                                         && (theModelContext.model.flags.testFlag(QSSGRenderModel::Flag::GloballyPickable)
                                             || renderableFlags.isPickable()));
+
+            // Casting and Receiving Shadows
+            renderableFlags.setCastsShadows(inModel.castsShadows);
+            renderableFlags.setReceivesShadows(inModel.receivesShadows);
+
             QSSGRenderableObject *theRenderableObject = nullptr;
             QPair<bool, QSSGRenderGraphObject *> theMaterialObjectAndDirty = resolveReferenceMaterial(theSourceMaterialObject);
             QSSGRenderGraphObject *theMaterialObject = theMaterialObjectAndDirty.second;

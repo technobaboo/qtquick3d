@@ -529,6 +529,10 @@ inline void renderRenderableShadowMapPass(QSSGLayerRenderData &inData,
 {
     QSSGShadowMapEntry *pEntry = inData.shadowMapManager->getShadowMapEntry(lightIndex);
 
+    // If the object is marked that it doesn't cast shadows, then skip it.
+    if (!inObject.renderableFlags.castsShadows())
+        return;
+
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
         static_cast<QSSGSubsetRenderableBase &>(inObject).renderShadowMapPass(inCameraProps, inData.globalLights[lightIndex], inCamera, pEntry);
     else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {

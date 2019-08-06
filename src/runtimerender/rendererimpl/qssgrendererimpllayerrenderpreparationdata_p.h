@@ -304,7 +304,7 @@ struct QSSGLayerRenderPreparationData
 
     static QByteArray cgLightingFeatureName();
 
-    QSSGShaderDefaultMaterialKey generateLightingKey(QSSGRenderDefaultMaterial::MaterialLighting inLightingType);
+    QSSGShaderDefaultMaterialKey generateLightingKey(QSSGRenderDefaultMaterial::MaterialLighting inLightingType, bool receivesShadows = true);
 
     void prepareImageForRender(QSSGRenderImage &inImage,
                                QSSGImageMapTypes inMapType,

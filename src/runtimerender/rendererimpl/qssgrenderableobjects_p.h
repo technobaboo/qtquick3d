@@ -66,6 +66,8 @@ enum class QSSGRenderableObjectFlag
     CustomMaterialMeshSubset = 1 << 7,
     HasRefraction = 1 << 8,
     Path = 1 << 9,
+    CastsShadows = 1 << 10,
+    ReceivesShadows = 1 << 11
 };
 
 struct QSSGRenderableObjectFlags : public QFlags<QSSGRenderableObjectFlag>
@@ -88,6 +90,12 @@ struct QSSGRenderableObjectFlags : public QFlags<QSSGRenderableObjectFlag>
     bool isDirty() const { return this->operator&(QSSGRenderableObjectFlag::Dirty); }
     void setPickable(bool inPickable) { setFlag(QSSGRenderableObjectFlag::Pickable, inPickable); }
     bool isPickable() const { return this->operator&(QSSGRenderableObjectFlag::Pickable); }
+
+    void setCastsShadows(bool inCastsShadows) { setFlag(QSSGRenderableObjectFlag::CastsShadows, inCastsShadows); }
+    bool castsShadows() const { return this->operator&(QSSGRenderableObjectFlag::CastsShadows); }
+
+    void setReceivesShadows(bool inReceivesShadows) { setFlag(QSSGRenderableObjectFlag::ReceivesShadows, inReceivesShadows); }
+    bool receivesShadows() const { return this->operator&(QSSGRenderableObjectFlag::ReceivesShadows); }
 
     // Mutually exclusive values
     void setDefaultMaterialMeshSubset(bool inMeshSubset)

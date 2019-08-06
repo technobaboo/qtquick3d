@@ -503,7 +503,8 @@ struct QSSGShaderGenerator : public QSSGMaterialShaderGeneratorInterface
                              const QVector3D &,
                              const QVector<QSSGRenderLight *> &inLights,
                              const QVector<QVector3D> &,
-                             const QSSGRef<QSSGRenderShadowMap> &inShadowMaps)
+                             const QSSGRef<QSSGRenderShadowMap> &inShadowMaps,
+                             bool receivesShadows = true)
     {
         const QSSGRef<QSSGShaderGeneratorGeneratedShader> &theShader(getShaderForProgram(inProgram));
         m_renderContext->renderContext()->setActiveShader(inProgram);
@@ -537,18 +538,21 @@ struct QSSGShaderGenerator : public QSSGMaterialShaderGeneratorInterface
             // Split the count between CG lights and area lights
             for (int lightIdx = 0; lightIdx < inLights.size() && pLightCb; ++lightIdx) {
                 QSSGShadowMapEntry *theShadow = nullptr;
-                if (inShadowMaps && inLights[lightIdx]->m_castShadow)
-                    theShadow = inShadowMaps->getShadowMapEntry(lightIdx);
+                qint32 shdwIdx = 0;
 
-                qint32 shdwIdx = (inLights[lightIdx]->m_lightType != QSSGRenderLight::Type::Directional) ? numShadowCubes : numShadowMaps;
-                setShadowMaps(inProgram,
-                              theShadow,
-                              numShadowMaps,
-                              numShadowCubes,
-                              inLights[lightIdx]->m_lightType == QSSGRenderLight::Type::Directional,
-                              theShader->m_shadowMaps,
-                              theShader->m_shadowCubes);
+                if (receivesShadows) {
+                    if (inShadowMaps && inLights[lightIdx]->m_castShadow)
+                        theShadow = inShadowMaps->getShadowMapEntry(lightIdx);
 
+                    shdwIdx = (inLights[lightIdx]->m_lightType != QSSGRenderLight::Type::Directional) ? numShadowCubes : numShadowMaps;
+                    setShadowMaps(inProgram,
+                                  theShadow,
+                                  numShadowMaps,
+                                  numShadowCubes,
+                                  inLights[lightIdx]->m_lightType == QSSGRenderLight::Type::Directional,
+                                  theShader->m_shadowMaps,
+                                  theShader->m_shadowCubes);
+                }
                 if (inLights[lightIdx]->m_lightType == QSSGRenderLight::Type::Area) {
                     const QSSGRef<QSSGShaderLightProperties> &theAreaLightEntry = setLight(inProgram,
                                                                                                lightIdx,
@@ -599,17 +603,21 @@ struct QSSGShaderGenerator : public QSSGMaterialShaderGeneratorInterface
             for (int lightIdx = 0; lightIdx < inLights.size(); ++lightIdx) {
 
                 QSSGShadowMapEntry *theShadow = nullptr;
-                if (inShadowMaps && inLights[lightIdx]->m_castShadow)
-                    theShadow = inShadowMaps->getShadowMapEntry(lightIdx);
+                qint32 shdwIdx = 0;
 
-                qint32 shdwIdx = (inLights[lightIdx]->m_lightType != QSSGRenderLight::Type::Directional) ? numShadowCubes : numShadowMaps;
-                setShadowMaps(inProgram,
-                              theShadow,
-                              numShadowMaps,
-                              numShadowCubes,
-                              inLights[lightIdx]->m_lightType == QSSGRenderLight::Type::Directional,
-                              theShader->m_shadowMaps,
-                              theShader->m_shadowCubes);
+                if (receivesShadows) {
+                    if (inShadowMaps && inLights[lightIdx]->m_castShadow)
+                        theShadow = inShadowMaps->getShadowMapEntry(lightIdx);
+
+                    shdwIdx = (inLights[lightIdx]->m_lightType != QSSGRenderLight::Type::Directional) ? numShadowCubes : numShadowMaps;
+                    setShadowMaps(inProgram,
+                                  theShadow,
+                                  numShadowMaps,
+                                  numShadowCubes,
+                                  inLights[lightIdx]->m_lightType == QSSGRenderLight::Type::Directional,
+                                  theShader->m_shadowMaps,
+                                  theShader->m_shadowCubes);
+                }
 
                 const QSSGRef<QSSGShaderLightProperties> &p = setLight(inProgram, lightIdx, areaLights, inLights[lightIdx], theShadow, shdwIdx, inCamera.clipFar);
                 if (inLights[lightIdx]->m_lightType == QSSGRenderLight::Type::Area)
@@ -755,7 +763,8 @@ struct QSSGShaderGenerator : public QSSGMaterialShaderGeneratorInterface
                                const QMatrix4x4 &inGlobalTransform,
                                QSSGRenderableImage *inFirstImage,
                                float inOpacity,
-                               const QSSGLayerGlobalRenderProperties &inRenderProperties) override
+                               const QSSGLayerGlobalRenderProperties &inRenderProperties,
+                               bool receivesShadows) override
     {
         const QSSGRenderCustomMaterial &theCustomMaterial = static_cast<const QSSGRenderCustomMaterial &>(inMaterial);
         Q_ASSERT(inMaterial.type == QSSGRenderGraphObject::Type::CustomMaterial);
@@ -766,7 +775,8 @@ struct QSSGShaderGenerator : public QSSGMaterialShaderGeneratorInterface
                             inRenderProperties.cameraDirection,
                             inRenderProperties.lights,
                             inRenderProperties.lightDirections,
-                            inRenderProperties.shadowMapManager);
+                            inRenderProperties.shadowMapManager,
+                            receivesShadows);
 
         setMaterialProperties(inProgram,
                               theCustomMaterial,

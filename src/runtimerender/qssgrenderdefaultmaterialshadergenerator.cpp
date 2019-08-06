@@ -1408,7 +1408,8 @@ struct QSSGShaderGenerator : public QSSGDefaultMaterialShaderGeneratorInterface
                              const QVector3D &inCameraDirection,
                              const QVector<QSSGRenderLight *> &inLights,
                              const QVector<QVector3D> &inLightDirections,
-                             const QSSGRef<QSSGRenderShadowMap> &inShadowMapManager)
+                             const QSSGRef<QSSGRenderShadowMap> &inShadowMapManager,
+                             bool receivesShadows = true)
     {
         const QSSGRef<QSSGShaderGeneratorGeneratedShader> &shader(getShaderForProgram(inProgram));
         m_renderContext->renderContext()->setActiveShader(inProgram);
@@ -1443,7 +1444,7 @@ struct QSSGShaderGenerator : public QSSGDefaultMaterialShaderGeneratorInterface
                 shader->m_lights.push_back(QSSGShaderLightProperties());
                 ++numShaderLights;
             }
-            if (shadowMapIdx >= numShadowLights && numShadowLights < QSSG_MAX_NUM_SHADOWS) {
+            if (shadowMapIdx >= numShadowLights && numShadowLights < QSSG_MAX_NUM_SHADOWS && receivesShadows) {
                 if (theLight->m_scope == nullptr && theLight->m_castShadow) {
                     // PKC TODO : Fix multiple shadow issues.
                     // Need to know when the list of lights changes order, and clear shadow maps
@@ -1464,7 +1465,7 @@ struct QSSGShaderGenerator : public QSSGDefaultMaterialShaderGeneratorInterface
 
             // TODO : This does potentially mean that we can create more shadow map entries than
             // we can actually use at once.
-            if ((theLight->m_scope == nullptr) && (theLight->m_castShadow && inShadowMapManager)) {
+            if ((theLight->m_scope == nullptr) && (theLight->m_castShadow && receivesShadows && inShadowMapManager)) {
                 QSSGShadowMapProperties &theShadowMapProperties(shader->m_shadowMaps[shadowMapIdx++]);
                 QSSGShadowMapEntry *pEntry = inShadowMapManager->getShadowMapEntry(lightIdx);
                 if (pEntry) {
@@ -1739,10 +1740,12 @@ struct QSSGShaderGenerator : public QSSGDefaultMaterialShaderGeneratorInterface
                                const QMatrix4x4 &inGlobalTransform,
                                QSSGRenderableImage *inFirstImage,
                                float inOpacity,
-                               const QSSGLayerGlobalRenderProperties &inRenderProperties) override
+                               const QSSGLayerGlobalRenderProperties &inRenderProperties,
+                               bool receivesShadows) override
     {
         const QSSGRenderDefaultMaterial &theMaterial(static_cast<const QSSGRenderDefaultMaterial &>(inMaterial));
         Q_ASSERT(inMaterial.type == QSSGRenderGraphObject::Type::DefaultMaterial);
+
 
         setGlobalProperties(inProgram,
                             inRenderProperties.layer,
@@ -1750,7 +1753,8 @@ struct QSSGShaderGenerator : public QSSGDefaultMaterialShaderGeneratorInterface
                             inRenderProperties.cameraDirection,
                             inRenderProperties.lights,
                             inRenderProperties.lightDirections,
-                            inRenderProperties.shadowMapManager);
+                            inRenderProperties.shadowMapManager,
+                            receivesShadows);
         setMaterialProperties(inProgram,
                               theMaterial,
                               inCameraVec,
