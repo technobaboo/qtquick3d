@@ -418,6 +418,16 @@ void QQuick3DViewport::setRenderMode(QQuick3DViewport::QQuick3DViewportRenderMod
     update();
 }
 
+void QQuick3DViewport::setEnableWireframeMode(bool enableWireframeMode)
+{
+    if (m_enableWireframeMode == enableWireframeMode)
+        return;
+
+    m_enableWireframeMode = enableWireframeMode;
+    emit enableWireframeModeChanged(m_enableWireframeMode);
+    update();
+}
+
 static QSurfaceFormat findIdealGLVersion()
 {
     QSurfaceFormat fmt;
@@ -566,6 +576,25 @@ QQuick3DPickResult QQuick3DViewport::pick(float x, float y) const
     // Some non-thread safe stuff to do input
     // First need to get a handle to the renderer
 
+    QQuick3DSceneRenderer *renderer = getRenderer();
+    if (renderer) {
+        return renderer->pick(position);
+    }
+    return QQuick3DPickResult();
+}
+
+bool QQuick3DViewport::enableWireframeMode() const
+{
+    return m_enableWireframeMode;
+}
+
+void QQuick3DViewport::invalidateSceneGraph()
+{
+    m_node = nullptr;
+}
+
+QQuick3DSceneRenderer *QQuick3DViewport::getRenderer() const
+{
     QQuick3DSceneRenderer *renderer = nullptr;
     if (m_node) {
         renderer = m_node->renderer;
@@ -574,16 +603,7 @@ QQuick3DPickResult QQuick3DViewport::pick(float x, float y) const
     } else if (m_directRenderer) {
         renderer = m_directRenderer->renderer();
     }
-
-    if (renderer) {
-        return renderer->pick(position);
-    }
-    return QQuick3DPickResult();
-}
-
-void QQuick3DViewport::invalidateSceneGraph()
-{
-    m_node = nullptr;
+    return renderer;
 }
 
 QT_END_NAMESPACE

@@ -1752,6 +1752,7 @@ Module {
         Property { name: "environment"; type: "QQuick3DSceneEnvironment"; isPointer: true }
         Property { name: "scene"; type: "QQuick3DNode"; isPointer: true }
         Property { name: "renderMode"; type: "QQuick3DViewportRenderMode" }
+        Property { name: "enableWireframeMode"; type: "bool" }
         Signal {
             name: "cameraChanged"
             Parameter { name: "camera"; type: "QQuick3DCamera"; isPointer: true }
@@ -1768,6 +1769,10 @@ Module {
             name: "renderModeChanged"
             Parameter { name: "renderMode"; type: "QQuick3DViewportRenderMode" }
         }
+        Signal {
+            name: "enableWireframeModeChanged"
+            Parameter { name: "enableWireframeMode"; type: "bool" }
+        }
         Method {
             name: "setCamera"
             Parameter { name: "camera"; type: "QQuick3DCamera"; isPointer: true }
@@ -1783,6 +1788,10 @@ Module {
         Method {
             name: "setRenderMode"
             Parameter { name: "renderMode"; type: "QQuick3DViewportRenderMode" }
+        }
+        Method {
+            name: "setEnableWireframeMode"
+            Parameter { name: "enableWireframeMode"; type: "bool" }
         }
         Method {
             name: "worldToView"
