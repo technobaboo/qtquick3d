@@ -153,7 +153,7 @@ struct QSSGSubsetMaterialVertexPipeline : public QSSGVertexPipelineImpl
         // add varyings we must pass through
         typedef TStrTableStrMap::const_iterator TParamIter;
         for (TParamIter iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end(); iter != end; ++iter) {
-            tessCtrlShader << "\t" << iter.value() << "TC[gl_InvocationID] = " << iter.value() << "[gl_InvocationID];\n";
+            tessCtrlShader << "\t" << iter.key() << "TC[gl_InvocationID] = " << iter.key() << "[gl_InvocationID];\n";
         }
     }
 
