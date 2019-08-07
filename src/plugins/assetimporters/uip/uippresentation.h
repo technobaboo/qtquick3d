@@ -1206,6 +1206,7 @@ struct UipPresentationData
     Scene *scene = nullptr;
     Slide *masterSlide = nullptr;
     QHash<QByteArray, GraphObject *> objects; // node ptrs managed by scene, not owned
+
     // Note: the key here is the sourcePath before it's resolved!
     QHash<QString, bool /* hasTransparency */> imageBuffers;
 };

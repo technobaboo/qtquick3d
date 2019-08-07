@@ -81,6 +81,7 @@ private:
     QVector <ReferencedMaterial *> m_referencedMaterials;
     QVector <AliasNode *> m_aliasNodes;
     QVector <ComponentNode *> m_componentNodes;
+    QVector<QDir> m_qmlDirs;
     bool m_hasQMLSubPresentations = false;
 
     // options

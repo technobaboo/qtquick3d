@@ -18,7 +18,8 @@ HEADERS += \
     enummaps.h \
     datamodelparser.h \
     keyframegroupgenerator.h \
-    propertymap.h
+    propertymap.h \
+    uniqueidmapper.h
 
 SOURCES += \
     uipassetimporterplugin.cpp \
@@ -30,7 +31,8 @@ SOURCES += \
     enummaps.cpp \
     datamodelparser.cpp \
     keyframegroupgenerator.cpp \
-    propertymap.cpp
+    propertymap.cpp \
+    uniqueidmapper.cpp
 
 RESOURCES += \
     metadata.qrc

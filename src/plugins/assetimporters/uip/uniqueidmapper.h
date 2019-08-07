@@ -27,51 +27,31 @@
 **
 ****************************************************************************/
 
-#ifndef UIPPARSER_H
-#define UIPPARSER_H
+#ifndef UNIQUEIDMAPPER_H
+#define UNIQUEIDMAPPER_H
 
-#include <abstractxmlparser.h>
-#include <functional>
+#include <QHash>
 #include <QSet>
-
 
 QT_BEGIN_NAMESPACE
 
-class UipPresentation;
-class GraphObject;
-class Slide;
-class AnimationTrack;
-class UipParser : public AbstractXmlParser
+class UniqueIdMapper
 {
 public:
-    UipPresentation *parse(const QString &filename, const QString &presentationName);
-    UipPresentation *parseData(const QByteArray &data, const QString &presentationName);
+    static UniqueIdMapper *instance();
+    void reset();
+
+    QByteArray queryId(const QByteArray &id);
+    QByteArray generateUniqueId(const QByteArray &id);
 
 private:
-    UipPresentation *createPresentation(const QString &presentationName);
-    void parseUIP();
-    void parseProject();
-    void parseProjectSettings();
-    void parseClasses();
-    void parseBufferData();
-    void parseImageBuffer();
-    void parseGraph();
-    void parseScene();
-    void parseObjects(GraphObject *parent);
-    void parseLogic();
-    Slide *parseSlide(Slide *parent = nullptr, const QByteArray &idPrefix = QByteArray());
-    void parseAddSet(Slide *slide, bool isSet, bool isMaster);
-    void parseAnimationKeyFrames(const QString &data, AnimationTrack *animTrack);
+    UniqueIdMapper();
+    ~UniqueIdMapper();
 
-    QByteArray getId(const QStringRef &desc, bool required = true);
-    void resolveReferences(GraphObject *obj);
-
-    typedef std::function<bool(const QByteArray &, const QString &)> ExternalFileLoadCallback;
-    void parseExternalFileRef(ExternalFileLoadCallback callback);
-
-    UipPresentation *m_presentation = nullptr;
+    QSet<QString> m_uniqueIds;
+    QHash<QByteArray, QByteArray> m_uniqueIdMap;
 };
 
 QT_END_NAMESPACE
 
-#endif // UIPPARSER_H
+#endif // UNIQUEIDMAPPER_H

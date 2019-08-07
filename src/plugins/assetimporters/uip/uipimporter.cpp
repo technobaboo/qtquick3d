@@ -33,6 +33,7 @@
 #include "uippresentation.h"
 #include "datamodelparser.h"
 #include "keyframegroupgenerator.h"
+#include "uniqueidmapper.h"
 #include <QtQuick3DAssetImport/private/qssgqmlutilities_p.h>
 
 #include <QBuffer>
@@ -128,8 +129,12 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
         auto uia = m_uiaParser.parse(sourceFile);
         uiaComponentName = uia.initialPresentationId;
         for (auto presentation : uia.presentations)
-            if (presentation.type == UiaParser::Uia::Presentation::Qml)
+            if (presentation.type == UiaParser::Uia::Presentation::Qml) {
                 m_hasQMLSubPresentations = true;
+                QFileInfo qmlFile(source.absolutePath() + QDir::separator() + presentation.source);
+                if (!m_qmlDirs.contains(qmlFile.dir()))
+                    m_qmlDirs.append(qmlFile.dir());
+            }
 
         for (auto presentation : uia.presentations) {
             if (presentation.type == UiaParser::Uia::Presentation::Uip) {
@@ -144,8 +149,8 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
         if (m_hasQMLSubPresentations) {
             // If there is any QML in the project at all, we have to copy the entire
             // qml folder over
-            copyRecursively(source.absolutePath() + QDir::separator() + QStringLiteral("qml"),
-                            m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("qml"));
+            for (QDir dir : m_qmlDirs)
+                copyRecursively(dir.absolutePath(), m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("qml"));
         }
 
     } else if (sourceFile.endsWith(QStringLiteral(".uip"), Qt::CaseInsensitive)) {
@@ -411,6 +416,26 @@ void generateTimelineAnimation(Slide *slide, float startFrame, float endFrame, b
     output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("}");
 }
 
+QVector<AnimationTrack> combineAnimationTracks(const QVector<AnimationTrack> &master, const QVector<AnimationTrack> &slide) {
+    // We can't have animations that target the same object and property,
+    // so slides overwrite master animations
+    QVector<AnimationTrack> animations;
+    for (auto masterAnimation : master) {
+        bool skip = false;
+        for (auto slideAnimation : slide) {
+            if (masterAnimation.m_target == slideAnimation.m_target &&
+                    masterAnimation.m_property == slideAnimation.m_property) {
+                skip = true;
+                break;
+            }
+        }
+        if (!skip)
+            animations.append(masterAnimation);
+    }
+    animations.append(slide);
+    return animations;
+}
+
 }
 
 void UipImporter::generateAnimationTimeLine(Slide *masterSlide, QTextStream &output, int tabLevel)
@@ -434,8 +459,7 @@ void UipImporter::generateAnimationTimeLine(Slide *masterSlide, QTextStream &out
 
         // Keyframe groups for master + current slide
         // Get a list off all animations for the master and first slide
-        auto animations = masterSlide->animations();
-        animations.append(slide->animations());
+        auto animations = combineAnimationTracks(masterSlide->animations(), slide->animations());
         // Create a list of KeyframeGroups
         KeyframeGroupGenerator generator;
 
@@ -636,6 +660,8 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             // Instead of parsing these items as normal, instead we iterate the
             // materials container and generate new Components for each one and output them
             // to the "materials" folder
+            m_exportPath.mkdir("materials");
+
             GraphObject *object = layer->firstChild();
             while (object) {
                 generateMaterialComponent(object);
@@ -669,7 +695,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
         QString id = material->m_referencedMaterial_unresolved;
         if (id.startsWith("#"))
             id.remove(0, 1);
-        auto obj = presentation->object(id.toUtf8());
+        auto obj = presentation->object(UniqueIdMapper::instance()->queryId(id.toUtf8()));
         if (!obj) {
             qWarning("Couldn't find object with id: %s", qPrintable(id));
             continue;
@@ -681,7 +707,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
         QString id = alias->m_referencedNode_unresolved;
         if (id.startsWith("#"))
             id.remove(0, 1);
-        generateAliasComponent(presentation->object(id.toUtf8()));
+        generateAliasComponent(presentation->object(UniqueIdMapper::instance()->queryId(id.toUtf8())));
     }
 
     // Generate actual files from the buffers we created

@@ -30,6 +30,7 @@
 #include "uipparser.h"
 #include "uippresentation.h"
 #include "enummaps.h"
+#include "uniqueidmapper.h"
 
 #include <QDebug>
 
@@ -312,7 +313,7 @@ void UipParser::parseLogic()
                 return;
             }
 
-            QByteArray refId = compRef.mid(1).toUtf8();
+            QByteArray refId = UniqueIdMapper::instance()->queryId(compRef.mid(1).toUtf8());
             GraphObject *slideTarget = m_presentation->object(refId);
             if (!slideTarget) {
                 r->raiseError(
@@ -387,7 +388,7 @@ void UipParser::parseAddSet(Slide *slide, bool isSet, bool isMaster)
         return;
     }
 
-    QByteArray refId = ref.mid(1).toUtf8();
+    QByteArray refId = UniqueIdMapper::instance()->queryId(ref.mid(1).toUtf8());
     GraphObject *obj = m_presentation->object(refId);
     if (!obj) {
         r->raiseError(
@@ -530,7 +531,7 @@ QByteArray UipParser::getId(const QStringRef &desc, bool required)
     QByteArray id = reader()->attributes().value(QLatin1String("id")).toUtf8();
     if (id.isEmpty() && required)
         reader()->raiseError(QObject::tr("Missing %1 id.").arg(desc.toString()));
-    return id;
+    return UniqueIdMapper::instance()->generateUniqueId(id);
 }
 
 
@@ -543,13 +544,12 @@ void UipParser::parseExternalFileRef(UipParser::ExternalFileLoadCallback callbac
     const QStringRef sourcePath = a.value(QStringLiteral("sourcepath"));
 
     // custommaterial/effect/behavior all expect ids to be prefixed with #
-    const QByteArray decoratedId = QByteArrayLiteral("#") + id.toUtf8();
+    const QByteArray decoratedId = QByteArrayLiteral("#") + UniqueIdMapper::instance()->queryId(id.toUtf8());
     const QString src = m_presentation->assetFileName(sourcePath.toString(), nullptr);
     if (!callback(decoratedId, src))
         r->raiseError(QObject::tr("Failed to load external file %1").arg(src));
 
     r->skipCurrentElement();
 }
-
 
 QT_END_NAMESPACE
