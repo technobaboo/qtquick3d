@@ -134,6 +134,7 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
                 QFileInfo qmlFile(source.absolutePath() + QDir::separator() + presentation.source);
                 if (!m_qmlDirs.contains(qmlFile.dir()))
                     m_qmlDirs.append(qmlFile.dir());
+                generateQmlComponent(presentation.id, qmlFile.baseName());
             }
 
         for (auto presentation : uia.presentations) {
@@ -581,12 +582,11 @@ void UipImporter::writeHeader(QTextStream &output)
         output << "import \"../aliases\" as Aliases" << endl;
     }
 
-    if (m_componentNodes.count() > 0) {
+    if (m_componentNodes.count() > 0 || m_qmlDirs.count() > 0) {
         output << "import \"../components\"" << endl;
     }
 
-    if (m_hasQMLSubPresentations)
-        output << "import \"../qml\"" << endl;
+    output << "import \"../presentations\"" << endl;
 
     output << endl;
 }
@@ -625,6 +625,31 @@ void UipImporter::generateApplicationComponent(const QString &initialPresentatio
 
     applicationComponentFile.close();
     m_generatedFiles += targetFileName;
+}
+
+void UipImporter::generateQmlComponent(const QString componentName, const QString componentSource)
+{
+    QDir componentPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("components");
+    componentPath.mkdir(".");
+
+    // Basically creates an alias component to a QML one
+    QString qmlComponentName = QSSGQmlUtilities::qmlComponentName(componentName);
+    QString targetFileName = componentPath.absolutePath() + QDir::separator() + qmlComponentName + QStringLiteral(".qml");
+    QFile componentFile(targetFileName);
+    if (!componentFile.open(QIODevice::WriteOnly)) {
+        qWarning() << "Could not write to file: " << componentFile;
+        return;
+    }
+
+    QTextStream output(&componentFile);
+
+    output << "import QtQuick 2.12" << endl;
+    output << "import \"../qml\"" << endl << endl;
+
+    output << componentSource << QStringLiteral(" { }");
+
+    componentFile.close();
+    m_generatedFiles.append(targetFileName);
 }
 
 QString UipImporter::processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath)

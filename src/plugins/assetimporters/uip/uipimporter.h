@@ -66,6 +66,7 @@ private:
     void generateComponent(GraphObject *component);
     void writeHeader(QTextStream &output);
     void generateApplicationComponent(const QString &initialPresentationComponent, const QSize &size);
+    void generateQmlComponent(const QString componentName, const QString componentSource);
 
     QVector<QString> m_resourcesList;
     UiaParser m_uiaParser;
