@@ -461,24 +461,67 @@ QVector<AnimationTrack> combineAnimationTracks(const QVector<AnimationTrack> &ma
     return animations;
 }
 
+void calculateStartAndEndTimes(Slide *currentSlide, UipPresentation *presentation, ComponentNode *component, float &startTime, float &endTime) {
+
+    GraphObject *object = nullptr;
+    if (presentation) {
+        //presentation
+        presentation->applySlidePropertyChanges(currentSlide);
+        object = presentation->scene()->firstChild();
+    } else {
+        //component
+        const auto &changeList = currentSlide->propertyChanges();
+        for (auto it = changeList.cbegin(), ite = changeList.cend(); it != ite; ++it) {
+            it.key()->applyPropertyChanges(*it.value());
+        }
+        object = component->firstChild();
+    }
+
+    startTime = std::numeric_limits<float>::max();
+    endTime = std::numeric_limits<float>::min();
+    while (object) {
+        startTime = qMin(object->startTime(), startTime);
+        endTime = qMax(object->endTime(), endTime);
+        object = object->nextSibling();
+    }
 }
 
-void UipImporter::generateAnimationTimeLine(Slide *masterSlide, QTextStream &output, int tabLevel, const QString &componentName)
+}
+
+void UipImporter::generateAnimationTimeLine(QTextStream &output, int tabLevel, UipPresentation *presentation, ComponentNode *component)
 {
+    // Either presentation or component should be valid
+    Slide *masterSlide;
+    QString componentName;
+    if (presentation) {
+        masterSlide = presentation->masterSlide();
+        componentName = presentation->name();
+    } else if (component) {
+        masterSlide = component->m_masterSlide;
+        componentName = component->qmlId();
+    } else {
+        Q_UNREACHABLE();
+        qDebug("something went wrong");
+        return;
+    }
+
     // Generate a 1 Timeline and 1 TimelineAnimation for each slide
     // Each combines the master slide and current slide
 
     // For each slide, create a TimelineAnimation
     auto slide = static_cast<Slide*>(masterSlide->firstChild());
     while (slide) {
+        float startTime = 0.0f;
+        float endTime = 0.0f;
+        calculateStartAndEndTimes(slide, presentation, component, startTime, endTime);
         output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("Timeline {") << endl;
         output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("id: ") << QSSGQmlUtilities::sanitizeQmlId(slide->m_name + QStringLiteral("Timeline")) << endl;
-        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("startFrame: ") << masterSlide->startTime() << endl;
-        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("endFrame: ") << masterSlide->endTime() << endl;
-        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("currentFrame: ") << masterSlide->startTime() << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("startFrame: ") << startTime << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("endFrame: ") << endTime << endl;
+        output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("currentFrame: ") << startTime << endl;
         output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("enabled: false") << endl;
         output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("animations: [") << endl;
-        generateTimelineAnimation(slide, slide->startTime(), slide->endTime(), true, output, tabLevel + 2, componentName);
+        generateTimelineAnimation(slide, startTime, endTime, true, output, tabLevel + 2, componentName);
         output << endl;
         output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("]") << endl;
 
@@ -587,7 +630,7 @@ void UipImporter::generateComponent(GraphObject *component)
 
     // Generate Animation Timeline
     auto componentNode = static_cast<ComponentNode*>(component);
-    generateAnimationTimeLine(componentNode->m_masterSlide, output, 1, component->qmlId());
+    generateAnimationTimeLine(output, 1, nullptr, componentNode);
 
     // Generate States from Slides
     generateStatesFromSlides(componentNode->m_masterSlide, output, 1);
@@ -803,7 +846,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             }
             // Do States and AnimationTimelines here (same for all layers of the presentation)
             // Generate Animation Timeline
-            generateAnimationTimeLine(m_presentation->masterSlide(), output, 1, QSSGQmlUtilities::sanitizeQmlId(m_presentation->name()));
+            generateAnimationTimeLine(output, 1, m_presentation, nullptr);
             // Generate States from Slides
             generateStatesFromSlides(m_presentation->masterSlide(), output, 1);
 
