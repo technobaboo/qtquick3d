@@ -61,7 +61,7 @@ private:
     void checkForResourceFiles(GraphObject *object);
     void generateMaterialComponent(GraphObject *object);
     void generateAliasComponent(GraphObject *reference);
-    void generateAnimationTimeLine(Slide *masterSlide, QTextStream &output, int tabLevel);
+    void generateAnimationTimeLine(Slide *masterSlide, QTextStream &output, int tabLevel, const QString &componentName);
     void generateStatesFromSlides(Slide *masterSlide, QTextStream &output, int tabLevel);
     void generateComponent(GraphObject *component);
     void writeHeader(QTextStream &output);
