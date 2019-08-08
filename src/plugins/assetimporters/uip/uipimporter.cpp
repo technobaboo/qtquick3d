@@ -614,6 +614,7 @@ void UipImporter::generateApplicationComponent(const QString &initialPresentatio
     output << QSSGQmlUtilities::insertTabs(1) << "width: " << size.width() << endl;
     output << QSSGQmlUtilities::insertTabs(1) << "height: " << size.height() << endl;
     output << QSSGQmlUtilities::insertTabs(1) << "title: " << "\"" << initialPresentationComponent << "\"" << endl;
+    output << QSSGQmlUtilities::insertTabs(1) << "visible: true" << endl;
     output << endl;
 
     // Component

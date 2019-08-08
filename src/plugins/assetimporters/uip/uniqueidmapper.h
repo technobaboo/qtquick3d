@@ -42,6 +42,7 @@ public:
     void reset();
 
     QByteArray queryId(const QByteArray &id);
+    QByteArray queryId(const QString &id);
     QByteArray generateUniqueId(const QByteArray &id);
 
 private:

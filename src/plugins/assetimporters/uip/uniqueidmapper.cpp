@@ -47,7 +47,26 @@ void UniqueIdMapper::reset()
 
 QByteArray UniqueIdMapper::queryId(const QByteArray &id)
 {
-    return m_uniqueIdMap[id];
+    if (id == QByteArrayLiteral("#Material_diffusemap"))
+        qDebug("here");
+
+    QByteArray idCopy = id;
+    if (id.startsWith('#'))
+        idCopy = idCopy.mid(1);
+
+    QByteArray value = m_uniqueIdMap[idCopy];
+    if (value.isEmpty()) {
+        // try again after sanitizing
+        value = m_uniqueIdMap[QSSGQmlUtilities::sanitizeQmlId(idCopy).toUtf8()];
+        if (value.isEmpty())
+            value = QSSGQmlUtilities::sanitizeQmlId(idCopy).toUtf8();
+    }
+    return value;
+}
+
+QByteArray UniqueIdMapper::queryId(const QString &id)
+{
+    return queryId(id.toUtf8());
 }
 
 QByteArray UniqueIdMapper::generateUniqueId(const QByteArray &id)
@@ -55,7 +74,7 @@ QByteArray UniqueIdMapper::generateUniqueId(const QByteArray &id)
     int index = 0;
     QByteArray uniqueID = QSSGQmlUtilities::sanitizeQmlId(id).toLocal8Bit();
     while (m_uniqueIds.contains(uniqueID))
-        uniqueID = id + QByteArrayLiteral("_") + QString::number(++index).toLocal8Bit();
+        uniqueID = uniqueID + QByteArrayLiteral("_") + QString::number(++index).toLocal8Bit();
     m_uniqueIds.insert(uniqueID);
     m_uniqueIdMap.insert(id, uniqueID);
     return uniqueID;
