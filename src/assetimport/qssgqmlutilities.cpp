@@ -106,13 +106,80 @@ QString sanitizeQmlId(const QString &id)
         idCopy[0] = idCopy[0].toLower();
 
     // ### qml keywords as names
-    if (idCopy == "default" ||
-            idCopy == "alias" ||
-            idCopy == "readonly" ||
-            idCopy == "property" ||
-            idCopy == "signal"||
-            idCopy == "int") {
-        idCopy += "_";
+    static QSet<QByteArray> keywords {
+        "as",
+        "do",
+        "if",
+        "in",
+        "on",
+        "of",
+        "for",
+        "get",
+        "int",
+        "let",
+        "new",
+        "set",
+        "try",
+        "var",
+        "byte",
+        "case",
+        "char",
+        "else",
+        "num",
+        "from",
+        "goto",
+        "null",
+        "this",
+        "true",
+        "void",
+        "with",
+        "alias",
+        "break",
+        "catch",
+        "class",
+        "const",
+        "false",
+        "float",
+        "short",
+        "super",
+        "throw",
+        "while",
+        "yield",
+        "delete",
+        "double",
+        "export",
+        "import",
+        "native",
+        "public",
+        "pragma",
+        "return",
+        "signal",
+        "static",
+        "switch",
+        "throws",
+        "typeof",
+        "boolean",
+        "default",
+        "extends",
+        "finally",
+        "package",
+        "private",
+        "abstract",
+        "continue",
+        "debugger",
+        "function",
+        "property",
+        "readonly",
+        "volatile",
+        "interface",
+        "protected",
+        "transient",
+        "implements",
+        "instanceof",
+        "synchronized"
+    };
+    if (keywords.contains(idCopy.toUtf8())) {
+        idCopy += QStringLiteral("_");
     }
 
     // We may have removed all the characters by now
