@@ -482,6 +482,11 @@ QSSGRenderGraphObject *QQuick3DTexture::updateSpatialNode(QSSGRenderGraphObject 
 
         m_layer->setItem(QQuickItemPrivate::get(m_sourceItem)->itemNode());
         QRectF sourceRect = QRectF(0, 0, m_sourceItem->width(), m_sourceItem->height());
+        // check if the size is null
+        if (sourceRect.width() == 0.0)
+            sourceRect.setWidth(256.0);
+        if (sourceRect.height() == 0.0)
+            sourceRect.setHeight(256.0);
         m_layer->setRect(sourceRect);
 
         QSize textureSize(qCeil(qAbs(sourceRect.width())), qCeil(qAbs(sourceRect.height())));

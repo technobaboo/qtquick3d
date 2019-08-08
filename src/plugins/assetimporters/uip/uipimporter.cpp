@@ -661,9 +661,9 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
     m_presentation = presentation;
 
     // Apply the properties of the first slide before running generator
-    Slide *firstSlide = static_cast<Slide*>(presentation->masterSlide()->firstChild());
-    if (firstSlide)
-        presentation->applySlidePropertyChanges(firstSlide);
+//    Slide *firstSlide = static_cast<Slide*>(presentation->masterSlide()->firstChild());
+//    if (firstSlide)
+//        presentation->applySlidePropertyChanges(firstSlide);
     QString errorString;
 
     // create one component per layer

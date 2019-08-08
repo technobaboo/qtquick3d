@@ -168,7 +168,11 @@ void KeyframeGroupGenerator::KeyframeGroup::generateKeyframeGroupQml(QTextStream
         output << QSSGQmlUtilities::insertTabs(tabLevel + 1) << QStringLiteral("Keyframe {") << endl;
 
         output << QSSGQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("frame: ") << keyframe->time << endl;
-        output << QSSGQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("value: ") << keyframe->valueToString() << endl;
+        // special handling just for opacity value
+        if (property == QStringLiteral("opacity"))
+            output << QSSGQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("value: ") << QString::number(keyframe->value.x() * 0.01) << endl;
+        else
+            output << QSSGQmlUtilities::insertTabs(tabLevel + 2) << QStringLiteral("value: ") << keyframe->valueToString() << endl;
 
         // ### Only linear supported at the moment, add support for EaseInOut and Bezier
 

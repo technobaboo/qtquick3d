@@ -47,9 +47,6 @@ void UniqueIdMapper::reset()
 
 QByteArray UniqueIdMapper::queryId(const QByteArray &id)
 {
-    if (id == QByteArrayLiteral("#Material_diffusemap"))
-        qDebug("here");
-
     QByteArray idCopy = id;
     if (id.startsWith('#'))
         idCopy = idCopy.mid(1);

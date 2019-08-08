@@ -1577,6 +1577,8 @@ QString blendTypeToString(LayerNode::BlendType type)
 void LayerNode::writeQmlProperties(QTextStream &output, int tabLevel)
 {
     output << QSSGQmlUtilities::insertTabs(tabLevel) << QStringLiteral("id: ") << qmlId() << endl;
+    //need to manually call visible flag here
+    writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("visible"), m_flags.testFlag(Node::Active));
 
     // QQuickItem position/anchors
     if (m_horizontalFields == LeftWidth) {
@@ -1774,6 +1776,8 @@ void LayerNode::writeQmlProperties(const PropertyChangeList &changeList, QTextSt
             writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("environment.probe2window"), m_probe2Window);
         } else if (targetProperty == QStringLiteral("probe2pos")) {
             writeQmlPropertyHelper(output, tabLevel + 1, type(), QStringLiteral("environment.probe2pos"), m_probe2Pos);
+        } else if (targetProperty == QStringLiteral("eyeball")) {
+            writeQmlPropertyHelper(output, tabLevel, type(), QStringLiteral("visible"), m_flags.testFlag(Node::Active));
         }
     }
 }
