@@ -201,6 +201,13 @@ bool QQuick3DNode::visible() const
     return m_visible;
 }
 
+QQuick3DNode *QQuick3DNode::parentNode() const
+{
+    // The parent of a QQuick3DNode should never be anything else than a (subclass
+    // of) QQuick3DNode (but the children/leaf nodes can be something else).
+    return static_cast<QQuick3DNode *>(parentItem());
+}
+
 /*!
     \qmlproperty vector3d QtQuick3D::Node::forward
 

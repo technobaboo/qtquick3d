@@ -106,6 +106,8 @@ public:
     Orientation orientation() const;
     bool visible() const;
 
+    inline QQuick3DNode *parentNode() const;
+
     QVector3D forward() const;
     QVector3D up() const;
     QVector3D right() const;
