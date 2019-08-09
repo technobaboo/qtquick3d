@@ -124,119 +124,19 @@ bool QSSGRenderNode::calculateGlobalVariables()
     return retval && flags.testFlag(Flag::Active);
 }
 
-// Create some mapping of euler angles to their axis mapping.
-#define ITERATE_POSSIBLE_EULER_ANGLES                                                                                  \
-    HANDLE_EULER_ANGLE(EulOrdXYZs, X, Y, Z)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdXYXs, X, Y, X)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdXZYs, X, Z, Y)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdXZXs, X, Z, X)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdYZXs, Y, Z, X)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdYZYs, Y, Z, Y)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdYXZs, Y, X, Z)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdYXYs, Y, X, Y)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdZXYs, Z, X, Y)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdZXZs, Z, X, Z)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdZYXs, Z, Y, X)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdZYZs, Z, Y, Z)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdZYXr, Z, Y, X)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdXYXr, X, Y, X)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdYZXr, Y, Z, X)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdXZXr, X, Z, X)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdXZYr, X, Z, Y)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdYZYr, Y, Z, Y)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdZXYr, Z, X, Y)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdYXYr, Y, X, Y)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdYXZr, Y, X, Z)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdZXZr, Z, X, Z)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdXYZr, X, Y, Z)                                                                            \
-    HANDLE_EULER_ANGLE(EulOrdZYZr, Z, Y, Z)
-
-inline EulerAngles rotationAndOrderToShoemake(QVector3D inRotation, quint32 inOrder)
-{
-    EulerAngles retval;
-    retval.w = float(inOrder);
-    int X = 0;
-    int Y = 1;
-    int Z = 2;
-
-    switch (inOrder) {
-#define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                                    \
-    case order:                                                                                                        \
-        retval.x = -inRotation[xIdx];                                                                                  \
-        retval.y = -inRotation[yIdx];                                                                                  \
-        retval.z = -inRotation[zIdx];                                                                                  \
-        break;
-        ITERATE_POSSIBLE_EULER_ANGLES
-#undef HANDLE_EULER_ANGLE
-    default:
-        Q_ASSERT(false);
-        retval.x = inRotation[X];
-        retval.y = inRotation[Y];
-        retval.z = inRotation[Z];
-        break;
-    }
-    return retval;
-}
-
 QVector3D QSSGRenderNode::getRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const
 {
-    QMatrix4x4 theConvertMatrix = { inMatrix(0, 0),
-                                    inMatrix(0, 1),
-                                    inMatrix(0, 2),
-                                    0.0f,
-                                    inMatrix(1, 0),
-                                    inMatrix(1, 1),
-                                    inMatrix(1, 2),
-                                    0.0f,
-                                    inMatrix(2, 0),
-                                    inMatrix(2, 1),
-                                    inMatrix(2, 2),
-                                    0.0f,
-                                    0.0f,
-                                    0.0f,
-                                    0.0f,
-                                    1.0f };
-
-    if (flags.testFlag(Flag::LeftHanded))
-        QSSGRenderNode::flipCoordinateSystem(theConvertMatrix);
-    QSSGEulerAngleConverter theConverter;
-    HMatrix *theHMatrix = reinterpret_cast<HMatrix *>(theConvertMatrix.data());
-    EulerAngles theAngles = theConverter.eulerFromHMatrix(*theHMatrix, rotationOrder);
-    return getRotationVectorFromEulerAngles(theAngles);
+    return QSSGEulerAngleConverter::calculateRotationVector(inMatrix, flags.testFlag(Flag::LeftHanded), rotationOrder);
 }
 
 QVector3D QSSGRenderNode::getRotationVectorFromEulerAngles(const EulerAngles &inAngles)
 {
-    QVector3D retval(0, 0, 0);
-    int X = 0;
-    int Y = 1;
-    int Z = 2;
-    switch (int(inAngles.w)) {
-#define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                                    \
-    case order:                                                                                                        \
-        retval[xIdx] = -inAngles.x;                                                                                    \
-        retval[yIdx] = -inAngles.y;                                                                                    \
-        retval[zIdx] = -inAngles.z;                                                                                    \
-        break;
-        ITERATE_POSSIBLE_EULER_ANGLES
-#undef HANDLE_EULER_ANGLE
-    default:
-        Q_ASSERT(false);
-        retval.setX(inAngles.x);
-        retval.setY(inAngles.y);
-        retval.setZ(inAngles.z);
-        break;
-    }
-
-    return retval;
+    return QSSGEulerAngleConverter::calculateRotationVector(inAngles);
 }
 
 void QSSGRenderNode::calculateRotationMatrix(QMatrix4x4 &outMatrix) const
 {
-    QSSGEulerAngleConverter theConverter;
-    EulerAngles theAngles(rotationAndOrderToShoemake(rotation, int(rotationOrder)));
-    HMatrix *theMatrix = reinterpret_cast<HMatrix *>(&outMatrix);
-    theConverter.eulerToHMatrix(theAngles, *theMatrix);
+    outMatrix = QSSGEulerAngleConverter::createRotationMatrix(rotation, rotationOrder);
 }
 
 void QSSGRenderNode::calculateLocalTransform()

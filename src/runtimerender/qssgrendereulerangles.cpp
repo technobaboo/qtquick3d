@@ -38,6 +38,8 @@
 #include <cstring>
 #include <cstdio>
 
+#include <QtQuick3DUtils/private/qssgutils_p.h>
+
 #ifdef _MSC_VER
 #pragma warning(disable : 4365) // warnings on conversion from unsigned int to int
 #endif
@@ -310,6 +312,125 @@ EulerAngles QSSGEulerAngleConverter::eulerFromQuat(Quat theQuaternion, int theOr
     theMatrix[W][W] = 1.0;
 
     return eulerFromHMatrix(theMatrix, theOrder);
+}
+
+//==============================================================================
+
+// Create some mapping of euler angles to their axis mapping.
+#define ITERATE_POSSIBLE_EULER_ANGLES                                                                                  \
+    HANDLE_EULER_ANGLE(EulOrdXYZs, X, Y, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXYXs, X, Y, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXZYs, X, Z, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXZXs, X, Z, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYZXs, Y, Z, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYZYs, Y, Z, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYXZs, Y, X, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYXYs, Y, X, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZXYs, Z, X, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZXZs, Z, X, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZYXs, Z, Y, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZYZs, Z, Y, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZYXr, Z, Y, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXYXr, X, Y, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYZXr, Y, Z, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXZXr, X, Z, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXZYr, X, Z, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYZYr, Y, Z, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZXYr, Z, X, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYXYr, Y, X, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYXZr, Y, X, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZXZr, Z, X, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXYZr, X, Y, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZYZr, Z, Y, Z)
+
+EulerAngles QSSGEulerAngleConverter::calculateEulerAngles(const QVector3D &rotation, quint32 order)
+{
+    EulerAngles retval;
+    retval.w = float(order);
+    int X = 0;
+    int Y = 1;
+    int Z = 2;
+
+    switch (order) {
+#define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                                  \
+    case order:                                                                                                      \
+        retval.x = -rotation[xIdx];                                                                                  \
+        retval.y = -rotation[yIdx];                                                                                  \
+        retval.z = -rotation[zIdx];                                                                                  \
+        break;
+        ITERATE_POSSIBLE_EULER_ANGLES
+#undef HANDLE_EULER_ANGLE
+    default:
+        Q_ASSERT(false);
+        retval.x = rotation[X];
+        retval.y = rotation[Y];
+        retval.z = rotation[Z];
+        break;
+    }
+    return retval;
+}
+
+QVector3D QSSGEulerAngleConverter::calculateRotationVector(const EulerAngles &angles)
+{
+    QVector3D retval(0, 0, 0);
+    int X = 0;
+    int Y = 1;
+    int Z = 2;
+    switch (int(angles.w)) {
+#define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                                  \
+    case order:                                                                                                      \
+        retval[xIdx] = -angles.x;                                                                                    \
+        retval[yIdx] = -angles.y;                                                                                    \
+        retval[zIdx] = -angles.z;                                                                                    \
+        break;
+        ITERATE_POSSIBLE_EULER_ANGLES
+#undef HANDLE_EULER_ANGLE
+    default:
+        Q_ASSERT(false);
+        retval.setX(angles.x);
+        retval.setY(angles.y);
+        retval.setZ(angles.z);
+        break;
+    }
+
+    return retval;
+}
+
+QMatrix4x4 QSSGEulerAngleConverter::createRotationMatrix(const QVector3D &rotationAsRadians, quint32 order)
+{
+    QMatrix4x4 matrix;
+    const EulerAngles theAngles = QSSGEulerAngleConverter::calculateEulerAngles(rotationAsRadians, order);
+    QSSGEulerAngleConverter theConverter;
+    theConverter.eulerToHMatrix(theAngles, *reinterpret_cast<HMatrix *>(&matrix));
+    return matrix;
+}
+
+QVector3D QSSGEulerAngleConverter::calculateRotationVector(const QMatrix3x3 &rotationMatrix, bool matrixIsLeftHanded, quint32 order)
+{
+    QMatrix4x4 theConvertMatrix = { rotationMatrix(0, 0),
+                                    rotationMatrix(0, 1),
+                                    rotationMatrix(0, 2),
+                                    0.0f,
+                                    rotationMatrix(1, 0),
+                                    rotationMatrix(1, 1),
+                                    rotationMatrix(1, 2),
+                                    0.0f,
+                                    rotationMatrix(2, 0),
+                                    rotationMatrix(2, 1),
+                                    rotationMatrix(2, 2),
+                                    0.0f,
+                                    0.0f,
+                                    0.0f,
+                                    0.0f,
+                                    1.0f };
+
+    if (matrixIsLeftHanded)
+        mat44::flip(theConvertMatrix);
+
+    QSSGEulerAngleConverter theConverter;
+    HMatrix *theHMatrix = reinterpret_cast<HMatrix *>(theConvertMatrix.data());
+    EulerAngles theAngles = theConverter.eulerFromHMatrix(*theHMatrix, int(order));
+    return calculateRotationVector(theAngles);
 }
 
 //==============================================================================

@@ -43,6 +43,7 @@
 //
 
 #include <qmath.h>
+#include <QtQuick3DRuntimeRender/private/qtquick3druntimerenderglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 //==============================================================================
@@ -130,7 +131,7 @@ typedef Quat EulerAngles; /* (x,y,z)=ang 1,2,3, w=order code  */
 #define TODEG(x) x = (float)(x * 180 / M_PI);
 #define TORAD(x) x = (float)(x / 180 * M_PI);
 
-class QSSGEulerAngleConverter
+class Q_QUICK3DRUNTIMERENDER_EXPORT QSSGEulerAngleConverter
 {
 private:
     char m_orderInfoBuffer[1024];
@@ -145,6 +146,11 @@ public:
     void eulerToHMatrix(EulerAngles ea, HMatrix M);
     EulerAngles eulerFromHMatrix(HMatrix M, int order);
     EulerAngles eulerFromQuat(Quat q, int order);
+
+    static EulerAngles calculateEulerAngles(const QVector3D &rotation, quint32 order);
+    static QVector3D calculateRotationVector(const EulerAngles &angles);
+    static QVector3D calculateRotationVector(const QMatrix3x3 &rotationMatrix, bool matrixIsLeftHanded, quint32 order);
+    static QMatrix4x4 createRotationMatrix(const QVector3D &rotationAsRadians, quint32 order);
 
     // Debug Stuff
     const char *dumpOrderInfo();
