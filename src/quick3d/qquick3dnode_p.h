@@ -113,6 +113,8 @@ public:
     QVector3D right() const;
     QVector3D globalPosition() const;
     QMatrix4x4 globalTransform() const;
+    QMatrix4x4 globalTransformLeftHanded() const;
+    QMatrix4x4 globalTransformRightHanded() const;
 
     QQuick3DObject::Type type() const override;
 
@@ -158,7 +160,11 @@ private:
     RotationOrder m_rotationorder = YXZ;
     Orientation m_orientation = LeftHanded;
     bool m_visible = true;
-    QMatrix4x4 m_globalTransform;
+    QMatrix4x4 m_globalTransformRightHanded;
+
+    QMatrix4x4 calculateLocalTransformRightHanded();
+    void calculateGlobalVariables();
+
     friend QQuick3DSceneManager;
 };
 

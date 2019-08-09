@@ -217,7 +217,7 @@ QQuick3DNode *QQuick3DNode::parentNode() const
 */
 QVector3D QQuick3DNode::forward() const
 {
-    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
+    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(globalTransform());
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
 
     const QVector3D frontVector(0, 0, 1);
@@ -232,7 +232,7 @@ QVector3D QQuick3DNode::forward() const
 */
 QVector3D QQuick3DNode::up() const
 {
-    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
+    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(globalTransform());
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
 
     const QVector3D upVector(0, 1, 0);
@@ -247,7 +247,7 @@ QVector3D QQuick3DNode::up() const
 */
 QVector3D QQuick3DNode::right() const
 {
-    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(m_globalTransform);
+    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(globalTransform());
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
 
     const QVector3D rightVector(1, 0, 0);
@@ -257,22 +257,97 @@ QVector3D QQuick3DNode::right() const
     \qmlproperty vector3d QtQuick3D::Node::globalPosition
 
     This property returns the position of the node in global coordinate space.
-
-
+    \note the position will be reported in the same orientation as the node.
 */
 QVector3D QQuick3DNode::globalPosition() const
 {
-    return QVector3D(m_globalTransform(0, 3), m_globalTransform(1, 3), m_globalTransform(2, 3));
+    const QMatrix4x4 transform = globalTransform();
+    return QVector3D(transform(0, 3), transform(1, 3), transform(2, 3));
 }
 
 /*!
     \qmlproperty matrix4x4 QtQuick3D::Node::globalTransform
 
     This property returns the global transform matrix for this node.
+    \note the return value will be \l LeftHanded or \l RightHanded
+    depending on \l orientation().
+
+    \sa globalTransformRightHanded()
 */
 QMatrix4x4 QQuick3DNode::globalTransform() const
 {
-    return m_globalTransform;
+    return m_orientation == LeftHanded ? globalTransformLeftHanded() : globalTransformRightHanded();
+}
+
+/*!
+    This function returns the global transform matrix for this node
+    as a left-handed coordinate system, regardless of \l orientation().
+
+    \sa globalTransform() globalTransformRightHanded()
+*/
+QMatrix4x4 QQuick3DNode::globalTransformLeftHanded() const
+{
+    QMatrix4x4 transform = globalTransformRightHanded();
+    mat44::flip(transform);
+    return transform;
+}
+
+/*!
+    This function returns the global transform matrix for this node
+    as a right-handed coordinate system, regardless of \l orientation().
+
+    \sa globalTransform() globalTransformLeftHanded()
+*/
+QMatrix4x4 QQuick3DNode::globalTransformRightHanded() const
+{
+    // TODO: don't call this if not dirty
+    const_cast<QQuick3DNode *>(this)->calculateGlobalVariables();
+    return m_globalTransformRightHanded;
+}
+
+void QQuick3DNode::calculateGlobalVariables()
+{
+    QMatrix4x4 localTransformRightHanded = calculateLocalTransformRightHanded();
+    QQuick3DNode *parent = parentNode();
+    if (!parent) {
+        m_globalTransformRightHanded = localTransformRightHanded;
+        return;
+    }
+
+    parent->calculateGlobalVariables();
+    m_globalTransformRightHanded = parent->m_globalTransformRightHanded * localTransformRightHanded;
+}
+
+QMatrix4x4 QQuick3DNode::calculateLocalTransformRightHanded()
+{
+    // Create a right-handed rotation transform from the radians.
+    const float radX = qDegreesToRadians(m_rotation.x());
+    const float radY = qDegreesToRadians(m_rotation.y());
+    const float radZ = qDegreesToRadians(m_rotation.z());
+    const QVector3D radians(radX, radY, radZ);
+    const QMatrix4x4 rotationTransform = QSSGEulerAngleConverter::createRotationMatrix(radians, quint32(m_rotationorder));
+
+    const QVector3D pivot = -m_pivot * m_scale;
+    QMatrix4x4 localTransform;
+
+    localTransform(0, 0) = m_scale[0];
+    localTransform(1, 1) = m_scale[1];
+    localTransform(2, 2) = m_scale[2];
+
+    localTransform(0, 3) = pivot[0];
+    localTransform(1, 3) = pivot[1];
+    localTransform(2, 3) = pivot[2];
+
+    localTransform = rotationTransform * localTransform;
+
+    localTransform(0, 3) += m_position[0];
+    localTransform(1, 3) += m_position[1];
+    localTransform(2, 3) += m_position[2];
+
+    if (Q_LIKELY(m_orientation == LeftHanded))
+        mat44::flip(localTransform);
+
+    return localTransform;
 }
 
 QQuick3DObject::Type QQuick3DNode::type() const
@@ -459,15 +534,9 @@ QSSGRenderGraphObject *QQuick3DNode::updateSpatialNode(QSSGRenderGraphObject *no
     if (transformIsDirty) {
         spacialNode->markDirty(QSSGRenderNode::TransformDirtyFlag::TransformIsDirty);
         spacialNode->calculateGlobalVariables();
-        QMatrix4x4 globalTransformMatrix = spacialNode->globalTransform;
-        // Might need to switch it regardless because it is always in right hand coordinates
-        if (m_orientation == LeftHanded)
-            spacialNode->flipCoordinateSystem(globalTransformMatrix);
-        if (globalTransformMatrix != m_globalTransform) {
-            m_globalTransform = globalTransformMatrix;
-            emit globalTransformChanged(m_globalTransform);
-        }
         // Still needs to be marked dirty if it will show up correctly in the backend
+        // Note: no longer sure if this is still needed after we now do our own
+        // calculation of the global matrix from the front-end.
         spacialNode->flags.setFlag(QSSGRenderNode::Flag::Dirty, true);
     } else {
         spacialNode->markDirty(QSSGRenderNode::TransformDirtyFlag::TransformNotDirty);
