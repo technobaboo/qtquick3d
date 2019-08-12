@@ -1,4 +1,4 @@
-# Qt Quick 3D (code name: demon render)
+# Qt Quick 3D
 
 [![pipeline status](https://git.qt.io/annichol/qtdemonrender/badges/master/pipeline.svg)](https://git.qt.io/annichol/qtdemonrender/commits/master)
 
