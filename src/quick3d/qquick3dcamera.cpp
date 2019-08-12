@@ -41,7 +41,42 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype Camera
     \inqmlmodule QtQuick3D
-    \brief Defines a Camera node for viewing the content of a 3D scene.
+    \brief Defines a Camera for viewing the content of a 3D scene.
+
+    A Camera is always necessary view the content of a 3D scene. A camera
+    defines how to project the content of a 3D scene into a 2D coordinate space
+    which can then be used on a 2D surface. When a camera is present in the scene
+    it can be used to direct what is displayed in a View3D.
+
+    To determine the projection of this camera a high level API is provided.
+    First it is possible to position this Camera like any other spatial Node in
+    the scene. This determines where the Camera is in the scene, and what
+    direction it is facing. The default direction of the camera is such that the
+    forward vector is looking up the +Z axis, and the up direction vector is up
+    the +Y axis.  With this in mind any transformation applied to the camera as
+    well as the transformations inherited from it's parent Nodes you can define
+    exactly where and in what direction your camera is facing.
+
+    The second part of determining the projection of the camera is defining the
+    frustum that defines the what parts of the scenes are visible, as well as
+    how they are visible. The Camera API provides multiple levels of abstraction
+    to determine the shape of the Camera's frustum.  By setting the
+    Camera::projectionMode property it is possible to control what type of
+    projection is created and how much control is needed.
+
+    The high level API for Camera is used by either selection the
+    Camera::Perspective or Camera::Orthographic projectionModes. This allows for
+    a sensible default for either of the two main projection types.
+
+    For finer grain control of how the frustum is defined, there is the
+    Camera::Frustum projectionMode. This allows for setting the
+    Camera::frustumTop, Camera::frustumBottom, Camera::frustomRight, and
+    Camera::frustumLeft properties. This is useful in creating asymetrical
+    frustums.
+
+    If you need full-control over how the projection matrix is created there is
+    also the Camera::Custom mode which lets you define the projection matrix
+    directly.
 */
 
 /*!
@@ -105,49 +140,6 @@ bool QQuick3DCamera::isFieldOfViewHorizontal() const
 }
 
 /*!
- * \qmlproperty enumeration Camera::scaleMode
- *
- * This property defines how the cameras output retangle is scaled to match the viewport.
- *
- * \list
- * \li Camera.Fit
- * \li Camera.SameSize
- * \li Camera.FitHorizontal
- * \li Camera.FitVertical
- * \endlist
- *
- */
-
-QQuick3DCamera::QSSGCameraScaleModes QQuick3DCamera::scaleMode() const
-{
-    return m_scaleMode;
-}
-
-
-/*!
- * \qmlproperty enumeration Camera::scaleAnchor
- *
- * This property sets the anchor point to perform scaling when necessary.
- *
- * \list
- * \li Camera.Center
- * \li Camera.North
- * \li Camera.NorthEast
- * \li Camera.East
- * \li Camera.SouthEast
- * \li Camera.South
- * \li Camera.SouthWest
- * \li Camera.West
- * \li Camera.NorthWest
- * \endlist
- */
-
-QQuick3DCamera::QSSGCameraScaleAnchors QQuick3DCamera::scaleAnchor() const
-{
-    return m_scaleAnchor;
-}
-
-/*!
  * \internal
  */\
 QQuick3DObject::Type QQuick3DCamera::type() const
@@ -164,11 +156,87 @@ QSSGRenderCamera *QQuick3DCamera::getCameraNode() const
 }
 
 /*!
+    \qmlproperty float Camera::frustumTop
+
+    This property defines the top plane of the camera view frustum.
+
+    \note This property only has an effect when using \c Camera.Frustum for the
+    Camera::projectionMode property
+*/
+float QQuick3DCamera::frustumTop() const
+{
+    return m_frustumTop;
+}
+
+/*!
+    \qmlproperty float Camera::frustumBottom
+
+    This property defines the bottom plane of the camera view frustum.
+
+    \note This property only has an effect when using \c Camera.Frustum for the
+    Camera::projectionMode property
+*/
+float QQuick3DCamera::frustumBottom() const
+{
+    return m_frustumBottom;
+}
+
+/*!
+    \qmlproperty float Camera::frustumRight
+
+    This property defines the right plane of the camera view frustum.
+
+    \note This property only has an effect when using \c Camera.Frustum for the
+    Camera::projectionMode property
+*/
+float QQuick3DCamera::frustumRight() const
+{
+    return m_frustumRight;
+}
+
+/*!
+    \qmlproperty float Camera::frustumLeft
+
+    This property defines the left plane of the camera view frustum.
+
+    \note This property only has an effect when using \c Camera.Frustum for the
+    Camera::projectionMode property
+*/
+float QQuick3DCamera::frustumLeft() const
+{
+    return m_frustumLeft;
+}
+
+/*!
+    \qmlproperty float Camera::customProjection
+
+    This property defines a custom projection matrix. This property should only
+    be used for handling more advanced projections.
+
+    \note This property only has an effect when using \c Camera.Custom for the
+    Camera::projectionMode property
+*/
+QMatrix4x4 QQuick3DCamera::customProjection() const
+{
+    return m_customProjection;
+}
+
+/*!
  * \qmlproperty enumeration Camera::projectionMode
  *
+ * This property defines the type of projection that will be to render the
+ * scene. The most common cases are \c Camera.Perspective and
+ * \c Camera.Orthographic which will automatically generate a projection
+ * matrix.
+ *
+ * It also possible to use either \c Camera.Frustum or \c Camera.Custom to
+ * have finer control over how the projection is defined.
+ *
  * \list
- * \li Camera.Projection
+ * \li Camera.Perspective
  * \li Camera.Orthographic
+ * \li Camera.Frustum
+ * \li Camera.Custom
  * \endlist
  *
  */
@@ -176,6 +244,30 @@ QSSGRenderCamera *QQuick3DCamera::getCameraNode() const
 QQuick3DCamera::QSSGCameraProjectionMode QQuick3DCamera::projectionMode() const
 {
     return m_projectionMode;
+}
+
+/*!
+ * \qmlproperty bool Camera::enableFrustumCulling
+ *
+ * When enabled this property determines whether frustum culling is enabled for
+ * this camera. What this means is that when the scene is being rendered only
+ * items that are within the bounds of the fustum are rendered.  For scenes
+ * where there are lots of expensive items outside of the view of the camera
+ * time will not be spent rendering content that will never be shown. There is
+ * however a cost for doing this as the scene has to be iterated on the CPU to
+ * determine what is and isn't inside the frustum. If you know that everything
+ * in the scene will always be indie the camera frustum, this step is an
+ * unnecessary use of resources.
+ *
+ * There are also cases with shadowing where shadows can disapear before they
+ * are out of view because the item causing the shadow is outside of the camera
+ * frustum, but the shadow it is casting still is.
+ *
+ */
+
+bool QQuick3DCamera::enableFrustumCulling() const
+{
+    return m_enableFrustumCulling;
 }
 
 void QQuick3DCamera::setClipNear(float clipNear)
@@ -218,27 +310,6 @@ void QQuick3DCamera::setIsFieldOfViewHorizontal(bool isFieldOfViewHorizontal)
     update();
 }
 
-void QQuick3DCamera::setScaleMode(QQuick3DCamera::QSSGCameraScaleModes scaleMode)
-{
-    if (m_scaleMode == scaleMode)
-        return;
-
-    m_scaleMode = scaleMode;
-    emit scaleModeChanged(m_scaleMode);
-    update();
-}
-
-void QQuick3DCamera::setScaleAnchor(QQuick3DCamera::QSSGCameraScaleAnchors scaleAnchor)
-{
-    if (m_scaleAnchor == scaleAnchor)
-        return;
-
-    m_scaleAnchor = scaleAnchor;
-    emit scaleAnchorChanged(m_scaleAnchor);
-    update();
-}
-
-
 void QQuick3DCamera::setProjectionMode(QQuick3DCamera::QSSGCameraProjectionMode projectionMode)
 {
     if (m_projectionMode == projectionMode)
@@ -259,7 +330,59 @@ void QQuick3DCamera::setEnableFrustumCulling(bool enableFrustumCulling)
     update();
 }
 
+void QQuick3DCamera::setFrustumTop(float frustumTop)
+{
+    if (qFuzzyCompare(m_frustumTop, frustumTop))
+        return;
+
+    m_frustumTop = frustumTop;
+    emit frustumTopChanged(m_frustumTop);
+    update();
+}
+
+void QQuick3DCamera::setFrustumBottom(float frustumBottom)
+{
+    if (qFuzzyCompare(m_frustumBottom, frustumBottom))
+        return;
+
+    m_frustumBottom = frustumBottom;
+    emit frustumBottomChanged(m_frustumBottom);
+    update();
+}
+
+void QQuick3DCamera::setFrustumRight(float frustumRight)
+{
+    if (qFuzzyCompare(m_frustumRight, frustumRight))
+        return;
+
+    m_frustumRight = frustumRight;
+    emit frustumRightChanged(m_frustumRight);
+    update();
+}
+
+void QQuick3DCamera::setFrustumLeft(float frustumLeft)
+{
+    if (qFuzzyCompare(m_frustumLeft, frustumLeft))
+        return;
+
+    m_frustumLeft = frustumLeft;
+    emit frustumLeftChanged(m_frustumLeft);
+    update();
+}
+
+void QQuick3DCamera::setCustomProjection(QMatrix4x4 customProjection)
+{
+    if (m_customProjection == customProjection)
+        return;
+
+    m_customProjection = customProjection;
+    emit customProjectionChanged(m_customProjection);
+    update();
+}
+
 /*!
+ * \qmlmethod vector3d Camera::woldToViewport(vector3d worldPos)
+ *
  * Transforms \a worldPos from world space into viewport space. The position
  * is normalized, with the top-left of the viewport being [0,0] and
  * the botton-right being [1,1]. The returned z value will contain the distance from the
@@ -304,6 +427,8 @@ QVector3D QQuick3DCamera::worldToViewport(const QVector3D &worldPos) const
 }
 
 /*!
+ * \qmlmethod vector3d Camera::viewportToWorld(vector3d viewportPos)
+ *
  * Transforms \a viewportPos from viewport space into world space. \a The x-, and y
  * values of \l viewportPos needs to be normalized, with the top-left of the viewport
  * being [0,0] and the botton-right being [1,1]. The z value should be the distance
@@ -353,16 +478,49 @@ QVector3D QQuick3DCamera::viewportToWorld(const QVector3D &viewportPos) const
     return worldPos;
 }
 
-/*!
- * \qmlproperty bool Camera::enableFrustumCulling
- *
- *
- *
- */
+namespace  {
+    bool updateProjectionFlags(QSSGRenderCamera *camera, QQuick3DCamera::QSSGCameraProjectionMode projectionMode)
+    {
+        if (projectionMode == QQuick3DCamera::Perspective) {
+            if (camera->flags.testFlag(QSSGRenderNode::Flag::Orthographic) ||
+                camera->flags.testFlag(QSSGRenderNode::Flag::CameraFrustumProjection) ||
+                camera->flags.testFlag(QSSGRenderNode::Flag::CameraCustomProjection)) {
+                camera->flags.setFlag(QSSGRenderNode::Flag::CameraFrustumProjection, false);
+                camera->flags.setFlag(QSSGRenderNode::Flag::CameraCustomProjection, false);
+                camera->flags.setFlag(QSSGRenderNode::Flag::Orthographic, false);
+                return true;
+            }
+        } else if (projectionMode == QQuick3DCamera::Orthographic) {
+            if (!camera->flags.testFlag(QSSGRenderNode::Flag::Orthographic) ||
+                camera->flags.testFlag(QSSGRenderNode::Flag::CameraFrustumProjection) ||
+                camera->flags.testFlag(QSSGRenderNode::Flag::CameraCustomProjection)) {
+                camera->flags.setFlag(QSSGRenderNode::Flag::CameraFrustumProjection, false);
+                camera->flags.setFlag(QSSGRenderNode::Flag::CameraCustomProjection, false);
+                camera->flags.setFlag(QSSGRenderNode::Flag::Orthographic, true);
+                return true;
+            }
+        } else if (projectionMode == QQuick3DCamera::Frustum) {
+            if (camera->flags.testFlag(QSSGRenderNode::Flag::Orthographic) ||
+                !camera->flags.testFlag(QSSGRenderNode::Flag::CameraFrustumProjection) ||
+                camera->flags.testFlag(QSSGRenderNode::Flag::CameraCustomProjection)) {
+                camera->flags.setFlag(QSSGRenderNode::Flag::CameraFrustumProjection, true);
+                camera->flags.setFlag(QSSGRenderNode::Flag::CameraCustomProjection, false);
+                camera->flags.setFlag(QSSGRenderNode::Flag::Orthographic, false);
+                return true;
+            }
+        } else if (projectionMode == QQuick3DCamera::Custom) {
+            if (camera->flags.testFlag(QSSGRenderNode::Flag::Orthographic) ||
+                camera->flags.testFlag(QSSGRenderNode::Flag::CameraFrustumProjection) ||
+                !camera->flags.testFlag(QSSGRenderNode::Flag::CameraCustomProjection)) {
+                camera->flags.setFlag(QSSGRenderNode::Flag::CameraFrustumProjection, false);
+                camera->flags.setFlag(QSSGRenderNode::Flag::CameraCustomProjection, true);
+                camera->flags.setFlag(QSSGRenderNode::Flag::Orthographic, false);
+                return true;
+            }
+        }
 
-bool QQuick3DCamera::enableFrustumCulling() const
-{
-    return m_enableFrustumCulling;
+        return false;
+    }
 }
 
 /*!
@@ -382,15 +540,26 @@ QSSGRenderGraphObject *QQuick3DCamera::updateSpatialNode(QSSGRenderGraphObject *
     changed |= qUpdateIfNeeded(camera->clipFar, m_clipFar);
     changed |= qUpdateIfNeeded(camera->fov, qDegreesToRadians(m_fieldOfView));
     changed |= qUpdateIfNeeded(camera->fovHorizontal, m_isFieldOfViewHorizontal);
-
-    changed |= qUpdateIfNeeded(camera->scaleMode, QSSGRenderCamera::ScaleModes(m_scaleMode));
-    changed |= qUpdateIfNeeded(camera->scaleAnchor, QSSGRenderCamera::ScaleAnchors(m_scaleAnchor));
     changed |= qUpdateIfNeeded(camera->enableFrustumClipping, m_enableFrustumCulling);
 
-    const bool wasOrtho = camera->flags.testFlag(QSSGRenderNode::Flag::Orthographic);
-    const bool ortho = m_projectionMode == Orthographic;
-    camera->flags.setFlag(QSSGRenderNode::Flag::Orthographic, ortho);
-    changed |= wasOrtho != ortho;
+    // Set Projection mode based properties
+    switch (m_projectionMode) {
+    case Orthographic:
+        break;
+    case Frustum:
+        changed |= qUpdateIfNeeded(camera->top, m_frustumTop);
+        changed |= qUpdateIfNeeded(camera->bottom, m_frustumBottom);
+        changed |= qUpdateIfNeeded(camera->right, m_frustumRight);
+        changed |= qUpdateIfNeeded(camera->left, m_frustumLeft);
+        break;
+    case Custom:
+        changed |= qUpdateIfNeeded(camera->projection, m_customProjection);
+        break;
+    case Perspective:
+        break;
+    }
+
+    changed |= updateProjectionFlags(camera, m_projectionMode);
 
     m_cameraNode = camera;
 

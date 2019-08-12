@@ -85,6 +85,8 @@ struct Q_QUICK3DRUNTIMERENDER_EXPORT QSSGRenderNode : public QSSGRenderGraphObje
         IgnoreParentTransform = 1 << 13,
         LayerEnableDepthPrePass = 1 << 14, ///< True when we render a depth pass before
         CameraDirty = 1 << 15, ///< True when the camera inheriting from this is dirty
+        CameraFrustumProjection = 1 << 16,
+        CameraCustomProjection = 1 << 17
     };
     Q_DECLARE_FLAGS(Flags, Flag)
 

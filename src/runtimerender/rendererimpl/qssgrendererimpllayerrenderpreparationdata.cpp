@@ -1054,7 +1054,6 @@ void QSSGLayerRenderPreparationData::prepareForRender(const QSize &inViewportDim
         thePrepResult = QSSGLayerRenderPreparationResult(
                 QSSGLayerRenderHelper(theViewport,
                                         theScissor,
-                                        QVector2D(inViewportDimensions.width(), inViewportDimensions.height()),
                                         layer,
                                         shouldRenderToTexture,
                                         renderer->demonContext()->scaleMode(),

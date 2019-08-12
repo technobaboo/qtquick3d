@@ -78,27 +78,6 @@ struct QSSGCuboidRect
 
 struct Q_QUICK3DRUNTIMERENDER_EXPORT QSSGRenderCamera : public QSSGRenderNode
 {
-    enum class ScaleModes : quint8
-    {
-        Fit = 0,
-        SameSize,
-        FitHorizontal,
-        FitVertical,
-    };
-
-    enum class ScaleAnchors : quint8
-    {
-        Center = 0,
-        North,
-        NorthEast,
-        East,
-        SouthEast,
-        South,
-        SouthWest,
-        West,
-        NorthWest,
-    };
-
     // Setting these variables should set dirty on the camera.
     float clipNear;
     float clipFar;
@@ -106,16 +85,18 @@ struct Q_QUICK3DRUNTIMERENDER_EXPORT QSSGRenderCamera : public QSSGRenderNode
     float fov; // Radians
     bool fovHorizontal;
 
+    float top = 0.0f;
+    float bottom = 0.0f;
+    float left = 0.0f;
+    float right = 0.0f;
+
     QMatrix4x4 projection;
-    ScaleModes scaleMode;
-    ScaleAnchors scaleAnchor;
     // Record some values from creating the projection matrix
     // to use during mouse picking.
     QVector2D frustumScale;
     bool enableFrustumClipping;
 
     QRectF previousInViewport;
-    QVector2D previousInDesignDimensions;
 
     QSSGRenderCamera();
 
@@ -127,15 +108,16 @@ struct Q_QUICK3DRUNTIMERENDER_EXPORT QSSGRenderCamera : public QSSGRenderNode
     // our global transform.
     void lookAt(const QVector3D &inCameraPos, const QVector3D &inUpDir, const QVector3D &inTargetPos);
 
-    QSSGCameraGlobalCalculationResult calculateGlobalVariables(const QRectF &inViewport, const QVector2D &inDesignDimensions);
-    bool calculateProjection(const QRectF &inViewport, const QVector2D &inDesignDimensions);
-    bool computeFrustumOrtho(const QRectF &inViewport, const QVector2D &inDesignDimensions);
+    QSSGCameraGlobalCalculationResult calculateGlobalVariables(const QRectF &inViewport);
+    bool calculateProjection(const QRectF &inViewport);
+    bool computeFrustumOrtho(const QRectF &inViewport);
     // Used when rendering the widgets in studio.  This scales the widget when in orthographic
     // mode in order to have
     // constant size on screen regardless.
     // Number is always greater than one
-    float getOrthographicScaleFactor(const QRectF &inViewport, const QVector2D &inDesignDimensions) const;
-    bool computeFrustumPerspective(const QRectF &inViewport, const QVector2D &inDesignDimensions);
+    float getOrthographicScaleFactor(const QRectF &inViewport) const;
+    bool computeFrustumPerspective(const QRectF &inViewport);
+    bool computeCustomFrustum(const QRectF &inViewport);
 
     void calculateViewProjectionMatrix(QMatrix4x4 &outMatrix) const;
 
@@ -148,7 +130,7 @@ struct Q_QUICK3DRUNTIMERENDER_EXPORT QSSGRenderCamera : public QSSGRenderNode
 
     // Return a normalized rect that describes the area the camera is rendering to.
     // This takes into account the various camera properties (scale mode, scale anchor).
-    QSSGCuboidRect getCameraBounds(const QRectF &inViewport, const QVector2D &inDesignDimensions) const;
+    QSSGCuboidRect getCameraBounds(const QRectF &inViewport) const;
 
     // Setup a camera VP projection for rendering offscreen.
     static void setupOrthographicCameraForOffscreenRender(QSSGRenderTexture2D &inTexture, QMatrix4x4 &outVP);
@@ -156,7 +138,7 @@ struct Q_QUICK3DRUNTIMERENDER_EXPORT QSSGRenderCamera : public QSSGRenderNode
 
     // Unproject a point (x,y) in viewport relative coordinates meaning
     // left, bottom is 0,0 and values are increasing right,up respectively.
-    QSSGRenderRay unproject(const QVector2D &inLayerRelativeMouseCoords, const QRectF &inViewport, const QVector2D &inDesignDimensions) const;
+    QSSGRenderRay unproject(const QVector2D &inLayerRelativeMouseCoords, const QRectF &inViewport) const;
 
     // Unproject a given coordinate to a 3d position that lies on the same camera
     // plane as inGlobalPos.

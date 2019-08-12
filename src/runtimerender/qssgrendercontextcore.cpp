@@ -442,12 +442,7 @@ void QSSGRenderContextInterface::teardownRenderTarget()
         theCamera.markDirty(QSSGRenderCamera::TransformDirtyFlag::TransformIsDirty);
         theCamera.flags.setFlag(QSSGRenderCamera::Flag::Orthographic);
         m_renderContext->setViewport(thePresentationViewport);
-        QVector2D theCameraDimensions((float)thePresentationViewport.width(), (float)thePresentationViewport.height());
-        theCamera.calculateGlobalVariables(QRect(0,
-                                                 0,
-                                                 (quint32)thePresentationViewport.width(),
-                                                 (quint32)thePresentationViewport.height()),
-                                           theCameraDimensions);
+        theCamera.calculateGlobalVariables(QRectF(0, 0, thePresentationViewport.width(), thePresentationViewport.height()));
         QMatrix4x4 theVP;
         theCamera.calculateViewProjectionMatrix(theVP);
         QSSGRenderNode theTempNode;

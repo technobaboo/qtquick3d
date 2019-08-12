@@ -54,9 +54,15 @@ class Q_QUICK3D_EXPORT QQuick3DCamera : public QQuick3DNode
     Q_PROPERTY(float fieldOfView READ fieldOfView WRITE setFieldOfView NOTIFY fieldOfViewChanged)
     Q_PROPERTY(bool isFieldOfViewHorizontal READ isFieldOfViewHorizontal WRITE setIsFieldOfViewHorizontal NOTIFY isFieldOfViewHorizontalChanged)
     Q_PROPERTY(QSSGCameraProjectionMode projectionMode READ projectionMode WRITE setProjectionMode NOTIFY projectionModeChanged)
-    Q_PROPERTY(QSSGCameraScaleModes scaleMode READ scaleMode WRITE setScaleMode NOTIFY scaleModeChanged)
-    Q_PROPERTY(QSSGCameraScaleAnchors scaleAnchor READ scaleAnchor WRITE setScaleAnchor NOTIFY scaleAnchorChanged)
     Q_PROPERTY(bool enableFrustumCulling READ enableFrustumCulling WRITE setEnableFrustumCulling NOTIFY enableFrustumCullingChanged)
+    // Frustum Mode
+    Q_PROPERTY(float frustumTop READ frustumTop WRITE setFrustumTop NOTIFY frustumTopChanged)
+    Q_PROPERTY(float frustumBottom READ frustumBottom WRITE setFrustumBottom NOTIFY frustumBottomChanged)
+    Q_PROPERTY(float frustumRight READ frustumRight WRITE setFrustumRight NOTIFY frustumRightChanged)
+    Q_PROPERTY(float frustumLeft READ frustumRight WRITE setFrustumLeft NOTIFY frustumLeftChanged)
+    // Custom Mode
+    Q_PROPERTY(QMatrix4x4 customProjection READ customProjection WRITE setCustomProjection NOTIFY customProjectionChanged)
+
 
 public:
     enum QSSGCameraScaleModes {
@@ -82,7 +88,9 @@ public:
 
     enum QSSGCameraProjectionMode {
         Perspective,
-        Orthographic
+        Orthographic,
+        Frustum,
+        Custom
     };
     Q_ENUM(QSSGCameraProjectionMode)
 
@@ -103,25 +111,42 @@ public:
 
     QSSGRenderCamera *getCameraNode() const;
 
+    float frustumTop() const;
+    float frustumBottom() const;
+    float frustumRight() const;
+    float frustumLeft() const;
+
+    QMatrix4x4 customProjection() const;
+
 public Q_SLOTS:
     void setClipNear(float clipNear);
     void setClipFar(float clipFar);
     void setFieldOfView(float fieldOfView);
     void setIsFieldOfViewHorizontal(bool isFieldOFViewHorizontal);
-    void setScaleMode(QSSGCameraScaleModes scaleMode);
-    void setScaleAnchor(QSSGCameraScaleAnchors scaleAnchor);
     void setProjectionMode(QSSGCameraProjectionMode projectionMode);
     void setEnableFrustumCulling(bool enableFrustumCulling);
+
+    void setFrustumTop(float frustumTop);
+    void setFrustumBottom(float frustumBottom);
+    void setFrustumRight(float frustumRight);
+    void setFrustumLeft(float frustumLeft);
+
+    void setCustomProjection(QMatrix4x4 customProjection);
 
 Q_SIGNALS:
     void clipNearChanged(float clipNear);
     void clipFarChanged(float clipFar);
     void fieldOfViewChanged(float fieldOfView);
     void isFieldOfViewHorizontalChanged(bool isFieldOfViewHorizontal);
-    void scaleModeChanged(QSSGCameraScaleModes scaleMode);
-    void scaleAnchorChanged(QSSGCameraScaleAnchors scaleAnchor);
     void projectionModeChanged(QSSGCameraProjectionMode projectionMode);
     void enableFrustumCullingChanged(bool enableFrustumCulling);
+
+    void frustumTopChanged(float frustumTop);
+    void frustumBottomChanged(float frustumBottom);
+    void frustumRightChanged(float frustumRight);
+    void frustumLeftChanged(float frustumLeft);
+
+    void customProjectionChanged(QMatrix4x4 customProjection);
 
 protected:
     QSSGRenderGraphObject *updateSpatialNode(QSSGRenderGraphObject *node) override;
@@ -130,13 +155,18 @@ private:
     float m_clipNear = 10.0f;
     float m_clipFar = 10000.0f;
     float m_fieldOfView = 60.0f;
-    QSSGCameraScaleModes m_scaleMode = QSSGCameraScaleModes::Fit;
-    QSSGCameraScaleAnchors m_scaleAnchor = QSSGCameraScaleAnchors::Center;
     bool m_isFieldOfViewHorizontal = false;
 
     QSSGRenderCamera *m_cameraNode = nullptr;
     QSSGCameraProjectionMode m_projectionMode = QSSGCameraProjectionMode::Perspective;
     bool m_enableFrustumCulling = true;
+
+    float m_frustumTop = 0.0f;
+    float m_frustumBottom = 0.0f;
+    float m_frustumRight = 0.0f;
+    float m_frustumLeft = 0.0f;
+
+    QMatrix4x4 m_customProjection;
 };
 
 QT_END_NAMESPACE

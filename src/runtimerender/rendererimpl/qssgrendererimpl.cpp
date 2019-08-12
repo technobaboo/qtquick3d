@@ -292,8 +292,7 @@ QSSGOption<QSSGCuboidRect> QSSGRendererImpl::cameraBounds(const QSSGRenderGraphO
         if (!theLayer->usesOffscreenRenderer()) {
             QSSGRenderCamera *theCamera = theLayer->camera;
             if (theCamera)
-                return theCamera->getCameraBounds(theLayer->layerPrepResult->viewport(),
-                                                  theLayer->layerPrepResult->presentationDesignDimensions());
+                return theCamera->getCameraBounds(theLayer->layerPrepResult->viewport());
         }
     }
     return QSSGOption<QSSGCuboidRect>();
@@ -305,7 +304,7 @@ void QSSGRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
     theScreenCamera.markDirty(QSSGRenderCamera::TransformDirtyFlag::TransformIsDirty);
     QRectF theViewport(m_context->viewport());
     theScreenCamera.flags.setFlag(QSSGRenderCamera::Flag::Orthographic);
-    theScreenCamera.calculateGlobalVariables(theViewport, QVector2D(float(theViewport.width()), float(theViewport.height())));
+    theScreenCamera.calculateGlobalVariables(theViewport);
     generateXYQuad();
     if (!m_screenRectShader) {
         QSSGRef<QSSGShaderProgramGeneratorInterface> theGenerator(getProgramGenerator());
@@ -447,7 +446,7 @@ void QSSGRendererImpl::endFrame()
         theCamera.markDirty(QSSGRenderCamera::TransformDirtyFlag::TransformIsDirty);
         theCamera.flags.setFlag(QSSGRenderCamera::Flag::Orthographic);
         QVector2D theTextureDims(float(theDetails.width), float(theDetails.height));
-        theCamera.calculateGlobalVariables(QRect(0, 0, theDetails.width, theDetails.height), theTextureDims);
+        theCamera.calculateGlobalVariables(QRectF(0, 0, theDetails.width, theDetails.height));
         QMatrix4x4 theViewProj;
         theCamera.calculateViewProjectionMatrix(theViewProj);
         renderQuad(theTextureDims, theViewProj, *m_widgetTexture);
@@ -911,8 +910,7 @@ QSSGScaleAndPosition QSSGRendererImpl::worldToPixelScaleFactor(const QSSGRenderC
     if (inCamera.flags.testFlag(QSSGRenderCamera::Flag::Orthographic)) {
         // There are situations where the camera can scale.
         return QSSGScaleAndPosition(inWorldPoint,
-                                      inCamera.getOrthographicScaleFactor(inRenderData.layerPrepResult->viewport(),
-                                                                          inRenderData.layerPrepResult->presentationDesignDimensions()));
+                                      inCamera.getOrthographicScaleFactor(inRenderData.layerPrepResult->viewport()));
     } else {
         QVector3D theCameraPos(0, 0, 0);
         QVector3D theCameraDir(0, 0, -1);

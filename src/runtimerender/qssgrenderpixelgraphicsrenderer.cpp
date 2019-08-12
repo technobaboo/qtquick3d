@@ -247,7 +247,7 @@ struct QSSGPixelGraphicsRenderer : public QSSGPixelGraphicsRendererInterface
         theCamera.clipFar = 10.0f;
         theCamera.flags.setFlag(QSSGRenderCamera::Flag::Orthographic);
         // Setup camera projection
-        theCamera.computeFrustumOrtho(theViewport, QVector2D(theViewport.width(), theViewport.height()));
+        theCamera.computeFrustumOrtho(theViewport);
         // Translate such that 0, 0 is lower left of screen.
         QRectF theIdealViewport = theViewport;
         theIdealViewport.setX(theIdealViewport.x() - theViewport.width() / 2.0f);

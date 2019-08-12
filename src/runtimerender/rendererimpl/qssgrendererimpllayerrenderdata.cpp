@@ -449,7 +449,7 @@ void setupCameraForShadowMap(const QVector2D &/*inCameraVec*/,
         theCamera.lookAt(inLightPos, QVector3D(0, 1.0, 0), QVector3D(0, 0, 0));
     }
 
-    theCamera.calculateGlobalVariables(theViewport, QVector2D(theViewport.width(), theViewport.height()));
+    theCamera.calculateGlobalVariables(theViewport);
 }
 }
 
@@ -486,7 +486,7 @@ void setupCubeShadowCameras(const QSSGRenderLight *inLight, QSSGRenderCamera inC
 
         inCameras[i].position = inLightPos;
         inCameras[i].rotation = rotOfs[i];
-        inCameras[i].calculateGlobalVariables(theViewport, QVector2D(theViewport.width(), theViewport.height()));
+        inCameras[i].calculateGlobalVariables(theViewport);
     }
 
     /*
@@ -1852,9 +1852,7 @@ void QSSGLayerRenderData::runnableRenderToViewport(const QSSGRef<QSSGRenderFrame
             theTempCamera.position.setZ(-theCameraSetback);
             theTempCamera.clipFar = 2.0f * theCameraSetback;
             // Render the layer texture to the entire viewport.
-            theTempCamera.calculateGlobalVariables(theLayerViewport,
-                                                   QVector2D((float)theLayerViewport.width(),
-                                                             (float)theLayerViewport.height()));
+            theTempCamera.calculateGlobalVariables(theLayerViewport);
             theTempCamera.calculateViewProjectionMatrix(theViewProjection);
             QSSGRenderNode theTempNode;
             theFinalMVP = theViewProjection;
