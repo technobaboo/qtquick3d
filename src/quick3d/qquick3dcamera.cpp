@@ -402,7 +402,7 @@ QVector3D QQuick3DCamera::worldToViewport(const QVector3D &worldPos) const
     const QVector4D worldPosRightHand(worldPos.x(), worldPos.y(), -worldPos.z(), 1);
 
     // Transform position
-    const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
+    const QMatrix4x4 worldToCamera = globalTransformRightHanded().inverted();
     const QMatrix4x4 projectionViewMatrix = m_cameraNode->projection * worldToCamera;
     const QVector4D transformedWorldPos = mat44::transform(projectionViewMatrix, worldPosRightHand);
 
@@ -459,7 +459,7 @@ QVector3D QQuick3DCamera::viewportToWorld(const QVector3D &viewportPos) const
     clipFarPos.setZ(0);
 
     // Transform position to world
-    const QMatrix4x4 worldToCamera = m_cameraNode->globalTransform.inverted();
+    const QMatrix4x4 worldToCamera = globalTransformRightHanded().inverted();
     const QMatrix4x4 projectionViewMatrixInv = (m_cameraNode->projection * worldToCamera).inverted();
     const QVector4D transformedClipNearPos = mat44::transform(projectionViewMatrixInv, clipNearPos);
     const QVector4D transformedClipFarPos = mat44::transform(projectionViewMatrixInv, clipFarPos);
@@ -475,7 +475,7 @@ QVector3D QQuick3DCamera::viewportToWorld(const QVector3D &viewportPos) const
     const QVector3D direction = (clipFarPosWorld - clipNearPosWorld).normalized();
     const float distanceFromClipNear = viewportPos.z();
     QVector3D worldPos = clipNearPosWorld + (direction * distanceFromClipNear);
-    // Convert right-handt to left-hand
+    // Convert right-handed to left-handed
     worldPos.setZ(-worldPos.z());
     return worldPos;
 }
