@@ -65,26 +65,6 @@ class Q_QUICK3D_EXPORT QQuick3DCamera : public QQuick3DNode
 
 
 public:
-    enum QSSGCameraScaleModes {
-        Fit = 0,
-        SameSize,
-        FitHorizontal,
-        FitVertical,
-    };
-    Q_ENUM(QSSGCameraScaleModes)
-
-    enum QSSGCameraScaleAnchors {
-        Center = 0,
-        North,
-        NorthEast,
-        East,
-        SouthEast,
-        South,
-        SouthWest,
-        West,
-        NorthWest,
-    };
-    Q_ENUM(QSSGCameraScaleAnchors)
 
     enum QSSGCameraProjectionMode {
         Perspective,
@@ -100,8 +80,6 @@ public:
     float clipFar() const;
     float fieldOfView() const;
     bool isFieldOfViewHorizontal() const;
-    QSSGCameraScaleModes scaleMode() const;
-    QSSGCameraScaleAnchors scaleAnchor() const;
     QQuick3DObject::Type type() const override;
     QSSGCameraProjectionMode projectionMode() const;
     bool enableFrustumCulling() const;
