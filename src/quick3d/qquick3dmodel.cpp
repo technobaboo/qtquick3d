@@ -85,20 +85,20 @@ int QQuick3DModel::skeletonRoot() const
 }
 
 /*!
- * \qmlproperty enumeration Model::tesselationMode
- *
- * This property defines what method to use to dynamically generate additional
- * geometry for the model. Tessellation is useful if you are using a
- * displacement map with your geometry, or if you wish to generate a smoother
- * silhouette when zooming in.
- *
- * \list
- * \li \c Model::NoTess
- * \li \c Model::TessLinear
- * \li \c Model::TessPhong
- * \li \c Model::TessNPatch
- * \endlist
- *
+  \qmlproperty enumeration Model::tesselationMode
+
+  This property defines what method to use to dynamically generate additional
+  geometry for the model. Tessellation is useful if you are using a
+  displacement map with your geometry, or if you wish to generate a smoother
+  silhouette when zooming in.
+
+  \list
+  \li \c Model::NoTess
+  \li \c Model::TessLinear
+  \li \c Model::TessPhong
+  \li \c Model::TessNPatch
+  \endlist
+
 */
 
 QQuick3DModel::QSSGTessModeValues QQuick3DModel::tesselationMode() const
