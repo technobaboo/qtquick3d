@@ -42,6 +42,8 @@ QT_BEGIN_NAMESPACE
 
 /*!
    \qmltype Model
+   \inherits Node
+   \instantiates QQuick3DModel
    \inqmlmodule QtQuick3D
    \brief Lets you load a 3D model data.
 */
@@ -55,35 +57,103 @@ QQuick3DObject::Type QQuick3DModel::type() const
     return QQuick3DObject::Model;
 }
 
+/*!
+ * \qmlproperty url Model::source
+ *
+ * This property defines the location of the mesh file containing the geometry
+ * of this Model
+ *
+*/
+
 QUrl QQuick3DModel::source() const
 {
     return m_source;
 }
+
+/*!
+ * \qmlproperty int Model::skeletonRoot
+ *
+ * This property defines the root bone ID for this Models skeleton.
+ *
+ * \note Skeletal animations are not yet available, so this property does\
+ * nothing
+*/
 
 int QQuick3DModel::skeletonRoot() const
 {
     return m_skeletonRoot;
 }
 
+/*!
+ * \qmlproperty enumeration Model::tesselationMode
+ *
+ * This property defines what method to use to dynamically generate additional
+ * geometry for the model. Tessellation is useful if you are using a
+ * displacement map with your geometry, or if you wish to generate a smoother
+ * silhouette when zooming in.
+ *
+ * \list
+ * \li \c Model::NoTess
+ * \li \c Model::TessLinear
+ * \li \c Model::TessPhong
+ * \li \c Model::TessNPatch
+ * \endlist
+ *
+*/
+
 QQuick3DModel::QSSGTessModeValues QQuick3DModel::tesselationMode() const
 {
     return m_tesselationMode;
 }
+
+/*!
+ * \qmlproperty real Model::edgeTess
+ *
+ * This property defines the edge multiplier to the tesselation generator.
+ *
+*/
 
 float QQuick3DModel::edgeTess() const
 {
     return m_edgeTess;
 }
 
+/*!
+ * \qmlproperty real Model::edgeInner
+ *
+ * This property defines the inner multiplier to the tesselation generator.
+ *
+*/
+
 float QQuick3DModel::innerTess() const
 {
     return m_innerTess;
 }
 
+/*!
+ * \qmlproperty bool Model::isWireframeMode
+ *
+ * When this property is /c true, and the Model::tesselationMode is not
+ * Model::NoTess, then a wireframe is displayed to highlight the additional
+ * geometry created by the tesselation generator.
+ *
+*/
+
 bool QQuick3DModel::isWireframeMode() const
 {
     return m_isWireframeMode;
 }
+
+/*!
+ * \qmlproperty List<QtQuick3D::Material> Model::materials
+ *
+ * This property contains a list of materials used to render the provided
+ * geometry. To render anything, there must be at least one material. Normally
+ * there should be one material for each sub-mesh included in the source
+ * geometry.
+ *
+*/
+
 
 QQmlListProperty<QQuick3DMaterial> QQuick3DModel::materials()
 {
@@ -95,10 +165,26 @@ QQmlListProperty<QQuick3DMaterial> QQuick3DModel::materials()
                                             QQuick3DModel::qmlClearMaterials);
 }
 
+/*!
+ * \qmlproperty bool Model::castsShadows
+ *
+ * When this property is enabled, the geometry of this model is used in the
+ * when rendering to shadow maps.
+ *
+*/
+
 bool QQuick3DModel::castsShadows() const
 {
     return m_castsShadows;
 }
+
+/*!
+ * \qmlproperty bool Model::receivesShadows
+ *
+ * When this property is enabled, shadows can be cast onto this item. So the
+ * shadow map is applied to this model by the renderer.
+ *
+*/
 
 bool QQuick3DModel::receivesShadows() const
 {
