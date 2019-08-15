@@ -43,102 +43,143 @@ QT_BEGIN_NAMESPACE
 /*!
  * \qmlproperty enumeration Light::lightType
  *
+ * This property defines which type of light is being used.
+ *
+ * \list
+ * \li Light::Directional - Lighting is applied uniformly in the direction of
+ * the Z axis for this light. The rotation of directional lights affects the
+ * result, but not the position or scale.
+ * \li Light::Point - Lighting is applied outwards from the center of the
+ * light, becoming increasingly dim away from the center. The position of
+ * point lights affects the result, but not the rotation or scale.
+ * \li Light::Area - Lighting emits from the +Z face of a rectangular light.
+ * Use the Light::AreaWidget and Light::AreaHeight properties to control the
+ * size of the area light.
+ * \endlist
  *
  */
 
 /*!
  * \qmlproperty color Light::diffuseColor
- *
+ * This property defines the diffuse color (and intensity) applied to models
+ * illuminated by this light.
  *
  */
 
 /*!
  * \qmlproperty color Light::specularColor
  *
+ * This property defines the specular color (and intensity) applied to models
+ * illuminated by this light.
+ *
+ * \note A model’s material must have a non-zero Specular Amount for any specular lighting to take effect.
  *
  */
 
 /*!
  * \qmlproperty color Light::ambientColor
  *
+ * The property defines the diffuse color (and intensity) applied to materials
+ * before being lit by this light.
  *
  */
 
 /*!
  * \qmlproperty real Light::brightness
  *
+ * This property defines an overall multiplier for a Point light’s effects.
  *
  */
 
 /*!
  * \qmlproperty real Light::linearFade
  *
+ * This property increases the rate at which the lighting effect dims the
+ * farther surfaces are from a Point light.
  *
  */
 
 /*!
  * \qmlproperty real Light::exponentialFade
  *
+ * This property increases the rate at which the lighting effect dims on
+ * surfaces that are extra far away from a Point light.
  *
  */
 
 /*!
  * \qmlproperty real Light::areaWidth
  *
+ * This property controls the width of an Area lights rectangle.
  *
  */
 
 /*!
  * \qmlproperty real Light::areaHeight
  *
+ * This property controls the height of an Area lights rectangle
  *
  */
 
 /*!
  * \qmlproperty bool Light::castShadow
  *
+ * When this property is enabled, the light will cast shadows.
  *
  */
 
 /*!
  * \qmlproperty real Light::shadowBias
  *
+ * This property is used to tweak the shadowing effect when when objects
+ * are casting shadows on themselves
  *
  */
 
 /*!
  * \qmlproperty real Light::shadowFactor
  *
+ * This propery determines how dark the cast shadows should be.
  *
  */
 
 /*!
  * \qmlproperty int Light::shadowMapResolution
  *
+ * The propery sets the size of the shadow map created for shadow rendering.
+ * This is specified as 2^n.  The larger the value the larger the shadow map
+ * and this can have a huge affect on resource usage.
  *
  */
 
 /*!
  * \qmlproperty real Light::shadowMapFar
  *
+ * The property determines the maximum distance for the shadow map. Smaller
+ * values ma improve the precision and effects of the map.
  *
  */
 
 /*!
  * \qmlproperty real Light::shadowMapFieldOFView
  *
+ * This property determines the field of view used by the simulated cameras
+ * that render to the shadow map.
  *
  */
 
 /*!
  * \qmlproperty real Light::shadowFilter
  *
+ * This property sets how much blur is applied to the shadows.
  *
  */
 
 /*!
  * \qmlproperty Node Light::scope
  *
+ * The propery allows the selection of a Node in the scene which has the affect
+ * that only that Node and it's children are affected by this light.
  *
  */
 
