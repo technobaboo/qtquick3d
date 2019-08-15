@@ -38,6 +38,8 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype Material
+    \inherits Object3D
+    \instantiates QQuick3DMaterial
     \inqmlmodule QtQuick3D
     \brief Lets you define material for the 3D item.
 */
@@ -45,42 +47,77 @@ QT_BEGIN_NAMESPACE
 /*!
  * \qmlproperty Texture Material::lightmapIndirect
  *
+ * This property defines a baked lightmap Texture containing indirect lighting
+ * information for this material.
+ *
+ * \note This feature is still in development so there is currently no way to
+ * bake lights. The texture currently still uses the UV1 coordinates which is
+ * going to change later to UV2.
  *
  */
 
 /*!
  * \qmlproperty Texture Material::lightmapRadiosity
  *
+ * This property defines a baked lightmap Texture containing direct lighting
+ * information for this material.
+ *
+ * \note This feature is still in development so there is currently no way to
+ * bake lights. The texture currently still uses the UV1 coordinates which is
+ * going to change later to UV2.
  *
  */
 
 /*!
  * \qmlproperty Texture Material::lightmapShadow
  *
+ * This property defines a baked lightmap Texture containing shadowing
+ * information for this material.
+ *
+ * \note This feature is still in development so there is currently no way to
+ * bake lights. The texture currently still uses the UV1 coordinates which is
+ * going to change later to UV2.
  *
  */
 
 /*!
  * \qmlproperty Texture Material::iblProbe
  *
+ * This property defines a Texture for overriding or setting an image based
+ * lighting Texture for use for only this material.
  *
  */
 
 /*!
  * \qmlproperty Texture Material::emissiveMap2
  *
+ * This property sets a second Texture to be used to set the emissive power for
+ * different parts of the material. Using a grayscale image will not affect the
+ * color of the result, while using a color image will produce glowing regions
+ * with the color affected by the emissive map.
  *
  */
 
 /*!
  * \qmlproperty Texture Material::displacementMap
  *
+ * This propery defines  grayscale image used to offset the vertices of
+ * geometry across the surface of the material. Brighter pixels indicate raised
+ * regions.
+ *
+ * \note Displacement maps require vertices to offset. I.e. the result will be
+ * more accurate on a high poly model than on a low poly model.
+ *
+ * \note Displacement maps do not affect the normals of your geometry. To look
+ * correct with lighting or reflections you will likely want to also add a
+ * matching bump map or normal map to your material.
  *
  */
 
 /*!
  * \qmlproperty real Material::displacementAmount
  *
+ * This property controls the offset am ount for the Material::displacmentMap.
  *
  */
 

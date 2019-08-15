@@ -37,6 +37,8 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype DefaultMaterial
+    \inherits Material
+    \instantiates QQuick3DDefaultMaterial
     \inqmlmodule QtQuick3D
     \brief Defines a Material generated depending on which properites are set.
 
