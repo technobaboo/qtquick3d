@@ -266,10 +266,7 @@ void QSSGRenderNode::calculateLocalTransform()
 
     writePtr[12] = theScaledPivot[0];
     writePtr[13] = theScaledPivot[1];
-    if (leftHanded)
-        writePtr[14] = theScaledPivot[2];
-    else
-        writePtr[14] = -theScaledPivot[2];
+    writePtr[14] = theScaledPivot[2];
 
     QMatrix4x4 theRotationTransform;
     calculateRotationMatrix(theRotationTransform);
@@ -278,10 +275,7 @@ void QSSGRenderNode::calculateLocalTransform()
 
     writePtr[12] += position[0];
     writePtr[13] += position[1];
-    if (leftHanded)
-        writePtr[14] = writePtr[14] + position[2];
-    else
-        writePtr[14] = writePtr[14] - position[2];
+    writePtr[14] += position[2];
 
     if (leftHanded)
         flipCoordinateSystem(localTransform);
