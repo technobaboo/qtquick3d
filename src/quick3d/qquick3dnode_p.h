@@ -69,6 +69,7 @@ class Q_QUICK3D_EXPORT QQuick3DNode : public QQuick3DObject
     Q_PROPERTY(QVector3D up READ up)
     Q_PROPERTY(QVector3D right READ right)
     Q_PROPERTY(QVector3D globalPosition READ globalPosition)
+    Q_PROPERTY(QVector3D globalRotation READ globalRotation)
     Q_PROPERTY(QMatrix4x4 globalTransform READ globalTransform NOTIFY globalTransformChanged)
 
 public:
@@ -112,6 +113,7 @@ public:
     QVector3D up() const;
     QVector3D right() const;
     QVector3D globalPosition() const;
+    QVector3D globalRotation() const;
     QMatrix4x4 globalTransform() const;
     QMatrix4x4 globalTransformLeftHanded() const;
     QMatrix4x4 globalTransformRightHanded() const;

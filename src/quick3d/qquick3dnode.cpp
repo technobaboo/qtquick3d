@@ -266,6 +266,21 @@ QVector3D QQuick3DNode::globalPosition() const
 }
 
 /*!
+    \qmlproperty vector3d QtQuick3D::Node::globalRotation
+
+    This property returns the rotation of the node in global coordinate space.
+*/
+QVector3D QQuick3DNode::globalRotation() const
+{
+    const QMatrix3x3 rotationMatrix = mat44::getUpper3x3(globalTransform());
+    const QVector3D radians = QSSGEulerAngleConverter::calculateRotationVector(rotationMatrix, false, m_rotationorder);
+    const float angleX = qRadiansToDegrees(radians.x());
+    const float angleY = qRadiansToDegrees(radians.y());
+    const float angleZ = qRadiansToDegrees(radians.z());
+    return QVector3D(angleX, angleY, angleZ);
+}
+
+/*!
     \qmlproperty matrix4x4 QtQuick3D::Node::globalTransform
 
     This property returns the global transform matrix for this node.
