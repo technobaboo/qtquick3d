@@ -281,6 +281,20 @@ QVector3D QQuick3DNode::globalRotation() const
 }
 
 /*!
+    \qmlproperty vector3d QtQuick3D::Node::globalScale
+
+    This property returns the scale of the node in global coordinate space.
+*/
+QVector3D QQuick3DNode::globalScale() const
+{
+    const QMatrix4x4 transform = globalTransform();
+    const float scaleX = transform.column(0).length();
+    const float scaleY = transform.column(1).length();
+    const float scaleZ = transform.column(2).length();
+    return QVector3D(scaleX, scaleY, scaleZ);
+}
+
+/*!
     \qmlproperty matrix4x4 QtQuick3D::Node::globalTransform
 
     This property returns the global transform matrix for this node.
