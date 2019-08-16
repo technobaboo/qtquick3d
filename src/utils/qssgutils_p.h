@@ -82,6 +82,20 @@ QVector3D Q_QUICK3DUTILS_EXPORT rotate(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_QUICK3DUTILS_EXPORT rotate(const QMatrix4x4 &m, const QVector4D &v);
 QVector3D Q_QUICK3DUTILS_EXPORT transform(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_QUICK3DUTILS_EXPORT transform(const QMatrix4x4 &m, const QVector4D &v);
+
+inline void Q_QUICK3DUTILS_EXPORT flip(QMatrix4x4 &matrix)
+{
+    // Flip between left-handed and right-handed orientation
+    float *writePtr(matrix.data());
+    // rotation conversion
+    writePtr[0 * 4 + 2] *= -1;
+    writePtr[1 * 4 + 2] *= -1;
+    writePtr[2 * 4 + 0] *= -1;
+    writePtr[2 * 4 + 1] *= -1;
+    // translation conversion
+    writePtr[3 * 4 + 2] *= -1;
+}
+
 }
 
 namespace quant {

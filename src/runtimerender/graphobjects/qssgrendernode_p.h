@@ -168,9 +168,6 @@ struct Q_QUICK3DRUNTIMERENDER_EXPORT QSSGRenderNode : public QSSGRenderGraphObje
 
     static QVector3D getRotationVectorFromEulerAngles(const EulerAngles &inAngles);
 
-    // Flip a matrix from left-handed to right-handed and vice versa
-    static void flipCoordinateSystem(QMatrix4x4 &ioMatrix);
-
     // Force the calculation of the local transform
     void calculateLocalTransform();
 

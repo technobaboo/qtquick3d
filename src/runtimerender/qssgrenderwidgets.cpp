@@ -275,7 +275,7 @@ struct QSSGWidgetAxis : public QSSGRenderWidgetInterface
             QMatrix4x4 theNodeRotation;
             m_node->calculateRotationMatrix(theNodeRotation);
             if (m_node->flags.testFlag(QSSGRenderNode::Flag::LeftHanded))
-                QSSGRenderNode::flipCoordinateSystem(theNodeRotation);
+                mat44::flip(theNodeRotation);
             QMatrix3x3 theRotationMatrix(theNodeRotation.constData());
             // Move the camera position into camera space.  This is so that when we render we don't
             // have to account

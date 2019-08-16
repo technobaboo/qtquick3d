@@ -239,19 +239,6 @@ void QSSGRenderNode::calculateRotationMatrix(QMatrix4x4 &outMatrix) const
     theConverter.eulerToHMatrix(theAngles, *theMatrix);
 }
 
-void QSSGRenderNode::flipCoordinateSystem(QMatrix4x4 &inMatrix)
-{
-    float *writePtr(inMatrix.data());
-    // rotation conversion
-    writePtr[0 * 4 + 2] *= -1;
-    writePtr[1 * 4 + 2] *= -1;
-    writePtr[2 * 4 + 0] *= -1;
-    writePtr[2 * 4 + 1] *= -1;
-
-    // translation conversion
-    writePtr[3 * 4 + 2] *= -1;
-}
-
 void QSSGRenderNode::calculateLocalTransform()
 {
     flags.setFlag(Flag::TransformDirty, false);
@@ -278,7 +265,7 @@ void QSSGRenderNode::calculateLocalTransform()
     writePtr[14] += position[2];
 
     if (leftHanded)
-        flipCoordinateSystem(localTransform);
+        mat44::flip(localTransform);
 }
 
 void QSSGRenderNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
